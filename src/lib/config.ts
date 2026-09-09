@@ -9,6 +9,16 @@ export const config = {
   // origins in the Google Cloud console.
   googleClientId: import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "",
 
+  // Cloudflare Turnstile public site key — NOT a secret (site keys are served
+  // to browsers in plaintext; only the paired secret, which lives on the
+  // backend, is sensitive). Shared widget: waithowmuch.com is on its hostname
+  // allowlist in the Cloudflare dashboard.
+  //
+  // Deliberately NOT defaulted to the real key: an empty value here is what
+  // makes local dev and preview builds skip the challenge, and localhost is
+  // not allowlisted.
+  turnstileSiteKey: import.meta.env.VITE_TURNSTILE_SITE_KEY ?? "",
+
   ga4MeasurementId: "G-0K360RYPPB",
   clarityId: "yfrezqqmrh",
 };

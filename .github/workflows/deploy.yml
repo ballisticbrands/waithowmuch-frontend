@@ -45,6 +45,10 @@ jobs:
           # (it ships in every brand app's bundle). https://waithowmuch.com is
           # on this client's Authorized JavaScript origins.
           VITE_GOOGLE_CLIENT_ID: "776606808148-8p8l20pg1vt4jcbde2rr1orvlku87b55.apps.googleusercontent.com"
+          # Public site key for the shared Cloudflare Turnstile widget — NOT a
+          # secret. Only the paired TURNSTILE_SECRET_KEY, on the backend, is.
+          # waithowmuch.com must be on this widget's hostname allowlist.
+          VITE_TURNSTILE_SITE_KEY: "0x4AAAAAAD0Om6EwWjyl-CF4"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

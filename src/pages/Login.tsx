@@ -4,12 +4,14 @@ import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
+import { Turnstile } from "@/components/Turnstile";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const navigate = useNavigate();
 
   async function requestLink(e: React.FormEvent) {
@@ -19,7 +21,7 @@ export default function Login() {
     try {
       await apiFetch("/v1/auth/magic-link", {
         method: "POST",
-        body: JSON.stringify({ email, attribution: readAttribution() }),
+        body: JSON.stringify({ email, turnstileToken, attribution: readAttribution() }),
       });
       // The API answers 202 whether or not the address has an account, so this
       // screen must too — anything conditional here would leak exactly what
@@ -70,7 +72,14 @@ export default function Login() {
             value={email} onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com" style={{ marginTop: "0.375rem" }}
           />
-          <button data-btn type="submit" disabled={busy || !email} style={{ width: "100%", marginTop: "0.75rem" }}>
+          <div style={{ marginTop: "0.75rem" }}>
+            <Turnstile onToken={setTurnstileToken} />
+          </div>
+          {/* Disabled until the challenge reports back — an empty token is a
+              guaranteed rejection, and a button that silently does nothing
+              reads as the site being broken. */}
+          <button data-btn type="submit" disabled={busy || !email || turnstileToken === null}
+                  style={{ width: "100%", marginTop: "0.75rem" }}>
             {busy ? "Sending…" : "Email me a link"}
           </button>
         </form>
