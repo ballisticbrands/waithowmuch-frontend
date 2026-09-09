@@ -21,7 +21,32 @@ import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
-const shell = readFileSync(join(dist, 'index.html'), 'utf8');
+let shell = readFileSync(join(dist, 'index.html'), 'utf8');
+
+// ── Inline the stylesheet ────────────────────────────────────────────
+//
+// Vite emits <link rel="stylesheet">, which is RENDER-BLOCKING: on throttled
+// mobile the browser parses the HTML, discovers the link, and spends another
+// round trip before it can paint anything. That measured FCP 2.9s -> LCP 5.0s
+// (PSI mobile 75) while desktop sat at 0.3s.
+//
+// The whole stylesheet is ~8.6KB raw / ~2.5KB gzipped, which is smaller than
+// the request that fetches it. Inlining trades cross-page CSS caching for one
+// fewer blocking round trip on the first view — the right trade for a content
+// site whose visitors arrive cold from a link and often read one page.
+//
+// 🚨 If the stylesheet ever grows past ~15KB, reverse this and inline only
+// critical CSS instead: past that point the per-page duplication costs more
+// than the round trip saves.
+const cssHref = shell.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/);
+if (cssHref) {
+  const css = readFileSync(join(dist, cssHref[1].replace(/^\//, '')), 'utf8');
+  if (css.length > 15_000) {
+    console.warn(`postbuild: stylesheet is ${css.length}B — past the point where inlining pays. See the note here.`);
+  }
+  shell = shell.replace(cssHref[0], `<style>${css}</style>`);
+  console.log(`postbuild: inlined ${css.length}B of CSS`);
+}
 
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
