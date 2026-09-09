@@ -5,14 +5,19 @@ import { Chart } from "@/components/Chart";
 import { Provenance } from "@/components/Provenance";
 import { exactMoney, percent, monthLabel, yearsSince } from "@/lib/format";
 import { BRAND_NAME } from "@/data/site";
+import { businessBootstrap } from "@/lib/bootstrap";
 
 export default function Business() {
   const { slug = "" } = useParams();
-  const [b, setB] = useState<BusinessDetail | null>(null);
-  const [points, setPoints] = useState<MetricPoint[]>([]);
+  const boot = businessBootstrap(slug);
+  const [b, setB] = useState<BusinessDetail | null>(boot?.business ?? null);
+  const [points, setPoints] = useState<MetricPoint[]>(boot?.metrics ?? []);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
+    // The landed-on page already has everything inlined. A client-side
+    // navigation to a DIFFERENT business does not, so this still runs there.
+    if (businessBootstrap(slug)) return;
     let cancelled = false;
     getBusiness(slug)
       .then((r) => { if (!cancelled) setB(r.business); })

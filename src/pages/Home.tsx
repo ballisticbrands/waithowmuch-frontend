@@ -1,21 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { listBusinesses, listCategories, type BusinessCard as Card, type CategoryRef } from "@/lib/api";
 import { BusinessCard } from "@/components/BusinessCard";
+import { homeBootstrap } from "@/lib/bootstrap";
 
 type Sort = "revenue" | "profit" | "margin" | "newest";
 
 export default function Home() {
-  const [businesses, setBusinesses] = useState<Card[] | null>(null);
-  const [categories, setCategories] = useState<Array<CategoryRef & { businessCount: number }>>([]);
+  // Seeded from the payload the prerender inlined, so the default view paints
+  // without a network round trip.
+  const [businesses, setBusinesses] = useState<Card[] | null>(homeBootstrap?.businesses ?? null);
+  const [categories, setCategories] = useState<Array<CategoryRef & { businessCount: number }>>(
+    homeBootstrap?.categories ?? [],
+  );
   const [sort, setSort] = useState<Sort>("revenue");
   const [category, setCategory] = useState<string>("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (homeBootstrap?.categories?.length) return;
     listCategories().then((r) => setCategories(r.categories)).catch(() => {});
   }, []);
 
+  // Tracks whether this is the very first pass, so the bootstrapped default
+  // view is not immediately thrown away and refetched.
+  const first = useRef(true);
+
   useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      if (homeBootstrap && sort === "revenue" && category === "") return;
+    }
     let cancelled = false;
     setBusinesses(null);
     setError(false);

@@ -34,7 +34,7 @@ const money = (v, c = 'USD') => {
 };
 
 /** Replace the head tags and inject a real content block inside #root. */
-function render({ path, title, description, body }) {
+function render({ path, title, description, body, bootstrap }) {
   let html = shell
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(description)}" />`);
@@ -49,6 +49,23 @@ function render({ path, title, description, body }) {
     `<meta name="twitter:card" content="summary" />`,
   ].join('\n    ');
   html = html.replace('</head>', `  ${head}\n  </head>`);
+
+  // 🚨 Inline the data the first render needs.
+  //
+  // Without this, React mounts, clears the prerendered markup, and then shows
+  // a spinner until api.waithowmuch.com answers — so LCP is gated on a network
+  // round trip that has not even started until the bundle has parsed. That
+  // measured LCP 4.7s on throttled mobile (PSI performance 77) against 0.3s on
+  // desktop. Serving the payload inline removes the round trip from first
+  // paint entirely.
+  //
+  // JSON.stringify output is escaped for `</script>` — a business name or
+  // source note containing that sequence would otherwise close the tag early
+  // and inject the rest of the payload as markup.
+  if (bootstrap) {
+    const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
+    html = html.replace('</head>', `  <script>window.__WHM_BOOTSTRAP__=${json}</script>\n  </head>`);
+  }
 
   // `data-prerender` marks the block for main.tsx. See the note there about
   // why this is replaced rather than hydrated.
@@ -115,11 +132,20 @@ const homeBody = `
     </ul>
     <p><a href="/about">How these figures are researched</a></p>`.trim();
 
+let categories = [];
+try {
+  categories = (await (await fetch(`${API_BASE}/v1/categories`)).json()).categories ?? [];
+} catch { /* filters degrade to "All categories"; not worth failing a deploy */ }
+
 const homeHtml = render({
   path: '/',
   title: `${BRAND_NAME} — what businesses actually make`,
   description: 'Revenue, profit and margin for businesses you have never heard of. Researched from public data, with sources on every profile.',
   body: homeBody,
+  // Only the DEFAULT view (sort=revenue, no category filter) is inlined —
+  // that is what this URL renders, and anything else would be a payload the
+  // page does not use.
+  bootstrap: { route: 'home', businesses, categories },
 });
 guard('/', homeHtml);
 write('', homeHtml);
@@ -198,11 +224,19 @@ for (const b of businesses) {
        not make a purchase decision on them.</p>
     <p><a href="/">All businesses</a> · <a href="/about">How these figures are researched</a></p>`.trim();
 
+  let detail = null;
+  let metrics = null;
+  try {
+    detail = (await (await fetch(`${API_BASE}/v1/businesses/${encodeURIComponent(b.slug)}`)).json()).business;
+    metrics = (await (await fetch(`${API_BASE}/v1/businesses/${encodeURIComponent(b.slug)}/metrics?granularity=month`)).json()).metrics;
+  } catch { /* the page still works, it just fetches on mount like before */ }
+
   const html = render({
     path: businessPath(b.slug),
     title: `${b.name}${rev ? ` — ${rev}/mo` : ''} | ${BRAND_NAME}`,
     description: `${b.name}: ${rev ?? 'revenue'} per month${margin ? `, ${margin} margin` : ''}. ${method}, with sources.`,
     body,
+    bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
   });
 
   guard(businessPath(b.slug), html);
