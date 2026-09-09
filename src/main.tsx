@@ -1,30 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { CurrencyProvider } from "@/currency";
-import { AddBusinessProvider } from "@/AddBusiness";
 import { BrowserRouter } from "react-router-dom";
-import {
-  BrandProvider,
-  captureAttribution,
-  configureShared,
-} from "@ballisticbrands/frontend-shared";
 import App from "./App";
-import { activeBrand, META_PIXEL_ID } from "./brands";
 import { config } from "./lib/config";
-import { fixMetaStandardEvents } from "./lib/meta-events";
+import { captureAttribution } from "./lib/attribution";
 import "./globals.css";
 
-const brand = activeBrand();
-
-// Configure @ballisticbrands/frontend-shared BEFORE any of its functions run.
-// Sets the module-level singleton that non-React code (attribution helpers,
-// fetch wrapper) reads apiUrl + brand from.
-configureShared({
-  apiUrl: config.apiUrl,
-  brand,
-  turnstileSiteKey: config.turnstileSiteKey,
-  googleClientId: config.googleClientId,
-});
+captureAttribution();
 
 function injectGa4(measurementId: string): void {
   if (!measurementId) return;
@@ -35,11 +17,10 @@ function injectGa4(measurementId: string): void {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).dataLayer = (window as any).dataLayer || [];
   // 🚨 gtag.js only processes the `arguments` OBJECT pushed to dataLayer.
-  // Pushing a rest-param ARRAY — `dataLayer.push(args)` — is silently ignored,
-  // so gtag('config') and every gtag('event') no-op and NO hits are ever sent:
-  // not sign_up, not even page_view. That exact bug zeroed a sibling app's GA4
-  // for ~10 days with nothing in the console. Push `arguments`, like the
-  // canonical snippet does. Do not "modernise" this to a rest param.
+  // Pushing a rest-param ARRAY is silently ignored, so gtag('config') and
+  // every gtag('event') no-op and NO hits are ever sent — not even page_view.
+  // That exact bug zeroed a sibling app's GA4 for ~10 days with nothing in the
+  // console. Do not "modernise" this to a rest param.
   const gtag: (...args: unknown[]) => void = function () {
     // eslint-disable-next-line prefer-rest-params, @typescript-eslint/no-explicit-any
     (window as any).dataLayer.push(arguments);
@@ -52,81 +33,44 @@ function injectGa4(measurementId: string): void {
 
 function injectClarity(projectId: string): void {
   if (!projectId) return;
-  // Verbatim port of the standard Clarity snippet.
   ((c, l, a, r, i) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (c as any)[a] = (c as any)[a] || function () {
-      // Clarity's queue, like gtag's, expects the arguments object — not a
-      // plain array (see the GA4 note above).
+      // Clarity's queue, like gtag's, expects the arguments object.
       // eslint-disable-next-line prefer-rest-params, @typescript-eslint/no-explicit-any
       ((c as any)[a].q = (c as any)[a].q || []).push(arguments);
     };
     const t = l.createElement(r) as HTMLScriptElement;
     t.async = true;
-    t.src = "https://www.clarity.ms/tag/" + i;
-    const y = l.getElementsByTagName(r)[0];
-    y?.parentNode?.insertBefore(t, y);
+    t.src = `https://www.clarity.ms/tag/${i}`;
+    const y = l.getElementsByTagName(r)[0]!;
+    y.parentNode!.insertBefore(t, y);
   })(window, document, "clarity", "script", projectId);
 }
 
-// Meta Pixel base snippet. The shared library fires CompleteRegistration /
-// ConnectSeller / ConnectAds through `window.fbq`, but only when it already
-// exists — nothing in the shared package loads the pixel itself. Without this,
-// creating the dataset in Business Manager produces exactly zero app events,
-// silently. The LP loads its pixel from index.html; this is the app's
-// equivalent, kept here so it's brand-resolved like GA4 and Clarity.
-function injectMetaPixel(pixelId: string): void {
-  if (!pixelId) return;
-  /* eslint-disable @typescript-eslint/no-explicit-any, prefer-rest-params */
-  const w = window as any;
-  if (w.fbq) return;
-  const n: any = (w.fbq = function () {
-    n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-  });
-  if (!w._fbq) w._fbq = n;
-  n.push = n;
-  n.loaded = true;
-  n.version = "2.0";
-  n.queue = [];
-  const t = document.createElement("script");
-  t.async = true;
-  t.src = "https://connect.facebook.net/en_US/fbevents.js";
-  document.head.appendChild(t);
-  /* eslint-enable @typescript-eslint/no-explicit-any, prefer-rest-params */
-  w.fbq("init", pixelId);
-  w.fbq("track", "PageView");
-}
+injectGa4(config.ga4MeasurementId);
+injectClarity(config.clarityId);
 
-injectGa4(brand.ga4MeasurementId);
-injectClarity(brand.clarityId);
-injectMetaPixel(META_PIXEL_ID);
-fixMetaStandardEvents();
+const root = document.getElementById("root")!;
 
-document.title = brand.displayName;
-const metaDesc = document.querySelector('meta[name="description"]');
-if (metaDesc) metaDesc.setAttribute("content", brand.metaDescription);
-
-// SPA fallback for GitHub Pages (see public/404.html). MUST run BEFORE
-// captureAttribution(), which reads the query string off the real landing URL.
-const redirectPath = sessionStorage.getItem("spa-redirect");
-if (redirectPath && redirectPath !== "/") {
-  sessionStorage.removeItem("spa-redirect");
-  window.history.replaceState(null, "", redirectPath);
-}
-
-// Snapshot the visitor's first landing into localStorage.
-captureAttribution();
-
-createRoot(document.getElementById("root")!).render(
+// 🚨 createRoot (which REPLACES #root's children), not hydrateRoot.
+//
+// The prerender writes hand-authored SEO markup — a heading, the summary, the
+// headline figures — which is deliberately NOT what React renders. hydrateRoot
+// against markup that does not match throws a hydration mismatch, and React 18
+// then silently re-renders the whole tree client-side anyway, so you pay the
+// cost and get console errors for it.
+//
+// The known tradeoff: replacing causes a repaint, and on a sibling repo an
+// unbounded version of that measured CLS 0.377. It is contained here because
+// the prerendered block is short and sits in the same place as the real
+// heading. The real fix, if CLS shows up in PSI, is to prerender by rendering
+// the ACTUAL React tree with puppeteer (as the LP repos do) — then the markup
+// matches and this can become hydrateRoot. Do not flip it before then.
+createRoot(root).render(
   <StrictMode>
-    <BrandProvider brand={brand}>
-      <BrowserRouter>
-        <CurrencyProvider>
-          <AddBusinessProvider>
-            <App />
-          </AddBusinessProvider>
-        </CurrencyProvider>
-      </BrowserRouter>
-    </BrandProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 );
