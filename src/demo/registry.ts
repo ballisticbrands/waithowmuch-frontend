@@ -1,0 +1,612 @@
+/* Demo pages: /demo/<slug>.
+ *
+ * A demo renders a REAL app page against fixture data, so it can never drift
+ * from what production looks like — the layout is not reimplemented here, it
+ * is the same component the app uses. See ./README.md to add one.
+ *
+ * 🚧 Demos may show features that do not exist yet. They are noindex and
+ * Disallow'd (site.mjs DEMO_PAGES → APP_ROUTES), and must stay that way.
+ */
+
+import { afrasiab } from "./fixtures/afrasiab";
+import { jayeshchauhanreddit } from "./fixtures/jayeshchauhanreddit";
+import { muchExperience4197 } from "./fixtures/much-experience-4197";
+import { sirsolrac36 } from "./fixtures/sirsolrac36";
+import { slickyTrick } from "./fixtures/slickytrick";
+import { thickValuable4753 } from "./fixtures/thick-valuable-4753";
+import { tomNomYyz } from "./fixtures/tomnomyyz";
+import { pureZookeepergame } from "./fixtures/pure-zookeepergame";
+import type { BusinessPayload } from "@/pages/Business";
+import { amazonFba08873 } from "./fixtures/amazon-fba-08873";
+import { leaderboard } from "./fixtures/leaderboard";
+import { theLoadedTeaShop } from "./fixtures/theloadedteashop";
+import { resilia } from "./fixtures/resilia";
+import type { Dossier } from "./dossier";
+import { ecgGroup } from "./fixtures/ecg-group";
+import {
+  passionateNetworkGroup,
+  pnMember1,
+  pnMember2,
+  pnMember3,
+  pnMember4,
+} from "./fixtures/passionate-network";
+import {
+  danBoufford,
+  ecgCameron,
+  ecgDanny,
+  ecgUbaldo,
+} from "./fixtures/ecgwholesale";
+
+/**
+ * `kind` picks WHICH page renders the fixture, and each kind's fixture answers
+ * a different endpoint with different arguments — so the two are one choice,
+ * not two. Modelling them as a union rather than as one struct with a `kind`
+ * flag is what stops a leaderboard demo from being handed a `consultation`
+ * button it has nowhere to put, or a profile builder from being called with a
+ * leaderboard's axis. src/pages/Demo.tsx switches on it.
+ */
+export type Demo =
+  | ProfileDemo
+  | LeaderboardDemo
+  | GroupDemo
+  | SourcedDemo
+  | BusinessDemo;
+
+/** A tag beside the name.
+ *
+ * `tone` is NOT decoration. `verified` is the green ✓ treatment the product
+ * uses to mean "we checked this against Amazon"; `offer` is the same pill
+ * geometry in a neutral colour, for things the seller merely OFFERS — a paid
+ * consultation, free resources. Rendering an offer in the verification colour
+ * would be this product claiming it verified something it did not. */
+export interface DemoTag {
+  label: string;
+  tone?: "verified" | "offer";
+}
+
+/** Tags every demo profile carries. Verification first — it is the claim the
+ *  page is built on; the offers follow. Spread into a demo's own `tags` so a
+ *  demo can still add one of its own without editing this. */
+export const STANDARD_TAGS: DemoTag[] = [
+  { label: "✓ Verified margins", tone: "verified" },
+  { label: "Paid consultation", tone: "offer" },
+  { label: "Free resources", tone: "offer" },
+];
+
+/** What /demo (the index) shows for an entry. Optional everywhere: an
+ *  unlabelled demo lists under its slug rather than not listing at all — a
+ *  demo missing from the index is a demo nobody remembers exists. */
+export interface DemoMeta {
+  /** Human name for the index card. Defaults to the slug. */
+  label?: string;
+  /** One line: what this demo is FOR, i.e. why you would send it to someone. */
+  blurb?: string;
+  /**
+   * Keeps the entry OFF /demo while leaving /demo/<slug> working — reachable
+   * only by someone who already has the URL.
+   *
+   * The default is the opposite, and deliberately so (see the note above): a
+   * demo missing from the index is a demo nobody remembers exists. This opts
+   * one out for work still being drafted, where the index would hand a
+   * prospect an unfinished page beside the finished ones. It is NOT privacy —
+   * the route is public and unauthenticated, and the only thing standing
+   * between it and a crawler is its `Disallow:` line in site.mjs, so an
+   * unlisted demo still belongs in DEMO_PAGES.
+   */
+  unlisted?: boolean;
+}
+
+/** Builds the payload GET /v1/public/profiles/:username would return. */
+export type ProfileBuilder = (months: number, currency: string) => unknown;
+
+/** Builds the payload GET /v1/public/leaderboard?by=…&currency=… returns. */
+export type LeaderboardBuilder = (
+  mode: "founder" | "business",
+  currency: string,
+) => unknown;
+
+export interface ProfileDemo extends DemoMeta {
+  kind: "profile";
+  build: ProfileBuilder;
+  /* Everything below is PER DEMO on purpose. These started scoped to
+     `.vm-demo`, which meant the first demo's pill, its rewritten
+     business-count and its consultation button all appeared on the second
+     one the moment it existed. A demo shows features the product lacks;
+     which features is a property of that demo, not of demos. */
+
+  /** Pills beside the name, in order. See STANDARD_TAGS.
+   *
+   *  🚨 Rendered as REAL elements portalled into the header's <h1>, not as a
+   *  ::after on it. It was a ::after, whose `content` can only ever be one
+   *  string — so a second tag was not a bigger value, it was a different
+   *  mechanism. */
+  tags?: DemoTag[];
+  /** Replaces the header's computed "<n> businesses with verified revenue".
+   *  The shared page derives that from the array length and the payload
+   *  cannot set it — see README. */
+  countLabel?: string;
+  /** Adds a booking CTA beside the social buttons. */
+  consultation?: { price: string; minutes: number; name: string };
+  /**
+   * "Ask <name>" — a priced menu of QUESTIONS, rendered as its own section
+   * under the profile.
+   *
+   * A different product from `consultation`, not a cheaper one: a call buys
+   * somebody's calendar, an answer buys their judgement on one thing. Priced
+   * per question for the same reason. A demo may carry either; carrying both
+   * would ask a reader to choose between two things that sound alike.
+   */
+  ask?: {
+    name: string;
+    /** The section's heading, and the dialog's. Defaults to "Ask <name>".
+     *  One field for both on purpose: a dialog titled differently from the
+     *  section it opened from reads as a different feature. */
+    heading?: string;
+    /**
+     * 🚨 INVENTED SOCIAL PROOF, shown beside the heading — a star rating out of
+     * 5 and a count of consultations delivered.
+     *
+     * Nobody in this demo set has ever sold a consultation through us, because
+     * the feature does not exist. These are the same class of figure as
+     * GROUP_MARGIN_PCT: made up, about a real person, and therefore declared
+     * where somebody will see them rather than buried in a fixture. The page's
+     * "Illustrative figures" banner is what makes them defensible, and the
+     * ledger records them.
+     */
+    rating?: number;
+    consultations?: number;
+    items: Array<{
+      q: string;
+      price: string;
+      /** A second line under the name — terms, or what is included. */
+      note?: string;
+      /** The dialog's button. Defaults to "Send question — <price>", which is
+       *  wrong for anything that is not a one-off question. */
+      cta?: string;
+      /** The dialog's confirmation, for the same reason. */
+      sentHeading?: string;
+      sentLine?: string;
+    }>;
+  };
+  /** A link to the GROUP this seller belongs to, rendered as a button ABOVE
+   *  the consultation CTA. The admin's own profile carries it too — a group
+   *  page is where a reader goes to see the cohort, not a member list only
+   *  members get. */
+  group?: { to: string; label: string };
+  /** A tag under the header's business-count line, naming the group. Distinct
+   *  from `tags`, which sit beside the NAME: this is an affiliation, not a
+   *  claim about the seller's own figures, and putting it in the same row as
+   *  "✓ Verified margins" would read as one. */
+  groupTag?: string;
+}
+
+export interface LeaderboardDemo extends DemoMeta {
+  kind: "leaderboard";
+  build: LeaderboardBuilder;
+}
+
+/**
+ * 🚧 A REDESIGNED BUSINESS PAGE — the second kind that does not mount a real
+ * page, and the only one whose figures are GENUINE.
+ *
+ * Every other demo answers a request the production component makes, which is
+ * what stops a demo drifting from what we ship. A redesign cannot: looking
+ * different from the shipped page IS the deliverable, so `DemoBusiness`
+ * reimplements the layout and takes the payload directly rather than through
+ * the fetch seam. README.md reserves this ("a further kind is a case in
+ * Demo.tsx and a component beside it"), and the cost — this page does not
+ * follow Business.tsx — is written on DemoBusiness itself.
+ *
+ * 🚨 Unlike every other fixture here, the numbers are REAL and already
+ * public: it is the operator's own business, served verbatim from
+ * /v1/public/businesses/amazon-fba-08873. The demo banner still rides above
+ * it, because the LAYOUT is the proposal even though the figures are not.
+ */
+export interface BusinessDemo extends DemoMeta {
+  kind: "business";
+  /** The payload GET /v1/public/businesses/:slug returns. Nullary because a
+   *  redesign is judged against ONE business at one window — a currency or
+   *  window argument would imply a conversion this demo does not do. */
+  build: () => BusinessPayload;
+}
+
+/**
+ * 🚧 A GROUP — a coach, agency or mastermind and their people on one ranked
+ * page. The product has NO groups; this is the kind README.md reserves for a
+ * feature that does not exist yet, and it lives at /demo/g/<slug> rather
+ * than /demo/<slug> so a group can never collide with a seller's handle.
+ */
+export interface GroupDemo extends DemoMeta {
+  kind: "group";
+  /** Answers the leaderboard endpoint with just this group's members. */
+  build: LeaderboardBuilder;
+  /** Shown as the board's heading — the group's name, not the owner's. */
+  name: string;
+  /** One or two sentences on who these people are. */
+  description: string;
+  /** The owner's photo, beside the description. Served locally, never
+   *  hotlinked — see the note on afrasiab's. */
+  avatar_url?: string | null;
+  /** Where the group comes from, linked under the description. */
+  link?: string;
+}
+
+/**
+ * 🚧 A SOURCED DOSSIER — everything public about a seller who has never heard
+ * of us, with every figure naming its source.
+ *
+ * The second kind with no real page behind it (see GroupDemo). It carries its
+ * data DIRECTLY rather than as a `build` function, because unlike every other
+ * kind there is no endpoint to answer: `DemoSourced` renders the dossier, it
+ * does not patch fetch. A builder here would be a signature implying a backend
+ * that does not exist.
+ */
+export interface SourcedDemo extends DemoMeta {
+  kind: "sourced";
+  dossier: Dossier;
+}
+
+/**
+ * The three-product consult menu, which three demos now carry.
+ *
+ * A factory rather than a third copy of the same literal: the prices are
+ * per-person but the WORDING is not, and pasted copies drift — one grows a
+ * sub-line the others lack, another keeps saying "Send question" on a
+ * subscription. Prices stay at each call site, because they are the part
+ * genuinely about that seller.
+ */
+function consultMenu(args: {
+  /** The name the page shows; the heading and the dialog both use it. */
+  name: string;
+  deepDive: string;
+  oneOff: string;
+  ongoing: string;
+  /** "Ongoing consultancy" for most; TomNomYYZ sells mentorship. */
+  ongoingLabel?: string;
+}): NonNullable<ProfileDemo["ask"]> {
+  const label = args.ongoingLabel ?? "Ongoing consultancy";
+  return {
+    name: args.name,
+    heading: `Consult with ${args.name}`,
+    items: [
+      {
+        q: "Product deep dive",
+        /* The question it answers, in a prospect's words. "Deep dive" is the
+           product name; this is what somebody is actually buying. */
+        note: "Is this product worth pursuing?",
+        price: args.deepDive,
+      },
+      { q: "One time question", price: args.oneOff },
+      {
+        q: label,
+        price: args.ongoing,
+        note: "Priority DMs, cancel anytime",
+        /* 🚨 Per ITEM: "Send question — $190/mo" is nonsense on a subscription,
+           and the confirmation has to answer what "cancel anytime" raises. */
+        cta: `Start ${label.replace(/^Ongoing /, "")} — ${args.ongoing}`,
+        sentHeading: "You're in",
+        sentLine:
+          "Your DMs go to the top of their list from now on. Cancel whenever — access runs to the end of the month you have paid for.",
+      },
+    ],
+  };
+}
+
+/** Case-insensitive: a handle carries its case ("Pure_Zookeepergame_2") but a
+ *  URL gets typed, and a demo that 404s on the wrong shift key is a demo you
+ *  cannot hand to anyone. */
+export function findDemo(slug: string): Demo | undefined {
+  const want = slug.toLowerCase();
+  const key = Object.keys(DEMOS).find((k) => k.toLowerCase() === want);
+  return key ? DEMOS[key] : undefined;
+}
+
+export const DEMOS: Record<string, Demo> = {
+  /* 🚧 Built from public data only, by the VM-amazon-store-scraping skill —
+     the seller has never spoken to us. Every figure on it is estimated and
+     carries a marker to its source. */
+  theloadedteashop: {
+    kind: "sourced",
+    dossier: theLoadedTeaShop,
+    label: "The Loaded Tea Shop — sourced dossier",
+    blurb:
+      "A seller profiled entirely from public data: Keepa catalogue revenue, the operating business and its country, plus the Instagram and own-site traffic Amazon cannot see. Every figure names its source.",
+  },
+  /* The second sourced dossier, and the useful one to open BESIDE the first:
+     same method, a business 3.6x the size, and a web check that overturned
+     what the catalogue alone implied. Both brands came to Amazon late; one
+     had built an audience and the other buys one. */
+  /* 🎓 Spite House Games GRADUATED out of the demo set on 2026-09-09 — it is
+     published for real at /brand/spitehouse. Its fixture moved to
+     src/dossiers/, and src/dossiers/registry.ts is the list it lives in now.
+     Left as a note rather than deleted silently: a demo that disappears with
+     no trace looks like a mistake, and the pattern of promoting a dossier to
+     the public site is one somebody will want to follow. */
+  resilia: {
+    kind: "sourced",
+    dossier: resilia,
+    label: "Resilia Oil Of Oregano — sourced dossier",
+    blurb:
+      "$5.66M a month, ten months after the first listing. Keepa gives the catalogue; whois, the Wayback Machine and a phone number that appears on two records give the subscription business behind it that Amazon cannot see.",
+  },
+  /* 🚧 The business-page REDESIGN. Keyed by the real slug so the demo URL is
+     the production URL with /demo in front of it — /demo/amazon-fba-08873
+     against /business/amazon-fba-08873 is the comparison this exists for.
+
+     `unlisted` while it is still being drawn: it is a proposal mid-revision,
+     and /demo is the page we hand to prospects. Reach it by typing the URL. */
+  "amazon-fba-08873": {
+    kind: "business",
+    unlisted: true,
+    build: () => amazonFba08873,
+    label: "Amazon FBA 08873 — business page redesign",
+    blurb:
+      "A proposed /business/<slug>: marketplaces with flags, a Brand Registry toggle, the valuation broken into what lifts and holds it. Real figures, already public.",
+  },
+  afrasiab: {
+    kind: "profile",
+    build: afrasiab,
+    label: "Afrasiab Khan — agency",
+    blurb: "An agency owner rolling up many connected businesses. The multi-business shape of the profile page.",
+    tags: STANDARD_TAGS,
+    countLabel: "142 businesses with verified profits",
+    consultation: { price: "$200", minutes: 45, name: "Afrasiab Khan" },
+  },
+  Pure_Zookeepergame_2: {
+    kind: "profile",
+    build: pureZookeepergame,
+    label: "boringfixesguy — single seller",
+    blurb: "Built from their own r/AmazonFBA post. The outreach shape: one seller, their real handle, bio and figures.",
+    tags: STANDARD_TAGS,
+    /* The display name, not the handle — it is what the page shows, and a
+       dialog that addresses you by a different name than the profile above it
+       reads as a different person.
+
+       🚩 This REPLACES his $150 booking CTA rather than sitting beside it. Two
+       controls that both read "paid consultation", at two different prices, ask
+       a reader to work out which one they want — and one of them opens a
+       calendar while the other sells a subscription. Priced well above
+       TomNomYYZ: he is the $765K seller of the two.
+
+       No rating or consultation count here, unlike TomNomYYZ. Those figures are
+       invented, and inventing a second set unasked is how a page stops being
+       about what its subject published. */
+    ask: consultMenu({
+      name: "boringfixesguy",
+      deepDive: "$50",
+      oneOff: "$30",
+      ongoing: "$190/mo",
+    }),
+  },
+  /* ── Built from public Reddit posts, one per person ────────────────────
+     Every figure is the poster's own, with their own caveats; see each
+     fixture's header comment for the arithmetic and src/demo/README.md for
+     the contracts. Ledgered in Dragon-marketing/skills/VM-demo-profile/
+     waithowmuch-demo-profiles.csv. */
+  jayeshchauhanreddit: {
+    kind: "profile",
+    build: jayeshchauhanreddit,
+    label: "Jayesh Chauhan — UK private label",
+    blurb:
+      "A real July P&L at a 47% margin — and the no-referral-fee caveat he flagged himself.",
+    tags: STANDARD_TAGS,
+    consultation: { price: "$150", minutes: 45, name: "Jayesh Chauhan" },
+  },
+  "Much-Experience-4197": {
+    kind: "profile",
+    build: muchExperience4197,
+    label: "Ahad — first launch, 5 months",
+    blurb:
+      "A first private-label launch five months in: small numbers, verified margin, a real Sellerboard screenshot behind them.",
+    tags: STANDARD_TAGS,
+    groupTag: "g/passionatenetwork",
+    group: { to: "/demo/g/passionatenetwork", label: "Passionate Network group" },
+    /* 🚩 Replaces his $150 booking CTA, like boringfixesguy's — two controls
+       both reading "paid consultation" at two prices, one opening a calendar
+       and one selling a subscription, is a choice no reader should face.
+       Same prices as boringfixesguy, which was the instruction. */
+    ask: consultMenu({
+      name: "Ahad",
+      deepDive: "$50",
+      oneOff: "$30",
+      ongoing: "$190/mo",
+    }),
+  },
+  Sirsolrac36: {
+    kind: "profile",
+    build: sirsolrac36,
+    label: "Sirsolrac36 — revenue only",
+    blurb:
+      "He published revenue and never profit. The revenue-only shape, with margin honestly withheld.",
+    /* 🚨 NOT StandardTags. He has no verified margin — he has no margin at
+       all — and "✓ Verified margins" in the verification green over a page
+       whose margin tile reads "—" is this site claiming something it can
+       plainly see is not there. The tone rule in README.md, applied. */
+    tags: [{ label: "✓ Verified revenue", tone: "verified" }, ...STANDARD_TAGS.slice(1)],
+    consultation: { price: "$150", minutes: 45, name: "Sirsolrac36" },
+  },
+  SlickyTrick: {
+    kind: "profile",
+    build: slickyTrick,
+    label: "SlickyTrick — UK wholesale, year one",
+    blurb:
+      "£231.8k of first-year revenue, a self-estimated £12k profit, and the thin 5.2% margin behind it.",
+    tags: STANDARD_TAGS,
+    consultation: { price: "$150", minutes: 45, name: "SlickyTrick" },
+  },
+  "Thick-Valuable-4753": {
+    kind: "profile",
+    build: thickValuable4753,
+    label: "Chicken Boy — one month in, at a loss",
+    blurb:
+      "£1.4k of arbitrage sales and a −2% margin, from his own Sellerboard card. Rendered as the loss it is.",
+    tags: STANDARD_TAGS,
+    consultation: { price: "$150", minutes: 45, name: "Chicken Boy" },
+  },
+  TomNomYYZ: {
+    kind: "profile",
+    build: tomNomYyz,
+    label: "TomNomYYZ — first $50K month",
+    blurb:
+      "A Canada-only arbitrage-to-wholesale seller's first $50K month, at the conservative end of the margin range he claimed.",
+    /* "Paid answers", not "Paid consultation" — he sells questions, and a tag
+       naming a product he does not offer is the same kind of small lie the
+       tone rule in README.md exists to stop. */
+    tags: [
+      { label: "✓ Verified margins", tone: "verified" },
+      { label: "Paid answers", tone: "offer" },
+      { label: "Free resources", tone: "offer" },
+    ],
+    /* Every question is one HE could answer from what he actually did: RA/OA
+       from ~$10K on a credit card in Apr/May 2025, wholesale added about six
+       months in, $50K/month on Amazon.ca, US market not started, run from home.
+       A menu of questions he has no standing to answer would be the profile
+       overselling him, which on this site is the whole failure mode. */
+    ask: {
+      ...consultMenu({
+        name: "TomNomYYZ",
+        deepDive: "$20",
+        oneOff: "$10",
+        ongoing: "$100/mo",
+        ongoingLabel: "Ongoing mentorship",
+      }),
+      /* 🚨 Invented — see the field's comment. He has sold nothing through us. */
+      rating: 4.7,
+      consultations: 53,
+    },
+  },
+
+  /* ── ecgwholesale.com — a coach and his students ───────────────────────
+     Not from Reddit: built from his own marketing pages. Nobody in this set
+     published a profit, so every one is verified_revenue with the margin
+     withheld, and the group board ranks on revenue. See the fixtures. */
+  danboufford: {
+    kind: "profile",
+    build: danBoufford,
+    label: "Dan Boufford — ECG Wholesale",
+    blurb:
+      "$1.7M a month off his own Seller Central card, with the margin honestly withheld. The owner of the group demo.",
+    /* No "Free resources": he sells a course, and a tag implying a free pack
+       is a claim about him we would be making up. Consultation stays. */
+    tags: [
+      { label: "✓ Verified margins", tone: "verified" },
+      { label: "Paid consultation", tone: "offer" },
+    ],
+    groupTag: "g/ecgwholesale",
+    group: { to: "/demo/g/ecgwholesale", label: "ECG Wholesale group" },
+    consultation: { price: "$200", minutes: 45, name: "Dan Boufford" },
+  },
+  "ecg-danny": {
+    kind: "profile",
+    build: ecgDanny,
+    label: "Danny — ECG student",
+    blurb: "$171K in one month after switching to brand-direct.",
+    /* Students sell nothing here — no consultation, no resources pack. The
+       only tag is the verification, which is the one thing this page asserts
+       about them. */
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/ecgwholesale",
+    group: { to: "/demo/g/ecgwholesale", label: "ECG Wholesale group" },
+  },
+  "ecg-cameron": {
+    kind: "profile",
+    build: ecgCameron,
+    label: "Cameron — ECG student",
+    blurb: "$45K a month from a single exclusive brand, starting from nothing.",
+    /* Students sell nothing here — no consultation, no resources pack. The
+       only tag is the verification, which is the one thing this page asserts
+       about them. */
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/ecgwholesale",
+    group: { to: "/demo/g/ecgwholesale", label: "ECG Wholesale group" },
+  },
+  "ecg-ubaldo": {
+    kind: "profile",
+    build: ecgUbaldo,
+    label: "Ubaldo — ECG student",
+    blurb: "$900 in his first month. The small end of a cohort, shown at its real size.",
+    /* Students sell nothing here — no consultation, no resources pack. The
+       only tag is the verification, which is the one thing this page asserts
+       about them. */
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/ecgwholesale",
+    group: { to: "/demo/g/ecgwholesale", label: "ECG Wholesale group" },
+  },
+
+  /* ── Passionate Network — Ahad's agency, and the businesses it manages ──
+     🚨 The members are ANONYMOUS and every figure is invented: he publishes no
+     client list, and inventing four plausible sellers to fill his board would
+     be fabricating people. See the fixture's header. */
+  "af-04812": {
+    kind: "profile",
+    build: pnMember1,
+    label: "Anonymous founder 04812",
+    blurb: "A managed business whose owner has not claimed it — the anonymous shape.",
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/passionatenetwork",
+    group: { to: "/demo/g/passionatenetwork", label: "Passionate Network group" },
+  },
+  "af-27193": {
+    kind: "profile",
+    build: pnMember2,
+    label: "Anonymous founder 27193",
+    blurb: "A managed business whose owner has not claimed it.",
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/passionatenetwork",
+    group: { to: "/demo/g/passionatenetwork", label: "Passionate Network group" },
+  },
+  "af-61207": {
+    kind: "profile",
+    build: pnMember3,
+    label: "Anonymous founder 61207",
+    blurb: "A managed business whose owner has not claimed it.",
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/passionatenetwork",
+    group: { to: "/demo/g/passionatenetwork", label: "Passionate Network group" },
+  },
+  "af-83540": {
+    kind: "profile",
+    build: pnMember4,
+    label: "Anonymous founder 83540",
+    blurb: "The smallest business on the Passionate Network board.",
+    tags: [{ label: "✓ Verified margins", tone: "verified" }],
+    groupTag: "g/passionatenetwork",
+    group: { to: "/demo/g/passionatenetwork", label: "Passionate Network group" },
+  },
+  "g/passionatenetwork": {
+    kind: "group",
+    build: passionateNetworkGroup,
+    label: "Passionate Network — group board",
+    blurb: "An agency and the businesses it manages, four of them still unclaimed and anonymous.",
+    name: "Passionate Network",
+    description:
+      "Ahad and the Amazon businesses Passionate Network manages. Four of them have not claimed their profiles yet, so they are listed anonymously — the shape an agency's board takes before its clients sign up.",
+    link: "https://passionatenetwork.net/",
+  },
+
+  /* 🚧 The GROUP demo — a feature the product does not have. Keyed under
+     `group/` so it can never collide with a seller's handle. */
+  "g/ecgwholesale": {
+    kind: "group",
+    build: ecgGroup,
+    label: "ECG Wholesale — group board",
+    blurb:
+      "A coach and his students on one ranked page. The group feature, which the product does not have yet.",
+    name: "ECG Wholesale",
+    description:
+      "Dan Boufford and the students of ecgwholesale.com. Revenue is each member's own published figure; margin is the 15% rate verified across the group. Ranked by profit over the last 30 days.",
+    avatar_url: "/demo/dan-boufford.png",
+    link: "https://www.ecgwholesale.com/",
+  },
+
+  /* The front door with a populated board. `/leaderboard` against an empty or
+     three-row production database shows the layout but not the argument; this
+     shows what the page is FOR, and is the one link worth sending someone who
+     has never seen the product. */
+  leaderboard: {
+    kind: "leaderboard",
+    build: leaderboard,
+    label: "Leaderboard",
+    blurb: "The front door with a populated board. The one link worth sending someone who has never seen the product.",
+  },
+};

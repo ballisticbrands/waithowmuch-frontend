@@ -1,0 +1,32 @@
+{
+  "name": "waithowmuch-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/check-site-constants.mjs && tsc -b && vite build && node scripts/build-profiles.mjs && node scripts/build-businesses.mjs && node scripts/build-dossiers.mjs && node scripts/postbuild-spa-routes.mjs && node scripts/generate-sitemap.mjs",
+    "preview": "vite preview",
+    "verify:events": "node scripts/verify-events.mjs",
+    "test": "node scripts/test-meta-events.mjs",
+    "screenshot": "node scripts/screenshot.mjs",
+    "build:og": "node scripts/build-og.mjs"
+  },
+  "dependencies": {
+    "@ballisticbrands/frontend-shared": "^0.9.36",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.25",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^6.3.6",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "puppeteer-core": "^25.7.0"
+  }
+}

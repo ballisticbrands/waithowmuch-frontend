@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon set. The mark is "VM": the V is a green checkmark in the
+         product's own --success (#10683f), the M is --accent (#16181d).
+         SVG first (crisp at any size, and what modern browsers prefer), with a
+         32px PNG fallback for older ones. -->
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Fallback title + description for anything rendering before the SPA
+         mounts. main.tsx sets the final values from the brand config. -->
+    <meta name="description" content="WaitHowMuch — a public profile for your Amazon margins." />
+    <meta property="og:image" content="https://waithowmuch.com/logo-512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <title>WaitHowMuch</title>
+    <!-- NO WEB FONT, deliberately. Words are system-ui and figures are the
+         platform's own monospace, so there is nothing to fetch and nothing to
+         reflow after paint. This used to preconnect to fonts.googleapis.com +
+         fonts.gstatic.com and load Inconsolata as the prose face; see
+         BRANDING.md §4 for why the mono retreated to figures only, and
+         globals.css §"No web font" for the metric override that has to come
+         back with it if it is ever restored. -->
+    <!-- GA4, Microsoft Clarity and the Meta Pixel are injected at runtime from
+         src/main.tsx, brand-resolved, matching the sibling brand app repos. -->
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

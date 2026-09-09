@@ -1,0 +1,1876 @@
+/* Screenshot the app's real pages with the API stubbed.
+ *
+ * ── Why this exists ──────────────────────────────────────────────────────
+ * Every page worth looking at is behind auth and behind a backend, so there is
+ * no way to SEE this app without either logging in against production or
+ * standing the whole stack up locally. That meant UI defects shipped unseen —
+ * and two were found the first time this ran:
+ *
+ *   1. `globals.css` defined only --background and --foreground, while the
+ *      shared package's components are built against ten CSS variables. Every
+ *      <Button> resolved to `background: ` — no surface at all, so "Sign in"
+ *      rendered as bare text. Nothing errored.
+ *   2. The shared <Input> hardcodes `bg-white` and sets no text colour, so in
+ *      dark mode the value inherited near-white ON white: ~1.1:1, i.e. what you
+ *      type is invisible. Placeholders looked fine, which is how it survived.
+ *
+ * Neither is visible in source review, and neither throws. Look at the pages.
+ *
+ * ── Usage ────────────────────────────────────────────────────────────────
+ *   npm run build && node scripts/screenshot.mjs [--light] [--out DIR]
+ *
+ * Requires Chrome (CHROME_PATH, or the usual per-platform locations).
+ * Output is gitignored — these are for looking at, not for committing.
+ */
+import { createServer } from "node:http";
+import { readFileSync, existsSync, statSync, mkdirSync } from "node:fs";
+import { join, extname, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import puppeteer from "puppeteer-core";
+
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const dist = join(root, "dist");
+const light = process.argv.includes("--light");
+/* A phone, because this product's most common first view is a profile link
+ * opened from a DM or a post. Portrait 390x844 is an iPhone 14/15 class
+ * viewport; deviceScaleFactor 2 so text renders the way it does on the
+ * device rather than at desktop hinting. */
+const mobile = process.argv.includes("--mobile");
+const outIdx = process.argv.indexOf("--out");
+const outDir = outIdx > -1 ? process.argv[outIdx + 1] : join(root, "screenshots");
+
+function chromePath() {
+  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+  const c = [
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/usr/bin/google-chrome", "/usr/bin/chromium",
+  ].find((p) => existsSync(p));
+  if (!c) { console.error("screenshot: no Chrome found; set CHROME_PATH"); process.exit(1); }
+  return c;
+}
+
+if (!existsSync(dist)) { console.error("screenshot: dist/ missing — run npm run build"); process.exit(1); }
+mkdirSync(outDir, { recursive: true });
+
+const MIME = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css" };
+const srv = createServer((q, r) => {
+  let f = join(dist, decodeURIComponent(q.url.split("?")[0]));
+  if (existsSync(f) && statSync(f).isDirectory()) f = join(f, "index.html");
+  if (!existsSync(f)) f = join(dist, "index.html"); // SPA fallback
+  r.writeHead(200, { "Content-Type": MIME[extname(f)] ?? "application/octet-stream" });
+  r.end(readFileSync(f));
+});
+await new Promise((r) => srv.listen(0, "127.0.0.1", r));
+const port = srv.address().port;
+
+/* Fixtures. Field names must match what the API actually returns — an invented
+ * one renders as NaN and reads like a bug in the page. */
+const USER = { id: "u1", email: "seller@example.com", name: "Test Seller", emailVerifiedAt: null };
+const PROFILE = {
+  id: "p1", username: "vm-efc298a568", type: "seller", sellerType: "private_label",
+  displayName: "Acme Brands", bio: "We sell things.", avatarUrl: "", websiteUrl: "https://acme.test",
+  socials: {}, published: false, verification: "unverified", verifiedAt: null, verifiedNote: null,
+  visibility: {}, username_changes_used: 0, username_changes_limit: 2, connections: [],
+};
+/* Mirrors the real wire shape from connectionToWire — including the duplicate
+ * store name, which is the case `countries` exists to disambiguate. */
+const OPTIONS = [
+  { id: "c1", provider: "amazon_selling_partner", name: "Paramint Designs", account_type: null, slug: "paramint-us",
+    countries: ["US"], cogs_basis: "per_sku", blended_cogs_pct: null, linked_here: true, linked_elsewhere: false },
+  { id: "c2", provider: "amazon_selling_partner", name: "Paramint Designs", account_type: null,
+    countries: ["CA", "MX"], cogs_basis: "blended_pct", blended_cogs_pct: 32, linked_here: false, linked_elsewhere: false },
+  { id: "c3", provider: "amazon_ads", name: "Ballas & Ballas", account_type: "seller",
+    countries: ["CA", "MX", "US"], cogs_basis: "per_sku", blended_cogs_pct: null, linked_here: false, linked_elsewhere: false },
+  { id: "c4", provider: "amazon_ads", name: "Ballas & Ballas", account_type: "agency",
+    countries: ["US"], cogs_basis: "per_sku", blended_cogs_pct: null, linked_here: false, linked_elsewhere: true },
+];
+/* The public profile — the page the whole product exists to produce, and the
+ * one the brand system lands hardest on (badge, headline figure, tabular
+ * metrics, avatar). Shape mirrors buildPublicProfile()'s payload; a field
+ * invented here renders as NaN and reads like a page bug.
+ *
+ * Two fixtures because the two verification states MUST look different, and a
+ * screenshot of only one proves nothing about that. */
+/* Twelve months with a seasonal Q4 lift and one month whose COGS coverage is
+ * incomplete — the null is deliberate: a gap in the line must read as "not
+ * computable", never as a zero. */
+const MONTHS = [
+  ["2025-09", 132000, 41], ["2025-10", 158000, 39], ["2025-11", 246000, 33],
+  ["2025-12", 311000, 30], ["2026-01", 176000, 34], ["2026-02", 149000, 36],
+  ["2026-03", 163000, 35], ["2026-04", 171000, null], ["2026-05", 184000, 33],
+  ["2026-06", 192000, 32], ["2026-07", 187000, 31], ["2026-08", 96000, 30],
+].map(([month, revenue, marginPct]) => ({
+  month, currency: "USD", revenue,
+  units: Math.round(revenue / 44), orders: Math.round(revenue / 51),
+  profit: marginPct === null ? null : Math.round(revenue * (marginPct / 100)),
+}));
+
+/* 30 days for the chart. The backend converts these to the display currency
+   and returns one row per DAY — the chart plots them directly, so a fixture
+   without `daily` exercises only the monthly fallback. Deterministic, and
+   with two zero days so the "a quiet day is a point, not a gap" behaviour is
+   visible rather than merely asserted. */
+const DAYS = Array.from({ length: 30 }, (_, i) => {
+  const d = new Date(Date.UTC(2026, 6, 12 + i));
+  const date = d.toISOString().slice(0, 10);
+  if (i === 11 || i === 12) return { date, revenue: 0, units: 0, orders: 0, profit: 0 };
+  const wobble = [1, 0.82, 0.91, 1.14, 1.06, 0.88, 0.74][d.getUTCDay()];
+  const revenue = Math.round(7700 * wobble * (1 + i * 0.012));
+  return { date, revenue, units: Math.round(revenue / 44), orders: Math.round(revenue / 51),
+           profit: Math.round(revenue * 0.32) };
+});
+
+function publicProfile(over = {}) {
+  return {
+    username: "acme", display_name: "Acme Brands", bio: "Private-label kitchen gear. Eight years, two people.",
+    avatar_url: null, website_url: "https://acme.test", socials: { x: "acmebrands", reddit: "u/acmebrands" },
+    seller_type: "private_label", type: "seller", claimed: true, noindex: false,
+    verification: {
+      tier: "verified_margin", label: "Verified margins",
+      description: "Revenue, fees and ad spend come straight from Amazon, and margin is computed from per-SKU costs the seller uploaded.",
+      revenueSource: "spapi", marginBasis: "per_sku", verified_at: "2026-08-24T00:00:00.000Z", note: null,
+    },
+    window: { months: 12, from: "2025-09", through: "2026-08", includes_partial_month: true },
+    visibility: { margin: true, sales: true, skuCount: true, brands: true, category: true },
+    metrics: {
+      native: [{ currency: "USD", revenue: 2140000, units: 48210, orders: 41880, fees: -412000,
+                 ad_spend: -186000, cogs: 861000, profit: 681000, margin_pct: 31.8, cogs_complete: true }],
+      display: { currency: "USD", revenue: 2140000, fees: -412000, ad_spend: -186000, cogs: 861000,
+                 profit: 681000, margin_pct: 31.8, fx: { as_of: "2026-08-01", source: "builtin-placeholder", unconvertible: [] } },
+      /* Per-connection rows. Two businesses with DIFFERENT badges, because
+         that is the case the per-connection change exists for: one synced
+         Amazon account and one typed-in legacy business must not share a
+         verdict. */
+      businesses: [
+        { platform: "amazon_selling_partner", label: "Amazon FBA", markets: ["US", "CA"], seller_type: "private_label",
+          last_30d: { revenue: 164000, profit: 54000, margin_pct: 32.9 }, revenue: 1840000,
+          margin_pct: 33.1, verification: { tier: "verified_margin", label: "Verified margins" } },
+        { platform: "amazon_selling_partner", label: "Amazon FBA", markets: ["DE", "FR"],
+          seller_type: "private_label",
+          last_30d: { revenue: 41000, profit: 11800, margin_pct: 28.8 }, revenue: 402000,
+          margin_pct: 29.1, verification: { tier: "verified_revenue", label: "Verified revenue" } },
+        // A transcribed business: labelled by TYPE ("Amazon FBA" — it is one),
+        // with the evidence carried by the badge and the source beside it.
+        { platform: "manual", label: "Amazon FBA", markets: [], seller_type: "wholesaler",
+          source: { link: "https://empireflippers.com/listing/91071/", name: "Empire Flippers",
+                    retrieved_at: "2026-08-30", note: null },
+          last_30d: { revenue: 26000, profit: 6200, margin_pct: 23.8 }, revenue: 300000,
+          margin_pct: 24.0, verification: { tier: "self_reported", label: "Self-reported" } },
+      ],
+      last_30d: { revenue: 231000, profit: 74000, units: 5240, margin_pct: 32.0 },
+      daily: DAYS,
+      series: MONTHS, margin_series: MONTHS.map((m) => ({
+        month: m.month,
+        margin_pct: m.profit === null ? null : (m.profit / m.revenue) * 100,
+      })),
+      margin_pct: 31.8, margin_basis: "per_sku", margin_note: null,
+      sku_count: 62, brand_count: 3, brands_label: "Brands sold", category: "Home & Kitchen",
+      categories: [{ name: "Home & Kitchen", revenue: 2140000 }],
+    },
+    currency_options: ["USD", "EUR", "GBP"], notes: [],
+    ...over,
+  };
+}
+const ESTIMATED = publicProfile({
+  username: "e/8x2k9", display_name: "An FBA seller in Home & Kitchen", claimed: false, noindex: true,
+  bio: null, socials: {}, website_url: null,
+  verification: {
+    tier: "estimated", label: "Estimated",
+    description: "These numbers are estimated from public data and reviewed by our team. They are not verified against the seller's Amazon account.",
+    revenueSource: "manual", marginBasis: "blended_pct", verified_at: null, note: null,
+  },
+  metrics: { ...publicProfile().metrics, margin_basis: "blended_pct" },
+});
+
+/* Margin public, revenue private — the combination the product's premise
+ * rests on. `series` and `display` are null (the backend gates them on
+ * visibility.sales) while `margin_series` still arrives, so the page must
+ * plot a trend that discloses no absolute figure. If a revenue number ever
+ * appears on this screenshot, the gating broke. */
+const MARGIN_ONLY = publicProfile({
+  username: "quietseller", display_name: "Quiet Seller",
+  bio: "Margin is public. Revenue is nobody's business.",
+  visibility: { margin: true },
+  metrics: {
+    ...publicProfile().metrics,
+    native: null, display: null, series: null,
+    last_30d: { revenue: null, profit: null, units: 0, margin_pct: 31.8 },
+    businesses: [
+      { platform: "amazon_selling_partner", label: "Amazon FBA", markets: ["US"], seller_type: "private_label",
+        last_30d: { revenue: null, profit: null, margin_pct: 31.8 }, revenue: null,
+        margin_pct: 31.8, verification: { tier: "verified_margin", label: "Verified margins" } },
+    ],
+    sku_count: null, brand_count: null, category: null, categories: null,
+  },
+});
+
+const LEADERBOARD = {
+  mode: "founder", window_months: 12, note: "2 profiles keep their margin private and are not ranked.",
+  entries: [
+    { rank: 1, username: "leanlabs", display_name: "Lean Labs", avatar_url: null, business: null,
+      margin_pct: 41.2, revenue: 640000, currency: "USD",
+      verification: { tier: "verified_margin", label: "Verified margins" } },
+    { rank: 2, username: "ggballas", display_name: "Gershon Ballas", avatar_url: null, business: null,
+      margin_pct: 31.8, revenue: 2140000, currency: "USD",
+      verification: { tier: "verified_margin", label: "Verified margins" } },
+    { rank: 3, username: "quietseller", display_name: "Quiet Seller", avatar_url: null, business: null,
+      margin_pct: 27.4, revenue: null, currency: "USD",
+      verification: { tier: "verified_revenue", label: "Verified revenue" } },
+  ],
+};
+
+/* The valuation wizard.
+ *
+ * ⚠️ GENERATED from src/data/questionnaire/v2.json in the sellerconnect repo,
+ * not written by hand — the wizard is server-driven, so a hand-typed fixture
+ * would drift from the questions sellers actually see and the screenshot
+ * would quietly stop being evidence. Regenerate it when the questionnaire
+ * changes.
+ *
+ * Two states: untouched, and far enough in that the differentiation lead-in
+ * has been chosen from the catalogue answer.
+ */
+const VAL_QUESTIONS_FRESH = [
+  {
+    "name": "primaryMethod",
+    "type": "radiogroup",
+    "title": "Where does the majority of your revenue come from?",
+    "description": "Choose the one method that generates most of your sales. An estimate is fine.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "private_label",
+        "text": "Private label \u2014 your own brand on a product whose spec you control. Nobody else sells your exact listing."
+      },
+      {
+        "value": "wholesale",
+        "text": "Wholesale \u2014 you buy an existing brand in bulk and resell it. Other sellers can list the same product."
+      },
+      {
+        "value": "dropship",
+        "text": "Dropship \u2014 you never hold the stock; a third party ships to the customer when an order comes in."
+      },
+      {
+        "value": "arbitrage",
+        "text": "Arbitrage \u2014 you buy branded stock from shops or sites at a discount and resell at a markup. No ongoing supplier."
+      },
+      {
+        "value": "handmade",
+        "text": "Handmade or artisan \u2014 you or a small team physically make it. Not mass-manufactured in a factory."
+      },
+      {
+        "value": "pod",
+        "text": "Print on demand \u2014 a third-party service fulfils a listing you own and price."
+      },
+      {
+        "value": "merch",
+        "text": "Amazon Merch on Demand \u2014 you upload designs, Amazon sets the price and fulfils, you take a royalty."
+      },
+      {
+        "value": "kdp",
+        "text": "Amazon KDP \u2014 Amazon's publishing programme: books, journals and the like."
+      }
+    ],
+    "page": "method",
+    "section": "How you source",
+    "answered": false
+  },
+  {
+    "name": "catalogStructure",
+    "type": "radiogroup",
+    "title": "Which of these best describes your catalogue?",
+    "description": "Pick the one that fits most of it \u2014 perfect precision isn't needed.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "broad",
+        "text": "Broad catalogue, low volume each \u2014 many SKUs, each taking a small slice of search demand. Hundreds of poster designs that add up to real revenue."
+      },
+      {
+        "value": "flagship",
+        "text": "Flagship plus complementary \u2014 one dominant product drives most revenue, with adjacent products sold alongside it. A bestselling yoga mat, plus blocks, straps and a carry bag."
+      },
+      {
+        "value": "concentrated",
+        "text": "Concentrated bets, few SKUs \u2014 a handful of products, each significant on its own, with no filler around them. Six or eight SKUs, each a top seller in its own right."
+      },
+      {
+        "value": "dominance",
+        "text": "Category dominance \u2014 most or all major variations within one narrow category. Every case style, colour and size for one phone model."
+      },
+      {
+        "value": "churn",
+        "text": "Trend or seasonal churn \u2014 deliberately high-turnover: launch against a trend, ride it, retire it, launch the next one."
+      },
+      {
+        "value": "generalist",
+        "text": "Generalist portfolio \u2014 products spread across unrelated niches with no single anchor. Phone cases, kitchen gadgets and pet toys under one account."
+      },
+      {
+        "value": "not_sure",
+        "text": "Not sure"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": false
+  },
+  {
+    "name": "skuStrategy",
+    "type": "radiogroup",
+    "title": "Where is the catalogue heading?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "expanding",
+        "text": "Adding products"
+      },
+      {
+        "value": "stable",
+        "text": "Holding steady"
+      },
+      {
+        "value": "consolidating",
+        "text": "Cutting back to the winners"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": false
+  },
+  {
+    "name": "diffTooling",
+    "type": "radiogroup",
+    "title": "Does it need custom tooling, a mould or complex engineering to make \u2014 or does it have patent or trademark protection a competitor can't legally copy?",
+    "description": "Answer for your single best-selling product. Answer honestly: this is a factual checklist, not a self-rating. Most products land in the middle.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes \u2014 the product I'm answering for is protected this way"
+      },
+      {
+        "value": "some",
+        "text": "Some of my products are \u2014 but not the one I'm answering for"
+      },
+      {
+        "value": "no",
+        "text": "No \u2014 nothing that would stop a competitor copying it"
+      }
+    ],
+    "page": "differentiation",
+    "section": "How hard it is to copy",
+    "answered": false
+  },
+  {
+    "name": "supplierCount",
+    "type": "radiogroup",
+    "title": "How many suppliers do you rely on?",
+    "description": "One supplier is the single most common reason a sale falls through.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "1",
+        "text": "One"
+      },
+      {
+        "value": "2to3",
+        "text": "Two or three"
+      },
+      {
+        "value": "4plus",
+        "text": "Four or more"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierCountries",
+    "type": "checkbox",
+    "title": "Where are they?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "CN",
+        "text": "China"
+      },
+      {
+        "value": "IN",
+        "text": "India"
+      },
+      {
+        "value": "VN",
+        "text": "Vietnam"
+      },
+      {
+        "value": "US",
+        "text": "United States"
+      },
+      {
+        "value": "EU",
+        "text": "Europe"
+      },
+      {
+        "value": "other",
+        "text": "Elsewhere"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierTerms",
+    "type": "radiogroup",
+    "title": "What is the relationship?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "exclusive",
+        "text": "Exclusive supply agreement"
+      },
+      {
+        "value": "contract",
+        "text": "A written contract"
+      },
+      {
+        "value": "informal",
+        "text": "Repeat orders, nothing signed"
+      },
+      {
+        "value": "reseller",
+        "text": "I buy stock others can also buy"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "hoursPerWeek",
+    "type": "radiogroup",
+    "title": "How many hours a week does this business take you?",
+    "description": "A buyer is buying your time back. This moves the number more than almost anything else.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "under5",
+        "text": "Under 5"
+      },
+      {
+        "value": "5to10",
+        "text": "5 to 10"
+      },
+      {
+        "value": "10to20",
+        "text": "10 to 20"
+      },
+      {
+        "value": "over20",
+        "text": "More than 20"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "team",
+    "type": "radiogroup",
+    "title": "Who else works on it?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Just me"
+      },
+      {
+        "value": "vas",
+        "text": "Contractors or VAs"
+      },
+      {
+        "value": "employees",
+        "text": "Employees"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "tasks",
+    "type": "checkbox",
+    "title": "What does the weekly work actually consist of?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "inventory",
+        "text": "Watching inventory and reordering"
+      },
+      {
+        "value": "ppc",
+        "text": "Reviewing advertising"
+      },
+      {
+        "value": "suppliers",
+        "text": "Supplier and freight coordination"
+      },
+      {
+        "value": "support",
+        "text": "Customer messages"
+      },
+      {
+        "value": "listings",
+        "text": "Listing and content updates"
+      },
+      {
+        "value": "newProducts",
+        "text": "Developing new products"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "brandRegistry",
+    "type": "radiogroup",
+    "title": "Are you in Amazon Brand Registry?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "issues",
+    "type": "radiogroup",
+    "title": "Anything hanging over the account?",
+    "description": "Suspensions, IP complaints, disputes. A buyer will find these in diligence, and a surprise costs more than a disclosure.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Nothing"
+      },
+      {
+        "value": "resolved",
+        "text": "Something, now resolved"
+      },
+      {
+        "value": "open",
+        "text": "Something open"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "sellIntent",
+    "type": "radiogroup",
+    "title": "Would you sell it at the right price?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "maybe",
+        "text": "Maybe"
+      },
+      {
+        "value": "no",
+        "text": "Not for sale"
+      }
+    ],
+    "page": "intent",
+    "section": "Selling",
+    "answered": false
+  }
+];
+const VAL_QUESTIONS_MIDWAY = [
+  {
+    "name": "primaryMethod",
+    "type": "radiogroup",
+    "title": "Where does the majority of your revenue come from?",
+    "description": "Choose the one method that generates most of your sales. An estimate is fine.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "private_label",
+        "text": "Private label \u2014 your own brand on a product whose spec you control. Nobody else sells your exact listing."
+      },
+      {
+        "value": "wholesale",
+        "text": "Wholesale \u2014 you buy an existing brand in bulk and resell it. Other sellers can list the same product."
+      },
+      {
+        "value": "dropship",
+        "text": "Dropship \u2014 you never hold the stock; a third party ships to the customer when an order comes in."
+      },
+      {
+        "value": "arbitrage",
+        "text": "Arbitrage \u2014 you buy branded stock from shops or sites at a discount and resell at a markup. No ongoing supplier."
+      },
+      {
+        "value": "handmade",
+        "text": "Handmade or artisan \u2014 you or a small team physically make it. Not mass-manufactured in a factory."
+      },
+      {
+        "value": "pod",
+        "text": "Print on demand \u2014 a third-party service fulfils a listing you own and price."
+      },
+      {
+        "value": "merch",
+        "text": "Amazon Merch on Demand \u2014 you upload designs, Amazon sets the price and fulfils, you take a royalty."
+      },
+      {
+        "value": "kdp",
+        "text": "Amazon KDP \u2014 Amazon's publishing programme: books, journals and the like."
+      }
+    ],
+    "page": "method",
+    "section": "How you source",
+    "answered": true
+  },
+  {
+    "name": "secondaryMethods",
+    "type": "checkbox",
+    "title": "Does any other method make up a meaningful part of your revenue?",
+    "description": "Not something you tried once or twice. Select all that apply.",
+    "isRequired": false,
+    "choices": [
+      {
+        "value": "wholesale",
+        "text": "Wholesale \u2014 you buy an existing brand in bulk and resell it. Other sellers can list the same product."
+      },
+      {
+        "value": "dropship",
+        "text": "Dropship \u2014 you never hold the stock; a third party ships to the customer when an order comes in."
+      },
+      {
+        "value": "arbitrage",
+        "text": "Arbitrage \u2014 you buy branded stock from shops or sites at a discount and resell at a markup. No ongoing supplier."
+      },
+      {
+        "value": "handmade",
+        "text": "Handmade or artisan \u2014 you or a small team physically make it. Not mass-manufactured in a factory."
+      },
+      {
+        "value": "pod",
+        "text": "Print on demand \u2014 a third-party service fulfils a listing you own and price."
+      },
+      {
+        "value": "merch",
+        "text": "Amazon Merch on Demand \u2014 you upload designs, Amazon sets the price and fulfils, you take a royalty."
+      },
+      {
+        "value": "kdp",
+        "text": "Amazon KDP \u2014 Amazon's publishing programme: books, journals and the like."
+      },
+      {
+        "value": "none",
+        "text": "None \u2014 this is the only way I source"
+      }
+    ],
+    "page": "method",
+    "section": "How you source",
+    "answered": true
+  },
+  {
+    "name": "catalogStructure",
+    "type": "radiogroup",
+    "title": "Which of these best describes your catalogue?",
+    "description": "Pick the one that fits most of it \u2014 perfect precision isn't needed.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "broad",
+        "text": "Broad catalogue, low volume each \u2014 many SKUs, each taking a small slice of search demand. Hundreds of poster designs that add up to real revenue."
+      },
+      {
+        "value": "flagship",
+        "text": "Flagship plus complementary \u2014 one dominant product drives most revenue, with adjacent products sold alongside it. A bestselling yoga mat, plus blocks, straps and a carry bag."
+      },
+      {
+        "value": "concentrated",
+        "text": "Concentrated bets, few SKUs \u2014 a handful of products, each significant on its own, with no filler around them. Six or eight SKUs, each a top seller in its own right."
+      },
+      {
+        "value": "dominance",
+        "text": "Category dominance \u2014 most or all major variations within one narrow category. Every case style, colour and size for one phone model."
+      },
+      {
+        "value": "churn",
+        "text": "Trend or seasonal churn \u2014 deliberately high-turnover: launch against a trend, ride it, retire it, launch the next one."
+      },
+      {
+        "value": "generalist",
+        "text": "Generalist portfolio \u2014 products spread across unrelated niches with no single anchor. Phone cases, kitchen gadgets and pet toys under one account."
+      },
+      {
+        "value": "not_sure",
+        "text": "Not sure"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": true
+  },
+  {
+    "name": "skuStrategy",
+    "type": "radiogroup",
+    "title": "Where is the catalogue heading?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "expanding",
+        "text": "Adding products"
+      },
+      {
+        "value": "stable",
+        "text": "Holding steady"
+      },
+      {
+        "value": "consolidating",
+        "text": "Cutting back to the winners"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": true
+  },
+  {
+    "name": "diffTooling",
+    "type": "radiogroup",
+    "title": "Does it need custom tooling, a mould or complex engineering to make \u2014 or does it have patent or trademark protection a competitor can't legally copy?",
+    "description": "Answer for your flagship \u2014 the product the rest of the catalogue supports. Answer honestly: this is a factual checklist, not a self-rating. Most products land in the middle.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes \u2014 the product I'm answering for is protected this way"
+      },
+      {
+        "value": "some",
+        "text": "Some of my products are \u2014 but not the one I'm answering for"
+      },
+      {
+        "value": "no",
+        "text": "No \u2014 nothing that would stop a competitor copying it"
+      }
+    ],
+    "page": "differentiation",
+    "section": "How hard it is to copy",
+    "answered": false
+  },
+  {
+    "name": "supplierCount",
+    "type": "radiogroup",
+    "title": "How many suppliers do you rely on?",
+    "description": "One supplier is the single most common reason a sale falls through.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "1",
+        "text": "One"
+      },
+      {
+        "value": "2to3",
+        "text": "Two or three"
+      },
+      {
+        "value": "4plus",
+        "text": "Four or more"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierCountries",
+    "type": "checkbox",
+    "title": "Where are they?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "CN",
+        "text": "China"
+      },
+      {
+        "value": "IN",
+        "text": "India"
+      },
+      {
+        "value": "VN",
+        "text": "Vietnam"
+      },
+      {
+        "value": "US",
+        "text": "United States"
+      },
+      {
+        "value": "EU",
+        "text": "Europe"
+      },
+      {
+        "value": "other",
+        "text": "Elsewhere"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierTerms",
+    "type": "radiogroup",
+    "title": "What is the relationship?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "exclusive",
+        "text": "Exclusive supply agreement"
+      },
+      {
+        "value": "contract",
+        "text": "A written contract"
+      },
+      {
+        "value": "informal",
+        "text": "Repeat orders, nothing signed"
+      },
+      {
+        "value": "reseller",
+        "text": "I buy stock others can also buy"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "hoursPerWeek",
+    "type": "radiogroup",
+    "title": "How many hours a week does this business take you?",
+    "description": "A buyer is buying your time back. This moves the number more than almost anything else.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "under5",
+        "text": "Under 5"
+      },
+      {
+        "value": "5to10",
+        "text": "5 to 10"
+      },
+      {
+        "value": "10to20",
+        "text": "10 to 20"
+      },
+      {
+        "value": "over20",
+        "text": "More than 20"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "team",
+    "type": "radiogroup",
+    "title": "Who else works on it?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Just me"
+      },
+      {
+        "value": "vas",
+        "text": "Contractors or VAs"
+      },
+      {
+        "value": "employees",
+        "text": "Employees"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "tasks",
+    "type": "checkbox",
+    "title": "What does the weekly work actually consist of?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "inventory",
+        "text": "Watching inventory and reordering"
+      },
+      {
+        "value": "ppc",
+        "text": "Reviewing advertising"
+      },
+      {
+        "value": "suppliers",
+        "text": "Supplier and freight coordination"
+      },
+      {
+        "value": "support",
+        "text": "Customer messages"
+      },
+      {
+        "value": "listings",
+        "text": "Listing and content updates"
+      },
+      {
+        "value": "newProducts",
+        "text": "Developing new products"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "brandRegistry",
+    "type": "radiogroup",
+    "title": "Are you in Amazon Brand Registry?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "issues",
+    "type": "radiogroup",
+    "title": "Anything hanging over the account?",
+    "description": "Suspensions, IP complaints, disputes. A buyer will find these in diligence, and a surprise costs more than a disclosure.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Nothing"
+      },
+      {
+        "value": "resolved",
+        "text": "Something, now resolved"
+      },
+      {
+        "value": "open",
+        "text": "Something open"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "sellIntent",
+    "type": "radiogroup",
+    "title": "Would you sell it at the right price?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "maybe",
+        "text": "Maybe"
+      },
+      {
+        "value": "no",
+        "text": "Not for sale"
+      }
+    ],
+    "page": "intent",
+    "section": "Selling",
+    "answered": false
+  }
+];
+const VAL_QUESTIONS_SHARE = [
+  {
+    "name": "primaryMethod",
+    "type": "radiogroup",
+    "title": "Where does the majority of your revenue come from?",
+    "description": "Choose the one method that generates most of your sales. An estimate is fine.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "private_label",
+        "text": "Private label \u2014 your own brand on a product whose spec you control. Nobody else sells your exact listing."
+      },
+      {
+        "value": "wholesale",
+        "text": "Wholesale \u2014 you buy an existing brand in bulk and resell it. Other sellers can list the same product."
+      },
+      {
+        "value": "dropship",
+        "text": "Dropship \u2014 you never hold the stock; a third party ships to the customer when an order comes in."
+      },
+      {
+        "value": "arbitrage",
+        "text": "Arbitrage \u2014 you buy branded stock from shops or sites at a discount and resell at a markup. No ongoing supplier."
+      },
+      {
+        "value": "handmade",
+        "text": "Handmade or artisan \u2014 you or a small team physically make it. Not mass-manufactured in a factory."
+      },
+      {
+        "value": "pod",
+        "text": "Print on demand \u2014 a third-party service fulfils a listing you own and price."
+      },
+      {
+        "value": "merch",
+        "text": "Amazon Merch on Demand \u2014 you upload designs, Amazon sets the price and fulfils, you take a royalty."
+      },
+      {
+        "value": "kdp",
+        "text": "Amazon KDP \u2014 Amazon's publishing programme: books, journals and the like."
+      }
+    ],
+    "page": "method",
+    "section": "How you source",
+    "answered": true
+  },
+  {
+    "name": "secondaryMethods",
+    "type": "checkbox",
+    "title": "Does any other method make up a meaningful part of your revenue?",
+    "description": "Not something you tried once or twice. Select all that apply.",
+    "isRequired": false,
+    "choices": [
+      {
+        "value": "wholesale",
+        "text": "Wholesale \u2014 you buy an existing brand in bulk and resell it. Other sellers can list the same product."
+      },
+      {
+        "value": "dropship",
+        "text": "Dropship \u2014 you never hold the stock; a third party ships to the customer when an order comes in."
+      },
+      {
+        "value": "arbitrage",
+        "text": "Arbitrage \u2014 you buy branded stock from shops or sites at a discount and resell at a markup. No ongoing supplier."
+      },
+      {
+        "value": "handmade",
+        "text": "Handmade or artisan \u2014 you or a small team physically make it. Not mass-manufactured in a factory."
+      },
+      {
+        "value": "pod",
+        "text": "Print on demand \u2014 a third-party service fulfils a listing you own and price."
+      },
+      {
+        "value": "merch",
+        "text": "Amazon Merch on Demand \u2014 you upload designs, Amazon sets the price and fulfils, you take a royalty."
+      },
+      {
+        "value": "kdp",
+        "text": "Amazon KDP \u2014 Amazon's publishing programme: books, journals and the like."
+      },
+      {
+        "value": "none",
+        "text": "None \u2014 this is the only way I source"
+      }
+    ],
+    "page": "method",
+    "section": "How you source",
+    "answered": true
+  },
+  {
+    "name": "catalogStructure",
+    "type": "radiogroup",
+    "title": "Which of these best describes your catalogue?",
+    "description": "Pick the one that fits most of it \u2014 perfect precision isn't needed.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "broad",
+        "text": "Broad catalogue, low volume each \u2014 many SKUs, each taking a small slice of search demand. Hundreds of poster designs that add up to real revenue."
+      },
+      {
+        "value": "flagship",
+        "text": "Flagship plus complementary \u2014 one dominant product drives most revenue, with adjacent products sold alongside it. A bestselling yoga mat, plus blocks, straps and a carry bag."
+      },
+      {
+        "value": "concentrated",
+        "text": "Concentrated bets, few SKUs \u2014 a handful of products, each significant on its own, with no filler around them. Six or eight SKUs, each a top seller in its own right."
+      },
+      {
+        "value": "dominance",
+        "text": "Category dominance \u2014 most or all major variations within one narrow category. Every case style, colour and size for one phone model."
+      },
+      {
+        "value": "churn",
+        "text": "Trend or seasonal churn \u2014 deliberately high-turnover: launch against a trend, ride it, retire it, launch the next one."
+      },
+      {
+        "value": "generalist",
+        "text": "Generalist portfolio \u2014 products spread across unrelated niches with no single anchor. Phone cases, kitchen gadgets and pet toys under one account."
+      },
+      {
+        "value": "not_sure",
+        "text": "Not sure"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": true
+  },
+  {
+    "name": "skuStrategy",
+    "type": "radiogroup",
+    "title": "Where is the catalogue heading?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "expanding",
+        "text": "Adding products"
+      },
+      {
+        "value": "stable",
+        "text": "Holding steady"
+      },
+      {
+        "value": "consolidating",
+        "text": "Cutting back to the winners"
+      }
+    ],
+    "page": "catalog",
+    "section": "What you sell",
+    "answered": true
+  },
+  {
+    "name": "diffTooling",
+    "type": "radiogroup",
+    "title": "Does it need custom tooling, a mould or complex engineering to make \u2014 or does it have patent or trademark protection a competitor can't legally copy?",
+    "description": "Answer for your flagship \u2014 the product the rest of the catalogue supports. Answer honestly: this is a factual checklist, not a self-rating. Most products land in the middle.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes \u2014 the product I'm answering for is protected this way"
+      },
+      {
+        "value": "some",
+        "text": "Some of my products are \u2014 but not the one I'm answering for"
+      },
+      {
+        "value": "no",
+        "text": "No \u2014 nothing that would stop a competitor copying it"
+      }
+    ],
+    "page": "differentiation",
+    "section": "How hard it is to copy",
+    "answered": true
+  },
+  {
+    "name": "diffToolingShare",
+    "type": "slider",
+    "title": "Roughly what share of your profit comes from those protected products?",
+    "description": "An estimate is fine. It decides how much of the business the protection actually covers.",
+    "isRequired": true,
+    "choices": [],
+    "min": 0,
+    "max": 100,
+    "step": 5,
+    "page": "differentiation",
+    "section": "How hard it is to copy",
+    "answered": false
+  },
+  {
+    "name": "diffCustom",
+    "type": "radiogroup",
+    "title": "Is it custom-made, with several real changes from the generic version \u2014 form, features, functionality, performance or materials?",
+    "description": "Not just a colour. Copying it should mean re-sourcing or re-engineering, not asking the same factory for a variant.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ],
+    "page": "differentiation",
+    "section": "How hard it is to copy",
+    "answered": false
+  },
+  {
+    "name": "supplierCount",
+    "type": "radiogroup",
+    "title": "How many suppliers do you rely on?",
+    "description": "One supplier is the single most common reason a sale falls through.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "1",
+        "text": "One"
+      },
+      {
+        "value": "2to3",
+        "text": "Two or three"
+      },
+      {
+        "value": "4plus",
+        "text": "Four or more"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierCountries",
+    "type": "checkbox",
+    "title": "Where are they?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "CN",
+        "text": "China"
+      },
+      {
+        "value": "IN",
+        "text": "India"
+      },
+      {
+        "value": "VN",
+        "text": "Vietnam"
+      },
+      {
+        "value": "US",
+        "text": "United States"
+      },
+      {
+        "value": "EU",
+        "text": "Europe"
+      },
+      {
+        "value": "other",
+        "text": "Elsewhere"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "supplierTerms",
+    "type": "radiogroup",
+    "title": "What is the relationship?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "exclusive",
+        "text": "Exclusive supply agreement"
+      },
+      {
+        "value": "contract",
+        "text": "A written contract"
+      },
+      {
+        "value": "informal",
+        "text": "Repeat orders, nothing signed"
+      },
+      {
+        "value": "reseller",
+        "text": "I buy stock others can also buy"
+      }
+    ],
+    "page": "supply",
+    "section": "Your suppliers",
+    "answered": false
+  },
+  {
+    "name": "hoursPerWeek",
+    "type": "radiogroup",
+    "title": "How many hours a week does this business take you?",
+    "description": "A buyer is buying your time back. This moves the number more than almost anything else.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "under5",
+        "text": "Under 5"
+      },
+      {
+        "value": "5to10",
+        "text": "5 to 10"
+      },
+      {
+        "value": "10to20",
+        "text": "10 to 20"
+      },
+      {
+        "value": "over20",
+        "text": "More than 20"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "team",
+    "type": "radiogroup",
+    "title": "Who else works on it?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Just me"
+      },
+      {
+        "value": "vas",
+        "text": "Contractors or VAs"
+      },
+      {
+        "value": "employees",
+        "text": "Employees"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "tasks",
+    "type": "checkbox",
+    "title": "What does the weekly work actually consist of?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "inventory",
+        "text": "Watching inventory and reordering"
+      },
+      {
+        "value": "ppc",
+        "text": "Reviewing advertising"
+      },
+      {
+        "value": "suppliers",
+        "text": "Supplier and freight coordination"
+      },
+      {
+        "value": "support",
+        "text": "Customer messages"
+      },
+      {
+        "value": "listings",
+        "text": "Listing and content updates"
+      },
+      {
+        "value": "newProducts",
+        "text": "Developing new products"
+      }
+    ],
+    "page": "operations",
+    "section": "Your week",
+    "answered": false
+  },
+  {
+    "name": "brandRegistry",
+    "type": "radiogroup",
+    "title": "Are you in Amazon Brand Registry?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "no",
+        "text": "No"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "issues",
+    "type": "radiogroup",
+    "title": "Anything hanging over the account?",
+    "description": "Suspensions, IP complaints, disputes. A buyer will find these in diligence, and a surprise costs more than a disclosure.",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "none",
+        "text": "Nothing"
+      },
+      {
+        "value": "resolved",
+        "text": "Something, now resolved"
+      },
+      {
+        "value": "open",
+        "text": "Something open"
+      }
+    ],
+    "page": "moat",
+    "section": "Brand and risk",
+    "answered": false
+  },
+  {
+    "name": "sellIntent",
+    "type": "radiogroup",
+    "title": "Would you sell it at the right price?",
+    "isRequired": true,
+    "choices": [
+      {
+        "value": "yes",
+        "text": "Yes"
+      },
+      {
+        "value": "maybe",
+        "text": "Maybe"
+      },
+      {
+        "value": "no",
+        "text": "Not for sale"
+      }
+    ],
+    "page": "intent",
+    "section": "Selling",
+    "answered": false
+  }
+];
+
+const VAL_ADJUSTMENTS = [
+  { label: "Trading 5+ years", delta: 0.5 },
+  { label: "Private label", delta: 0.3 },
+  { label: "5\u201310 hours a week", delta: 0.2 },
+];
+const valuationPreview = (questions) => ({
+  value: 412000, multiple: 3.1, netProfitTtm: 133000,
+  adjustments: VAL_ADJUSTMENTS,
+  questions,
+  completeness: {
+    complete: false,
+    missing: questions.filter((q) => q.isRequired && !q.answered).map((q) => q.name),
+    required: questions.filter((q) => q.isRequired).length,
+    answered: questions.filter((q) => q.answered).length,
+  },
+});
+
+const ROUTES = [
+  [/\/v1\/connections\/[^/]+\/questionnaire/, { answers: {}, completeness: { complete: false, missing: [], required: 13, answered: 0 } }],
+  [/\/v1\/connections\/[^/]+\/deep-dive/, { draft: { text: "" }, approved: {} }],
+  /* Amazon's consent URL. It points back at this stub server so a popup that
+     DOES open lands on something local — the flow under test is what the
+     dialog does before the popup, not what Amazon renders in it. */
+  [/\/v1\/connect\/[^/]+\/start/, { authorization_url: `http://127.0.0.1:${port}/oauth-consent-stub` }],
+  [/\/v1\/public\/leaderboard/, LEADERBOARD],
+  [/\/v1\/public\/profiles\/e%2F|\/v1\/public\/profiles\/8x2k9/, ESTIMATED],
+  [/\/v1\/public\/profiles\/quietseller/, MARGIN_ONLY],
+  [/\/v1\/public\/profiles\//, publicProfile()],
+  [/\/v1\/profiles\/username-available/, { available: true }],
+  [/\/v1\/profiles\/[^/]+\/connection-options/, OPTIONS],
+  [/\/v1\/profiles\/[^/]+$/, PROFILE],
+  [/\/v1\/profiles$/, [PROFILE]],
+];
+/* The stub converts, because the top bar's currency picker is a control whose
+ * ONLY visible effect is that the figures change. A stub that answered in
+ * dollars whatever was asked would render an identical page for every
+ * selection — and a screenshot run would go on passing with the picker wired
+ * to nothing at all. Rates match the backend's builtin table (fx.ts). */
+const STUB_RATES = { USD: 1, EUR: 0.92, GBP: 0.78, CAD: 1.36, AUD: 1.52, JPY: 150 };
+
+/** Field names that hold money. Percentages, counts and dates must not be
+ *  touched — converting a margin_pct would be the exact bug this is here to
+ *  catch, in reverse. */
+const MONEY_KEYS = new Set(["revenue", "profit", "fees", "ad_spend", "cogs"]);
+
+function convertMoney(value, rate, currency) {
+  if (Array.isArray(value)) return value.map((v) => convertMoney(v, rate, currency));
+  if (value === null || typeof value !== "object") return value;
+  const out = {};
+  for (const [k, v] of Object.entries(value)) {
+    if (MONEY_KEYS.has(k) && typeof v === "number") out[k] = Math.round(v * rate);
+    else if (k === "currency" && typeof v === "string") out[k] = currency;
+    else out[k] = convertMoney(v, rate, currency);
+  }
+  return out;
+}
+
+/** Re-price a stub payload into the currency the app actually asked for. */
+function inCurrency(body, url) {
+  const asked = new URL(url).searchParams.get("currency");
+  if (!asked || !STUB_RATES[asked] || asked === "USD") return body;
+  const converted = convertMoney(body, STUB_RATES[asked], asked);
+  // `native` is what was EARNED, not what is displayed — it must survive the
+  // conversion untouched, or the page would claim the seller banked euros.
+  if (body?.metrics?.native) converted.metrics.native = body.metrics.native;
+  return converted;
+}
+
+
+const CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "*",
+  "access-control-allow-methods": "*",
+};
+
+const PAGES = [
+  { route: "/login", auth: false, name: "login" },
+  { route: "/dashboard", auth: true, name: "dashboard" },
+  { route: "/settings", auth: true, name: "settings" },
+  { route: "/acme", auth: false, name: "profile-verified" },
+  { route: "/8x2k9", auth: false, name: "profile-estimated" },
+  { route: "/quietseller", auth: false, name: "profile-margin-only" },
+  { route: "/leaderboard", auth: false, name: "leaderboard" },
+  /* The trust page. Its badge specimens are copies of the profile's badge, so
+     a shot of it beside profile-verified is how a drift between the two gets
+     caught by looking rather than by a reader. */
+  { route: "/how-verification-works", auth: false, name: "how-verification-works" },
+  /* 🎭 Demo pages render fixture data through the real components — see
+   * src/demo/README.md. Worth shooting: a demo that renders wrong is a demo
+   * shown to a prospect. */
+  { route: "/demo", auth: false, name: "demo-index" },
+  /* 🚧 The public-business worked example: named, valued, with the method
+     on the page. Nothing else on this site is estimated, so nothing else
+     exercises any of it. */
+  { route: "/business/amazon-fba-37978", auth: false, name: "business-whitemountain" },
+  { route: "/demo/afrasiab", auth: false, name: "demo-afrasiab" },
+  /* 🚧 The sourced dossier: a seller profiled from public data, every figure
+     marked with its origin. Charts and a source list nothing else renders. */
+  { route: "/demo/theloadedteashop", auth: false, name: "demo-loadedteashop" },
+  /* One shot per tab. A tab nobody looks at is a tab that renders wrong in
+     front of a prospect, and only the overview is reachable by default. */
+  { route: "/demo/theloadedteashop?tab=timeline", auth: false, name: "demo-lts-timeline" },
+  { route: "/demo/theloadedteashop?tab=sales", auth: false, name: "demo-lts-sales" },
+  { route: "/demo/theloadedteashop?tab=sourcing", auth: false, name: "demo-lts-sourcing" },
+  { route: "/demo/theloadedteashop?tab=advertising", auth: false, name: "demo-lts-advertising" },
+  { route: "/demo/theloadedteashop?tab=traffic", auth: false, name: "demo-lts-traffic" },
+  { route: "/demo/theloadedteashop?tab=deepdive", auth: false, name: "demo-lts-deepdive" },
+  { route: "/demo/theloadedteashop?tab=sources", auth: false, name: "demo-lts-sources" },
+  { route: "/demo/resilia", auth: false, name: "demo-resilia" },
+  { route: "/demo/resilia?tab=timeline", auth: false, name: "demo-resilia-timeline" },
+  { route: "/demo/resilia?tab=sales", auth: false, name: "demo-resilia-sales" },
+  { route: "/demo/resilia?tab=sourcing", auth: false, name: "demo-resilia-sourcing" },
+  { route: "/demo/resilia?tab=advertising", auth: false, name: "demo-resilia-advertising" },
+  { route: "/demo/resilia?tab=traffic", auth: false, name: "demo-resilia-traffic" },
+  { route: "/demo/resilia?tab=deepdive", auth: false, name: "demo-resilia-deepdive" },
+  { route: "/demo/resilia?tab=sources", auth: false, name: "demo-resilia-sources" },
+  { route: "/brand/maryruth", auth: false, name: "brand-maryruth" },
+  { route: "/brand/maryruth?tab=traffic", auth: false, name: "brand-mr-traffic" },
+  { route: "/brand/maryruth?tab=deepdive", auth: false, name: "brand-mr-deepdive" },
+  { route: "/brand/maryruth?tab=sources", auth: false, name: "brand-mr-sources" },
+  { route: "/brand/spitehouse", auth: false, name: "demo-spitehouse" },
+  { route: "/brand/spitehouse?tab=timeline", auth: false, name: "demo-shg-timeline" },
+  { route: "/brand/spitehouse?tab=sales", auth: false, name: "demo-shg-sales" },
+  { route: "/brand/spitehouse?tab=sourcing", auth: false, name: "demo-shg-sourcing" },
+  { route: "/brand/spitehouse?tab=advertising", auth: false, name: "demo-shg-advertising" },
+  { route: "/brand/spitehouse?tab=traffic", auth: false, name: "demo-shg-traffic" },
+  { route: "/brand/spitehouse?tab=deepdive", auth: false, name: "demo-shg-deepdive" },
+  { route: "/brand/spitehouse?tab=sources", auth: false, name: "demo-shg-sources" },
+  /* The profit chart with a timeline dot active. That card only exists while a
+     dot is hovered or focused, so the plain overview shot cannot tell you
+     whether it renders. */
+  { route: "/demo/resilia", auth: false, name: "demo-resilia-chart-hover",
+    steps: [{ focus: '[data-event-dot="6"]' }] },
+  { route: "/demo/theloadedteashop", auth: false, name: "demo-lts-chart-hover",
+    steps: [{ focus: '[data-event-dot="4"]' }] },
+  { route: "/demo/Pure_Zookeepergame_2", auth: false, name: "demo-zookeeper" },
+  { route: "/demo/jayeshchauhanreddit", auth: false, name: "demo-jayesh" },
+  { route: "/demo/Much-Experience-4197", auth: false, name: "demo-ahad" },
+  { route: "/demo/Sirsolrac36", auth: false, name: "demo-sirsolrac" },
+  { route: "/demo/SlickyTrick", auth: false, name: "demo-slickytrick" },
+  { route: "/demo/Thick-Valuable-4753", auth: false, name: "demo-chickenboy" },
+  { route: "/demo/TomNomYYZ", auth: false, name: "demo-tomnom" },
+  /* The consult dialog, on the MENTORSHIP item — the one that overrides the
+     button and the confirmation. "Send question — $100/mo" is the failure this
+     shot exists to catch, and the default-wording items cannot show it. */
+  { route: "/demo/TomNomYYZ", auth: false, name: "demo-tomnom-ask",
+    click: "[data-demo-ask] li:nth-child(3) button" },
+  { route: "/demo/danboufford", auth: false, name: "demo-dan" },
+  { route: "/demo/ecg-ubaldo", auth: false, name: "demo-ubaldo" },
+  /* 🚧 The group board — a feature that does not exist. Worth a shot every
+     build precisely because nothing else in the app exercises this page. */
+  { route: "/demo/g/ecgwholesale", auth: false, name: "demo-group-ecg" },
+  { route: "/demo/g/passionatenetwork", auth: false, name: "demo-group-pn" },
+  { route: "/demo/Much-Experience-4197", auth: false, name: "demo-ahad" },
+  { route: "/demo/afrasiab", auth: false, name: "demo-afrasiab-scheduler", click: "[data-demo-cta]" },
+  { route: "/demo/leaderboard", auth: false, name: "demo-leaderboard" },
+  /* The second axis. Its rows are the SAME businesses rolled up differently,
+     so a shot of only "By founder" would not show whether the tab is wired to
+     anything — both boards look plausible on their own. */
+  { route: "/demo/leaderboard", auth: false, name: "demo-leaderboard-business",
+    steps: [{ click: "[data-tabs] button:nth-of-type(2)" }] },
+  /* The same profile, read in euros. Proves a non-default currency reaches
+     the API and that every figure on the page moves with it — the picker is
+     hidden for now, but the path it drives is live and worth guarding. */
+  { route: "/acme", auth: false, name: "profile-eur", storage: ["vm.currency", "EUR"] },
+  /* The onboarding dialog, in both its shapes: a stranger gets "Who are
+     you?", a signed-in seller does not. It is the one flow this product has,
+     so both are worth a picture. */
+  /* The valuation wizard, at both ends of the new sections: the first
+     question a seller sees, and one where the differentiation lead-in has
+     been chosen from their catalogue answer. */
+  {
+    route: "/business/paramint-us/value",
+    auth: true,
+    name: "valuation-sourcing",
+    valQuestions: VAL_QUESTIONS_FRESH,
+  },
+  {
+    route: "/business/paramint-us/value",
+    auth: true,
+    name: "valuation-differentiation",
+    valQuestions: VAL_QUESTIONS_MIDWAY,
+    /* Walk to the diagnostic. The wizard always opens on the first question,
+       so the lead-in — which is chosen from the catalogue answer and is the
+       whole point of this shot — is four Next clicks away. */
+    steps: [
+      { click: "[data-val-nav] button:last-of-type" },
+      { click: "[data-val-nav] button:last-of-type" },
+      { click: "[data-val-nav] button:last-of-type" },
+      { click: "[data-val-nav] button:last-of-type" },
+    ],
+  },
+  {
+    route: "/business/paramint-us/value",
+    auth: true,
+    name: "valuation-share",
+    valQuestions: VAL_QUESTIONS_SHARE,
+    /* The profit-share scale — the one question here that is not a list, and
+       the only one that can be looked at without being answered. */
+    steps: Array.from({ length: 5 }, () => ({ click: "[data-val-nav] button:last-of-type" })),
+  },
+  { route: "/leaderboard", auth: false, name: "add-business", click: "[data-nav-cta]" },
+  /* The wizard's later steps. Each needs the one before it completed, so the
+     click list is cumulative — a step that only renders after a valid margin
+     cannot be shot any other way. */
+  /* Each method changes the body AND the footer's enablement — worth a shot
+     each, because "disabled for the right reason" is not visible in source. */
+  { route: "/leaderboard", auth: false, name: "add-business-call",
+    steps: [{ click: "[data-nav-cta]" }, { select: ["[data-method-select]", "call"] }] },
+  /* The report route, with its instruction block — the part a seller has to
+     follow exactly, so it is worth looking at. */
+  { route: "/leaderboard", auth: false, name: "add-business-screenshot",
+    steps: [{ click: "[data-nav-cta]" }, { select: ["[data-method-select]", "screenshot"] }] },
+  /* 🚧 The SellerBoard shot is gone with the option — it is commented out in
+     AddBusinessModal's METHODS until the integration exists. Restore both
+     together.
+     { route: "/leaderboard", auth: false, name: "add-business-sellerboard",
+       steps: [{ click: "[data-nav-cta]" }, { select: ["[data-method-select]", "sellerboard"] }] }, */
+  /* The ONLY way into the claim step now: signed out, clicking Connect. The
+     primary button cannot get you there — it is disabled until Amazon's OAuth
+     has actually completed, which is the point. */
+  { route: "/leaderboard", auth: false, name: "add-business-claim",
+    steps: [{ click: "[data-nav-cta]" }, { click: "[data-connect] button" }] },
+  /* And back out of it. A signed-out seller clicks Connect, is detoured to
+     claim, signs in — and must land on AMAZON, not on step 1 with the same
+     button waiting to be pressed a second time. The panel is `data-armed`
+     here because a popup fired from the return trip is not a user gesture and
+     every browser blocks it; the state holds the consent URL so one tap
+     opens it. If this shot ever shows "Claim your business" again, the
+     detour has stopped coming back. */
+  { route: "/leaderboard", auth: false, name: "add-business-connect-resumed",
+    steps: [{ click: "[data-nav-cta]" }, { click: "[data-connect] button" },
+            { blockPopups: true }, { signIn: true }, { scrollTo: "[data-connect]" }] },
+  { route: "/leaderboard", auth: true, name: "add-business-signed-in", click: "[data-nav-cta]" },
+  /* Regression: a SIGNED-IN seller clicking Connect must reach Amazon, not the
+     claim step. useSession has three states and reading "not authenticated" as
+     "signed out" sent authenticated users to claim while /me was in flight. */
+  { route: "/leaderboard", auth: true, name: "add-business-connect-signedin",
+    steps: [{ click: "[data-nav-cta]" }, { click: "[data-connect] button" }] },
+];
+
+const browser = await puppeteer.launch({
+  executablePath: chromePath(), headless: "new", args: ["--no-sandbox", "--disable-dev-shm-usage"],
+});
+
+for (const { route, auth, name, click, storage, steps, valQuestions } of PAGES) {
+  /* A FRESH context per shot, not just a fresh page.
+   *
+   * Pages in one browser share an origin's localStorage, so the currency
+   * seeded for the EUR shot followed every page opened after it — the
+   * leaderboard quietly rendered in euros, and the screenshot looked like a
+   * bug in the leaderboard. A seeded preference must not outlive the shot
+   * that asked for it. */
+  const context = await browser.createBrowserContext();
+  const page = await context.newPage();
+  await page.setViewport(
+    mobile
+      ? { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true }
+      : { width: 1280, height: 900 },
+  );
+  /* The site is light-only (globals.css has no dark override), so this is
+     asserting rather than choosing: emulating a DARK OS preference and still
+     getting a light page is the check that no stray `prefers-color-scheme`
+     rule crept back in. `--light` flips the emulated preference, not the
+     product. */
+  await page.emulateMediaFeatures([
+    { name: "prefers-color-scheme", value: light ? "light" : "dark" },
+  ]);
+  /* Mutable, because one shot needs the session to CHANGE mid-page: a
+     signed-out visitor who signs in somewhere else. `auth` is still the
+     starting value for every other shot. */
+  let authed = Boolean(auth);
+  async function wire(p) {
+    await p.setRequestInterception(true);
+    p.on("request", (r) => {
+      const u = r.url();
+      if (u.includes("api.getdragonbot.com")) {
+        if (r.method() === "OPTIONS") return r.respond({ status: 204, headers: CORS });
+        if (/auth\/me/.test(u)) {
+          return authed
+            ? r.respond({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify(USER) })
+            : r.respond({ status: 401, contentType: "application/json", headers: CORS, body: "{}" });
+        }
+        /* The wizard asks for a new number on every answer, and the questions
+         come back with it — so this has to answer with the SAME shape the
+         backend does, questions included. */
+      if (/valuation\/preview/.test(u)) {
+        return r.respond({
+          status: 200,
+          contentType: "application/json",
+          headers: CORS,
+          body: JSON.stringify(valuationPreview(valQuestions ?? VAL_QUESTIONS_FRESH)),
+        });
+      }
+      for (const [re, body] of ROUTES) {
+          if (re.test(u))
+            return r.respond({
+              status: 200,
+              contentType: "application/json",
+              headers: CORS,
+              body: JSON.stringify(inCurrency(body, u)),
+            });
+        }
+        return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: "{}" });
+      }
+      // Never let a screenshot run fire real analytics.
+      if (/googletagmanager|clarity\.ms|connect\.facebook|google-analytics/.test(u)) {
+        return r.abort().catch(() => {});
+      }
+      r.continue().catch(() => {});
+    });
+  }
+  await wire(page);
+  if (auth) await page.evaluateOnNewDocument(() => localStorage.setItem("dragonbot_session", "stub"));
+  /* Seeded preferences, read at boot. The currency shot goes through storage
+     rather than through the top bar's <select> because that control is hidden
+     today (SHOW_CURRENCY_PICKER) — and because the thing worth testing is the
+     conversion path, which is the same either way. */
+  if (storage) {
+    const [k, v] = storage;
+    await page.evaluateOnNewDocument(
+      (key, value) => localStorage.setItem(key, value),
+      k,
+      v,
+    );
+  }
+
+  await page.goto(`http://127.0.0.1:${port}${route}`, { waitUntil: "networkidle2", timeout: 45_000 });
+  await new Promise((r) => setTimeout(r, 2_000));
+  /* `steps` runs clicks and fills IN ORDER — a wizard step that only appears
+     after a valid field cannot be reached by clicks alone. `click` stays for
+     the single-click cases that predate this. */
+  for (const st of steps ?? []) {
+    if (st.click) {
+      await page.click(st.click).catch(() => console.warn(`  (no ${st.click} to click)`));
+    } else if (st.select) {
+      const [sel, value] = st.select;
+      await page.select(sel, value).catch(() => console.warn(`  (no ${sel} to select)`));
+    } else if (st.fill) {
+      const [sel, value] = st.fill;
+      await page
+        .$eval(sel, (el, v) => {
+          const setter = Object.getOwnPropertyDescriptor(el.constructor.prototype, "value")?.set;
+          setter?.call(el, v);
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+        }, value)
+        .catch(() => console.warn(`  (no ${sel} to fill)`));
+    } else if (st.blockPopups) {
+      /* 🚨 Headless Chrome has NO popup blocker, so a window.open fired
+         outside a user gesture succeeds here and fails on every real
+         browser — the opposite of the situation worth a picture. A blocker
+         returns null, so returning null IS the simulation. */
+      await page.evaluate(() => {
+        window.open = () => null;
+      });
+    } else if (st.focus) {
+      /* For anything that only exists while a control is hovered or focused —
+         the dossier's profit chart says what happened at a point only when a
+         dot is active, and a shot of the inert chart cannot show whether that
+         works.
+         🚨 FOCUS, not hover: a fullPage screenshot resizes the viewport, which
+         moves the page out from under the pointer and fires the mouseleave
+         that closes the card. Focus survives it, which is also why the dots
+         are focusable in the first place. */
+      await page
+        .$eval(st.focus, (el) => el.focus())
+        .catch(() => console.warn(`  (no ${st.focus} to focus)`));
+      await new Promise((r) => setTimeout(r, 300));
+    } else if (st.scrollTo) {
+      /* The dialog body scrolls independently of the page, so a control below
+         its fold is absent from a fullPage shot. */
+      await page
+        .$eval(st.scrollTo, (el) => el.scrollIntoView({ block: "center" }))
+        .catch(() => console.warn(`  (no ${st.scrollTo} to scroll to)`));
+    } else if (st.signIn) {
+      /* Sign in the way this product actually signs people in: IN ANOTHER
+         TAB. The emailed link opens /magic?token=… wherever the mail app
+         sends it, that page writes the session to localStorage and navigates
+         itself onward, and the tab holding the half-finished wizard is never
+         told — it only ever hears the `storage` event. Setting the key from
+         inside `page` would prove nothing: storage events do not fire in the
+         document that made the change. */
+      authed = true;
+      const other = await context.newPage();
+      await wire(other);
+      await other.goto(`http://127.0.0.1:${port}/login`, { waitUntil: "domcontentloaded", timeout: 45_000 });
+      await other.evaluate(() => localStorage.setItem("dragonbot_session", "stub"));
+      await other.close();
+      // /me, then listProfiles, then POST /connect/start — three round trips
+      // before the panel can settle.
+      await new Promise((r) => setTimeout(r, 1_500));
+    }
+    await new Promise((r) => setTimeout(r, 220));
+  }
+  for (const sel of [click].flat().filter(Boolean)) {
+    await page.click(sel).catch(() => console.warn(`  (no ${sel} to click)`));
+    await new Promise((r) => setTimeout(r, 350));
+  }
+
+  const file = join(outDir, `${name}${mobile ? "-mobile" : ""}${light ? "-light" : ""}.png`);
+  await page.screenshot({ path: file, fullPage: true });
+  console.log(`  ${route} → ${file}`);
+  await page.close();
+  await context.close();
+}
+
+await browser.close();
+srv.close();
