@@ -323,10 +323,15 @@ h1, h2, h3, h4 {
 }
 [data-row-tags] { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
 
-[data-row-stat] { display: flex; flex-direction: column; gap: 0.05rem; text-align: right; }
+[data-row-stat] { display: flex; flex-direction: column; gap: 0.05rem; text-align: right; margin: 0; }
+/* Hidden at desktop width: the column heading above already names these, and
+   repeating it in every row was doubling the label under each figure. It
+   comes back below the fold-over breakpoint, where the heading is gone. */
 [data-row-stat] dt {
   font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
   color: var(--muted-foreground); font-weight: 600;
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
 }
 [data-row-stat] dd { margin: 0; font-size: 1rem; font-weight: 650; }
 
@@ -348,6 +353,11 @@ h1, h2, h3, h4 {
     grid-column: 1 / -1; display: flex; gap: 1.75rem;
   }
   [data-row-stat] { text-align: left; }
+  /* Un-hide: with no column heading on narrow screens, each figure has to
+     carry its own label or the numbers are unidentifiable. */
+  [data-row-stat] dt {
+    position: static; width: auto; height: auto; overflow: visible; clip: auto;
+  }
   [data-row-head] { display: none; }
 }
 
