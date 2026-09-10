@@ -48,8 +48,47 @@ function injectClarity(projectId: string): void {
   })(window, document, "clarity", "script", projectId);
 }
 
-injectGa4(config.ga4MeasurementId);
-injectClarity(config.clarityId);
+/**
+ * Analytics loads AFTER the page is interactive, never during mount.
+ *
+ * Measured on /data/ (PSI mobile, 5 consistent runs): gtag.js alone cost 824ms
+ * of bootup and two long tasks of 474ms and 291ms, with Clarity adding 249ms —
+ * about 1.07s of script evaluation against 333ms for this app's entire bundle.
+ * That is what took the page from 100 to 78. None of it is needed before the
+ * visitor can read or click anything.
+ *
+ * ⚠️ The trade-off is real and deliberate: a visitor who leaves within the
+ * first moment may go uncounted, so session counts skew very slightly low.
+ * `requestIdleCallback` with a 2s ceiling plus a first-interaction trigger
+ * keeps that window small — anyone who scrolls, taps or types is measured
+ * immediately. If you would rather have the last fraction of a percent of
+ * sessions than the performance, move these two calls back up here.
+ */
+function startAnalytics(): void {
+  let started = false;
+  const go = () => {
+    if (started) return;
+    started = true;
+    injectGa4(config.ga4MeasurementId);
+    injectClarity(config.clarityId);
+  };
+
+  // Whichever comes first: the browser going idle, a 2s ceiling, or the
+  // visitor actually doing something.
+  const opts = { once: true, passive: true } as const;
+  for (const evt of ["pointerdown", "keydown", "scroll"] as const) {
+    window.addEventListener(evt, go, opts);
+  }
+  const ric = (window as unknown as {
+    requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void;
+  }).requestIdleCallback;
+  // Safari has no requestIdleCallback, so the timeout is the real path there.
+  if (ric) ric(go, { timeout: 2000 });
+  else setTimeout(go, 2000);
+}
+
+if (document.readyState === "complete") startAnalytics();
+else window.addEventListener("load", startAnalytics, { once: true });
 
 const root = document.getElementById("root")!;
 
