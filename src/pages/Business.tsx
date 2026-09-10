@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getBusiness, getMetrics, type BusinessDetail, type MetricPoint } from "@/lib/api";
+import {
+  getBusiness, getMetrics, linkMetaNumber, toChartPoints,
+  type BusinessDetail, type MetricsResponse,
+} from "@/lib/api";
 import { profileFor } from "@/businesses/index.mjs";
 import { ProfileBlocks } from "@/components/ProfileBlocks";
 import { ResearchedNotice } from "@/components/ResearchedNotice";
@@ -14,7 +17,7 @@ export default function Business() {
   const { slug = "" } = useParams();
   const boot = businessBootstrap(slug);
   const [b, setB] = useState<BusinessDetail | null>(boot?.business ?? null);
-  const [points, setPoints] = useState<MetricPoint[]>(boot?.metrics ?? []);
+  const [series, setSeries] = useState<MetricsResponse | null>(boot?.metrics ?? null);
   const [missing, setMissing] = useState(false);
 
   useEffect(() => {
@@ -23,8 +26,8 @@ export default function Business() {
     getBusiness(slug)
       .then((r) => !cancelled && setB(r.business))
       .catch(() => !cancelled && setMissing(true));
-    getMetrics(slug, "month")
-      .then((r) => !cancelled && setPoints(r.metrics))
+    getMetrics(slug)
+      .then((r) => !cancelled && setSeries(r))
       .catch(() => {});
     return () => { cancelled = true; };
   }, [slug]);
@@ -58,6 +61,8 @@ export default function Business() {
   // An authored profile if one exists for this slug; otherwise the page falls
   // back to whatever the DB alone can say.
   const profile = profileFor(slug);
+  // Only FLOW types are charted; see toChartPoints.
+  const points = toChartPoints(series);
 
   return (
     <main data-main>
@@ -112,18 +117,7 @@ export default function Business() {
           <section style={{ marginTop: "2.5rem" }}>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 650, marginBottom: "0.75rem" }}>Monthly</h2>
             <Chart points={points} currency={b.currency} />
-            {b.summary && (
-              <div data-prose style={{ marginTop: "1.5rem" }}>
-                {b.summary.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
-              </div>
-            )}
           </section>
-        )}
-
-        {points.some((p) => p.derivedFrom === "MONTH") && (
-          <p style={{ fontSize: "0.8125rem", color: "var(--muted-foreground)", marginTop: "1rem" }}>
-            Monthly estimates are spread evenly across each month — daily variation is not measured.
-          </p>
         )}
 
         {b.links.length > 0 && (
@@ -135,9 +129,9 @@ export default function Business() {
                   <a href={l.url} target="_blank" rel="noopener noreferrer nofollow">
                     {l.label ?? l.handle ?? l.platform.toLowerCase()}
                   </a>
-                  {l.followerCount != null && (
+                  {linkMetaNumber(l, "followerCount") != null && (
                     <span style={{ color: "var(--muted-foreground)", fontSize: "0.875rem" }}>
-                      {" "}· {l.followerCount.toLocaleString("en-US")} followers
+                      {" "}· {linkMetaNumber(l, "followerCount")!.toLocaleString("en-US")} followers
                     </span>
                   )}
                 </li>

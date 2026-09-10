@@ -1,4 +1,4 @@
-import type { BusinessCard, BusinessDetail, FacetCategory, MetricPoint } from "./api.js";
+import type { BusinessCard, BusinessDetail, FacetCategory, MetricsResponse } from "./api.js";
 
 /**
  * Data the prerender inlined into the page, so the first render does not wait
@@ -9,7 +9,7 @@ import type { BusinessCard, BusinessDetail, FacetCategory, MetricPoint } from ".
  */
 type Bootstrap =
   | { route: "ideas"; collection: string; businesses: BusinessCard[]; total: number; categories: FacetCategory[] }
-  | { route: "business"; slug: string; business: BusinessDetail; metrics: MetricPoint[] };
+  | { route: "business"; slug: string; business: BusinessDetail; metrics: MetricsResponse | null };
 
 declare global {
   interface Window {

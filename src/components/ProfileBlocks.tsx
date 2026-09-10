@@ -1,5 +1,5 @@
 import type { Block, MetricKey, Profile } from "@/businesses/types";
-import type { BusinessDetail, MetricPoint } from "@/lib/api";
+import type { BusinessDetail, ChartPoint } from "@/lib/api";
 import { Chart } from "./Chart";
 import { exactMoney, percent } from "@/lib/format";
 
@@ -17,7 +17,7 @@ function statValue(metric: MetricKey, b: BusinessDetail): string {
   }
 }
 
-function BlockView({ block, business, metrics }: { block: Block; business: BusinessDetail; metrics: MetricPoint[] }) {
+function BlockView({ block, business, metrics }: { block: Block; business: BusinessDetail; metrics: ChartPoint[] }) {
   switch (block.type) {
     case "heading":
       return <h2>{block.text}</h2>;
@@ -59,7 +59,7 @@ function BlockView({ block, business, metrics }: { block: Block; business: Busin
   }
 }
 
-export function ProfileBlocks({ profile, business, metrics }: { profile: Profile; business: BusinessDetail; metrics: MetricPoint[] }) {
+export function ProfileBlocks({ profile, business, metrics }: { profile: Profile; business: BusinessDetail; metrics: ChartPoint[] }) {
   return (
     <div data-prose>
       {profile.blocks.map((b, i) => <BlockView key={i} block={b} business={business} metrics={metrics} />)}

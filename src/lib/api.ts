@@ -73,30 +73,80 @@ export type BusinessLink = {
   url: string;
   label: string | null;
   handle: string | null;
-  followerCount: number | null;
+  /** Every platform-specific fact — followerCount, posts, likes — lives here. */
   meta: Record<string, unknown>;
 };
 
+/** Read a numeric fact out of a link's untyped meta blob. */
+export function linkMetaNumber(link: BusinessLink, key: string): number | null {
+  const v = link.meta?.[key];
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
 export type BusinessDetail = BusinessCard & {
-  summary: string | null;
   startingCostNote: string | null;
   sources: Array<{ title: string; url: string; note?: string }>;
   links: BusinessLink[];
 };
 
-export type MetricPoint = {
-  date: string;
-  currency: string;
-  revenue: number | string | null;
-  profit: number | string | null;
-  marginPct: number | null;
-  adSpend: number | string | null;
-  units: number | null;
-  orders: number | null;
+/** One measurement of one thing over one period. */
+export type MetricRow = {
+  type: string;
+  value: string | number;
+  meta: Record<string, unknown>;
+  periodStart: string;
+  periodEnd: string;
   isEstimated: boolean;
-  derivedFrom: "MONTH" | null;
-  days?: number;
 };
+
+export type MetricTypeInfo = {
+  type: string;
+  label: string;
+  /** FLOW sums across periods; LEVEL must not be summed. */
+  kind: "FLOW" | "LEVEL";
+  aggregate: "sum" | "last";
+};
+
+export type MetricsResponse = {
+  currency: string;
+  types: MetricTypeInfo[];
+  metrics: MetricRow[];
+};
+
+/** A period with the series the chart draws. */
+export type ChartPoint = {
+  periodStart: string;
+  periodEnd: string;
+  revenue: number | null;
+  profit: number | null;
+  isEstimated: boolean;
+};
+
+/**
+ * Pivot the generic rows into revenue/profit per period.
+ *
+ * 🚨 Only FLOW types are pivoted here. A LEVEL series (followers, headcount)
+ * shares the table but must never be charted on a revenue axis or summed with
+ * one — the API declares each type's kind precisely so the client does not
+ * have to guess.
+ */
+export function toChartPoints(res: MetricsResponse | null): ChartPoint[] {
+  if (!res) return [];
+  const byPeriod = new Map<string, ChartPoint>();
+  for (const m of res.metrics) {
+    if (m.type !== "revenue" && m.type !== "profit") continue;
+    const key = `${m.periodStart}|${m.periodEnd}`;
+    const point = byPeriod.get(key) ?? {
+      periodStart: m.periodStart, periodEnd: m.periodEnd,
+      revenue: null, profit: null, isEstimated: m.isEstimated,
+    };
+    if (m.type === "revenue") point.revenue = Number(m.value);
+    else point.profit = Number(m.value);
+    point.isEstimated = point.isEstimated || m.isEstimated;
+    byPeriod.set(key, point);
+  }
+  return [...byPeriod.values()].sort((a, b) => a.periodStart.localeCompare(b.periodStart));
+}
 
 export const listBusinesses = (q = "") =>
   apiFetch<{ businesses: BusinessCard[]; total: number; nextCursor: string | null }>(
@@ -106,9 +156,9 @@ export const listBusinesses = (q = "") =>
 export const getBusiness = (slug: string) =>
   apiFetch<{ business: BusinessDetail }>(`/v1/businesses/${encodeURIComponent(slug)}`);
 
-export const getMetrics = (slug: string, granularity: "day" | "month" = "month") =>
-  apiFetch<{ granularity: string; currency: string; metrics: MetricPoint[] }>(
-    `/v1/businesses/${encodeURIComponent(slug)}/metrics?granularity=${granularity}`,
+export const getMetrics = (slug: string, type?: string) =>
+  apiFetch<MetricsResponse>(
+    `/v1/businesses/${encodeURIComponent(slug)}/metrics${type ? `?type=${encodeURIComponent(type)}` : ""}`,
   );
 
 export const listCategories = () => apiFetch<{ categories: FacetCategory[] }>("/v1/categories");

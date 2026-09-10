@@ -239,7 +239,9 @@ for (const b of all) {
   let metrics = null;
   try {
     detail = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}`)).business;
-    metrics = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}/metrics?granularity=month`)).metrics;
+    // The whole MetricsResponse, not just the rows: the client needs `types`
+    // to know which series are FLOW and safe to chart.
+    metrics = await get(`/v1/businesses/${encodeURIComponent(b.slug)}/metrics`);
   } catch { /* the page still works, it just fetches on mount */ }
 
   const rev = money(b.latestMonthlyRevenue, b.currency);

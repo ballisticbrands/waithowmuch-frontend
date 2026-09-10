@@ -1,4 +1,4 @@
-import type { MetricPoint } from "@/lib/api";
+import type { ChartPoint } from "@/lib/api";
 import { money, monthLabel } from "@/lib/format";
 
 /**
@@ -7,7 +7,7 @@ import { money, monthLabel } from "@/lib/format";
  * library is ~50KB gzipped — which is most of the performance budget the
  * funnel playbook mandates, spent on something a <rect> loop does.
  */
-export function Chart({ points, currency }: { points: MetricPoint[]; currency: string }) {
+export function Chart({ points, currency }: { points: ChartPoint[]; currency: string }) {
   if (points.length === 0) {
     return <div data-empty>No figures published yet.</div>;
   }
@@ -32,7 +32,7 @@ export function Chart({ points, currency }: { points: MetricPoint[]; currency: s
   return (
     <figure>
       <svg data-chart viewBox={`0 0 ${W} ${H}`} role="img"
-           aria-label={`Monthly revenue, ${monthLabel(points[0]!.date)} to ${monthLabel(points[points.length - 1]!.date)}`}>
+           aria-label={`Monthly revenue, ${monthLabel(points[0]!.periodStart)} to ${monthLabel(points[points.length - 1]!.periodStart)}`}>
         <line x1={PAD.left} y1={PAD.top + innerH} x2={W - PAD.right} y2={PAD.top + innerH}
               stroke="var(--border)" strokeWidth="1" />
         {points.map((p, i) => {
@@ -42,18 +42,18 @@ export function Chart({ points, currency }: { points: MetricPoint[]; currency: s
           const ph = (Math.max(profit, 0) / max) * innerH;
           const x = PAD.left + i * slot + (slot - barW) / 2;
           return (
-            <g key={p.date}>
+            <g key={p.periodStart}>
               <rect x={x} y={PAD.top + innerH - h} width={barW} height={h}
                     fill="var(--muted)" rx="3" />
               {/* Profit drawn inside revenue, not beside it — the visual
                   question is "how much of the top line survives". */}
               <rect x={x} y={PAD.top + innerH - ph} width={barW} height={ph}
                     fill="var(--accent)" rx="3" />
-              <title>{`${monthLabel(p.date)} — revenue ${money(rev, currency)}, profit ${money(profit, currency)}`}</title>
+              <title>{`${monthLabel(p.periodStart)} — revenue ${money(rev, currency)}, profit ${money(profit, currency)}`}</title>
               {i % step === 0 && (
                 <text x={x + barW / 2} y={H - 8} textAnchor="middle"
                       fontSize="10" fill="var(--muted-foreground)">
-                  {monthLabel(p.date)}
+                  {monthLabel(p.periodStart)}
                 </text>
               )}
             </g>
