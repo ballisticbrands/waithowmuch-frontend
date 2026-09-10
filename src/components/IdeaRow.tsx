@@ -38,7 +38,9 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
         )}
       </div>
 
-      <div data-row-stats style={{ display: "contents" }}>
+      {/* display is set in CSS, not inline: the narrow-screen rule has to be
+          able to override it, and an inline style always wins over a media query. */}
+      <div data-row-stats>
         <dl data-row-stat>
           <dt>Revenue / mo</dt>
           <dd data-figure>{money(b.latestMonthlyRevenue, b.currency)}</dd>
