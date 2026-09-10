@@ -74,6 +74,10 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+  /* A content page must never scroll sideways. This does not excuse a broken
+     layout — it stops ONE overflowing child from stretching the document and
+     clipping the header and footer, which is exactly what happened here. */
+  overflow-x: clip;
 }
 
 body {
@@ -408,6 +412,19 @@ h1, h2, h3, h4 {
 
 @media (max-width: 640px) {
   :root { --gutter: 0.875rem; }
+
+  /* Stack the filter bar instead of relying on flex-wrap.
+     Two 13rem sliders plus gutters exceed a 420px viewport, and because they
+     could not shrink they widened the DOCUMENT — which then stretched every
+     width:100% block, including the header, so the Sign in button and the
+     footer text were clipped off the right edge. A row that cannot fit is the
+     wrong layout at this width; a column always fits. */
+  [data-filters] { flex-direction: column; align-items: stretch; }
+  [data-filter] { width: 100%; }
+  [data-slider] { width: 100%; }
+  [data-select] { width: 100%; max-width: 100%; }
+  [data-row-stats] { flex-wrap: wrap; }
+
   [data-header-inner] { gap: 0.6rem; }
   [data-stat-row] { gap: 1rem; flex-wrap: wrap; row-gap: 1rem; }
   /* The wordmark text goes; the mark alone still identifies the site and still
