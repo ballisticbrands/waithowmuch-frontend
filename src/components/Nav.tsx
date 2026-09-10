@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
+import { RailIcon, type RailIconName } from "./RailIcons";
 import { CrumbTrail } from "./Breadcrumbs";
 import { useSession, signOut } from "@/lib/session";
 import { COLLECTIONS, MORE, collectionPath } from "@/data/collections.mjs";
@@ -36,10 +37,13 @@ export function TopBar() {
   );
 }
 
-function RailLink({ to, label, active }: { to: string; label: string; active: boolean }) {
+function RailLink({
+  to, label, active, icon,
+}: { to: string; label: string; active: boolean; icon?: string }) {
   return (
     <Link data-rail-link data-active={active} to={to} aria-current={active ? "page" : undefined}>
-      {label}
+      <RailIcon name={icon as RailIconName | undefined} />
+      <span>{label}</span>
     </Link>
   );
 }
@@ -54,7 +58,7 @@ export function SideRail() {
   return (
     <aside data-rail>
       <nav aria-label="Sections">
-        <RailLink to="/" label="Home" active={here === "/"} />
+        <RailLink to="/" label="Home" active={here === "/"} icon="home" />
 
         <div data-rail-group>Data</div>
         {COLLECTIONS.map((c) => (
@@ -63,16 +67,18 @@ export function SideRail() {
             to={collectionPath(c.slug)}
             label={c.navLabel ?? c.title}
             active={here === norm(collectionPath(c.slug))}
+            icon={c.icon}
           />
         ))}
         <RailLink
           to={collectionPath(MORE.slug)}
           label={MORE.title}
           active={here === norm(collectionPath(MORE.slug))}
+          icon={MORE.icon}
         />
 
         <div data-rail-group>About</div>
-        <RailLink to="/how-we-research/" label="How we research" active={here === "/how-we-research/"} />
+        <RailLink to="/how-we-research/" label="How we research" active={here === "/how-we-research/"} icon="book" />
       </nav>
     </aside>
   );

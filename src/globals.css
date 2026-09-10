@@ -97,9 +97,18 @@ a {
 }
 
 h1, h2, h3, h4 {
-  letter-spacing: -0.021em;
-  line-height: 1.2;
+  letter-spacing: -0.028em;
+  line-height: 1.15;
   margin: 0;
+}
+
+/* Page heading. Set here rather than per-page so every route shares one
+   scale — the old inline 1.875rem drifted from page to page. */
+[data-main] > h1,
+[data-prose] > h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.033em;
 }
 
 :focus-visible {
@@ -123,12 +132,24 @@ h1, h2, h3, h4 {
  * deliberately shallow: identity, the breadcrumb trail, and auth.
  */
 
+:root {
+  /* 🚨 These were previously declared ONLY inside the max-width:640px media
+     query, so on desktop every `var(--gutter)` padding resolved to nothing and
+     the content sat flush against the rail with zero margin. Declare layout
+     tokens at :root FIRST, then override them in a query — never the reverse. */
+  --gutter: 2rem;      /* content column */
+  --gutter-chrome: 1rem; /* top strip + rail */
+  --rail-width: 15rem;
+  --topbar-height: 3.5rem;
+}
+
 [data-shell] { min-height: 100vh; display: flex; flex-direction: column; }
 
 [data-topbar] {
   position: sticky; top: 0; z-index: 40;
   display: flex; align-items: center; gap: 0.75rem;
-  padding: 0.6rem var(--gutter);
+  min-height: var(--topbar-height);
+  padding: 0 var(--gutter-chrome);
   background: var(--card);
   border-bottom: 1px solid var(--border);
 }
@@ -153,11 +174,11 @@ h1, h2, h3, h4 {
 [data-body] { flex: 1; display: flex; align-items: flex-start; min-height: 0; }
 
 [data-rail] {
-  position: sticky; top: 3.1rem; align-self: flex-start;
-  width: 15rem; flex-shrink: 0;
-  height: calc(100vh - 3.1rem); overflow-y: auto;
+  position: sticky; top: var(--topbar-height); align-self: flex-start;
+  width: var(--rail-width); flex-shrink: 0;
+  height: calc(100vh - var(--topbar-height)); overflow-y: auto;
   border-right: 1px solid var(--border);
-  padding: 1rem 0.75rem 2rem;
+  padding: 1rem var(--gutter-chrome) 2rem;
   background: var(--card);
 }
 
@@ -170,14 +191,18 @@ h1, h2, h3, h4 {
 }
 
 [data-rail-link] {
-  display: block; padding: 0.5rem 0.65rem; border-radius: var(--radius);
+  display: flex; align-items: center; gap: 0.625rem;
+  padding: 0.5rem 0.6rem; border-radius: 0.5rem;
   font-size: 0.9375rem; font-weight: 500; color: var(--foreground);
 }
+[data-rail-link] svg { flex-shrink: 0; opacity: 0.75; }
+[data-rail-link][data-active="true"] svg { opacity: 1; }
 [data-rail-link]:hover { background: var(--muted); }
 /* Filled pill for the current section — the strongest signal in the rail, so
    it is the one place the near-black is spent. */
 [data-rail-link][data-active="true"] {
   background: var(--foreground); color: var(--background); font-weight: 600;
+  border-radius: 0.5rem;
 }
 
 /* Tinted, while the rail stays white. Without this the rail has no edge of its
@@ -186,7 +211,7 @@ h1, h2, h3, h4 {
    row table and filter panel sit ON something. */
 [data-content] { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--surface); }
 
-[data-main] { flex: 1; width: 100%; padding: 1.5rem var(--gutter) 4rem; }
+[data-main] { flex: 1; width: 100%; padding: 2rem var(--gutter) 4rem; }
 
 [data-footer] {
   margin-top: 2rem;
@@ -437,7 +462,7 @@ h1, h2, h3, h4 {
 [data-prose] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 @media (max-width: 640px) {
-  :root { --gutter: 0.875rem; }
+  :root { --gutter: 1rem; --gutter-chrome: 0.875rem; }
 
   /* Stack the filter bar instead of relying on flex-wrap.
      Two 13rem sliders plus gutters exceed a 420px viewport, and because they

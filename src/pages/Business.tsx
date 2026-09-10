@@ -12,6 +12,7 @@ import { Chart } from "@/components/Chart";
 import { businessBootstrap } from "@/lib/bootstrap";
 import { collectionPath, BRAND_NAME_SAFE } from "@/lib/nav-helpers";
 import { exactMoney, percent, monthLabel } from "@/lib/format";
+import { trackBusinessView } from "@/lib/track";
 
 export default function Business() {
   const { slug = "" } = useParams();
@@ -35,6 +36,14 @@ export default function Business() {
   useEffect(() => {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
+
+  // Keyed on the SLUG, not on `b`: the business object is replaced when the
+  // API response lands on top of the prerendered bootstrap, and keying on it
+  // would count the same profile twice on every cold view.
+  useEffect(() => {
+    if (slug) trackBusinessView(slug, b?.name);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   // The final crumb is the business NAME, which is not in the URL — hence a
   // context the page pushes into rather than crumbs derived from the path.
@@ -66,7 +75,7 @@ export default function Business() {
 
   return (
     <main data-main>
-        <h1 style={{ fontSize: "2rem", fontWeight: 700 }}>{b.name}</h1>
+        <h1>{b.name}</h1>
         {b.tagline && (
           <p style={{ color: "var(--muted-foreground)", margin: "0.4rem 0 0", fontSize: "1.0625rem" }}>{b.tagline}</p>
         )}

@@ -21,4 +21,16 @@ export const config = {
 
   ga4MeasurementId: "G-0K360RYPPB",
   clarityId: "yfrezqqmrh",
+
+  // Meta dataset ("WaitHowMuch website") in the Dragon Suite portfolio.
+  // Organic only — there is no ad account spend behind this and no CAPI. It
+  // is here so the audience and the events exist if that ever changes, which
+  // is not something you can backfill.
+  //
+  // 🔍 Sanity-check any pixel ID before trusting it: a wrong-but-valid ID
+  // sends every event to someone else's dataset and nothing anywhere errors.
+  //   curl -s https://connect.facebook.net/signals/config/<ID> | wc -c
+  // A real ID returns ~300KB of config; a bogus one ~30KB. This one measured
+  // 316,245 bytes on 2026-09-10.
+  metaPixelId: "1079875758342522",
 };

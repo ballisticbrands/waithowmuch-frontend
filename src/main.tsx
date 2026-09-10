@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { config } from "./lib/config";
 import { captureAttribution } from "./lib/attribution";
+import { markAnalyticsReady } from "./lib/track";
 import "./globals.css";
 
 captureAttribution();
@@ -48,6 +49,37 @@ function injectClarity(projectId: string): void {
   })(window, document, "clarity", "script", projectId);
 }
 
+function injectMetaPixel(pixelId: string): void {
+  if (!pixelId) return;
+  // Meta's base snippet, transcribed. The shape is load-bearing: `fbq` must
+  // exist as a QUEUEING stub the moment this runs, because the `init` and
+  // `track` calls below happen before fbevents.js has downloaded, and the
+  // real implementation drains `fbq.queue` when it arrives.
+  const w = window as unknown as {
+    fbq?: unknown; _fbq?: unknown;
+  };
+  if (w.fbq) return; // already installed — never init twice, it double-counts
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const fbq: any = function (...args: unknown[]) {
+    fbq.callMethod ? fbq.callMethod.apply(fbq, args) : fbq.queue.push(args);
+  };
+  fbq.push = fbq;
+  fbq.loaded = true;
+  fbq.version = "2.0";
+  fbq.queue = [];
+  w.fbq = fbq;
+  w._fbq = fbq;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://connect.facebook.net/en_US/fbevents.js";
+  document.head.appendChild(s);
+
+  fbq("init", pixelId);
+  fbq("track", "PageView");
+}
+
 /**
  * Analytics loads AFTER the page is interactive, never during mount.
  *
@@ -62,7 +94,13 @@ function injectClarity(projectId: string): void {
  * `requestIdleCallback` with a 2s ceiling plus a first-interaction trigger
  * keeps that window small — anyone who scrolls, taps or types is measured
  * immediately. If you would rather have the last fraction of a percent of
- * sessions than the performance, move these two calls back up here.
+ * sessions than the performance, move these calls back up here.
+ *
+ * ⚠️ The Meta pixel joined these on 2026-09-10 and is deferred on the SAME
+ * terms — fbevents.js is another ~70KB of third-party script and would undo
+ * the fix on its own. It is NOT in `index.html`, unlike the sibling LP repos,
+ * precisely because of that. The one Meta tag that DOES belong in the static
+ * head is the domain-verification meta tag, which is inert markup.
  */
 function startAnalytics(): void {
   let started = false;
@@ -71,6 +109,11 @@ function startAnalytics(): void {
     started = true;
     injectGa4(config.ga4MeasurementId);
     injectClarity(config.clarityId);
+    injectMetaPixel(config.metaPixelId);
+    // Each loader above has now counted the CURRENT url. Tell the route
+    // tracker so it treats that page as already reported and starts counting
+    // from the next navigation instead of double-counting this one.
+    markAnalyticsReady();
   };
 
   // Whichever comes first: the browser going idle, a 2s ceiling, or the

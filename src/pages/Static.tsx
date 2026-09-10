@@ -8,7 +8,7 @@ function Page({ title, children }: { title: string; children: React.ReactNode })
   return (
     <main data-main>
       <div data-prose>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{title}</h1>
+        <h1 style={{ marginBottom: "1.25rem" }}>{title}</h1>
         {children}
       </div>
     </main>

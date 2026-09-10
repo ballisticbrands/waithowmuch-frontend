@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
+import { RouteAnalytics } from "@/components/RouteAnalytics";
 import Home from "@/pages/Home";
 import Ideas, { MoreIdeas } from "@/pages/Ideas";
 import Business from "@/pages/Business";
@@ -22,6 +23,7 @@ function Both({ path, element }: { path: string; element: React.ReactElement }) 
 export default function App() {
   return (
     <Layout>
+      <RouteAnalytics />
       <Routes>
         <Route path="/" element={<Home />} />
         {/* The default collection IS /data/ — Ideas falls back to all-ideas

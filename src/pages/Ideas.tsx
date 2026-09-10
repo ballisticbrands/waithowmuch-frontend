@@ -74,7 +74,7 @@ export default function Ideas() {
 
   return (
     <main data-main>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{meta.title}</h1>
+        <h1 style={{ marginBottom: "1.25rem" }}>{meta.title}</h1>
 
         <Filters state={filters} onChange={setFilters} facets={facets} total={total} />
 
@@ -119,7 +119,7 @@ export function MoreIdeas() {
 
   return (
     <main data-main>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 700 }}>{MORE.title}</h1>
+        <h1>{MORE.title}</h1>
         <p style={{ color: "var(--muted-foreground)", margin: "0.5rem 0 2rem", maxWidth: "44rem" }}>{MORE.blurb}</p>
 
         <section style={{ marginBottom: "2.5rem" }}>

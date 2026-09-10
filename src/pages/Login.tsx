@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
+import { trackSignUp, trackLogin } from "@/lib/track";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
 
@@ -37,11 +38,15 @@ export default function Login() {
   async function onGoogle(credential: string) {
     setError(null);
     try {
-      const r = await apiFetch<{ token: string; user: SessionUser }>("/v1/auth/google", {
+      const r = await apiFetch<{ token: string; user: SessionUser; isNew?: boolean }>("/v1/auth/google", {
         method: "POST",
         body: JSON.stringify({ credential, attribution: readAttribution() }),
       });
       setSession(r.token, r.user);
+      // `isNew` is the server's answer, not a guess from "we just got a
+      // session" — every returning sign-in produces one of those too.
+      if (r.isNew) trackSignUp("google");
+      else trackLogin("google");
       navigate("/");
     } catch (err) {
       setError(

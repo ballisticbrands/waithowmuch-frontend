@@ -15,18 +15,23 @@ export const COLLECTIONS = [
     title: 'The Idea Database',
     /** Shown in the nav, where "The Idea Database" would be too long. */
     navLabel: 'All ideas',
+    icon: 'database',
     query: '',
     inNav: true,
   },
   {
     slug: 'amazon-fba',
     title: 'Amazon FBA ideas',
+    navLabel: 'Amazon FBA',
+    icon: 'parcel',
     query: 'channel=amazon-fba',
     inNav: true,
   },
   {
     slug: 'shopify',
     title: 'Shopify ideas',
+    navLabel: 'Shopify',
+    icon: 'bag',
     query: 'platform=shopify',
     inNav: true,
   },
@@ -36,6 +41,7 @@ export const COLLECTIONS = [
 export const MORE = {
   slug: 'more-ideas',
   title: 'More ideas',
+  icon: 'grid',
   blurb: 'Every way to slice the data — by niche, business model, platform and growth channel.',
   inNav: true,
 };
