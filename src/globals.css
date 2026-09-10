@@ -180,11 +180,16 @@ h1, h2, h3, h4 {
   background: var(--foreground); color: var(--background); font-weight: 600;
 }
 
-[data-content] { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+/* Tinted, while the rail stays white. Without this the rail has no edge of its
+   own and the two regions read as one undifferentiated white field — the
+   border alone is not enough separation at this scale. It also lets the white
+   row table and filter panel sit ON something. */
+[data-content] { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--surface); }
 
 [data-main] { flex: 1; width: 100%; padding: 1.5rem var(--gutter) 4rem; }
 
 [data-footer] {
+  margin-top: 2rem;
   border-top: 1px solid var(--border); background: var(--surface);
   padding: 2.5rem var(--gutter); color: var(--muted-foreground); font-size: 0.875rem;
 }
@@ -238,7 +243,7 @@ h1, h2, h3, h4 {
 [data-filters] {
   display: flex; flex-wrap: wrap; gap: 0.625rem; align-items: flex-end;
   padding: 0.875rem; margin-bottom: 1.25rem;
-  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
 }
 [data-filter] { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; max-width: 100%; }
 [data-filter-label] {
@@ -370,7 +375,7 @@ h1, h2, h3, h4 {
   gap: 1rem; padding: 0.5rem 1.125rem;
   font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
   color: var(--muted-foreground); font-weight: 600;
-  border-bottom: 1px solid var(--border); background: var(--surface);
+  border-bottom: 1px solid var(--border); background: var(--muted);
 }
 [data-row-head] span:nth-child(n+3) { text-align: right; }
 
