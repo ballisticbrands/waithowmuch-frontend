@@ -6,18 +6,19 @@
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <!-- Fallback title/description for anything rendering before the SPA
-         mounts. postbuild-spa-routes.mjs overwrites these per route. -->
+    <meta name="theme-color" content="#5b3df5" />
+    <!-- Preload the self-hosted face. Fonts referenced only from CSS are not
+         discovered until the stylesheet has parsed; since the stylesheet is
+         inlined at build time this is early, and `crossorigin` is REQUIRED
+         even same-origin — a font preload without it is fetched twice. -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="description" content="Revenue and profit for businesses you have never heard of. Researched from public data." />
     <meta property="og:site_name" content="WaitHowMuch" />
     <meta property="og:image" content="https://waithowmuch.com/logo-512.png" />
     <meta property="og:image:width" content="512" />
     <meta property="og:image:height" content="512" />
     <title>WaitHowMuch</title>
-    <!-- NO WEB FONT, deliberately. Words are system-ui and figures are the
-         platform's monospace, so there is nothing to fetch and nothing to
-         reflow after paint.
-         GA4 and Clarity are injected at runtime from src/main.tsx. -->
+    <!-- GA4 and Clarity are injected at runtime from src/main.tsx. -->
   </head>
   <body>
     <div id="root"></div>

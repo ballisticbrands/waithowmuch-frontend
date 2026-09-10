@@ -53,10 +53,11 @@ export default function Login() {
   }
 
   return (
+    <main data-main>
     <div style={{ maxWidth: "22rem", margin: "2rem auto" }}>
       <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Sign in</h1>
       <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
-        Everything on WaitHowMuch is free to read — an account just remembers you.
+        Everything here is free to read — an account just remembers you.
       </p>
 
       {sent ? (
@@ -91,5 +92,6 @@ export default function Login() {
         <GoogleSignIn onCredential={onGoogle} />
       </div>
     </div>
+    </main>
   );
 }

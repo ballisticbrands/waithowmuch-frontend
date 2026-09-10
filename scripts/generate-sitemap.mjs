@@ -2,6 +2,7 @@ import { writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, businessPath } from '../src/data/site.mjs';
+import { COLLECTIONS, MORE, collectionPath } from '../src/data/collections.mjs';
 
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
 
@@ -14,6 +15,9 @@ try {
 
 const urls = [
   { loc: `${SITE}/`, priority: '1.0' },
+  ...COLLECTIONS.map((c) => ({ loc: `${SITE}${collectionPath(c.slug)}`, priority: '0.9' })),
+  { loc: `${SITE}${collectionPath(MORE.slug)}`, priority: '0.6' },
+  { loc: `${SITE}/how-we-research/`, priority: '0.6' },
   { loc: `${SITE}/about/`, priority: '0.5' },
   { loc: `${SITE}/privacy/`, priority: '0.2' },
   { loc: `${SITE}/terms/`, priority: '0.2' },

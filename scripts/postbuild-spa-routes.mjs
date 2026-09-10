@@ -1,49 +1,41 @@
 /**
- * Writes a real static HTML file per route, so GitHub Pages returns 200 with
- * SUBSTANTIVE content instead of a soft-404 or an empty shell.
+ * Writes a real static HTML file per route, so the server returns 200 with
+ * SUBSTANTIVE content instead of an empty shell.
  *
- * 🚨 This is not optional and it is not just about status codes. A client-
- * rendered SPA that ships an identical contentless shell on every URL gets
- * every page indexed as a duplicate, and (on a sibling product) held Google
- * Ads Quality Score at 1-3/10 for four days of paid traffic because the
- * "landing page experience" was correctly judged as an empty page. Speed tests
- * do NOT catch it — Lighthouse runs JavaScript and sees a fine page. The only
- * way to see it is to look at what the server actually returns.
+ * 🚨 Not optional. A client-rendered SPA that ships an identical contentless
+ * shell on every URL gets every page indexed as a duplicate, and on a sibling
+ * product held Google Ads Quality Score at 1-3/10 through four days of paid
+ * traffic. Speed tests do NOT catch it — Lighthouse runs JavaScript and sees a
+ * fine page. The only way to see it is to look at what the server returns.
  *
- * Business pages are built from the live API, so the copy a crawler sees is
- * the copy the React app renders from. That is prerendering, not cloaking —
- * never inject text the page does not actually show.
+ * This is prerendering, not cloaking: every word emitted here comes from the
+ * same modules the React app renders from — src/data/collections.mjs and
+ * src/businesses/index.mjs — which is precisely why those are plain .mjs.
+ * Copy that lives only inside JSX is invisible to this script.
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
+import { COLLECTIONS, MORE, collectionPath } from '../src/data/collections.mjs';
+import { profileFor } from '../src/businesses/index.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
 let shell = readFileSync(join(dist, 'index.html'), 'utf8');
 
 // ── Inline the stylesheet ────────────────────────────────────────────
-//
 // Vite emits <link rel="stylesheet">, which is RENDER-BLOCKING: on throttled
-// mobile the browser parses the HTML, discovers the link, and spends another
+// mobile the browser parses the HTML, discovers the link, then spends another
 // round trip before it can paint anything. That measured FCP 2.9s -> LCP 5.0s
-// (PSI mobile 75) while desktop sat at 0.3s.
+// (PSI mobile 75) while desktop sat at 0.3s. Inlining took mobile to 100.
 //
-// The whole stylesheet is ~8.6KB raw / ~2.5KB gzipped, which is smaller than
-// the request that fetches it. Inlining trades cross-page CSS caching for one
-// fewer blocking round trip on the first view — the right trade for a content
-// site whose visitors arrive cold from a link and often read one page.
-//
-// 🚨 If the stylesheet ever grows past ~15KB, reverse this and inline only
-// critical CSS instead: past that point the per-page duplication costs more
-// than the round trip saves.
+// 🚨 Past ~15KB reverse this and inline only critical CSS: the per-page
+// duplication starts costing more than the round trip saves.
 const cssHref = shell.match(/<link rel="stylesheet"[^>]*href="([^"]+)"[^>]*>/);
 if (cssHref) {
   const css = readFileSync(join(dist, cssHref[1].replace(/^\//, '')), 'utf8');
-  if (css.length > 15_000) {
-    console.warn(`postbuild: stylesheet is ${css.length}B — past the point where inlining pays. See the note here.`);
-  }
+  if (css.length > 15_000) console.warn(`postbuild: stylesheet is ${css.length}B — past the point where inlining pays.`);
   shell = shell.replace(cssHref[0], `<style>${css}</style>`);
   console.log(`postbuild: inlined ${css.length}B of CSS`);
 }
@@ -53,12 +45,10 @@ const esc = (s) =>
 
 const money = (v, c = 'USD') => {
   if (v === null || v === undefined || v === '') return null;
-  const n = Number(v);
   const sym = c === 'USD' ? '$' : c === 'EUR' ? '€' : c === 'GBP' ? '£' : '';
-  return `${sym}${Math.round(n).toLocaleString('en-US')}`;
+  return `${sym}${Math.round(Number(v)).toLocaleString('en-US')}`;
 };
 
-/** Replace the head tags and inject a real content block inside #root. */
 function render({ path, title, description, body, bootstrap }) {
   let html = shell
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
@@ -75,25 +65,17 @@ function render({ path, title, description, body, bootstrap }) {
   ].join('\n    ');
   html = html.replace('</head>', `  ${head}\n  </head>`);
 
-  // 🚨 Inline the data the first render needs.
+  // Inline the data the first render needs. Without it React mounts, clears
+  // the prerendered markup, and shows a spinner until the API answers — so LCP
+  // waits on a round trip that has not started until the bundle has parsed.
   //
-  // Without this, React mounts, clears the prerendered markup, and then shows
-  // a spinner until api.waithowmuch.com answers — so LCP is gated on a network
-  // round trip that has not even started until the bundle has parsed. That
-  // measured LCP 4.7s on throttled mobile (PSI performance 77) against 0.3s on
-  // desktop. Serving the payload inline removes the round trip from first
-  // paint entirely.
-  //
-  // JSON.stringify output is escaped for `</script>` — a business name or
-  // source note containing that sequence would otherwise close the tag early
-  // and inject the rest of the payload as markup.
+  // `<` is escaped: a business name or source note containing "</script>"
+  // would otherwise close the tag early and inject the rest as markup.
   if (bootstrap) {
     const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
     html = html.replace('</head>', `  <script>window.__WHM_BOOTSTRAP__=${json}</script>\n  </head>`);
   }
 
-  // `data-prerender` marks the block for main.tsx. See the note there about
-  // why this is replaced rather than hydrated.
   return html.replace('<div id="root"></div>', `<div id="root" data-prerender>${body}</div>`);
 }
 
@@ -104,10 +86,13 @@ function write(path, html) {
 }
 
 const MIN_WORDS = 120;
-/** Fail the build on a thin SEO destination. Raise this threshold, never
- *  lower it to make a build pass — the whole point is that a thin page looks
- *  completely fine in every tool that executes JavaScript. Support/legal/auth
- *  routes are exempt: nobody lands on /terms from a search. */
+const words = (html) =>
+  html.replace(/<(script|style)[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+
+/** Fail the build on a thin SEO destination. Raise this threshold, never lower
+ *  it to make a build pass — a thin page looks completely fine in every tool
+ *  that executes JavaScript. Home, auth and legal routes are exempt: nobody
+ *  lands on /terms from a search, and / is a deliberate placeholder for now. */
 function guard(path, html) {
   const n = words(html.slice(html.indexOf('<div id="root"')));
   if (n < MIN_WORDS) {
@@ -116,145 +101,159 @@ function guard(path, html) {
   }
 }
 
-const words = (html) =>
-  html.replace(/<(script|style)[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
-
-let businesses = [];
-try {
-  const res = await fetch(`${API_BASE}/v1/businesses?limit=100`);
-  businesses = (await res.json()).businesses ?? [];
-  console.log(`postbuild: ${businesses.length} businesses from the API`);
-} catch (err) {
-  // Warn, never fail: a transient API blip should cost the business pages
-  // their static copy, not the whole deploy.
-  console.warn(`postbuild: could not reach ${API_BASE} — business routes get the shell only (${err.message})`);
-}
-
-// ── Home ──────────────────────────────────────────────────────────────
-const list = businesses.slice(0, 24).map((b) => {
-  const rev = money(b.latestMonthlyRevenue, b.currency);
-  const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
-  return `<li><a href="${businessPath(b.slug)}">${esc(b.name)}</a>${
-    b.tagline ? ` — ${esc(b.tagline)}` : ''
-  }${rev ? ` · ${rev}/mo` : ''}${margin ? ` · ${margin}` : ''}</li>`;
-}).join('\n      ');
-
-const homeBody = `
-    <h1>Wait, how much?</h1>
-    <p>${BRAND_NAME} publishes what businesses actually make — revenue, profit and margin for
-       companies most people have never heard of. A card game. A supplement brand. A one-person
-       shop doing numbers that would embarrass a funded startup.</p>
-    <p>Most figures here are estimates, modelled from public information: marketplace data,
-       advertising libraries, social footprints, pricing and public filings. They are not the
-       company's books, and we do not pretend otherwise. Every profile states plainly how its
-       numbers were arrived at and links to the sources behind them, so you can judge them
-       yourself rather than taking our word for it.</p>
-    <p>Where an owner has confirmed a figure, or it was read from a connected account, the
-       profile says that too. That distinction is the entire point of the site: an estimate
-       presented as a fact is worse than no number at all.</p>
-    <ul>
-      ${list}
-    </ul>
-    <p><a href="/about">How these figures are researched</a></p>`.trim();
+const get = async (path) => {
+  const res = await fetch(`${API_BASE}${path}`);
+  if (!res.ok) throw new Error(`${res.status} ${path}`);
+  return res.json();
+};
 
 let categories = [];
 try {
-  categories = (await (await fetch(`${API_BASE}/v1/categories`)).json()).categories ?? [];
-} catch { /* filters degrade to "All categories"; not worth failing a deploy */ }
+  categories = (await get('/v1/categories')).categories ?? [];
+} catch { /* filters degrade to empty; not worth failing a deploy */ }
 
-const homeHtml = render({
-  path: '/',
-  title: `${BRAND_NAME} — what businesses actually make`,
-  description: 'Revenue, profit and margin for businesses you have never heard of. Researched from public data, with sources on every profile.',
-  body: homeBody,
-  // Only the DEFAULT view (sort=revenue, no category filter) is inlined —
-  // that is what this URL renders, and anything else would be a payload the
-  // page does not use.
-  bootstrap: { route: 'home', businesses, categories },
-});
-guard('/', homeHtml);
-write('', homeHtml);
+// ── Collection pages ──────────────────────────────────────────────────
+for (const c of [...COLLECTIONS]) {
+  let businesses = [];
+  let total = 0;
+  try {
+    const data = await get(`/v1/businesses?limit=100${c.query ? `&${c.query}` : ''}`);
+    businesses = data.businesses ?? [];
+    total = data.total ?? businesses.length;
+  } catch (err) {
+    console.warn(`postbuild: ${c.slug} — API unreachable (${err.message})`);
+  }
 
-// ── Static routes ─────────────────────────────────────────────────────
-const STATIC = [
-  { path: '/about/', title: `About ${BRAND_NAME}`,
-    description: `How ${BRAND_NAME} researches the figures it publishes, and what the labels on each profile mean.`,
-    body: `<h1>About ${BRAND_NAME}</h1>
-    <p>${BRAND_NAME} publishes what businesses actually make. Revenue, profit, margin — for
-       companies most people have never heard of.</p>
-    <p>Most of these figures are estimates. They are modelled from public information:
-       marketplace data, ad libraries, social footprints, pricing and public filings. They are
-       not the company's books, and we do not pretend otherwise. Every profile carries a label
-       saying how its numbers were arrived at, and links to the sources behind them.</p>
-    <p>Where a figure is confirmed by an owner, or read from a connected account, the profile
-       says that too. The distinction is the point: an estimate that is presented as a fact is
-       worse than no number at all, and a research site that blurs the two has nothing left to
-       offer.</p>` },
-  { path: '/privacy/', title: `Privacy — ${BRAND_NAME}`,
-    description: `What ${BRAND_NAME} stores about you, and how to have it deleted.`,
-    body: `<h1>Privacy</h1>
-    <p>If you create an account we store your email address, and — if you arrived from a link
-       carrying campaign parameters — where you came from. That is it. We do not ask for a
-       password, a name, or a payment method.</p>
-    <p>We use Google Analytics and Microsoft Clarity to understand how the site is used.
-       Neither is given your email address.</p>
-    <p>To have your account and its data deleted, email hello@waithowmuch.com and we will
-       remove it.</p>` },
-  { path: '/terms/', title: `Terms — ${BRAND_NAME}`,
-    description: `Terms of use for ${BRAND_NAME}. Figures are estimates unless stated otherwise.`,
-    body: `<h1>Terms</h1>
-    <p>${BRAND_NAME} is provided as-is, for information only.</p>
-    <p>Figures on this site are estimates unless a profile explicitly states otherwise. They
-       are not audited, they are not endorsed by the businesses described, and they must not
-       be relied on for any investment, acquisition or lending decision. Treat them as a
-       well-sourced guess, because that is what they are.</p>
-    <p>If you are an owner and believe a profile is wrong, email hello@waithowmuch.com and we
-       will correct or remove it.</p>` },
-  { path: '/login/', title: `Sign in — ${BRAND_NAME}`,
-    description: `Sign in to ${BRAND_NAME} with a one-time email link or with Google.`,
-    body: `<h1>Sign in</h1>
-    <p>Everything on ${BRAND_NAME} is free to read — an account just remembers you. There is
-       no password: enter your email address and we send a one-time link that expires in
-       twenty minutes and works once. You can also continue with Google.</p>
-    <p><a href="/">Browse businesses</a> · <a href="/about">How the research works</a></p>` },
-];
+  const list = businesses.slice(0, 40).map((b) => {
+    const rev = money(b.latestMonthlyRevenue, b.currency);
+    const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
+    const cost = money(b.startingCost, b.currency);
+    return `<li><a href="${businessPath(b.slug)}">${esc(b.name)}</a>${b.tagline ? ` — ${esc(b.tagline)}` : ''}${
+      rev ? ` · ${rev}/mo` : ''}${margin ? ` · ${margin}` : ''}${cost ? ` · ${cost} to start` : ''}</li>`;
+  }).join('\n      ');
 
-for (const r of STATIC) {
-  const html = render(r);
-  if (r.path === '/about/') guard(r.path, html);
-  write(r.path, html);
+  const body = `
+    <h1>${esc(c.title)}</h1>
+    <p>${esc(c.blurb)}</p>
+    <p>Every idea below shows what the business turns over each month, how much of that it
+       keeps, and what it cost to get started. You can narrow the list by revenue, by starting
+       cost, by the channel that actually drove the growth, by niche, and by who the business
+       sells to.</p>
+    <p>Most of these figures are estimates rather than audited accounts. They are built from
+       what is publicly visible — marketplace listings and pricing, review velocity, public
+       advertising libraries, social footprints and company filings where they exist — and then
+       worked through to a revenue and margin figure. Each profile states plainly how its
+       numbers were reached and links to the sources behind them, so you can judge them rather
+       than taking our word for it.</p>
+    <p>Where an owner has confirmed a figure, or it was read from a connected account, the
+       profile says so. That distinction matters more than any single number here: an estimate
+       presented as a fact is worse than no figure at all.</p>
+    <ul>
+      ${list || '<li>No ideas published yet.</li>'}
+    </ul>
+    <p><a href="/how-we-research/">How we research these figures</a></p>`.trim();
+
+  const html = render({
+    path: collectionPath(c.slug),
+    title: `${c.title} — ${BRAND_NAME}`,
+    description: c.blurb,
+    body,
+    bootstrap: { route: 'ideas', collection: c.slug, businesses, total, categories },
+  });
+  guard(collectionPath(c.slug), html);
+  write(collectionPath(c.slug), html);
 }
 
+// ── More ideas ────────────────────────────────────────────────────────
+const facetList = categories.map((f) => `<li>${esc(f.name)} (${f.businessCount})</li>`).join('\n      ');
+const moreHtml = render({
+  path: collectionPath(MORE.slug),
+  title: `${MORE.title} — ${BRAND_NAME}`,
+  description: MORE.blurb,
+  body: `
+    <h1>${esc(MORE.title)}</h1>
+    <p>${esc(MORE.blurb)}</p>
+    <p>Browse by collection, or narrow by any of the tags below. Each tag is a different way
+       of asking the same question, so it helps to know what they mean.</p>
+    <p><strong>Niche</strong> describes what a business actually sells — supplements, card
+       games, pet supplies. <strong>Model</strong> describes how it is built: private label,
+       dropshipping, print on demand, agency. <strong>Platform</strong> and
+       <strong>channel</strong> describe where the selling happens, which is often more than
+       one place at once. <strong>Growth channel</strong> is usually the most interesting of
+       the four, because it describes how a business actually found its customers rather than
+       what it sells them — short-form video, search, paid social, wholesale, community.
+       <strong>Who it sells to</strong> narrows by customer rather than by product.</p>
+    <p>Every slice shows the same three figures: monthly revenue, margin, and what it cost to
+       get started. Most are estimates built from public information rather than the company's
+       accounts, and each profile says how its numbers were reached.</p>
+    <ul>
+      ${COLLECTIONS.map((c) => `<li><a href="${collectionPath(c.slug)}">${esc(c.title)}</a></li>`).join('\n      ')}
+      ${facetList}
+    </ul>`.trim(),
+});
+guard(collectionPath(MORE.slug), moreHtml);
+write(collectionPath(MORE.slug), moreHtml);
+
 // ── Business pages ────────────────────────────────────────────────────
-for (const b of businesses) {
+let all = [];
+try {
+  all = (await get('/v1/businesses?limit=100')).businesses ?? [];
+} catch { /* handled below */ }
+
+const METHOD_PHRASE = {
+  RESEARCHED: 'modelled by us from public information',
+  SELF_REPORTED: 'reported by the owner and not independently checked',
+  INTERVIEW: 'given by the owner on the record',
+  VERIFIED: 'read from a connected account rather than estimated',
+};
+
+for (const b of all) {
+  let detail = null;
+  let metrics = null;
+  try {
+    detail = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}`)).business;
+    metrics = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}/metrics?granularity=month`)).metrics;
+  } catch { /* the page still works, it just fetches on mount */ }
+
   const rev = money(b.latestMonthlyRevenue, b.currency);
   const profit = money(b.latestMonthlyProfit, b.currency);
   const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}%` : null;
+  const cost = money(b.startingCost, b.currency);
   const cats = (b.categories ?? []).map((c) => c.name).join(', ');
-  const method = { RESEARCHED: 'modelled from public data', SELF_REPORTED: 'self-reported by the owner',
-                   INTERVIEW: 'given by the owner on the record', VERIFIED: 'read from a connected account' }[b.researchMethod]
-                 ?? 'modelled from public data';
+  const method = METHOD_PHRASE[b.researchMethod] ?? METHOD_PHRASE.RESEARCHED;
+
+  // The authored profile, flattened to text. This is the reason
+  // src/businesses/*.mjs is JSX-free: prose that lives only in a component is
+  // invisible here, and the page would ship thin while looking perfect.
+  const profile = profileFor(b.slug);
+  const authored = profile
+    ? [profile.intro ? `<p>${esc(profile.intro)}</p>` : '']
+        .concat(profile.blocks.map((blk) => {
+          switch (blk.type) {
+            case 'heading': return `<h2>${esc(blk.text)}</h2>`;
+            case 'prose': return `<p>${esc(blk.text)}</p>`;
+            case 'callout': return `<p>${esc(blk.text)}</p>`;
+            case 'quote': return `<blockquote>${esc(blk.text)}</blockquote>`;
+            case 'list': return `<ul>${blk.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
+            case 'timeline': return `<ul>${blk.items.map((i) => `<li>${esc(i.when)}: ${esc(i.what)}</li>`).join('')}</ul>`;
+            default: return ''; // stat/chart are figures, emitted below
+          }
+        }))
+        .filter(Boolean).join('\n    ')
+    : '';
 
   const body = `
     <h1>${esc(b.name)}</h1>
     ${b.tagline ? `<p>${esc(b.tagline)}</p>` : ''}
+    <p><strong>Researched profile.</strong> Nobody from this business wrote this page —
+       the figures are ${method}, published with the sources they were drawn from.
+       <a href="/how-we-research/">How we research</a>.</p>
     <p>${esc(b.name)} is estimated to make ${rev ?? 'an undisclosed amount'} per month in
-       revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.
-       ${cats ? `It operates in ${esc(cats)}. ` : ''}These figures are ${method}, and are published
-       alongside the sources they were drawn from.</p>
-    <p>${BRAND_NAME} publishes revenue and profit for businesses most people have never heard of.
-       Unless a profile states otherwise, the figures are estimates rather than audited accounts —
-       modelled from marketplace data, advertising libraries, social footprints and public pricing.
-       They are good enough to understand the shape of a business and wrong enough that you should
-       not make a purchase decision on them.</p>
-    <p><a href="/">All businesses</a> · <a href="/about">How these figures are researched</a></p>`.trim();
-
-  let detail = null;
-  let metrics = null;
-  try {
-    detail = (await (await fetch(`${API_BASE}/v1/businesses/${encodeURIComponent(b.slug)}`)).json()).business;
-    metrics = (await (await fetch(`${API_BASE}/v1/businesses/${encodeURIComponent(b.slug)}/metrics?granularity=month`)).json()).metrics;
-  } catch { /* the page still works, it just fetches on mount like before */ }
+       revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.${
+       cost ? ` It is estimated to have cost around ${cost} to start.` : ''}
+       ${cats ? `It operates in ${esc(cats)}.` : ''}</p>
+    ${authored}
+    <p><a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
 
   const html = render({
     path: businessPath(b.slug),
@@ -263,17 +262,92 @@ for (const b of businesses) {
     body,
     bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
   });
-
   guard(businessPath(b.slug), html);
   write(businessPath(b.slug), html);
 }
 
-// SPA fallback for anything not prerendered.
-writeFileSync(join(dist, '404.html'), render({
+// ── Static routes ─────────────────────────────────────────────────────
+const STATIC = [
+  { path: '/how-we-research/', guard: true, title: `How we research — ${BRAND_NAME}`,
+    description: `How ${BRAND_NAME} builds its figures, what each profile label means, and where the estimates are most likely to be wrong.`,
+    body: `<h1>How we research</h1>
+    <p>Almost every profile here is a researched profile. Nobody from the business wrote it.
+       We gather what is publicly visible, work the economics out ourselves, and publish the
+       result with the sources attached.</p>
+    <h2>Where the numbers come from</h2>
+    <ul><li>Marketplace listings, pricing, review velocity and catalogue size</li>
+        <li>Public advertising libraries</li>
+        <li>Social footprints — follower counts, posting history, engagement</li>
+        <li>Company filings and registrations where they exist</li></ul>
+    <h2>What the labels mean</h2>
+    <ul><li>Researched — modelled by us from public information. Treat as an estimate.</li>
+        <li>Owner-reported — the owner gave us the figures. We have not checked them.</li>
+        <li>Interview — the owner gave the figures on the record.</li>
+        <li>Verified — read from a connected account rather than estimated.</li></ul>
+    <h2>Where we are likely to be wrong</h2>
+    <p>Estimates go wrong in predictable ways: a business selling through channels we cannot
+       see looks smaller than it is, and one running heavy discounts looks more profitable.
+       Margins are the softest figure on any page, because costs are the hardest thing to
+       observe from outside.</p>` },
+  { path: '/about/', title: `About ${BRAND_NAME}`, guard: true,
+    description: `What ${BRAND_NAME} is and how seriously to take its figures.`,
+    body: `<h1>About ${BRAND_NAME}</h1>
+    <p>${BRAND_NAME} publishes what businesses actually make — revenue, profit and margin for
+       companies most people have never heard of.</p>
+    <p>Most of these figures are estimates, built from public information rather than the
+       company's accounts, and we do not pretend otherwise. Every profile says how its numbers
+       were reached and links to the sources behind them, so you can judge them rather than
+       taking our word for it.</p>
+    <p>Where an owner has confirmed a figure, or it was read from a connected account, the
+       profile says that too. The distinction is the point: an estimate presented as a fact is
+       worse than no number at all.</p>
+    <p>The reason to publish estimates at all is that the alternative is silence. Almost no
+       small business discloses what it makes, so the only numbers most people ever see come
+       from the handful of founders willing to talk publicly — which is a badly skewed sample,
+       weighted towards the ones with something to sell you. A careful estimate with its
+       working shown is more useful than that, provided it is labelled honestly.</p>
+    <p>So every figure here carries its method, its date and its sources. If a profile is
+       wrong and it is yours, email hello@waithowmuch.com and we will correct or remove it.</p>` },
+  { path: '/privacy/', title: `Privacy — ${BRAND_NAME}`,
+    description: `What ${BRAND_NAME} stores about you, and how to have it deleted.`,
+    body: `<h1>Privacy</h1>
+    <p>If you create an account we store your email address, and where you came from. That is
+       it. No password, no name, no payment method.</p>
+    <p>To have your account and its data deleted, email hello@waithowmuch.com.</p>` },
+  { path: '/terms/', title: `Terms — ${BRAND_NAME}`,
+    description: `Terms of use. Figures are estimates unless a profile states otherwise.`,
+    body: `<h1>Terms</h1>
+    <p>${BRAND_NAME} is provided as-is, for information only. Figures are estimates unless a
+       profile explicitly states otherwise, and must not be relied on for any investment,
+       acquisition or lending decision.</p>` },
+  { path: '/login/', title: `Sign in — ${BRAND_NAME}`,
+    description: `Sign in to ${BRAND_NAME} with a one-time email link or with Google.`,
+    body: `<h1>Sign in</h1>
+    <p>Everything here is free to read — an account just remembers you. No password: enter your
+       email and we send a one-time link.</p>` },
+];
+
+for (const r of STATIC) {
+  const html = render(r);
+  if (r.guard) guard(r.path, html);
+  write(r.path, html);
+}
+
+// ── Home (deliberately a placeholder) ─────────────────────────────────
+write('', render({
   path: '/',
-  title: BRAND_NAME,
-  description: 'Revenue and profit for businesses you have never heard of.',
-  body: `<h1>${BRAND_NAME}</h1><p><a href="/">Browse businesses</a></p>`,
+  title: `${BRAND_NAME} — what businesses actually make`,
+  description: 'Revenue, profit and margin for businesses you have never heard of. Researched from public data, with sources on every profile.',
+  body: `<h1>${BRAND_NAME}</h1>
+    <p>Revenue, profit and margin for businesses most people have never heard of.</p>
+    <p><a href="${collectionPath('all-ideas')}">Browse all ideas</a> · <a href="/how-we-research/">How we research</a></p>`,
 }));
 
-console.log(`postbuild: wrote ${STATIC.length + businesses.length + 1} static routes`);
+// SPA fallback.
+writeFileSync(join(dist, '404.html'), render({
+  path: '/', title: BRAND_NAME,
+  description: 'Revenue and profit for businesses you have never heard of.',
+  body: `<h1>${BRAND_NAME}</h1><p><a href="${collectionPath('all-ideas')}">Browse all ideas</a></p>`,
+}));
+
+console.log(`postbuild: ${COLLECTIONS.length} collections, ${all.length} businesses, ${STATIC.length} static routes`);

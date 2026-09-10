@@ -1,15 +1,14 @@
-import type { BusinessCard, BusinessDetail, CategoryRef, MetricPoint } from "./api.js";
+import type { BusinessCard, BusinessDetail, FacetCategory, MetricPoint } from "./api.js";
 
 /**
- * Data the prerender inlined into the page, so the first render does not have
- * to wait for a network round trip. See the note in postbuild-spa-routes.mjs.
+ * Data the prerender inlined into the page, so the first render does not wait
+ * for a network round trip. See the note in postbuild-spa-routes.mjs.
  *
- * Read ONCE and then discarded: a client-side navigation to a different
- * business must not be served the payload baked in for the page the visitor
- * originally landed on.
+ * Read ONCE and discarded: a client-side navigation to another collection or
+ * business must not be served the payload baked in for the landed-on page.
  */
 type Bootstrap =
-  | { route: "home"; businesses: BusinessCard[]; categories: Array<CategoryRef & { businessCount: number }> }
+  | { route: "ideas"; collection: string; businesses: BusinessCard[]; total: number; categories: FacetCategory[] }
   | { route: "business"; slug: string; business: BusinessDetail; metrics: MetricPoint[] };
 
 declare global {
@@ -30,7 +29,8 @@ function take(): Bootstrap | undefined {
 // would hand the second pass `undefined` and flash a spinner.
 const initial = take();
 
-export const homeBootstrap = initial?.route === "home" ? initial : undefined;
+export const ideasBootstrap = (collection: string) =>
+  initial?.route === "ideas" && initial.collection === collection ? initial : undefined;
 
 export const businessBootstrap = (slug: string) =>
   initial?.route === "business" && initial.slug === slug ? initial : undefined;

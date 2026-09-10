@@ -44,11 +44,11 @@ export function Chart({ points, currency }: { points: MetricPoint[]; currency: s
           return (
             <g key={p.date}>
               <rect x={x} y={PAD.top + innerH - h} width={barW} height={h}
-                    fill="var(--muted)" rx="2" />
+                    fill="var(--muted)" rx="3" />
               {/* Profit drawn inside revenue, not beside it — the visual
                   question is "how much of the top line survives". */}
               <rect x={x} y={PAD.top + innerH - ph} width={barW} height={ph}
-                    fill="var(--success)" rx="2" />
+                    fill="var(--accent)" rx="3" />
               <title>{`${monthLabel(p.date)} — revenue ${money(rev, currency)}, profit ${money(profit, currency)}`}</title>
               {i % step === 0 && (
                 <text x={x + barW / 2} y={H - 8} textAnchor="middle"
@@ -61,7 +61,7 @@ export function Chart({ points, currency }: { points: MetricPoint[]; currency: s
         })}
       </svg>
       <figcaption className="text-sm" style={{ color: "var(--muted-foreground)", marginTop: "0.5rem" }}>
-        <span style={{ color: "var(--success)" }}>■</span> profit inside{" "}
+        <span style={{ color: "var(--accent)" }}>■</span> profit inside{" "}
         <span>■</span> revenue · peak {money(max, currency)}/mo
       </figcaption>
     </figure>

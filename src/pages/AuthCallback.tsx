@@ -30,11 +30,11 @@ export default function AuthCallback() {
   }, [params, navigate]);
 
   return failed ? (
-    <div data-empty>
+    <main data-main><div data-empty>
       <p>That sign-in link is expired or already used.</p>
       <p style={{ marginTop: "1rem" }}><Link data-btn to="/login">Get a new one</Link></p>
-    </div>
+    </div></main>
   ) : (
-    <div data-empty>Signing you in…</div>
+    <main data-main><div data-empty>Signing you in…</div></main>
   );
 }

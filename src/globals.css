@@ -4,390 +4,295 @@
 
 /* ─── Design tokens ───────────────────────────────────────────────────
  *
- * The palette from BRANDING.md. Four colours — green, black, white, light
- * grey — and the green is the only chroma in the system, which is what lets
- * it carry meaning.
+ * A violet accent on near-white, in the register of the data-directory sites
+ * this is modelled on. The accent is the only chroma in the system, which is
+ * what lets it mean something: it marks the brand mark, the primary action and
+ * an active filter, and nothing else.
  *
- * 🚨 GREEN MEANS VERIFIED. It is not "the brand colour" and it is not the
- * primary-button colour: primary actions are --accent (near-black). If the
- * Publish button, the nav and the headings are also green, a reader scanning
- * the page sees green everywhere and the verified badge stops being a signal.
- * Scarcity is the whole mechanism. See BRANDING.md §3.1 before spending it.
- *
- * 🚨 THESE ARE REQUIRED, NOT DECORATION. Every component in
- * @ballisticbrands/frontend-shared is built against these custom properties —
- * <Button> is `bg-[var(--accent)]`, <Input> is `border-[var(--border)]`, and
- * so on. With one undefined the classes still apply but resolve to nothing,
- * so buttons render as bare text with no background. Nothing errors. Grep the
- * shared package before dropping any:
- *   grep -rhoE "var\(--[a-z-]+\)" node_modules/@ballisticbrands/frontend-shared/dist/
+ * 🚨 These are load-bearing, not decoration. Every component below resolves
+ * its colour from them. An undefined custom property does not error — the
+ * class still applies and resolves to nothing, so a button renders as bare
+ * text on no background.
  */
 :root {
-  /* `light`, not `light dark`: this is load-bearing beyond the page
-     background. It also tells the browser how to paint NATIVE controls —
-     <select> menus, date pickers, scrollbars, autofill. Left as
-     `light dark`, a visitor whose OS is in dark mode gets a dark dropdown
-     hanging off a white page, which reads as a rendering bug rather than a
-     choice. */
+  /* `light`, not `light dark`. This also tells the browser how to paint NATIVE
+     controls — <select> menus, range thumbs, scrollbars, autofill. Left as
+     `light dark`, a visitor whose OS is dark gets a dark dropdown hanging off
+     a white page, which reads as a rendering bug rather than a choice. */
   color-scheme: light;
 
   --background: #ffffff;
-  --foreground: #16181d;       /* 17.4:1 on white */
-  --muted: #f2f4f7;            /* section fills, zebra, hover */
-  --muted-foreground: #5c636e; /* help text, metadata, handles — 6.4:1 on white */
-  --border: #d9dde3;           /* hairlines. 1px, everywhere, never a shadow */
+  --surface: #fbfbfd;
+  --foreground: #14141b;       /* 17.9:1 on white */
+  --muted: #f3f3f7;
+  --muted-foreground: #5f6072; /* 6.2:1 on white — passes AA for body text */
+  --border: #e4e4ec;
+  --border-strong: #d2d2de;
   --card: #ffffff;
 
-  --accent: #16181d;           /* PRIMARY ACTIONS. Deliberately not green. */
+  --accent: #5b3df5;
+  --accent-hover: #4a2ee0;
+  --accent-tint: #efecfe;
   --accent-foreground: #ffffff;
 
-  /* Verification. --success is kept as an alias because the shared package
-     and <Logo> reference it; --verified is the name to use in new code. */
-  --verified: #10683f;         /* 6.8:1 on white */
-  --verified-strong: #0d5433;  /* hover / press on green surfaces */
-  --verified-tint: #e8f3ed;    /* badge fill — green on tint = 6.0:1 */
-  --success: var(--verified);
+  --success: #10683f;
+  --warning: #8a5a00;
+  --danger: #b42318;
 
-  /* Revenue checked, margin merely modelled — the middle rung. Amber, and
-     deliberately so: this used to render in --verified, which made the
-     weaker claim indistinguishable from the strongest one this product can
-     make. 6.45:1 on white, a near match for --verified's 6.83 so the two
-     badges carry the same visual weight and neither shouts down the other;
-     5.62:1 on its own tint. See BRANDING.md §5. */
-  --partial: #8f4e00;
-  --partial-tint: #faeed9;     /* 1.15 vs white — matches --verified-tint's 1.14 */
+  --radius: 0.625rem;
+  --radius-lg: 0.875rem;
 
-  /* Nothing checked at all — the bottom rung. Red, because a self-reported
-     figure is a CLAIM, and this product exists to say so plainly.
-     6.57:1 on white, which lands between --verified (6.83) and --partial
-     (6.45): the three rungs carry equal weight and none shouts the others
-     down. See BRANDING.md §5. */
-  --unverified: #b42318;
-  --unverified-tint: #fdecea;  /* 1.14 vs white — exactly --verified-tint's 1.14 */
+  /* One shadow, used sparingly — depth is carried by hairlines, not blur. */
+  --shadow: 0 1px 2px rgb(20 20 27 / 0.04), 0 4px 12px rgb(20 20 27 / 0.05);
 
-  /* 🚨 SAME HEX AS --unverified, DELIBERATELY A DIFFERENT TOKEN. This one is
-     for form errors and failed requests; that one is a verification rung. They
-     are one colour today and may not be tomorrow, and a rule that says "never
-     use red for a bad number" (§11) still needs a red that means "error" to
-     point at. Do not collapse them. */
-  --danger: #b42318;           /* ERRORS ONLY. Never "a bad number". */
-
-  --estimated: #5c636e;        /* retired from the badge; still muted metadata */
-
-  /* Type. TWO roles: words and figures.
-
-     Words are PROPORTIONAL — titles and prose alike. Figures are the
-     platform's own monospace, and they are the only fixed-width thing on
-     the site.
-
-     🚨 THIS REPLACED A THREE-FACE MODEL in which prose was Inconsolata — a
-     MONOSPACED face, despite the variable name. Every sentence on the site
-     was fixed-width, which read as terminal output rather than as a designed
-     page and ran ~30% wider per character than it needed to. The mono is now
-     spent only where it earns its keep: on quantities. See BRANDING.md §4.
-
-     🚨 Figures keep their OWN stack rather than inheriting --font-sans.
-     tabular-nums on a proportional face aligns digits but gives nothing else
-     a fixed advance, and this product's entire surface is columns of
-     numbers. A figure should read as a quantity lifted out of the prose
-     around it, not as more prose. See BRANDING.md §4.3.
-
-     --font-display and --font-sans are the same stack today. They stay two
-     variables because the heading rule at the foot of this file is where a
-     real display face would land if one is ever commissioned; collapsing
-     them now would mean hunting down every heading later. */
-  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
-
-  --radius: 6px;               /* controls + cards */
-  --radius-lg: 10px;           /* modals */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 }
 
-/* ─── No web font ────────────────────────────────────────────────────
+/* ─── Self-hosted Inter ───────────────────────────────────────────────
  *
- * Both faces are the platform's own now — system-ui for words, the system
- * monospace for figures — so the site makes NO font request at all. That
- * takes a blocking round trip to fonts.googleapis.com + fonts.gstatic.com
- * off the critical path of a page people open from a DM.
+ * Self-hosted, not fetched from fonts.googleapis.com. A Google Fonts <link> is
+ * a render-blocking stylesheet on a THIRD origin — a DNS lookup, a TLS
+ * handshake and a round trip before the browser even learns which font file to
+ * ask for. That is the same class of defect that pinned this site's mobile
+ * score at 75 before the stylesheet was inlined.
  *
- * An `@font-face` for "Inconsolata Fallback" used to sit here, re-cutting
- * local Arial to Inconsolata's exact metrics so that not one line reflowed
- * when the real face swapped in. With no web font there is nothing to swap
- * and nothing to reflow, so it went with it.
- *
- * 🚨 Restoring Inconsolata means restoring BOTH halves — the <link> in
- * index.html AND that metric override — or every profile visibly jumps a
- * beat after paint, on the page a stranger judges us by.
+ * `swap` so text paints immediately in the fallback and reflows when Inter
+ * arrives, rather than sitting invisible. The fallback stack is deliberately
+ * metric-similar (system-ui is SF/Segoe/Roboto) so that reflow is small.
  */
+@font-face {
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
+    U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
-/* ─── One scheme, for now ─────────────────────────────────────────────
- *
- * The site ships LIGHT ONLY. There is no `prefers-color-scheme: dark`
- * override here on purpose: a scheme that follows the OS is a scheme nobody
- * chose, and until there is a real toggle, half of visitors were seeing a
- * dark product page while the brand guide, the OG cards and every screenshot
- * showed a light one.
- *
- * The dark palette is NOT lost — it is specified and contrast-measured in
- * BRANDING.md §3 ("Dark"), including the one rule that matters when it comes
- * back: --verified must lift from #10683f to #3fbb7f, because #10683f
- * measures 2.6:1 against #101216 and is unreadable. Restoring dark mode is
- * pasting that table into a media query (or a [data-theme] block, if the
- * toggle is explicit), not re-deriving it.
- */
+html {
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* ─── Prose measure ──────────────────────────────────────────────────
- *
- * The long-form public pages — /about, /privacy, /tos, /support,
- * /how-verification-works — run in the `wide` column (52rem), which is the
- * right width for their tables and card grids and far too wide for their
- * sentences. Unbroken, a paragraph there measures ~119ch, about double a
- * readable line (BRANDING.md §4.1 caps prose at 70ch).
- *
- * 🚨 Scoped to the TEXT elements, not to the container. Capping the wrapper
- * would drag the comparison table and the card grids in with it, and those
- * are data views that want the full column.
- */
-.vm-prose p,
-.vm-prose ul,
-.vm-prose ol {
-  max-width: 70ch;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* ─── Shared <Input> dark-mode fix ────────────────────────────────────
- *
- * 🚨 A REAL BUG, not a preference. The shared <Input> hardcodes `bg-white` and
- * sets no text colour, so the value inherits `--foreground` from <body>. In
- * dark mode that is near-white text on a white field: measured
- * rgb(255,255,255) background against rgb(233,236,241) text — about 1.1:1,
- * i.e. what you type is invisible. Placeholders are fine, which is why it
- * survives a glance at a screenshot.
- *
- * `bg-white` is a literal class in the DOM, and a Tailwind utility outranks an
- * element selector, so the override has to target the class and win on
- * specificity. In light mode --card is #ffffff, so this is a no-op there.
- *
- * This belongs upstream in @ballisticbrands/frontend-shared — every brand app
- * has it. Remove this block once the shared component pairs its background
- * with a foreground.
- */
-input.bg-white,
-textarea.bg-white,
-select.bg-white {
-  background-color: var(--card);
-  color: var(--foreground);
+h1, h2, h3, h4 {
+  letter-spacing: -0.021em;
+  line-height: 1.2;
+  margin: 0;
 }
 
-
-/* ─── WaitHowMuch components ──────────────────────────────────────────
- *
- * Everything below the token block is new. The ~4,000 lines that used to
- * live here styled VerifiedMargins' profile/dashboard/leaderboard surfaces,
- * none of which exist in this app any more.
- *
- * 🚨 The token block above is load-bearing and must not be trimmed: the
- * components below resolve their colours from it. An undefined custom
- * property does not error — the class still applies and resolves to nothing,
- * so a button renders as bare text on no background.
- */
-
-[data-shell] {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-[data-topbar] {
+/* Figures are the entire point of this product, so they get a tabular figure
+   set — a column of revenues has to line up digit for digit, and proportional
+   numerals make a table look broken. */
+[data-figure] {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+}
+
+/* ─── Shell ───────────────────────────────────────────────────────────── */
+
+[data-shell] { min-height: 100vh; display: flex; flex-direction: column; }
+
+[data-header] {
+  position: sticky; top: 0; z-index: 40;
+  background: rgb(255 255 255 / 0.86);
+  backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
-  background: var(--card);
 }
 
-[data-topbar-inner] {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 0.875rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+[data-header-inner] {
+  max-width: 78rem; margin: 0 auto; padding: 0.75rem 1.25rem;
+  display: flex; align-items: center; gap: 1.5rem;
 }
 
-[data-wordmark] {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--foreground);
-}
+[data-brand] { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
 
-[data-main] {
-  flex: 1;
-  width: 100%;
-  max-width: 72rem;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+[data-nav] { display: flex; align-items: center; gap: 0.25rem; }
+
+[data-nav-link] {
+  padding: 0.4rem 0.7rem; border-radius: var(--radius);
+  font-size: 0.9375rem; font-weight: 500; color: var(--muted-foreground);
 }
+[data-nav-link]:hover { background: var(--muted); color: var(--foreground); }
+[data-nav-link][data-active="true"] { color: var(--foreground); background: var(--muted); }
+
+/* ─── Dropdown ─────────────────────────────────────────────────────────
+ * Opens on hover for pointers AND on click/focus for keyboard and touch —
+ * hover alone is unreachable on a phone and invisible to a screen reader. */
+[data-menu] { position: relative; }
+[data-menu-panel] {
+  position: absolute; top: calc(100% + 0.375rem); left: 0; min-width: 13rem;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); box-shadow: var(--shadow);
+  padding: 0.375rem; display: none;
+}
+[data-menu]:hover > [data-menu-panel],
+[data-menu][data-open="true"] > [data-menu-panel],
+[data-menu]:focus-within > [data-menu-panel] { display: block; }
+
+[data-menu-item] {
+  display: block; padding: 0.5rem 0.625rem; border-radius: var(--radius);
+  font-size: 0.9375rem; color: var(--foreground);
+}
+[data-menu-item]:hover { background: var(--muted); }
+[data-menu-item][data-active="true"] { color: var(--accent); background: var(--accent-tint); }
+
+/* ─── Breadcrumbs ─────────────────────────────────────────────────────── */
+
+[data-crumbs] {
+  max-width: 78rem; margin: 0 auto; padding: 0.875rem 1.25rem 0;
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.8125rem; color: var(--muted-foreground);
+}
+[data-crumbs] a:hover { color: var(--foreground); }
+[data-crumb-sep] { opacity: 0.45; }
+[data-crumbs] [aria-current="page"] { color: var(--foreground); font-weight: 500; }
+
+[data-main] { flex: 1; width: 100%; max-width: 78rem; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; }
 
 [data-footer] {
-  border-top: 1px solid var(--border);
-  padding: 2rem 1.25rem;
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
+  border-top: 1px solid var(--border); background: var(--surface);
+  padding: 2.5rem 1.25rem; color: var(--muted-foreground); font-size: 0.875rem;
 }
+[data-footer-inner] { max-width: 78rem; margin: 0 auto; }
 
-/* ─── Business cards ─────────────────────────────────────────────────── */
-
-[data-grid] {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
-}
-
-[data-card] {
-  display: block;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  padding: 1.125rem;
-  background: var(--card);
-  color: inherit;
-  transition: border-color 0.15s ease;
-}
-
-[data-card]:hover {
-  border-color: var(--foreground);
-}
-
-[data-card-name] {
-  font-weight: 650;
-  letter-spacing: -0.01em;
-}
-
-[data-card-tagline] {
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
-}
-
-/* Figures are the point of this product, so they get the mono face and a
-   tabular figure set — a column of revenues has to line up digit for digit. */
-[data-figure] {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-}
-
-[data-stat-row] {
-  display: flex;
-  gap: 1.25rem;
-  margin-top: 0.875rem;
-}
-
-[data-stat] {
-  display: flex;
-  flex-direction: column;
-}
-
-[data-stat] dt {
-  font-size: 0.6875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--muted-foreground);
-}
-
-[data-stat] dd {
-  font-size: 1.125rem;
-  font-weight: 600;
-}
-
-/* ─── Provenance ──────────────────────────────────────────────────────
- * The credibility of a research product rests on saying where a number came
- * from, so this is a first-class element rather than fine print. */
-[data-provenance] {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  font-size: 0.75rem;
-  padding: 0.1875rem 0.5rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-}
-
-[data-provenance][data-method="VERIFIED"] {
-  color: var(--success);
-  border-color: var(--success);
-}
-
-[data-tag] {
-  display: inline-block;
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  border-radius: 999px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  margin-right: 0.375rem;
-}
-
-[data-chart] {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-[data-empty] {
-  border: 1px dashed var(--border);
-  border-radius: 0.75rem;
-  padding: 3rem 1.5rem;
-  text-align: center;
-  color: var(--muted-foreground);
-}
+/* ─── Buttons + controls ──────────────────────────────────────────────── */
 
 [data-btn] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 550;
-  background: var(--accent);
-  color: var(--accent-foreground, #fff);
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.5rem 0.9rem; border-radius: var(--radius);
+  font-size: 0.9375rem; font-weight: 550; cursor: pointer;
+  background: var(--accent); color: var(--accent-foreground);
   border: 1px solid var(--accent);
 }
+[data-btn]:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+[data-btn]:disabled { opacity: 0.5; cursor: not-allowed; }
+[data-btn][data-variant="ghost"] { background: transparent; color: var(--foreground); border-color: var(--border-strong); }
+[data-btn][data-variant="ghost"]:hover { background: var(--muted); }
+[data-btn][data-variant="quiet"] { background: transparent; color: var(--muted-foreground); border-color: transparent; }
+[data-btn][data-variant="quiet"]:hover { background: var(--muted); color: var(--foreground); }
 
-[data-btn]:disabled {
-  opacity: 0.55;
+[data-input], [data-select] {
+  width: 100%; padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-strong); border-radius: var(--radius);
+  background: var(--background); color: var(--foreground);
+  font-family: inherit; font-size: 0.9375rem;
 }
 
-[data-btn][data-variant="ghost"] {
-  background: transparent;
-  color: var(--foreground);
-  border-color: var(--border);
+/* ─── Filter bar ──────────────────────────────────────────────────────── */
+
+[data-filters] {
+  display: flex; flex-wrap: wrap; gap: 0.625rem; align-items: flex-end;
+  padding: 0.875rem; margin-bottom: 1.25rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface);
+}
+[data-filter] { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+[data-filter-label] {
+  font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--muted-foreground);
 }
 
-[data-input] {
-  width: 100%;
-  padding: 0.625rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  background: var(--background);
-  color: var(--foreground);
+[data-range] { display: flex; align-items: center; gap: 0.4rem; }
+[data-range] input[type="number"] {
+  width: 6.5rem; padding: 0.5rem 0.6rem; font-size: 0.875rem;
+  border: 1px solid var(--border-strong); border-radius: var(--radius);
+  background: var(--background); color: var(--foreground); font-variant-numeric: tabular-nums;
+}
+[data-range-sep] { color: var(--muted-foreground); font-size: 0.8125rem; }
+
+[data-chips] { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+[data-chip] {
+  padding: 0.3rem 0.6rem; border-radius: 999px; font-size: 0.8125rem;
+  border: 1px solid var(--border-strong); background: var(--background);
+  color: var(--muted-foreground); cursor: pointer;
+}
+[data-chip]:hover { border-color: var(--foreground); color: var(--foreground); }
+[data-chip][data-on="true"] {
+  background: var(--accent-tint); border-color: var(--accent); color: var(--accent); font-weight: 550;
 }
 
-[data-input]:focus-visible {
-  outline: 2px solid var(--foreground);
-  outline-offset: 1px;
+[data-result-count] { font-size: 0.875rem; color: var(--muted-foreground); margin-bottom: 0.875rem; }
+
+/* ─── Idea cards ──────────────────────────────────────────────────────── */
+
+[data-grid] { display: grid; gap: 0.875rem; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); }
+
+[data-card] {
+  display: block; padding: 1.125rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); transition: border-color .15s ease, box-shadow .15s ease;
+}
+[data-card]:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
+[data-card-name] { font-weight: 650; font-size: 1.0625rem; letter-spacing: -0.015em; }
+[data-card-tagline] {
+  color: var(--muted-foreground); font-size: 0.875rem; margin-top: 0.2rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+[data-stat-row] { display: flex; gap: 1.5rem; margin: 1rem 0 0; }
+[data-stat] { display: flex; flex-direction: column; gap: 0.1rem; }
+[data-stat] dt {
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--muted-foreground); font-weight: 600;
+}
+[data-stat] dd { margin: 0; font-size: 1.1875rem; font-weight: 650; }
+[data-stat][data-size="lg"] dd { font-size: 1.75rem; }
+
+[data-tag] {
+  display: inline-block; font-size: 0.75rem; padding: 0.15rem 0.5rem;
+  border-radius: 999px; background: var(--muted); color: var(--muted-foreground);
+}
+[data-tags] { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.875rem; }
+
+/* ─── Researched-profile notice ───────────────────────────────────────── */
+
+[data-notice] {
+  display: flex; gap: 0.75rem; padding: 0.875rem 1rem;
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: var(--radius); background: var(--surface);
+  font-size: 0.875rem; color: var(--muted-foreground);
+}
+[data-notice] strong { color: var(--foreground); font-weight: 600; }
+
+[data-chart] { width: 100%; height: auto; display: block; }
+
+[data-empty] {
+  border: 1px dashed var(--border-strong); border-radius: var(--radius-lg);
+  padding: 3.5rem 1.5rem; text-align: center; color: var(--muted-foreground);
+}
+
+[data-prose] { max-width: 44rem; }
+[data-prose] p { margin: 0 0 0.875rem; }
+[data-prose] h2 { font-size: 1.25rem; font-weight: 650; margin: 2rem 0 0.75rem; }
+[data-prose] h3 { font-size: 1.0625rem; font-weight: 650; margin: 1.5rem 0 0.5rem; }
+[data-prose] ul { margin: 0 0 0.875rem; padding-left: 1.15rem; }
+[data-prose] li { margin-bottom: 0.3rem; }
+[data-prose] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 640px) {
+  [data-header-inner] { gap: 0.75rem; }
+  [data-stat-row] { gap: 1rem; }
 }

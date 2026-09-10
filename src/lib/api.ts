@@ -46,6 +46,7 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 export type ResearchMethod = "RESEARCHED" | "SELF_REPORTED" | "INTERVIEW" | "VERIFIED";
 
 export type CategoryRef = { slug: string; name: string; kind: string };
+export type FacetCategory = CategoryRef & { businessCount: number };
 
 export type BusinessCard = {
   id: string;
@@ -61,6 +62,7 @@ export type BusinessCard = {
   latestMonthlyRevenue: string | null;
   latestMonthlyProfit: string | null;
   latestMarginPct: string | null;
+  startingCost: string | null;
   publishedAt: string | null;
   categories: CategoryRef[];
 };
@@ -76,6 +78,7 @@ export type BusinessLink = {
 
 export type BusinessDetail = BusinessCard & {
   summary: string | null;
+  startingCostNote: string | null;
   sources: Array<{ title: string; url: string; note?: string }>;
   links: BusinessLink[];
 };
@@ -95,7 +98,9 @@ export type MetricPoint = {
 };
 
 export const listBusinesses = (q = "") =>
-  apiFetch<{ businesses: BusinessCard[]; nextCursor: string | null }>(`/v1/businesses${q}`);
+  apiFetch<{ businesses: BusinessCard[]; total: number; nextCursor: string | null }>(
+    `/v1/businesses${q.startsWith("?") || q === "" ? q : `?${q}`}`,
+  );
 
 export const getBusiness = (slug: string) =>
   apiFetch<{ business: BusinessDetail }>(`/v1/businesses/${encodeURIComponent(slug)}`);
@@ -105,5 +110,4 @@ export const getMetrics = (slug: string, granularity: "day" | "month" = "month")
     `/v1/businesses/${encodeURIComponent(slug)}/metrics?granularity=${granularity}`,
   );
 
-export const listCategories = () =>
-  apiFetch<{ categories: Array<CategoryRef & { businessCount: number }> }>("/v1/categories");
+export const listCategories = () => apiFetch<{ categories: FacetCategory[] }>("/v1/categories");
