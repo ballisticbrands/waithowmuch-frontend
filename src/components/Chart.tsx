@@ -62,7 +62,7 @@ export function Chart({ points, currency }: { points: MetricPoint[]; currency: s
       </svg>
       <figcaption className="text-sm" style={{ color: "var(--muted-foreground)", marginTop: "0.5rem" }}>
         <span style={{ color: "var(--accent)" }}>■</span> profit inside{" "}
-        <span>■</span> revenue · peak {money(max, currency)}/mo
+        <span style={{ color: "var(--muted)" }}>■</span> revenue · peak {money(max, currency)}/mo
       </figcaption>
     </figure>
   );

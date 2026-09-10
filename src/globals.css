@@ -288,7 +288,8 @@ h1, h2, h3, h4 {
 [data-prose] p { margin: 0 0 0.875rem; }
 [data-prose] h2 { font-size: 1.25rem; font-weight: 650; margin: 2rem 0 0.75rem; }
 [data-prose] h3 { font-size: 1.0625rem; font-weight: 650; margin: 1.5rem 0 0.5rem; }
-[data-prose] ul { margin: 0 0 0.875rem; padding-left: 1.15rem; }
+[data-prose] ul { margin: 0 0 0.875rem; padding-left: 1.15rem; list-style: disc; }
+[data-prose] ol { margin: 0 0 0.875rem; padding-left: 1.15rem; list-style: decimal; }
 [data-prose] li { margin-bottom: 0.3rem; }
 [data-prose] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
