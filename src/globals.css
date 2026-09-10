@@ -39,6 +39,13 @@
   --warning: #8a5a00;
   --danger: #b42318;
 
+  /* The two chart series. One hue at two lightnesses, because --accent is the
+     only chroma in the system — which is also why the earnings card ships a
+     table view: the lighter step is under 3:1 against the card, and exact
+     figures in a table are the honest relief for that. */
+  --series-revenue: var(--accent);
+  --series-profit: #b9addf;
+
   --radius: 0.625rem;
   --radius-lg: 0.875rem;
 
@@ -428,6 +435,994 @@ h1, h2, h3, h4 {
 }
 [data-stat] dd { margin: 0; font-size: 1.1875rem; font-weight: 650; }
 [data-stat][data-size="lg"] dd { font-size: 1.75rem; }
+
+/* ─── Metric cards ─────────────────────────────────────────────────────
+ *
+ * The card grid at the top of a business profile (components/MetricCards.tsx).
+ * Three rows: valuation, averages, then everything else.
+ *
+ * 🚨 Hairlines, no shadow. The sheet above carries exactly one --shadow and
+ * spends it on the nav dropdown; a shadowed six-card grid at the top of the
+ * page would make the profile the only blurred surface on the site. The
+ * border IS the card.
+ */
+
+[data-glance] { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.25rem; }
+
+/* auto-fit rather than a fixed 3, so a row of two or four cards is a layout
+   rather than a special case — and so the whole grid folds to one column on a
+   phone without a media query. */
+[data-cards] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+[data-card] {
+  display: flex; flex-direction: column; gap: 0.15rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card);
+  /* Without this a grid child's min-width is its content, so one long
+     unbreakable figure widens the whole track — and, at the top of the
+     document, the document with it. */
+  min-width: 0;
+}
+
+[data-card-label] {
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--muted-foreground); font-weight: 600;
+}
+[data-card-value] { font-size: 1.5rem; font-weight: 650; line-height: 1.15; }
+[data-card][data-big] [data-card-value] { font-size: 2rem; }
+[data-card-sub] {
+  margin-top: 0.15rem; font-size: 0.75rem; line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+[data-card-jump] {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  margin-top: 0.4rem; font-size: 0.8125rem; color: var(--accent);
+}
+[data-card-jump]:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* The accent is the only chroma in the system, so both sparklines use it —
+   they sit in separately labelled cards and never share an axis. */
+[data-spark] {
+  width: 100%; height: 2.125rem; margin-top: 0.35rem; display: block;
+  overflow: visible;
+}
+[data-spark] polyline { stroke: var(--accent); vector-effect: non-scaling-stroke; }
+
+/* One card holding a grid, not one card per figure: past about six, separate
+   boxes stop being scannable and start being wallpaper. */
+[data-metric-card] { gap: 0.75rem; }
+[data-metric-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.9rem 1.25rem; margin: 0;
+}
+[data-metric] { display: flex; flex-direction: column; gap: 0.05rem; min-width: 0; }
+/* A category path or a phrase, rather than a figure — one column wraps it to
+   four lines and leaves a hole in the row. */
+[data-metric][data-wide] { grid-column: span 2; }
+@media (max-width: 640px) { [data-metric][data-wide] { grid-column: auto; } }
+[data-metric] dt { font-size: 0.75rem; color: var(--muted-foreground); }
+[data-metric] dd { margin: 0; font-size: 1rem; font-weight: 600; }
+[data-metric-note] { font-size: 0.6875rem; color: var(--muted-foreground); line-height: 1.4; }
+
+/* ─── Earnings card ────────────────────────────────────────────────────
+ *
+ * components/Earnings.tsx — paired revenue/profit bars, period controls, a
+ * trend line per series and a table view.
+ */
+
+[data-earnings] {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); padding: 1.15rem 1.25rem 1.25rem;
+  margin: 1.5rem 0;
+}
+[data-earnings-head] {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.6rem 1rem; margin-bottom: 0.5rem;
+}
+[data-earnings-head] h2 {
+  margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em;
+}
+
+[data-series-legend] {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.8rem; color: var(--muted-foreground);
+}
+[data-series-legend] [data-series] { width: 9px; height: 9px; border-radius: 50%; }
+[data-series-legend] [data-series]:not(:first-child) { margin-left: 0.75rem; }
+[data-series="revenue"] { background: var(--series-revenue); }
+[data-series="profit"] { background: var(--series-profit); }
+
+[data-chart-wrap] { position: relative; margin: 1.25rem 0 0; }
+[data-chart-wrap] svg { width: 100%; height: auto; display: block; overflow: visible; }
+[data-grid] { stroke: var(--border); stroke-width: 1; }
+[data-ytick] { fill: var(--muted-foreground); font-size: 11px; text-anchor: end; }
+[data-xtick] { fill: var(--muted-foreground); font-size: 11px; text-anchor: middle; }
+[data-xtick][data-tilt] { text-anchor: end; }
+[data-chart-wrap] rect[data-series="revenue"] { fill: var(--series-revenue); }
+[data-chart-wrap] rect[data-series="profit"] { fill: var(--series-profit); }
+[data-hit] { fill: transparent; }
+[data-group][data-hover] [data-hit] { fill: var(--muted); }
+[data-trendline="revenue"] { stroke: var(--series-revenue); }
+[data-trendline="profit"] { stroke: var(--series-profit); }
+[data-trendline] { stroke-width: 2; stroke-dasharray: 7 6; stroke-linecap: round; }
+
+[data-tip] {
+  position: absolute; top: 0.5rem; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 0.15rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); box-shadow: var(--shadow);
+  font-size: 0.78rem; white-space: nowrap; pointer-events: none; z-index: 2;
+}
+[data-tip] span { display: flex; align-items: center; gap: 0.35rem; }
+[data-tip] i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+
+[data-earnings-note] {
+  margin: 0.9rem 0 0; font-size: 0.78rem; line-height: 1.5;
+  color: var(--muted-foreground); max-width: 66ch;
+}
+
+[data-table-wrap] { margin-top: 1.25rem; overflow-x: auto; }
+[data-earnings-table] { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+[data-earnings-table] th, [data-earnings-table] td {
+  padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); text-align: right;
+}
+[data-earnings-table] thead th {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted-foreground); font-weight: 600;
+}
+[data-earnings-table] th:first-child, [data-earnings-table] tbody th {
+  text-align: left; font-weight: 550;
+}
+
+/* ── Controls ──────────────────────────────────────────────────────────
+   One exclusive choice of period, then a toggle for how it is drawn. The
+   two are deliberately different shapes. */
+[data-periods] {
+  --ctl-h: 2.5rem;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 0.75rem; margin-top: 1.35rem;
+}
+[data-period-group] { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+[data-period-group] > * { box-sizing: border-box; height: var(--ctl-h); }
+[data-period-group] button, [data-view-toggle] {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0 1.1rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); color: var(--muted-foreground);
+  font: inherit; font-size: 0.85rem; line-height: 1; cursor: pointer;
+}
+[data-period-group] button:hover, [data-view-toggle]:hover { color: var(--foreground); }
+[data-period-group] button[data-on] {
+  background: var(--accent); border-color: var(--accent);
+  color: var(--accent-foreground); font-weight: 600;
+}
+[data-view-toggle] {
+  height: var(--ctl-h); padding: 0 0.9rem; border-color: transparent;
+}
+[data-view-toggle][aria-pressed="true"] { border-color: var(--border-strong); color: var(--foreground); }
+
+[data-period-select] {
+  position: relative; display: inline-flex; align-items: center;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); color: var(--muted-foreground); font-size: 0.85rem;
+}
+[data-period-select][data-on] { border-color: var(--accent); color: var(--foreground); }
+[data-period-select] select {
+  appearance: none; -webkit-appearance: none;
+  height: 100%; padding: 0 2.75rem 0 1.1rem;
+  border: 0; background: transparent; color: inherit;
+  font: inherit; font-size: 0.85rem; cursor: pointer;
+}
+[data-period-select] select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[data-select-chevron] {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 2.125rem; border-left: 1px solid var(--border);
+  pointer-events: none; color: var(--muted-foreground);
+}
+
+/* Announced, not shown. */
+[data-visually-hidden] {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ─── Table of contents ────────────────────────────────────────────────
+ *
+ * components/Toc.tsx. A sticky section list down the left of a profile,
+ * derived from the profile's own section markers.
+ */
+
+[data-with-toc] {
+  display: grid;
+  grid-template-columns: 11.5rem minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+/* 🚨 minmax(0, 1fr), not 1fr. A grid track's default minimum is its content,
+   so one wide child — the earnings table, a long unbroken figure — would push
+   the column past the viewport and take the document with it. */
+[data-toc-body] { min-width: 0; }
+
+[data-toc] {
+  position: sticky;
+  /* Clears the sticky header (3.5rem) with a little air. */
+  top: 4.5rem;
+  align-self: start;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+}
+[data-toc-label] {
+  display: block; margin-bottom: 0.6rem;
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--muted-foreground); font-weight: 600;
+}
+[data-toc] ul { list-style: none; margin: 0; padding: 0; }
+[data-toc] li { margin: 0; }
+/* Sections come in runs — what it earns, where demand comes from, who and
+   when. The run is worth showing and its NAME is not: a labelled heading per
+   group would add a line that does not navigate, and three of the groups hold
+   one section each. A gap says the same thing for nothing. */
+[data-toc] li[data-group-start] { margin-top: 0.65rem; }
+[data-toc] a {
+  display: block; padding: 0.3rem 0.6rem;
+  border-left: 2px solid var(--border);
+  color: var(--muted-foreground); font-size: 0.875rem; text-decoration: none;
+}
+[data-toc] a:hover { color: var(--foreground); border-left-color: var(--border-strong); }
+[data-toc] a[data-on] {
+  color: var(--accent); font-weight: 600; border-left-color: var(--accent);
+}
+
+/* Below this the sidebar costs more width than it earns, so the list becomes
+   a scrollable strip above the content — still every section, still real
+   anchors, no longer a column competing with the prose for a phone screen. */
+@media (max-width: 900px) {
+  [data-with-toc] { display: block; }
+  [data-toc] {
+    position: static; max-height: none;
+    margin-bottom: 1.25rem; padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  [data-toc-label] { display: none; }
+  [data-toc] ul { display: flex; gap: 0.25rem; overflow-x: auto; }
+  [data-toc] li { flex: none; }
+  /* Horizontally, the same boundary is a wider gap — a top margin would just
+     nudge one tab out of line with its neighbours. */
+  [data-toc] li[data-group-start] { margin-top: 0; margin-left: 0.85rem; }
+  [data-toc] a {
+    padding: 0.4rem 0.7rem; white-space: nowrap;
+    border-left: 0; border-bottom: 2px solid transparent;
+  }
+  [data-toc] a[data-on] { border-bottom-color: var(--accent); }
+}
+
+/* 🚨 The header is sticky, so an anchor jump lands the section heading
+   UNDERNEATH it — the reader arrives at a section whose title they cannot
+   see, which reads as the link having missed. scroll-margin-top is the whole
+   fix, and it has to cover every id the table of contents can reach. */
+[data-profile-section], #overview, #sources, [data-earnings] { scroll-margin-top: 4.75rem; }
+
+[data-next-section] {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  margin-top: 2.5rem; padding: 0.6rem 1rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); color: var(--foreground);
+  font-size: 0.9375rem; font-weight: 600; text-decoration: none;
+}
+[data-next-section] span {
+  color: var(--muted-foreground); font-weight: 500; font-size: 0.8125rem;
+  text-transform: uppercase; letter-spacing: 0.055em;
+}
+[data-next-section]:hover { border-color: var(--border-strong); }
+[data-next-section] svg { color: var(--accent); }
+
+/* Sections start a new beat, but the first one follows the cards directly. */
+[data-profile-section] + [data-profile-section] { margin-top: 2rem; }
+[data-facts-block] { margin: 1rem 0 1.25rem; }
+
+/* ─── Info tooltips ────────────────────────────────────────────────────
+ *
+ * components/InfoTip.tsx — the ⓘ beside a metric label.
+ */
+
+[data-infowrap] { display: inline-flex; }
+[data-info] {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px; padding: 0; margin: 0 0 0 0.15rem;
+  border: 0; background: transparent; color: var(--muted-foreground);
+  opacity: 0.75; cursor: help;
+}
+[data-info]:hover, [data-info]:focus-visible, [data-info][data-pinned] {
+  opacity: 1; color: var(--foreground);
+}
+[data-infotip] {
+  position: fixed; z-index: 60;
+  transform: translateY(-100%);
+  display: flex; flex-direction: column; gap: 0.6rem;
+  width: min(340px, calc(100vw - 24px));
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius);
+  /* Inverted, which is how a layer above the page says so without the shadow
+     this sheet spends elsewhere. */
+  background: var(--foreground); color: var(--background);
+  font-size: 0.8125rem; line-height: 1.5; font-weight: 400;
+  text-transform: none; letter-spacing: normal;
+}
+/* The "Learn more" out of a tooltip. Sits under the paragraphs and above the
+   Esc hint, separated by a hairline: it is a way OUT of the panel, not another
+   sentence in it.
+   🚨 NOT --accent, and the divider is NOT --border. This panel is inverted —
+   near-black ground — and both of those tokens are picked to sit on white.
+   The violet accent lands near 3:1 against it and the hairline turns into a
+   bright rule across the panel. The link wears the panel's own ink at full
+   strength (17.9:1) and is marked as a link by the underline and the icon. */
+[data-learnmore] {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  align-self: flex-start;
+  margin-top: 0.15rem; padding-top: 0.6rem;
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+  width: 100%;
+  color: var(--background); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 2px;
+  text-decoration-color: rgb(255 255 255 / 0.45);
+}
+[data-learnmore]:hover { text-decoration-color: currentColor; }
+[data-learnmore]:focus-visible { outline-color: var(--background); }
+
+[data-tip-hint] { margin-top: 0.15rem; font-size: 0.68rem; opacity: 0.6; }
+
+/* ─── Lede ─────────────────────────────────────────────────────────────
+   The one line at the top of a section, for a reader who will not read the
+   four paragraphs under it. Larger and darker than body copy, but NOT a
+   heading — it is a sentence, and setting it as a heading would put it in the
+   document outline where it would compete with the section title. */
+[data-prose] [data-lede] {
+  margin: 0 0 1.25rem;
+  font-size: 1.1875rem; line-height: 1.5; font-weight: 550;
+  letter-spacing: -0.01em; color: var(--foreground);
+}
+
+/* ─── Timeline ─────────────────────────────────────────────────────────
+   Date, strand, headline, then the paragraph that says why it mattered. */
+
+[data-timeline] { list-style: none; margin: 1.25rem 0; padding: 0; }
+[data-timeline] li {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 0.15rem 1.25rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+[data-timeline] li:last-child { border-bottom: none; }
+[data-timeline-when] {
+  grid-row: 1 / span 2;
+  color: var(--muted-foreground); font-size: 0.8125rem; padding-top: 0.1rem;
+  font-variant-numeric: tabular-nums;
+}
+[data-timeline-head] { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; }
+[data-timeline-head] strong { font-weight: 600; }
+[data-timeline-tag] {
+  font-style: normal; font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+  padding: 0.1rem 0.4rem; border-radius: 999px; background: var(--muted);
+}
+[data-timeline-detail] {
+  color: var(--muted-foreground); font-size: 0.875rem; line-height: 1.55;
+}
+/* The date column costs more than it earns on a phone; above the entry it
+   still reads as a date without squeezing the headline into two words. */
+@media (max-width: 640px) {
+  [data-timeline] li { grid-template-columns: minmax(0, 1fr); }
+  [data-timeline-when] { grid-row: auto; }
+}
+
+/* ─── Business attributes ──────────────────────────────────────────────
+ *
+ * pages/BusinessAttributes.tsx — the reference behind the Sourcing /
+ * Catalogue / Differentiation ⓘ on every profile.
+ *
+ * 🚨 Ink and grey, no accent fills. The accent marks the brand, the primary
+ * action and an active filter, and none of these figures is any of those — a
+ * catalogue shape is an illustration, not a state. Keeping them monochrome is
+ * also what keeps them legible in the greyscale screenshot this page will
+ * mostly be seen as.
+ */
+
+/* Prose caps at 44rem like every other written page; the figures are allowed
+   the full column, which is why the width lives on the children and not here. */
+[data-attrs] > h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 1.25rem; }
+[data-attrs] section { margin-bottom: 2.75rem; }
+[data-attrs] h2 { font-size: 1.3rem; font-weight: 650; margin: 0 0 0.5rem; scroll-margin-top: 5rem; }
+[data-attrs] h3 { font-size: 1.0625rem; font-weight: 650; margin: 1.75rem 0 0.5rem; }
+[data-attrs] p { margin: 0 0 0.75rem; max-width: 44rem; line-height: 1.6; }
+[data-attrs] [data-lede] { font-size: 1.0625rem; }
+[data-attrs] em { color: var(--muted-foreground); font-style: italic; }
+[data-attrs] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* How the attribute was arrived at, in three words, directly under its
+   heading — the same question the profile's ⓘ answers last. */
+[data-attrs-derivation] {
+  display: inline-block; margin: 0 0 0.75rem !important;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600;
+  color: var(--muted-foreground);
+  padding: 0.2rem 0.5rem; border-radius: 999px; background: var(--muted);
+}
+[data-attrs-note] { font-size: 0.85rem; color: var(--muted-foreground); }
+
+/* ── On this page ── */
+[data-attrs-toc] {
+  margin: 1.75rem 0 0; padding: 1rem 1.15rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface);
+  max-width: 30rem;
+}
+[data-attrs-toc-title] {
+  margin: 0 0 0.5rem !important;
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; color: var(--muted-foreground);
+}
+[data-attrs-toc] ol { margin: 0; padding: 0; list-style: none; counter-reset: attrs; }
+[data-attrs-toc] li {
+  display: flex; align-items: baseline; gap: 0.5rem;
+  padding: 0.3rem 0; font-size: 0.9375rem;
+}
+[data-attrs-toc-note] { font-size: 0.8125rem; color: var(--muted-foreground); }
+
+/* ── The definition lists ── */
+[data-attrs-defs] { margin: 1.25rem 0 0; max-width: 44rem; }
+[data-attrs-defs] > div { padding: 0.7rem 0; border-top: 1px solid var(--border); }
+[data-attrs-defs] dt { font-weight: 600; font-size: 0.9375rem; }
+[data-attrs-defs] dd { margin: 0.2rem 0 0; font-size: 0.9375rem; line-height: 1.55; }
+
+[data-attrs-levels] { margin: 1.25rem 0 0; padding: 0; list-style: none; max-width: 44rem; }
+[data-attrs-levels] > li { padding: 0.8rem 0; border-top: 1px solid var(--border); }
+[data-attrs-levels] p { margin: 0 !important; font-size: 0.9375rem; }
+[data-attrs-term] { font-weight: 600; }
+[data-attrs-levels] p + p { margin-top: 0.2rem !important; }
+
+[data-attrs-figure-note] {
+  margin-top: 0.6rem !important; font-size: 0.78rem; line-height: 1.5;
+  color: var(--muted-foreground);
+}
+[data-attrs-figure-title] {
+  font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--foreground);
+}
+
+/* ── Same numbers, different asset ── */
+[data-same] { margin: 1.75rem 0 0; }
+[data-same-panels] { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 0.75rem; }
+[data-same-panel] {
+  padding: 1rem 1.15rem 1.15rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
+}
+[data-same-label] {
+  margin: 0 0 0.35rem !important;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; color: var(--muted-foreground);
+}
+[data-same-figure] { margin: 0 !important; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+[data-same] svg { display: block; width: 100%; height: auto; margin: 0.6rem 0 0; }
+[data-same] [data-series] { fill: none; stroke: var(--foreground); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+/* The divider IS the argument: everything above it is identical. */
+[data-same-attrs] {
+  list-style: none; margin: 0.9rem 0 0; padding: 0.9rem 0 0;
+  border-top: 1px solid var(--border-strong);
+}
+[data-same-attrs] li { display: flex; justify-content: space-between; gap: 1rem; padding: 0.2rem 0; font-size: 0.8125rem; }
+[data-attr-label] { color: var(--muted-foreground); }
+[data-attr-value] { font-weight: 550; text-align: right; }
+[data-same] figcaption, [data-appear] + p { font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-same] figcaption { margin-top: 0.7rem; max-width: 44rem; line-height: 1.5; }
+
+/* ── What transfers with the sale ── */
+[data-matrix] { margin: 1.75rem 0 0; }
+[data-matrix] td { text-align: center; color: var(--muted-foreground); font-size: 0.95rem; }
+[data-matrix] td[data-yes] { color: var(--foreground); }
+
+/* ── Catalogue shapes ── */
+[data-attrs-catalogue] { margin: 1.5rem 0 0; }
+[data-attrs-catalogue] > div {
+  display: grid; grid-template-columns: 13rem minmax(0, 1fr);
+  gap: 1.25rem; align-items: start;
+  padding: 1rem 0; border-top: 1px solid var(--border);
+}
+[data-attrs-catalogue] dt { font-weight: 600; font-size: 0.9375rem; }
+[data-attrs-catalogue] dd { margin: 0.2rem 0 0; font-size: 0.9375rem; line-height: 1.55; }
+[data-shape] svg { display: block; width: 100%; height: auto; }
+[data-shape] [data-axis] { stroke: var(--border-strong); stroke-width: 1; }
+[data-shape] [data-bar] { fill: var(--foreground); }
+[data-shape] [data-hump] { fill: var(--foreground); opacity: 0.82; }
+[data-shape] [data-bracket] { fill: none; stroke: var(--muted-foreground); stroke-width: 1; }
+[data-shape-axis] {
+  margin: 0.3rem 0 0 !important; font-size: 0.7rem; color: var(--muted-foreground);
+}
+@media (max-width: 640px) {
+  [data-attrs-catalogue] > div { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
+}
+
+/* ── The differentiation ladder ── */
+[data-ladder] { margin: 1.5rem 0; }
+[data-ladder] svg { display: block; width: 100%; height: auto; max-width: 40rem; }
+[data-ladder] [data-axis] { stroke: var(--border-strong); stroke-width: 1; }
+/* Four steps of one grey, lightest to darkest — the ladder is ordered, so the
+   fill is ordered with it rather than four arbitrary tones. */
+[data-ladder] [data-level="1"] rect { fill: #e4e4ec; }
+[data-ladder] [data-level="2"] rect { fill: #c3c3d0; }
+[data-ladder] [data-level="3"] rect { fill: #8b8b9c; }
+[data-ladder] [data-level="4"] rect { fill: var(--foreground); }
+[data-ladder] text { text-anchor: middle; fill: var(--foreground); }
+[data-step-level] { font-size: 10px; font-weight: 650; }
+[data-step-name] { font-size: 9px; fill: var(--muted-foreground) !important; }
+[data-axis-label] { font-size: 9px; text-anchor: start !important; fill: var(--muted-foreground) !important; }
+
+/* ── The decision flow ── */
+[data-flow] { list-style: none; margin: 0.75rem 0 0; padding: 0; max-width: 44rem; }
+[data-flow] > li {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; align-items: center;
+  padding: 0.75rem 0.9rem; margin-bottom: 0.4rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: var(--card);
+}
+[data-flow] [data-flow-end] { background: var(--muted); border-style: dashed; }
+[data-flow-q] { margin: 0 !important; font-size: 0.875rem; line-height: 1.5; }
+[data-flow-yes] { margin: 0 !important; font-size: 0.8125rem; color: var(--muted-foreground); white-space: nowrap; }
+[data-flow-yes] b { color: var(--foreground); }
+@media (max-width: 560px) {
+  [data-flow] > li { grid-template-columns: minmax(0, 1fr); gap: 0.35rem; }
+}
+
+/* ── Where they appear ── */
+[data-appear] {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.75rem; margin: 1.5rem 0 0.75rem;
+}
+[data-appear-col] {
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
+}
+/* Deliberately the same size and weight as the placed column: the absence is
+   the point, and shrinking it would soften it. */
+[data-appear-col][data-empty-col] { background: var(--surface); border-style: dashed; }
+[data-appear-title] {
+  margin: 0 0 0.6rem !important;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em;
+  font-weight: 600; color: var(--muted-foreground);
+}
+[data-appear] dl { margin: 0; }
+[data-appear] dl > div { padding: 0.4rem 0; border-top: 1px solid var(--border); }
+[data-appear] dl > div:first-child { border-top: 0; padding-top: 0; }
+[data-appear] dt { font-size: 0.75rem; color: var(--muted-foreground); }
+[data-appear] dd { margin: 0.1rem 0 0; font-size: 0.875rem; font-weight: 550; }
+
+/* ─── Profile links ────────────────────────────────────────────────────
+ *
+ * components/ProfileLinks.tsx. Where the business sells and posts, as a row
+ * of chips above the figures.
+ *
+ * 🚨 The marks are ink, not brand colour — see the note in the component.
+ * --accent stays reserved for the brand mark, the primary action and an
+ * active filter, and a row of four logos in their own hues would take the
+ * eye before the revenue figure underneath does.
+ */
+
+[data-links] { margin: 0 0 1.25rem; }
+/* A grid, not a wrapping flex row. With flex, four chips of four different
+   widths leave one orphan hanging on a second row at whatever width its own
+   text happens to be; equal tracks make the wrap read as a grid instead. */
+[data-link-row] {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: 0.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+}
+
+[data-link-chip] {
+  height: 100%; box-sizing: border-box;
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.8rem 0.5rem 0.7rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card);
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+[data-link-chip]:hover {
+  border-color: var(--border-strong);
+  background: var(--surface);
+}
+
+/* The mark sits on a tint rather than bare, so a one-stroke glyph (the globe)
+   and a filled one (TikTok) carry the same weight in the row. */
+[data-link-icon] {
+  display: grid; place-items: center; flex: none;
+  width: 1.85rem; height: 1.85rem; border-radius: 0.5rem;
+  background: var(--muted); color: var(--foreground);
+}
+
+[data-link-text] { display: grid; gap: 0.05rem; min-width: 0; }
+[data-link-name] {
+  font-size: 0.875rem; font-weight: 550; color: var(--foreground);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Wraps rather than truncating. The follower count is the whole reason the
+   second line exists, and it is the end of the string — an ellipsis eats
+   exactly the part worth showing. Equal-height grid tracks absorb the extra
+   line, so a wrapped chip does not knock the row out of alignment. */
+[data-link-sub] {
+  font-size: 0.75rem; line-height: 1.35; color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pinned to the chip's right edge rather than trailing the text, so the four
+   arrows line up down the row instead of stepping in and out with the length
+   of each label. */
+[data-link-out] { flex: none; color: var(--muted-foreground); margin-left: auto; padding-left: 0.5rem; }
+[data-link-chip]:hover [data-link-out] { color: var(--foreground); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-link-chip] { transition: none; }
+}
+
+/* ─── Sales breakdown ──────────────────────────────────────────────────── */
+
+[data-breakdown] {
+  margin: 1.5rem 0;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card);
+}
+[data-breakdown] h3 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+[data-breakdown-intro] {
+  margin: 0.5rem 0 0; max-width: 66ch;
+  font-size: 0.9375rem; line-height: 1.55; color: var(--muted-foreground);
+}
+
+/* One part-to-whole bar. The whole width is the month's revenue, so each
+   segment's width IS its share — there is no scale to read and nothing to
+   compare across rows. Replaces the per-product bar list, which said the same
+   thing as the table under it. */
+[data-share] { position: relative; margin: 1.75rem 0 0; }
+
+[data-share-track] {
+  display: flex;
+  /* 🚨 2px of the CARD colour, not a border. A stroke around each segment adds
+     ink that is not data and muddies a ramp whose neighbours are one step
+     apart; the gap is what makes them read as separate. */
+  gap: 2px;
+  height: 1.5rem;
+}
+
+[data-share-seg] {
+  position: relative;
+  flex-basis: 0; flex-shrink: 0;
+  /* A $650 listing is 0.7% of the month — about 3px wide here, and 0px on a
+     phone. The floor keeps it from vanishing entirely; at this scale the
+     distortion it introduces is well under one pixel of anyone else's share. */
+  min-width: 3px;
+  padding: 0; border: 0; cursor: pointer; appearance: none;
+  display: flex; align-items: center;
+  transition: box-shadow 120ms ease;
+}
+/* The bar has two data-ends and seven interior joins, so only the outer two
+   corners round. */
+[data-share-seg]:first-child { border-radius: 4px 0 0 4px; }
+[data-share-seg]:last-child { border-radius: 0 4px 4px 0; }
+/* The hovered mark lifts rather than the rest fading. A ring costs nothing in
+   contrast; dimming would have taken the white "62%" label down with its
+   segment, and dropped the table's body text under AA at the same time. */
+[data-share-seg][data-active] {
+  z-index: 1;
+  box-shadow: 0 0 0 2px var(--card), 0 0 0 3.5px var(--foreground);
+}
+/* The hit target is taller than the mark — a 24px band is a thin thing to ask
+   a pointer to land on, and the narrow segments are the ones worth hovering. */
+[data-share-seg]::before { content: ""; position: absolute; inset-block: -8px; inset-inline: 0; }
+
+/* Set INSIDE a fill, so it is white by the fill's luminance rather than by the
+   text tokens — the first segment is the darkest step (10.4:1). */
+[data-share-seg-label] {
+  padding-left: 0.6rem; font-size: 0.78rem; font-weight: 650;
+  color: #ffffff; letter-spacing: -0.01em; pointer-events: none;
+}
+
+[data-share-tip] {
+  position: absolute; bottom: calc(100% + 0.55rem);
+  transform: translateX(-50%); z-index: 5; pointer-events: none;
+  width: max-content; max-width: min(22rem, 100%);
+  display: grid; gap: 0.1rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--card); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+}
+/* The value leads: the reader already knows which segment they are pointing
+   at, so the number is the thing they came for. */
+[data-share-tip-value] { font-size: 0.9375rem; font-weight: 650; }
+[data-share-tip-name] { font-size: 0.8125rem; }
+[data-share-tip-meta] { font-size: 0.75rem; color: var(--muted-foreground); }
+
+/* The table doubles as the legend — nine product names stacked beside the bar
+   would just be the table again. */
+[data-share-key] {
+  display: inline-block; width: 0.55rem; height: 0.55rem;
+  margin-right: 0.5rem; border-radius: 2px;
+  background: var(--border-strong);
+}
+/* Out to the listing. Underlined rather than accent-coloured: eighteen links
+   in a nine-row table turns the whole thing violet and buries the figures,
+   which are what the table is for. The underline is also what identifies them
+   as links without relying on colour. */
+[data-breakdown] [data-earnings-table] a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--border-strong);
+  transition: color 120ms ease, text-decoration-color 120ms ease;
+}
+[data-breakdown] [data-earnings-table] a:hover {
+  color: var(--accent);
+  text-decoration-color: currentColor;
+}
+[data-breakdown] [data-earnings-table] tbody tr { transition: background-color 120ms ease; }
+[data-breakdown] [data-earnings-table] tbody tr[data-active] { background: var(--accent-tint); }
+[data-breakdown-total] {
+  margin: 1rem 0 0; font-size: 0.875rem; color: var(--muted-foreground); max-width: 66ch;
+}
+[data-breakdown-note] {
+  margin: 0.9rem 0 0; font-size: 0.78rem; line-height: 1.5;
+  color: var(--muted-foreground); max-width: 66ch;
+}
+
+/* ─── Margin breakdown ─────────────────────────────────────────────────
+   Revenue down to margin, one cost line at a time. The last row is the answer
+   the page exists to give, so it is the only one that changes weight. */
+
+[data-margin-table] {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); overflow: hidden;
+}
+[data-margin] { list-style: none; margin: 0; padding: 0; }
+[data-margin] li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5.5rem 5.5rem;
+  align-items: baseline; gap: 0.35rem 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-margin] li:last-child { border-bottom: none; }
+
+[data-margin-label] { font-weight: 600; display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+[data-margin-pct], [data-margin-unit] { text-align: right; font-variant-numeric: tabular-nums; }
+[data-margin-pct] { font-weight: 600; }
+[data-margin-unit] { color: var(--muted-foreground); font-size: 0.875rem; }
+[data-margin-detail] {
+  grid-column: 1 / -1; margin: 0.1rem 0 0; max-width: 68ch;
+  font-size: 0.875rem; line-height: 1.55; color: var(--muted-foreground);
+}
+
+/* The starting line: what one order is worth before anything is taken out. */
+[data-margin] li[data-start] { background: var(--surface); }
+[data-margin] li[data-start] [data-margin-label] { color: var(--muted-foreground); font-weight: 600; }
+
+/* Named rather than shouted. The reference sets this line in capitals; a flag
+   says the same thing without a row of the table raising its voice. */
+[data-margin-flag] {
+  font-style: normal; font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.1rem 0.4rem; border-radius: 999px;
+  background: var(--accent-tint); color: var(--accent);
+}
+
+/* 🚨 The answer. Tinted, heavier and larger — the one row a reader who scrolls
+   past everything else should still leave with. */
+[data-margin] li[data-total] {
+  background: var(--accent-tint);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  padding-top: 1.05rem; padding-bottom: 1.05rem;
+}
+[data-margin] li[data-total] [data-margin-label] { font-size: 1.0625rem; }
+[data-margin] li[data-total] [data-margin-pct] { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+[data-margin] li[data-total] [data-margin-unit] { font-size: 1rem; color: var(--foreground); }
+[data-margin] li[data-total] [data-margin-detail] { color: var(--foreground); opacity: 0.75; }
+
+@media (max-width: 640px) {
+  [data-margin] li { grid-template-columns: minmax(0, 1fr) auto; }
+  [data-margin-unit] { grid-column: 2; }
+}
+
+/* ─── Channels ─────────────────────────────────────────────────────────
+   A name, one figure, and the paragraph that says what the figure is: ad
+   spend by channel, the off-marketplace presences, the best-seller positions.
+   Shares the margin table's card and row rhythm on purpose — they are the same
+   kind of object, and two card treatments a screen apart read as two
+   different sorts of claim. */
+
+[data-channels-block] { margin: 1.5rem 0; }
+[data-channels-block] h3 {
+  margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em;
+}
+[data-channels] {
+  list-style: none; margin: 0; padding: 0;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); overflow: hidden;
+}
+[data-channels] li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline; gap: 0.3rem 1rem;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-channels] li:last-child { border-bottom: none; }
+/* The row carrying the finding. Tinted rather than bolded: the note under it
+   is what a reader needs to actually read, and shouting the label pulls the
+   eye off it. */
+[data-channels] li[data-flag] { background: var(--accent-tint); }
+
+[data-channel-label] { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+/* Tabular numerals come from [data-figure] on the element itself. */
+[data-channel-value] { text-align: right; font-weight: 600; overflow-wrap: anywhere; }
+[data-channel-counted], [data-channel-note] {
+  grid-column: 1 / -1; margin: 0.15rem 0 0; max-width: 68ch;
+  font-size: 0.875rem; line-height: 1.55; color: var(--muted-foreground);
+}
+/* "Counted" is a label on the figure beside it, not a sentence — set small and
+   uppercase so a published number is never mistaken for part of the note. */
+[data-channel-counted] span {
+  font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.1rem 0.4rem; margin-right: 0.4rem;
+  border-radius: 999px; background: var(--muted); color: var(--muted-foreground);
+}
+[data-channel-counted] { font-variant-numeric: tabular-nums; }
+
+/* A long figure ("≈ $7.6K–15.2K / mo") next to a long channel name has nowhere
+   to go at this width, so the figure drops to its own line under the name. */
+@media (max-width: 560px) {
+  [data-channels] li { grid-template-columns: minmax(0, 1fr); }
+  [data-channel-value] { text-align: left; }
+}
+
+/* ─── Selling methods ──────────────────────────────────────────────────
+   What a business does gets a row and its evidence; what it does not gets
+   named on one line under the group. See SellingMethods.tsx for why the two
+   negative lines stay separate. */
+
+[data-selling] { margin: 1.5rem 0; display: grid; gap: 1.5rem; }
+[data-selling-group] > h3 {
+  margin: 0 0 0.6rem; font-size: 1.0625rem; font-weight: 650;
+  letter-spacing: -0.01em;
+  display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+}
+[data-selling-blurb] {
+  font-size: 0.8125rem; font-weight: 400; color: var(--muted-foreground);
+}
+
+[data-selling-list] {
+  list-style: none; margin: 0; padding: 0;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); overflow: hidden;
+}
+[data-selling-list] li {
+  display: grid; grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline; gap: 0.2rem 0.7rem;
+  padding: 0.75rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-selling-list] li:last-child { border-bottom: none; }
+[data-selling-list] li[data-flag] { background: var(--accent-tint); }
+
+/* Sized and coloured like the margin table's answer row — a confirmed method
+   is the same kind of statement, and the tick is the only green on the row. */
+[data-selling-tick] { color: var(--accent); font-weight: 700; line-height: 1; }
+[data-selling-label] { font-weight: 600; overflow-wrap: anywhere; }
+[data-selling-note] {
+  grid-column: 2; margin: 0.15rem 0 0; max-width: 68ch;
+  font-size: 0.875rem; line-height: 1.55; color: var(--muted-foreground);
+}
+
+[data-selling-none] {
+  margin: 0; font-size: 0.875rem; color: var(--muted-foreground);
+}
+/* The negatives. Quiet, but present — a method missing from the page entirely
+   reads as one nobody thought of. */
+[data-selling-rest] {
+  margin: 0.5rem 0 0; font-size: 0.8125rem; line-height: 1.55;
+  color: var(--muted-foreground); max-width: 68ch;
+}
+[data-selling-rest-label] {
+  font-size: 0.625rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.1rem 0.4rem; margin-right: 0.45rem;
+  border-radius: 999px; background: var(--muted); color: var(--muted-foreground);
+}
+/* 🚨 "Not checked" is not "not present" and must not look like it. A dashed
+   edge says the row is open rather than answered. */
+[data-selling-rest][data-unchecked] [data-selling-rest-label] {
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+}
+
+[data-block-table] { margin: 1.5rem 0; }
+[data-block-table] h3 { margin: 0 0 0.5rem; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+/* Quote names and regions are words, not figures — the mono/tabular treatment
+   the earnings table uses would set a supplier's name like a serial number. */
+[data-block-table] td { font-variant-numeric: normal; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-share-seg], [data-breakdown] [data-earnings-table] tbody tr { transition: none; }
+}
+
+/* ─── Valuation board ──────────────────────────────────────────────────
+ *
+ * components/ValuationBoard.tsx — every factor that moved the multiple.
+ *
+ * 🚨 Green and red here are SEMANTIC, and they are the one place this sheet
+ * spends a hue other than the accent. "What lifts it" against "what holds it
+ * back" is a direction, not a category, and the tokens exist for exactly that.
+ * Colour is never the only channel: the column heading names the direction and
+ * the delta carries its own sign.
+ */
+
+[data-val] {
+  margin: 1.5rem 0;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card);
+}
+[data-val-head] {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+  gap: 0.5rem 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+}
+[data-val-head] h3 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+[data-val-head] p { margin: 0.15rem 0 0; font-size: 0.85rem; color: var(--muted-foreground); }
+[data-val-figure] {
+  font-size: clamp(1.7rem, 5vw, 2.4rem); font-weight: 700; letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+[data-val-adj] {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1.25rem 2rem; margin-top: 1rem;
+}
+[data-col-title] {
+  margin: 0 0 0.55rem; font-size: 0.6875rem; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--muted-foreground); font-weight: 600;
+}
+[data-val-adj] ul { list-style: none; margin: 0; padding: 0; }
+[data-val-adj] li {
+  position: relative; display: flex; align-items: baseline; gap: 0.6rem;
+  padding: 0.34rem 0.5rem; font-size: 0.85rem; border-radius: 3px;
+}
+/* The bar sits BEHIND the row rather than beside it: a separate bar column
+   would cost the label the width it needs, and the label is the thing being
+   read. */
+[data-adj-bar] { position: absolute; inset: 0 auto 0 0; border-radius: 3px; z-index: 0; }
+[data-val-adj] li[data-dir="up"] [data-adj-bar] {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+[data-val-adj] li[data-dir="down"] [data-adj-bar] {
+  background: color-mix(in srgb, var(--danger) 11%, transparent);
+}
+[data-adj-label] { position: relative; z-index: 1; flex: 1; }
+[data-val-adj] li b {
+  position: relative; z-index: 1;
+  font-size: 0.8125rem; font-variant-numeric: tabular-nums; font-weight: 650;
+}
+[data-val-adj] li[data-dir="up"] b { color: var(--success); }
+[data-val-adj] li[data-dir="down"] b { color: var(--danger); }
+
+[data-val-missing] {
+  margin: 1rem 0 0; padding-top: 0.9rem; border-top: 1px solid var(--border);
+  font-size: 0.8125rem; line-height: 1.55; color: var(--muted-foreground); max-width: 72ch;
+}
+[data-val-missing] + [data-val-missing] { border-top: 0; padding-top: 0; margin-top: 0.5rem; }
+[data-val-missing] strong { color: var(--foreground); font-weight: 600; }
 
 [data-tag] {
   display: inline-block; font-size: 0.75rem; padding: 0.15rem 0.5rem;

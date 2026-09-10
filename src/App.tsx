@@ -7,6 +7,7 @@ import Business from "@/pages/Business";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import { About, Privacy, Terms, HowWeResearch, NotFound } from "@/pages/Static";
+import BusinessAttributes from "@/pages/BusinessAttributes";
 
 /** Every content route is registered with AND without a trailing slash: the
  *  prerender writes directories, so the canonical URL has one, but inbound
@@ -40,9 +41,18 @@ export default function App() {
         <Route path="/data/:collection/" element={<Ideas />} />
         <Route path="/business/:slug" element={<Business />} />
         <Route path="/business/:slug/" element={<Business />} />
+        {/* A profile is paginated: one section per URL, with the overview at
+            the business root. An unknown section redirects to that root rather
+            than 404ing — the business exists, only the section does not. */}
+        <Route path="/business/:slug/:section" element={<Business />} />
+        <Route path="/business/:slug/:section/" element={<Business />} />
         {Both({ path: "/login", element: <Login /> })}
         <Route path="/auth/callback" element={<AuthCallback />} />
         {Both({ path: "/how-we-research", element: <HowWeResearch /> })}
+        {/* The reference behind the Sourcing / Catalogue / Differentiation ⓘ on
+            every profile. A real route, not an anchor: the tooltips link to it
+            in a new tab, and a 404 behind a "Learn more" is worse than no link. */}
+        {Both({ path: "/business-attributes", element: <BusinessAttributes /> })}
         {Both({ path: "/about", element: <About /> })}
         {Both({ path: "/privacy", element: <Privacy /> })}
         {Both({ path: "/terms", element: <Terms /> })}

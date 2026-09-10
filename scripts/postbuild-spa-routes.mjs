@@ -19,6 +19,9 @@ import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, DESCRIPTIONS, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
+import { resolveSelling } from '../src/businesses/selling-methods.mjs';
+import { valueBusiness } from '../src/valuation/model.mjs';
+import { ttmNetProfit } from '../src/valuation/inputs.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -295,19 +298,117 @@ for (const b of all) {
   // src/businesses/*.mjs is JSX-free: prose that lives only in a component is
   // invisible here, and the page would ship thin while looking perfect.
   const profile = profileFor(b.slug);
-  const authored = profile
-    ? [profile.intro ? `<p>${esc(profile.intro)}</p>` : '']
-        .concat(profile.blocks.map((blk) => {
+  const flatten = (blocks) =>
+    blocks.map((blk) => {
           switch (blk.type) {
+            case 'section': return `<h2>${esc(blk.title)}</h2>`;
+            case 'facts': return `<ul>${blk.items.map((f) =>
+              `<li>${esc(f.label)}: ${esc(f.value)}${f.note ? ` — ${esc(f.note)}` : ''}</li>`).join('')}</ul>`;
             case 'heading': return `<h2>${esc(blk.text)}</h2>`;
             case 'prose': return `<p>${esc(blk.text)}</p>`;
+            case 'lede': return `<p><strong>${esc(blk.text)}</strong></p>`;
+            /* The margin row is computed here too, off the same lines, so the
+               static page cannot state a total the app does not. */
+            case 'margin': {
+              const total = 100 + blk.lines.reduce((a, l) => a + l.pct, 0);
+              return `<ul>${blk.lines.map((l) =>
+                `<li>${esc(l.label)}: ${l.pct}% of revenue${l.detail ? ` — ${esc(l.detail)}` : ''}</li>`).join('')}` +
+                `<li><strong>Margin: ${total}%</strong>${blk.note ? ` — ${esc(blk.note)}` : ''}</li></ul>`;
+            }
+            case 'table': return [
+              blk.caption ? `<h3>${esc(blk.caption)}</h3>` : '',
+              `<table><thead><tr>${blk.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead>`,
+              `<tbody>${blk.rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`,
+              blk.note ? `<p>${esc(blk.note)}</p>` : '',
+            ].filter(Boolean).join('');
+            /* 🚨 The three figures ARE the valuation section — without this the
+               page's whole point is invisible to a crawler, and the section
+               reads as one thin paragraph. Computed the same way the component
+               computes it, off the same series, so the two cannot disagree. */
+            case 'valuation': {
+              const v = profile?.valuation;
+              const ttm = ttmNetProfit(metrics);
+              if (!v || ttm === null) return '';
+              /* Same two paths as components/MetricCards.tsx, and the same
+                 order: the scoring model where a profile wires it up, a stated
+                 multiple otherwise. Computing it differently here is how the
+                 static page comes to print a figure the app does not. */
+              const scored = v.inputs ? valueBusiness({ netProfitTtm: ttm, ...v.inputs }) : null;
+              const multiple = scored?.multiple ?? v.multiple ?? null;
+              if (multiple === null) return '';
+              return `<p>Indicative valuation: <strong>${money(ttm * multiple, b.currency)}</strong> —
+                ${multiple}× a trailing-twelve net profit of ${money(ttm, b.currency)}.
+                ${esc(v.basis)}</p>`;
+            }
+            /* 🚨 Renders from `profile.selling`, not from the block — the
+               block carries no data, exactly like `valuation`. The negatives
+               are emitted too: a crawler seeing only the confirmed methods
+               gets a shorter and more flattering business than the one the
+               page describes. */
+            case 'selling': {
+              const groups = resolveSelling(profile?.selling);
+              const say = (ms) => ms.map((m) => esc(m.label)).join(', ');
+              return groups.map((g) => {
+                const yes = g.methods.filter((m) => m.status === 'yes');
+                const no = g.methods.filter((m) => m.status === 'no');
+                const unchecked = g.methods.filter((m) => m.status === 'unchecked');
+                if (!yes.length && !no.length) return '';
+                return [
+                  `<h3>${esc(g.title)}</h3>`,
+                  yes.length
+                    ? `<ul>${yes.map((m) =>
+                        `<li>${esc(m.label)}${m.note ? ` — ${esc(m.note)}` : ''}</li>`).join('')}</ul>`
+                    : '',
+                  no.length ? `<p>Not present: ${say(no)}.</p>` : '',
+                  unchecked.length ? `<p>Not checked: ${say(unchecked)}.</p>` : '',
+                ].filter(Boolean).join('');
+              }).filter(Boolean).join('');
+            }
+            case 'breakdown': return [
+              blk.intro ? `<p>${esc(blk.intro)}</p>` : '',
+              `<ul>${blk.items.map((i) =>
+                `<li>${esc(i.name)}${i.asin ? ` (${esc(i.asin)})` : ''}: ${money(i.revenue, b.currency) ?? ''} a month${
+                  i.price ? ` at ${money(i.price, b.currency)}` : ''}</li>`).join('')}</ul>`,
+              blk.note ? `<p>${esc(blk.note)}</p>` : '',
+            ].filter(Boolean).join('');
+            /* Both figures AND the note. On the advertising and traffic
+               sections the note is the row's whole point — without it a
+               crawler gets a list of channel names and one modelled range. */
+            case 'channels': return [
+              blk.caption ? `<h3>${esc(blk.caption)}</h3>` : '',
+              `<ul>${blk.items.map((c) => {
+                const head = c.href ? `<a href="${esc(c.href)}">${esc(c.label)}</a>` : esc(c.label);
+                return `<li>${head}${c.value ? `: ${esc(c.value)}` : ''}${
+                  c.counted ? ` — counted: ${esc(c.counted)}` : ''}${
+                  c.note ? ` ${esc(c.note)}` : ''}</li>`;
+              }).join('')}</ul>`,
+              blk.note ? `<p>${esc(blk.note)}</p>` : '',
+            ].filter(Boolean).join('');
             case 'callout': return `<p>${esc(blk.text)}</p>`;
             case 'quote': return `<blockquote>${esc(blk.text)}</blockquote>`;
             case 'list': return `<ul>${blk.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
-            case 'timeline': return `<ul>${blk.items.map((i) => `<li>${esc(i.when)}: ${esc(i.what)}</li>`).join('')}</ul>`;
+            case 'timeline': return `<ul>${blk.items.map((i) =>
+              `<li>${esc(i.when)}${i.tag ? ` — ${esc(i.tag)}` : ''}: ${esc(i.what)}${
+                i.detail ? ` ${esc(i.detail)}` : ''}</li>`).join('')}</ul>`;
             default: return ''; // stat/chart are figures, emitted below
           }
-        }))
+        }).filter(Boolean).join('\n    ');
+
+  /* 🚨 A PAGINATED profile is one page per section in the app, so it has to be
+     one FILE per section here. Emitting every section at the business root
+     while the app shows only the overview there would serve a crawler content
+     no visitor sees at that URL — which is the one thing the note at the top
+     of this file promises this script does not do. Sections are split at the
+     `section` markers, exactly as components/ProfileBlocks.tsx splits them. */
+  const parts = [{ id: null, title: null, blocks: [] }];
+  for (const blk of profile?.blocks ?? []) {
+    if (blk.type === 'section') parts.push({ id: blk.id, title: blk.title, blocks: [blk] });
+    else parts[parts.length - 1].blocks.push(blk);
+  }
+  const paginated = parts.length > 1;
+
+  const authored = profile
+    ? [profile.intro ? `<p>${esc(profile.intro)}</p>` : '', flatten(parts[0].blocks)]
         .filter(Boolean).join('\n    ')
     : '';
 
@@ -333,6 +434,31 @@ for (const b of all) {
   });
   guard(businessPath(b.slug), html);
   write(businessPath(b.slug), html);
+
+  // One file per section, matching the app's routes.
+  for (const part of paginated ? parts.slice(1) : []) {
+    const sectionBody = `
+    <h1>${esc(b.name)} — ${esc(part.title)}</h1>
+    <p><strong>Researched profile.</strong> The figures here are ${method}, published with the
+       sources they were drawn from. <a href="/how-we-research/">How we research</a>.</p>
+    ${flatten(part.blocks)}
+    <p><a href="${businessPath(b.slug)}">${esc(b.name)} overview</a> ·
+       <a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
+
+    const sectionHtml = render({
+      path: `${businessPath(b.slug)}${part.id}/`,
+      title: `${b.name}: ${part.title} | ${BRAND_NAME}`,
+      description: `${part.title} for ${b.name}. ${method}, with sources.`,
+      body: sectionBody,
+      bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
+    });
+    /* ⚠️ WARN, not fail. A section is deliberately short — that is the whole
+       point of splitting the profile — so the 120-word floor written for a
+       whole page would fail a build over a Timeline that is doing its job.
+       It is logged loudly so a genuinely empty section cannot pass unnoticed. */
+    softGuard(`${businessPath(b.slug)}${part.id}/`, sectionHtml, part.blocks.length);
+    write(`${businessPath(b.slug)}${part.id}/`, sectionHtml);
+  }
 }
 
 // ── Static routes ─────────────────────────────────────────────────────
@@ -358,6 +484,70 @@ const STATIC = [
        see looks smaller than it is, and one running heavy discounts looks more profitable.
        Margins are the softest figure on any page, because costs are the hardest thing to
        observe from outside.</p>` },
+  /* The reference behind the Sourcing / Catalogue / Differentiation ⓘ on every
+     profile. Guarded like the other content routes: it is linked from every
+     profile and is a page a crawler will follow, so it has to be worth landing
+     on without JavaScript. The static copy carries the DEFINITIONS — the
+     figures on the real page are illustrations and lose nothing by being
+     absent here. */
+  { path: '/business-attributes/', guard: true, title: `Business attributes — ${BRAND_NAME}`,
+    description: 'The three attributes describing how a business is built rather than what it earns: sourcing, catalogue structure and differentiation — with every option defined.',
+    body: `<h1>Business attributes</h1>
+    <p>Every profile carries three attributes describing how the business is <em>built</em>,
+       alongside the figures describing what it earns: sourcing, catalogue structure and
+       differentiation. They matter because two businesses with identical revenue can be worth
+       very different amounts. A private-label brand with tooling nobody can copy and a
+       retail-arbitrage account with the same monthly profit are not the same asset, and the
+       difference is not visible in the numbers.</p>
+    <h2>Sourcing</h2>
+    <p>How the business gets its product — the single method most of its revenue comes from.
+       It is the strongest signal of what actually transfers in a sale: a brand you own conveys
+       to a buyer, a knack for finding discounted stock does not. Placed by us from the public
+       record, not stated by the seller.</p>
+    <ul><li><b>Private label</b> — the seller puts their own brand on the product and controls its
+            spec. Nobody else sells the identical listing.</li>
+        <li><b>Wholesale</b> — buys an existing branded product in bulk and resells it. Other
+            sellers can list the same product.</li>
+        <li><b>Dropship</b> — lists products it never holds; a third party ships to the customer.</li>
+        <li><b>Arbitrage</b> — buys already-branded products at a discount and resells at a markup,
+            with no ongoing supplier relationship.</li>
+        <li><b>Handmade / artisan</b> — the seller physically makes the product.</li>
+        <li><b>Print on demand</b> — a third-party print service fulfils a listing the seller owns.</li>
+        <li><b>Merch on Demand</b> — Amazon's closed royalty programme; Amazon sets the price.</li>
+        <li><b>KDP</b> — Amazon's publishing royalty programme, for books and similar.</li></ul>
+    <h2>Catalogue structure</h2>
+    <p>The shape of the catalogue: whether revenue rests on one product, a handful, a long tail
+       of variations, or a portfolio with no anchor. It tells a buyer what running the business
+       involves day to day, and where it breaks if a single listing stalls.</p>
+    <ul><li><b>Broad catalogue, low volume each</b> — many SKUs, each aimed at a small slice of
+            search demand.</li>
+        <li><b>Flagship + complementary</b> — one dominant product, with adjacent products sold
+            alongside it.</li>
+        <li><b>Concentrated bets, few SKUs</b> — a handful of independently significant products
+            with no filler.</li>
+        <li><b>Category dominance</b> — most or all major variations within one narrow category.</li>
+        <li><b>Trend / seasonal churn</b> — launch against a trend, ride it, retire it, launch the
+            next one.</li>
+        <li><b>Generalist portfolio</b> — products spread across unrelated categories with no
+            anchor.</li></ul>
+    <h2>Differentiation</h2>
+    <p>How hard the product is for a competitor to copy. The principle is that complexity, cost
+       and time spent make a product defensible — and that the uniqueness has to be visible to
+       the customer. A factual checklist rather than a rating: the questions are answered in
+       order and the level is the first one that gets a yes.</p>
+    <ul><li><b>Level 1 — standard product</b> — off-the-shelf with a logo on it; a competitor
+            orders the same base unit from the same factory within days.</li>
+        <li><b>Level 2 — cosmetic variation</b> — visible changes to form, copyable by requesting
+            a variant from the same manufacturer.</li>
+        <li><b>Level 3 — functional customisation</b> — several real changes to form, features or
+            materials. Copying it means re-sourcing components and re-engineering.</li>
+        <li><b>Level 4 — hard to copy</b> — fully custom, protected by manufacturing complexity or
+            IP; typically a mould, tooling or a patent.</li></ul>
+    <h2>Where these appear</h2>
+    <p>All three sit under Additional metrics on a profile. None can be read off a set of figures
+       and none is worth guessing, so a profile we have not placed shows a question mark rather
+       than an answer. A question mark means nobody has placed it yet — not that the answer is
+       none, and not a judgement about the business.</p>` },
   { path: '/about/', title: `About ${BRAND_NAME}`, guard: true,
     description: `What ${BRAND_NAME} is and how seriously to take its figures.`,
     body: `<h1>About ${BRAND_NAME}</h1>

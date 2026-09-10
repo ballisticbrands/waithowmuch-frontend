@@ -26,6 +26,30 @@ export function exactMoney(value: number | string | null | undefined, currency =
   }).format(v);
 }
 
+/** Counts, not money: 45400 -> 45.4K, 5200000 -> 5.2M. Follower and visit
+ *  figures are approximations the platform itself rounds, so printing
+ *  "45,400 followers" would dress an estimate up as a headcount. */
+export function compact(value: number | string | null | undefined): string {
+  const v = n(value);
+  if (v === null) return "—";
+  const abs = Math.abs(v);
+  const fmt = (x: number) => x.toFixed(1).replace(/\.0$/, "");
+  if (abs >= 1_000_000) return `${fmt(v / 1_000_000)}M`;
+  if (abs >= 1_000) return `${fmt(v / 1_000)}K`;
+  return v.toLocaleString("en-US");
+}
+
+/** Money at the grain a shelf price is set in — $6.97, not $7.
+ *
+ *  Whole dollars are right for a monthly total, where cents are noise, and
+ *  wrong for a unit price, where they are the entire difference between one
+ *  fulfilment fee band and the next. */
+export function price(value: number | string | null | undefined, currency = "USD"): string {
+  const v = n(value);
+  if (v === null) return "—";
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(v);
+}
+
 export function percent(value: number | string | null | undefined): string {
   const v = n(value);
   return v === null ? "—" : `${Math.round(v)}%`;

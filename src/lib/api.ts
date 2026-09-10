@@ -148,6 +148,26 @@ export function toChartPoints(res: MetricsResponse | null): ChartPoint[] {
   return [...byPeriod.values()].sort((a, b) => a.periodStart.localeCompare(b.periodStart));
 }
 
+/**
+ * Read one metric type out of the generic series.
+ *
+ * 🚨 `toChartPoints` pivots revenue and profit ONLY, so anything else — ad
+ * spend, units, followers — has to be read from the rows. Summing is correct
+ * for a FLOW type and wrong for a LEVEL one; the caller picks, because only
+ * the caller knows which question it is asking.
+ */
+export function rowsOfType(res: MetricsResponse | null, type: string): MetricRow[] {
+  return (res?.metrics ?? [])
+    .filter((m) => m.type === type)
+    .sort((a, b) => a.periodStart.localeCompare(b.periodStart));
+}
+
+/** The most recent value of a type, or null where the series does not carry it. */
+export function latestOfType(res: MetricsResponse | null, type: string): number | null {
+  const rows = rowsOfType(res, type);
+  return rows.length ? Number(rows[rows.length - 1]!.value) : null;
+}
+
 export const listBusinesses = (q = "") =>
   apiFetch<{ businesses: BusinessCard[]; total: number; nextCursor: string | null }>(
     `/v1/businesses${q.startsWith("?") || q === "" ? q : `?${q}`}`,
