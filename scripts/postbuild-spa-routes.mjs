@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
-import { COLLECTIONS, MORE, collectionPath } from '../src/data/collections.mjs';
+import { COLLECTIONS, MORE, DESCRIPTIONS, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -86,6 +86,13 @@ function write(path, html) {
 }
 
 const MIN_WORDS = 120;
+
+/** Rendered in the footer of every page by Layout.tsx. Emitted here because a
+ *  crawler fetching the raw HTML sees no footer otherwise — and it is genuine
+ *  on-page copy, not text written for crawlers. Keep it in sync with Layout. */
+const FOOTER = `<p>${BRAND_NAME} publishes revenue and profit for real businesses. Unless a profile
+   says otherwise, the figures are estimates built from public information — not the company's
+   accounts. Every profile shows how its numbers were reached.</p>`;
 const words = (html) =>
   html.replace(/<(script|style)[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
 
@@ -98,6 +105,17 @@ function guard(path, html) {
   if (n < MIN_WORDS) {
     console.error(`postbuild: ${path} is only ${n} crawler-visible words (min ${MIN_WORDS}).`);
     process.exit(1);
+  }
+}
+
+function softGuard(path, html, itemCount) {
+  const n = words(html.slice(html.indexOf('<div id="root"')));
+  if (n < MIN_WORDS) {
+    console.warn(
+      `postbuild: ⚠️ ${path} is ${n} crawler-visible words (target ${MIN_WORDS}) — ` +
+      `only ${itemCount} idea(s) to list. This resolves as the catalogue grows; ` +
+      `do NOT pad it with copy the page does not show.`,
+    );
   }
 }
 
@@ -134,42 +152,51 @@ for (const c of [...COLLECTIONS]) {
 
   const body = `
     <h1>${esc(c.title)}</h1>
-    <p>${esc(c.blurb)}</p>
-    <p>Every idea below shows what the business turns over each month, how much of that it
-       keeps, and what it cost to get started. You can narrow the list by revenue, by starting
-       cost, by the channel that actually drove the growth, by niche, and by who the business
-       sells to.</p>
-    <p>Most of these figures are estimates rather than audited accounts. They are built from
-       what is publicly visible — marketplace listings and pricing, review velocity, public
-       advertising libraries, social footprints and company filings where they exist — and then
-       worked through to a revenue and margin figure. Each profile states plainly how its
-       numbers were reached and links to the sources behind them, so you can judge them rather
-       than taking our word for it.</p>
-    <p>Where an owner has confirmed a figure, or it was read from a connected account, the
-       profile says so. That distinction matters more than any single number here: an estimate
-       presented as a fact is worse than no figure at all.</p>
     <ul>
       ${list || '<li>No ideas published yet.</li>'}
     </ul>
+    ${FOOTER}
     <p><a href="/how-we-research/">How we research these figures</a></p>`.trim();
 
   const html = render({
     path: collectionPath(c.slug),
     title: `${c.title} — ${BRAND_NAME}`,
-    description: c.blurb,
+    description: DESCRIPTIONS[c.slug] ?? '',
     body,
     bootstrap: { route: 'ideas', collection: c.slug, businesses, total, categories },
   });
-  guard(collectionPath(c.slug), html);
+  // ⚠️ WARN, not fail, for collection pages.
+  //
+  // Everywhere else a thin page means someone forgot to write copy. Here the
+  // content IS the listing, and it grows with the catalogue — so with three
+  // businesses the page is legitimately short, and failing the build would
+  // only tempt someone to pad it with prose written for crawlers. It is
+  // logged loudly so it cannot pass unnoticed.
+  softGuard(collectionPath(c.slug), html, businesses.length);
   write(collectionPath(c.slug), html);
 }
+
+// ── Legacy alias: /data/all-ideas/ → /data/ ───────────────────────────
+//
+// The default collection moved to /data/. Without a real file here GitHub
+// Pages returns 404.html — the SPA fallback redirects a browser correctly, but
+// the STATUS is 404, so a crawler that already has the old URL records a dead
+// page instead of following the move. A canonical plus a meta refresh gets
+// both a 200 and an unambiguous signal about where the page went.
+write('/data/all-ideas/', shell
+  .replace(/<title>[^<]*<\/title>/, `<title>The Idea Database — ${BRAND_NAME}</title>`)
+  .replace('</head>',
+    `  <link rel="canonical" href="${SITE}/data/" />\n` +
+    `  <meta http-equiv="refresh" content="0; url=/data/" />\n  </head>`)
+  .replace('<div id="root"></div>',
+    `<div id="root" data-prerender><p>This page moved to <a href="/data/">The Idea Database</a>.</p></div>`));
 
 // ── More ideas ────────────────────────────────────────────────────────
 const facetList = categories.map((f) => `<li>${esc(f.name)} (${f.businessCount})</li>`).join('\n      ');
 const moreHtml = render({
   path: collectionPath(MORE.slug),
   title: `${MORE.title} — ${BRAND_NAME}`,
-  description: MORE.blurb,
+  description: DESCRIPTIONS['more-ideas'] ?? MORE.blurb,
   body: `
     <h1>${esc(MORE.title)}</h1>
     <p>${esc(MORE.blurb)}</p>

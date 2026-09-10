@@ -12,25 +12,21 @@
 export const COLLECTIONS = [
   {
     slug: 'all-ideas',
-    title: 'All ideas',
-    blurb:
-      'Every business we have researched, with what it makes and what it cost to start. Figures are estimates unless a profile says otherwise.',
+    title: 'The Idea Database',
+    /** Shown in the nav, where "The Idea Database" would be too long. */
+    navLabel: 'All ideas',
     query: '',
     inNav: true,
   },
   {
     slug: 'amazon-fba',
     title: 'Amazon FBA ideas',
-    blurb:
-      'Businesses selling physical products through Amazon FBA — what they turn over, what they keep, and how they got their first customers.',
     query: 'channel=amazon-fba',
     inNav: true,
   },
   {
     slug: 'shopify',
     title: 'Shopify ideas',
-    blurb:
-      'Direct-to-consumer businesses running on Shopify, with revenue, margin and the channel that actually drove their growth.',
     query: 'platform=shopify',
     inNav: true,
   },
@@ -44,10 +40,25 @@ export const MORE = {
   inNav: true,
 };
 
+/** Meta descriptions. Kept OUT of `blurb` because these are not rendered on
+ *  the page — they are <meta> only, and conflating "what the page says" with
+ *  "what the search result says" is how a page ends up serving copy to
+ *  crawlers that no visitor ever sees. */
+export const DESCRIPTIONS = {
+  'all-ideas': 'Revenue, profit, margin and starting cost for businesses you have never heard of. Researched from public data, with sources on every profile.',
+  'amazon-fba': 'Amazon FBA businesses with their monthly revenue, margin and what it cost to start. Researched from public data.',
+  shopify: 'Shopify businesses with their monthly revenue, margin and what it cost to start. Researched from public data.',
+  'more-ideas': 'Browse researched businesses by niche, business model, platform and growth channel.',
+};
+
 export function collectionBySlug(slug) {
   return COLLECTIONS.find((c) => c.slug === slug);
 }
 
+/** The default collection lives at /data/ itself, not /data/all-ideas/.
+ *  🚨 One function, used by the router, the nav, the prerender and the
+ *  sitemap — so the canonical URL cannot disagree with the link that points
+ *  at it. */
 export function collectionPath(slug) {
-  return `/data/${slug}/`;
+  return slug === 'all-ideas' ? '/data/' : `/data/${slug}/`;
 }

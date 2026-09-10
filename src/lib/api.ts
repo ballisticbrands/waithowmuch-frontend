@@ -63,6 +63,7 @@ export type BusinessCard = {
   latestMonthlyProfit: string | null;
   latestMarginPct: string | null;
   startingCost: string | null;
+  logoUrl: string | null;
   publishedAt: string | null;
   categories: CategoryRef[];
 };

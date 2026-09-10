@@ -1,5 +1,13 @@
 import type { FacetCategory } from "@/lib/api";
 import { money } from "@/lib/format";
+import { RangeSlider } from "./RangeSlider";
+
+/** Track ceilings. A thumb at the top means "and everything above", so these
+ *  bound the CONTROL, never the results — see the note in RangeSlider. */
+const REVENUE_MAX = 500_000;
+const REVENUE_STEP = 5_000;
+const COST_MAX = 10_000;
+const COST_STEP = 250;
 
 export type FilterState = {
   revenueMin?: number;
@@ -23,29 +31,6 @@ const SORTS = [
   { value: "cost", label: "Starting cost — high to low" },
   { value: "newest", label: "Recently added" },
 ];
-
-/** A number input that treats "" as undefined rather than 0 — an empty bound
- *  means "unbounded", and coercing it to 0 would filter out every unknown. */
-function NumberBound({
-  value, onChange, placeholder, ariaLabel,
-}: {
-  value?: number;
-  onChange: (v?: number) => void;
-  placeholder: string;
-  ariaLabel: string;
-}) {
-  return (
-    <input
-      type="number"
-      min={0}
-      inputMode="numeric"
-      aria-label={ariaLabel}
-      placeholder={placeholder}
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))}
-    />
-  );
-}
 
 function ChipGroup({
   label, options, selected, onToggle,
@@ -100,27 +85,21 @@ export function Filters({
   return (
     <>
       <div data-filters>
-        <div data-filter>
-          <span data-filter-label>Revenue / mo</span>
-          <div data-range>
-            <NumberBound ariaLabel="Minimum monthly revenue" placeholder="Any"
-              value={state.revenueMin} onChange={(v) => set({ revenueMin: v })} />
-            <span data-range-sep>to</span>
-            <NumberBound ariaLabel="Maximum monthly revenue" placeholder="Any"
-              value={state.revenueMax} onChange={(v) => set({ revenueMax: v })} />
-          </div>
-        </div>
+        <RangeSlider
+          label="Revenue / mo"
+          min={0} max={REVENUE_MAX} step={REVENUE_STEP}
+          valueMin={state.revenueMin} valueMax={state.revenueMax}
+          onChange={(r) => set({ revenueMin: r.min, revenueMax: r.max })}
+          format={(n) => money(n, "USD")}
+        />
 
-        <div data-filter>
-          <span data-filter-label>Starting cost</span>
-          <div data-range>
-            <NumberBound ariaLabel="Minimum starting cost" placeholder="Any"
-              value={state.costMin} onChange={(v) => set({ costMin: v })} />
-            <span data-range-sep>to</span>
-            <NumberBound ariaLabel="Maximum starting cost" placeholder="Any"
-              value={state.costMax} onChange={(v) => set({ costMax: v })} />
-          </div>
-        </div>
+        <RangeSlider
+          label="Starting cost"
+          min={0} max={COST_MAX} step={COST_STEP}
+          valueMin={state.costMin} valueMax={state.costMax}
+          onChange={(r) => set({ costMin: r.min, costMax: r.max })}
+          format={(n) => money(n, "USD")}
+        />
 
         <div data-filter>
           <span data-filter-label>Sort</span>

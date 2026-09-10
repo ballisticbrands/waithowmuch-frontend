@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import Home from "@/pages/Home";
 import Ideas, { MoreIdeas } from "@/pages/Ideas";
@@ -24,6 +24,14 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
+        {/* The default collection IS /data/ — Ideas falls back to all-ideas
+            when there is no :collection param. */}
+        <Route path="/data" element={<Ideas />} />
+        <Route path="/data/" element={<Ideas />} />
+        {/* The old URL, kept so existing links and any indexed copy land on
+            the canonical one rather than 404ing. */}
+        <Route path="/data/all-ideas" element={<Navigate to="/data/" replace />} />
+        <Route path="/data/all-ideas/" element={<Navigate to="/data/" replace />} />
         <Route path="/data/more-ideas" element={<MoreIdeas />} />
         <Route path="/data/more-ideas/" element={<MoreIdeas />} />
         <Route path="/data/:collection" element={<Ideas />} />

@@ -52,7 +52,7 @@ function DataMenu() {
             role="menuitem"
             onClick={() => setOpen(false)}
           >
-            {c.title}
+            {c.navLabel ?? c.title}
           </Link>
         ))}
         <Link

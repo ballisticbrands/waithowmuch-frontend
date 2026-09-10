@@ -123,9 +123,15 @@ h1, h2, h3, h4 {
   border-bottom: 1px solid var(--border);
 }
 
+/* Edge-to-edge, NOT a centered max-width container: the mark sits at the far
+   left of the viewport and the nav follows immediately beside it. --gutter is
+   the single source of that left offset, so the breadcrumbs below can line up
+   with the mark exactly rather than by eye. */
+:root { --gutter: 1.25rem; }
+
 [data-header-inner] {
-  max-width: 78rem; margin: 0 auto; padding: 0.75rem 1.25rem;
-  display: flex; align-items: center; gap: 1.5rem;
+  width: 100%; padding: 0.7rem var(--gutter);
+  display: flex; align-items: center; gap: 1.25rem;
 }
 
 [data-brand] { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
@@ -162,8 +168,10 @@ h1, h2, h3, h4 {
 
 /* ─── Breadcrumbs ─────────────────────────────────────────────────────── */
 
+/* Hangs off the mark: same left offset as the header, so the trail starts
+   directly beneath the logo rather than inside a narrower content column. */
 [data-crumbs] {
-  max-width: 78rem; margin: 0 auto; padding: 0.875rem 1.25rem 0;
+  width: 100%; padding: 0.75rem var(--gutter) 0;
   display: flex; align-items: center; gap: 0.4rem;
   font-size: 0.8125rem; color: var(--muted-foreground);
 }
@@ -171,13 +179,13 @@ h1, h2, h3, h4 {
 [data-crumb-sep] { opacity: 0.45; }
 [data-crumbs] [aria-current="page"] { color: var(--foreground); font-weight: 500; }
 
-[data-main] { flex: 1; width: 100%; max-width: 78rem; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; }
+[data-main] { flex: 1; width: 100%; padding: 1.25rem var(--gutter) 5rem; }
 
 [data-footer] {
   border-top: 1px solid var(--border); background: var(--surface);
-  padding: 2.5rem 1.25rem; color: var(--muted-foreground); font-size: 0.875rem;
+  padding: 2.5rem var(--gutter); color: var(--muted-foreground); font-size: 0.875rem;
 }
-[data-footer-inner] { max-width: 78rem; margin: 0 auto; }
+[data-footer-inner] { width: 100%; }
 
 /* ─── Buttons + controls ──────────────────────────────────────────────── */
 
@@ -215,6 +223,45 @@ h1, h2, h3, h4 {
   letter-spacing: 0.05em; color: var(--muted-foreground);
 }
 
+/* ─── Dual-thumb range slider ──────────────────────────────────────────
+ * Two native <input type=range> stacked on one track. Native inputs, not a
+ * custom widget, so keyboard control and screen-reader semantics come for
+ * free — a hand-rolled slider is one of the easiest ways to ship something
+ * unusable to anyone not holding a mouse.
+ *
+ * The inputs are pointer-transparent except for their thumbs, which is what
+ * lets the lower one stay grabbable where the two overlap. */
+[data-slider] { position: relative; height: 2.25rem; width: 13rem; }
+
+[data-slider-track] {
+  position: absolute; top: 0.85rem; left: 0; right: 0; height: 4px;
+  border-radius: 999px; background: var(--border-strong);
+}
+[data-slider-fill] { position: absolute; height: 4px; border-radius: 999px; background: var(--accent); }
+
+[data-slider] input[type="range"] {
+  position: absolute; top: 0.5rem; left: 0; width: 100%; margin: 0;
+  height: 1.25rem; background: none; pointer-events: none;
+  -webkit-appearance: none; appearance: none;
+}
+[data-slider] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; pointer-events: auto;
+  width: 1.05rem; height: 1.05rem; border-radius: 50%;
+  background: var(--card); border: 2px solid var(--accent);
+  box-shadow: 0 1px 3px rgb(20 20 27 / 0.18); cursor: grab;
+}
+[data-slider] input[type="range"]::-moz-range-thumb {
+  pointer-events: auto; width: 1.05rem; height: 1.05rem; border-radius: 50%;
+  background: var(--card); border: 2px solid var(--accent);
+  box-shadow: 0 1px 3px rgb(20 20 27 / 0.18); cursor: grab;
+}
+[data-slider] input[type="range"]::-moz-range-track { background: none; }
+
+[data-slider-value] {
+  font-size: 0.8125rem; color: var(--foreground); font-variant-numeric: tabular-nums;
+  margin-top: -0.15rem;
+}
+
 [data-range] { display: flex; align-items: center; gap: 0.4rem; }
 [data-range] input[type="number"] {
   width: 6.5rem; padding: 0.5rem 0.6rem; font-size: 0.875rem;
@@ -238,18 +285,70 @@ h1, h2, h3, h4 {
 
 /* ─── Idea cards ──────────────────────────────────────────────────────── */
 
-[data-grid] { display: grid; gap: 0.875rem; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); }
+/* ─── Idea rows ───────────────────────────────────────────────────────
+ * Rows, not cards: the whole point of this list is comparing figures down a
+ * column, and a card grid puts every number in a different horizontal
+ * position so the eye cannot scan them. */
 
-[data-card] {
-  display: block; padding: 1.125rem;
+[data-rows] {
   border: 1px solid var(--border); border-radius: var(--radius-lg);
-  background: var(--card); transition: border-color .15s ease, box-shadow .15s ease;
+  background: var(--card); overflow: hidden;
 }
-[data-card]:hover { border-color: var(--border-strong); box-shadow: var(--shadow); }
-[data-card-name] { font-weight: 650; font-size: 1.0625rem; letter-spacing: -0.015em; }
-[data-card-tagline] {
-  color: var(--muted-foreground); font-size: 0.875rem; margin-top: 0.2rem;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+
+[data-row] {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 7rem;
+  align-items: center; gap: 1rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-row]:last-child { border-bottom: none; }
+[data-row]:hover { background: var(--surface); }
+
+[data-row-logo] {
+  width: 2.75rem; height: 2.75rem; border-radius: var(--radius);
+  object-fit: cover; background: var(--muted); display: block;
+}
+/* Lettermark fallback for a business with no logo — a normal state. */
+[data-row-logo][data-fallback] {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 1.125rem;
+  color: var(--accent); background: var(--accent-tint);
+}
+
+[data-row-name] { font-weight: 600; font-size: 0.9688rem; letter-spacing: -0.01em; }
+[data-row-tagline] {
+  color: var(--muted-foreground); font-size: 0.8125rem; margin-top: 0.1rem;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+[data-row-tags] { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
+
+[data-row-stat] { display: flex; flex-direction: column; gap: 0.05rem; text-align: right; }
+[data-row-stat] dt {
+  font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--muted-foreground); font-weight: 600;
+}
+[data-row-stat] dd { margin: 0; font-size: 1rem; font-weight: 650; }
+
+[data-row-head] {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 7rem;
+  gap: 1rem; padding: 0.5rem 1.125rem;
+  font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--muted-foreground); font-weight: 600;
+  border-bottom: 1px solid var(--border); background: var(--surface);
+}
+[data-row-head] span:nth-child(n+3) { text-align: right; }
+
+@media (max-width: 760px) {
+  /* Below this the five columns cannot hold their widths without the figures
+     colliding, so the row folds: mark + name on one line, figures beneath. */
+  [data-row] { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: 0.6rem; }
+  [data-row-stats] {
+    grid-column: 1 / -1; display: flex; gap: 1.75rem;
+  }
+  [data-row-stat] { text-align: left; }
+  [data-row-head] { display: none; }
 }
 
 [data-stat-row] { display: flex; gap: 1.5rem; margin: 1rem 0 0; }

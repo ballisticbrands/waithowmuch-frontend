@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { listBusinesses, listCategories, type BusinessCard, type FacetCategory } from "@/lib/api";
 import { collectionBySlug, collectionPath, COLLECTIONS, MORE } from "@/data/collections.mjs";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { IdeaCard } from "@/components/IdeaCard";
+import { IdeaRow, IdeaRowHead } from "@/components/IdeaRow";
 import { Filters, EMPTY_FILTERS, toQuery, type FilterState } from "@/components/Filters";
 import { ideasBootstrap } from "@/lib/bootstrap";
 import { BRAND_NAME } from "@/data/site";
@@ -74,10 +74,7 @@ export default function Ideas() {
     <>
       <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: meta.title }]} />
       <main data-main>
-        <h1 style={{ fontSize: "1.875rem", fontWeight: 700 }}>{meta.title}</h1>
-        <p style={{ color: "var(--muted-foreground)", margin: "0.5rem 0 1.5rem", maxWidth: "44rem" }}>
-          {meta.blurb}
-        </p>
+        <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{meta.title}</h1>
 
         <Filters state={filters} onChange={setFilters} facets={facets} total={total} />
 
@@ -92,7 +89,10 @@ export default function Ideas() {
           </div>
         )}
         {rows && rows.length > 0 && (
-          <div data-grid>{rows.map((b) => <IdeaCard key={b.id} business={b} />)}</div>
+          <div data-rows>
+            <IdeaRowHead />
+            {rows.map((b) => <IdeaRow key={b.id} business={b} />)}
+          </div>
         )}
       </main>
     </>
