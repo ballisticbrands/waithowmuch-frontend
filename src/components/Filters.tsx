@@ -102,8 +102,8 @@ export function Filters({
         />
 
         <div data-filter>
-          <span data-filter-label>Sort</span>
-          <select data-select aria-label="Sort results" value={state.sort}
+          <label data-filter-label htmlFor="sort">Sort</label>
+          <select data-select id="sort" value={state.sort}
                   onChange={(e) => set({ sort: e.target.value })} style={{ width: "auto" }}>
             {SORTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
