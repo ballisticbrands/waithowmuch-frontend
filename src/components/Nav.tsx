@@ -78,7 +78,11 @@ export function Nav() {
       <div data-header-inner>
         <Link data-brand to="/">
           <Logo size={30} />
-          <span>{BRAND_NAME}</span>
+          {/* The wordmark carries the "?" that the mark does; BRAND_NAME itself
+              stays punctuation-free, because it also fills <title>, meta
+              descriptions and running prose where a stray "?" reads as a typo
+              rather than a name. */}
+          <span>{BRAND_NAME}?</span>
         </Link>
 
         <nav data-nav aria-label="Main">
