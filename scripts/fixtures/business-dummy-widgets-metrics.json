@@ -1,0 +1,823 @@
+{
+  "currency": "USD",
+  "types": [
+    {
+      "type": "ad_spend",
+      "label": "Ad spend",
+      "kind": "FLOW",
+      "aggregate": "sum"
+    },
+    {
+      "type": "followers",
+      "label": "Followers",
+      "kind": "LEVEL",
+      "aggregate": "last"
+    },
+    {
+      "type": "profit",
+      "label": "Profit",
+      "kind": "FLOW",
+      "aggregate": "sum"
+    },
+    {
+      "type": "revenue",
+      "label": "Revenue",
+      "kind": "FLOW",
+      "aggregate": "sum"
+    }
+  ],
+  "metrics": [
+    {
+      "type": "ad_spend",
+      "value": "2640",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-03-01T00:00:00.000Z",
+      "periodEnd": "2025-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "2746",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-04-01T00:00:00.000Z",
+      "periodEnd": "2025-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "2851",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-05-01T00:00:00.000Z",
+      "periodEnd": "2025-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "2957",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-06-01T00:00:00.000Z",
+      "periodEnd": "2025-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3062",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-07-01T00:00:00.000Z",
+      "periodEnd": "2025-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3168",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-08-01T00:00:00.000Z",
+      "periodEnd": "2025-08-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3274",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-09-01T00:00:00.000Z",
+      "periodEnd": "2025-09-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3379",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-10-01T00:00:00.000Z",
+      "periodEnd": "2025-10-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "11151",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-11-01T00:00:00.000Z",
+      "periodEnd": "2025-11-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "11489",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-12-01T00:00:00.000Z",
+      "periodEnd": "2025-12-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "11827",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-01-01T00:00:00.000Z",
+      "periodEnd": "2026-01-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3802",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-02-01T00:00:00.000Z",
+      "periodEnd": "2026-02-28T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "3907",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-03-01T00:00:00.000Z",
+      "periodEnd": "2026-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "4013",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-04-01T00:00:00.000Z",
+      "periodEnd": "2026-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "4118",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-05-01T00:00:00.000Z",
+      "periodEnd": "2026-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "4224",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-06-01T00:00:00.000Z",
+      "periodEnd": "2026-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "4330",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-07-01T00:00:00.000Z",
+      "periodEnd": "2026-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "ad_spend",
+      "value": "4435",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-08-01T00:00:00.000Z",
+      "periodEnd": "2026-08-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "12000",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-03-01T00:00:00.000Z",
+      "periodEnd": "2025-03-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "13850",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-04-01T00:00:00.000Z",
+      "periodEnd": "2025-04-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "15700",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-05-01T00:00:00.000Z",
+      "periodEnd": "2025-05-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "17550",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-06-01T00:00:00.000Z",
+      "periodEnd": "2025-06-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "19400",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-07-01T00:00:00.000Z",
+      "periodEnd": "2025-07-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "21250",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-08-01T00:00:00.000Z",
+      "periodEnd": "2025-08-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "23100",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-09-01T00:00:00.000Z",
+      "periodEnd": "2025-09-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "24950",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-10-01T00:00:00.000Z",
+      "periodEnd": "2025-10-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "26800",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-11-01T00:00:00.000Z",
+      "periodEnd": "2025-11-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "28650",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2025-12-01T00:00:00.000Z",
+      "periodEnd": "2025-12-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "30500",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-01-01T00:00:00.000Z",
+      "periodEnd": "2026-01-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "32350",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-02-01T00:00:00.000Z",
+      "periodEnd": "2026-02-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "34200",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-03-01T00:00:00.000Z",
+      "periodEnd": "2026-03-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "36050",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-04-01T00:00:00.000Z",
+      "periodEnd": "2026-04-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "37900",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-05-01T00:00:00.000Z",
+      "periodEnd": "2026-05-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "39750",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-06-01T00:00:00.000Z",
+      "periodEnd": "2026-06-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "41600",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-07-01T00:00:00.000Z",
+      "periodEnd": "2026-07-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "followers",
+      "value": "43450",
+      "meta": {
+        "source": "seed",
+        "platform": "instagram"
+      },
+      "periodStart": "2026-08-01T00:00:00.000Z",
+      "periodEnd": "2026-08-01T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "6160",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-03-01T00:00:00.000Z",
+      "periodEnd": "2025-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "6406",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-04-01T00:00:00.000Z",
+      "periodEnd": "2025-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "6653",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-05-01T00:00:00.000Z",
+      "periodEnd": "2025-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "6899",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-06-01T00:00:00.000Z",
+      "periodEnd": "2025-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "7146",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-07-01T00:00:00.000Z",
+      "periodEnd": "2025-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "7392",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-08-01T00:00:00.000Z",
+      "periodEnd": "2025-08-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "7638",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-09-01T00:00:00.000Z",
+      "periodEnd": "2025-09-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "7885",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-10-01T00:00:00.000Z",
+      "periodEnd": "2025-10-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "26020",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-11-01T00:00:00.000Z",
+      "periodEnd": "2025-11-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "26808",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-12-01T00:00:00.000Z",
+      "periodEnd": "2025-12-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "27597",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-01-01T00:00:00.000Z",
+      "periodEnd": "2026-01-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "8870",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-02-01T00:00:00.000Z",
+      "periodEnd": "2026-02-28T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "9117",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-03-01T00:00:00.000Z",
+      "periodEnd": "2026-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "9363",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-04-01T00:00:00.000Z",
+      "periodEnd": "2026-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "9610",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-05-01T00:00:00.000Z",
+      "periodEnd": "2026-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "9856",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-06-01T00:00:00.000Z",
+      "periodEnd": "2026-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "10102",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-07-01T00:00:00.000Z",
+      "periodEnd": "2026-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "profit",
+      "value": "10349",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-08-01T00:00:00.000Z",
+      "periodEnd": "2026-08-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "22000",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-03-01T00:00:00.000Z",
+      "periodEnd": "2025-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "22880",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-04-01T00:00:00.000Z",
+      "periodEnd": "2025-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "23760",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-05-01T00:00:00.000Z",
+      "periodEnd": "2025-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "24640",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-06-01T00:00:00.000Z",
+      "periodEnd": "2025-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "25520",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-07-01T00:00:00.000Z",
+      "periodEnd": "2025-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "26400",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-08-01T00:00:00.000Z",
+      "periodEnd": "2025-08-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "27280",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-09-01T00:00:00.000Z",
+      "periodEnd": "2025-09-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "28160",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-10-01T00:00:00.000Z",
+      "periodEnd": "2025-10-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "92928",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-11-01T00:00:00.000Z",
+      "periodEnd": "2025-11-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "95744",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2025-12-01T00:00:00.000Z",
+      "periodEnd": "2025-12-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "98560",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-01-01T00:00:00.000Z",
+      "periodEnd": "2026-01-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "31680",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-02-01T00:00:00.000Z",
+      "periodEnd": "2026-02-28T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "32560",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-03-01T00:00:00.000Z",
+      "periodEnd": "2026-03-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "33440",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-04-01T00:00:00.000Z",
+      "periodEnd": "2026-04-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "34320",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-05-01T00:00:00.000Z",
+      "periodEnd": "2026-05-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "35200",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-06-01T00:00:00.000Z",
+      "periodEnd": "2026-06-30T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "36080",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-07-01T00:00:00.000Z",
+      "periodEnd": "2026-07-31T00:00:00.000Z",
+      "isEstimated": true
+    },
+    {
+      "type": "revenue",
+      "value": "36960",
+      "meta": {
+        "source": "seed",
+        "currency": "USD"
+      },
+      "periodStart": "2026-08-01T00:00:00.000Z",
+      "periodEnd": "2026-08-31T00:00:00.000Z",
+      "isEstimated": true
+    }
+  ]
+}

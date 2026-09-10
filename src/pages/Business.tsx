@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
   getBusiness, getMetrics, linkMetaNumber, toChartPoints,
@@ -37,13 +37,21 @@ export default function Business() {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
 
-  // Keyed on the SLUG, not on `b`: the business object is replaced when the
-  // API response lands on top of the prerendered bootstrap, and keying on it
-  // would count the same profile twice on every cold view.
+  // Fires exactly once per slug, and only once the page has resolved one way
+  // or the other.
+  //
+  // The naive version — a `[slug]`-keyed effect — fires at mount, which beats
+  // the API response on every page that is not prerendered, so the event
+  // ships with `business_name: undefined` and GA4 shows a column of blanks.
+  // The other naive version, keying on `b`, double-counts: `b` changes again
+  // when the fetch lands on top of the bootstrap value.
+  const viewFired = useRef<string | null>(null);
   useEffect(() => {
-    if (slug) trackBusinessView(slug, b?.name);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug]);
+    if (!slug || viewFired.current === slug) return;
+    if (!b && !missing) return; // still resolving — wait for a name or a 404
+    viewFired.current = slug;
+    if (b) trackBusinessView(slug, b.name);
+  }, [slug, b, missing]);
 
   // The final crumb is the business NAME, which is not in the URL — hence a
   // context the page pushes into rather than crumbs derived from the path.

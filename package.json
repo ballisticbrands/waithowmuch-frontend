@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "node scripts/check-site-constants.mjs && tsc -b && vite build && node scripts/postbuild-spa-routes.mjs && node scripts/generate-sitemap.mjs",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:tracking": "node scripts/verify-tracking.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

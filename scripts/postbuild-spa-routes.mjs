@@ -40,6 +40,25 @@ if (cssHref) {
   console.log(`postbuild: inlined ${css.length}B of CSS`);
 }
 
+/**
+ * The bundle must be reachable — i.e. its <script> must not be sitting inside
+ * an HTML comment.
+ *
+ * This is the build-time half of the `insertIntoHead` fix below. A swallowed
+ * script tag produces a page that serves 200, looks correct in `view-source`,
+ * passes every word-count and SEO check here, and is COMPLETELY DEAD in a
+ * browser: no React, no analytics, no interactivity. Nothing else in this
+ * pipeline notices. One assertion is cheap insurance against shipping that.
+ */
+function assertBundleReachable(html, label) {
+  const masked = html.replace(/<!--[\s\S]*?-->/g, '');
+  if (!/<script[^>]*\ssrc=/.test(masked)) {
+    console.error(`postbuild: ${label} has no executable <script src> outside a comment — the bundle would never run.`);
+    process.exit(1);
+  }
+}
+assertBundleReachable(shell, 'the built shell');
+
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -63,7 +82,7 @@ function render({ path, title, description, body, bootstrap }) {
     `<meta property="og:type" content="website" />`,
     `<meta name="twitter:card" content="summary" />`,
   ].join('\n    ');
-  html = html.replace('</head>', `  ${head}\n  </head>`);
+  html = insertIntoHead(html, `  ${head}\n  `);
 
   // Inline the data the first render needs. Without it React mounts, clears
   // the prerendered markup, and shows a spinner until the API answers — so LCP
@@ -73,7 +92,7 @@ function render({ path, title, description, body, bootstrap }) {
   // would otherwise close the tag early and inject the rest as markup.
   if (bootstrap) {
     const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
-    html = html.replace('</head>', `  <script>window.__WHM_BOOTSTRAP__=${json}</script>\n  </head>`);
+    html = insertIntoHead(html, `  <script>window.__WHM_BOOTSTRAP__=${json}</script>\n  `);
   }
 
   return html.replace('<div id="root"></div>', `<div id="root" data-prerender>${body}</div>`);
@@ -95,6 +114,28 @@ const FOOTER = `<p>${BRAND_NAME} publishes revenue and profit for real businesse
    accounts. Every profile shows how its numbers were reached.</p>`;
 const words = (html) =>
   html.replace(/<(script|style)[\s\S]*?<\/\1>/g, '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+
+/**
+ * Insert markup immediately before the real closing </head>.
+ *
+ * 🪤 Why this is not a plain `.replace('</head>', ...)`: that replaces the
+ * FIRST occurrence of the literal string anywhere in the file — including
+ * inside an HTML COMMENT. A perfectly reasonable comment in index.html that
+ * mentioned the closing head tag caused every injected tag, and the module
+ * script tag with them, to be spliced INTO that comment. The browser then
+ * never executed the bundle: no React, no analytics, a blank page. The build
+ * printed no error and the HTML looked fine at a glance. It cost a real
+ * debugging detour on 2026-09-10.
+ *
+ * So: find the first closing head tag that is not inside a comment.
+ */
+function insertIntoHead(html, snippet) {
+  // Blank out comment bodies so their offsets still line up, then search.
+  const masked = html.replace(/<!--[\s\S]*?-->/g, (m) => ' '.repeat(m.length));
+  const i = masked.indexOf('</head>');
+  if (i === -1) throw new Error('postbuild: no closing </head> outside a comment');
+  return `${html.slice(0, i)}${snippet}${html.slice(i)}`;
+}
 
 /** Fail the build on a thin SEO destination. Raise this threshold, never lower
  *  it to make a build pass — a thin page looks completely fine in every tool
@@ -183,11 +224,10 @@ for (const c of [...COLLECTIONS]) {
 // the STATUS is 404, so a crawler that already has the old URL records a dead
 // page instead of following the move. A canonical plus a meta refresh gets
 // both a 200 and an unambiguous signal about where the page went.
-write('/data/all-ideas/', shell
-  .replace(/<title>[^<]*<\/title>/, `<title>The Idea Database — ${BRAND_NAME}</title>`)
-  .replace('</head>',
+write('/data/all-ideas/', insertIntoHead(
+  shell.replace(/<title>[^<]*<\/title>/, `<title>The Idea Database — ${BRAND_NAME}</title>`),
     `  <link rel="canonical" href="${SITE}/data/" />\n` +
-    `  <meta http-equiv="refresh" content="0; url=/data/" />\n  </head>`)
+    `  <meta http-equiv="refresh" content="0; url=/data/" />\n  `)
   .replace('<div id="root"></div>',
     `<div id="root" data-prerender><p>This page moved to <a href="/data/">The Idea Database</a>.</p></div>`));
 

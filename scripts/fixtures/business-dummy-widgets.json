@@ -1,0 +1,90 @@
+{
+  "business": {
+    "id": "cmtuhf6kk0000qs2v2qz5pmv6",
+    "slug": "dummy-widgets",
+    "name": "Dummy Widgets Co",
+    "tagline": "Placeholder business \u2014 every figure here is invented",
+    "country": "US",
+    "currency": "USD",
+    "establishedAt": "2021-03-01T00:00:00.000Z",
+    "researchMethod": "RESEARCHED",
+    "confidence": "LOW",
+    "latestPeriod": "2026-08-01T00:00:00.000Z",
+    "latestMonthlyRevenue": "36960",
+    "latestMonthlyProfit": "10349",
+    "latestMarginPct": "28",
+    "startingCost": "4200",
+    "logoUrl": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%23e9e6fd%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2242%22%20text-anchor%3D%22middle%22%20font-family%3D%22ui-monospace%2Cmonospace%22%20font-size%3D%2230%22%20font-weight%3D%22700%22%20fill%3D%22%235b3df5%22%3ED%3C%2Ftext%3E%3C%2Fsvg%3E",
+    "publishedAt": "2026-09-09T19:19:04.840Z",
+    "sources": [
+      {
+        "url": "https://waithowmuch.com/",
+        "note": "placeholder",
+        "title": "Nothing \u2014 this record is fabricated"
+      }
+    ],
+    "startingCostNote": "Invented figure \u2014 first inventory run plus artwork.",
+    "categories": [
+      {
+        "slug": "amazon-fba",
+        "name": "Amazon FBA",
+        "kind": "CHANNEL"
+      },
+      {
+        "slug": "private-label",
+        "name": "Private Label",
+        "kind": "MODEL"
+      },
+      {
+        "slug": "supplements",
+        "name": "Supplements",
+        "kind": "NICHE"
+      },
+      {
+        "slug": "shopify",
+        "name": "Shopify",
+        "kind": "PLATFORM"
+      },
+      {
+        "slug": "short-form-video",
+        "name": "Short-form video",
+        "kind": "GROWTH"
+      },
+      {
+        "slug": "paid-social",
+        "name": "Paid social",
+        "kind": "GROWTH"
+      },
+      {
+        "slug": "consumers",
+        "name": "Consumers",
+        "kind": "AUDIENCE"
+      },
+      {
+        "slug": "one-off-product",
+        "name": "One-off product",
+        "kind": "MONETIZATION"
+      }
+    ],
+    "links": [
+      {
+        "platform": "WEBSITE",
+        "url": "https://example.com",
+        "label": "Site",
+        "handle": null,
+        "meta": {}
+      },
+      {
+        "platform": "INSTAGRAM",
+        "url": "https://instagram.com/example",
+        "label": null,
+        "handle": "@example",
+        "meta": {
+          "likes": 5200000,
+          "posts": 359,
+          "followerCount": 45400
+        }
+      }
+    ]
+  }
+}

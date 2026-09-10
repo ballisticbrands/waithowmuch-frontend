@@ -13,6 +13,14 @@
          even same-origin — a font preload without it is fetched twice. -->
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <meta name="description" content="Revenue and profit for businesses you have never heard of. Researched from public data." />
+    <!-- Meta (Facebook) domain verification for the Dragon Suite portfolio.
+         This MUST live in the STATIC head: Meta's crawler does not execute
+         JavaScript, so a tag React injects is never seen, and Meta's own UI
+         warns that a dynamically-loaded tag fails. The prerender preserves it
+         into every route stub, and `npm run verify:tracking` asserts that.
+         Removing it later silently UN-verifies the domain: Meta re-checks
+         periodically, it does not verify once and remember. -->
+    <meta name="facebook-domain-verification" content="hie9b4d5jq6ga9qj6fckz40dd3qyp6" />
     <meta property="og:site_name" content="WaitHowMuch" />
     <meta property="og:image" content="https://waithowmuch.com/logo-512.png" />
     <meta property="og:image:width" content="512" />
