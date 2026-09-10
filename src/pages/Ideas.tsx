@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { listBusinesses, listCategories, type BusinessCard, type FacetCategory } from "@/lib/api";
 import { collectionBySlug, collectionPath, COLLECTIONS, MORE } from "@/data/collections.mjs";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { IdeaRow, IdeaRowHead } from "@/components/IdeaRow";
 import { Filters, EMPTY_FILTERS, toQuery, type FilterState } from "@/components/Filters";
 import { ideasBootstrap } from "@/lib/bootstrap";
@@ -28,6 +28,11 @@ export default function Ideas() {
   useEffect(() => {
     if (meta) document.title = `${meta.title} — ${BRAND_NAME}`;
   }, [meta]);
+
+  useSetCrumbs(
+    () => (meta ? [{ label: "Ideas", to: collectionPath("all-ideas") }, { label: meta.title }] : []),
+    [meta?.slug],
+  );
 
   const query = useMemo(() => {
     const parts = [meta?.query, toQuery(filters)].filter(Boolean);
@@ -58,22 +63,17 @@ export default function Ideas() {
 
   if (!meta) {
     return (
-      <>
-        <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: "Not found" }]} />
-        <main data-main>
-          <div data-empty>
-            <p>No such collection.</p>
-            <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
-          </div>
-        </main>
-      </>
+      <main data-main>
+        <div data-empty>
+          <p>No such collection.</p>
+          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
+        </div>
+      </main>
     );
   }
 
   return (
-    <>
-      <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: meta.title }]} />
-      <main data-main>
+    <main data-main>
         <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{meta.title}</h1>
 
         <Filters state={filters} onChange={setFilters} facets={facets} total={total} />
@@ -88,14 +88,13 @@ export default function Ideas() {
             </p>
           </div>
         )}
-        {rows && rows.length > 0 && (
-          <div data-rows>
-            <IdeaRowHead />
-            {rows.map((b) => <IdeaRow key={b.id} business={b} />)}
-          </div>
-        )}
-      </main>
-    </>
+      {rows && rows.length > 0 && (
+        <div data-rows>
+          <IdeaRowHead />
+          {rows.map((b) => <IdeaRow key={b.id} business={b} />)}
+        </div>
+      )}
+    </main>
   );
 }
 
@@ -116,10 +115,10 @@ export function MoreIdeas() {
     ["AUDIENCE", "By who it sells to"],
   ];
 
+  useSetCrumbs(() => [{ label: "Ideas", to: collectionPath("all-ideas") }, { label: MORE.title }], []);
+
   return (
-    <>
-      <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: MORE.title }]} />
-      <main data-main>
+    <main data-main>
         <h1 style={{ fontSize: "1.875rem", fontWeight: 700 }}>{MORE.title}</h1>
         <p style={{ color: "var(--muted-foreground)", margin: "0.5rem 0 2rem", maxWidth: "44rem" }}>{MORE.blurb}</p>
 
@@ -149,8 +148,7 @@ export function MoreIdeas() {
           );
         })}
 
-        {facets.length === 0 && <div data-empty>No categories yet.</div>}
-      </main>
-    </>
+      {facets.length === 0 && <div data-empty>No categories yet.</div>}
+    </main>
   );
 }

@@ -4,7 +4,7 @@ import { getBusiness, getMetrics, type BusinessDetail, type MetricPoint } from "
 import { profileFor } from "@/businesses/index.mjs";
 import { ProfileBlocks } from "@/components/ProfileBlocks";
 import { ResearchedNotice } from "@/components/ResearchedNotice";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { Chart } from "@/components/Chart";
 import { businessBootstrap } from "@/lib/bootstrap";
 import { collectionPath, BRAND_NAME_SAFE } from "@/lib/nav-helpers";
@@ -33,36 +33,34 @@ export default function Business() {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
 
+  // The final crumb is the business NAME, which is not in the URL — hence a
+  // context the page pushes into rather than crumbs derived from the path.
+  useSetCrumbs(
+    () => [
+      { label: "Ideas", to: collectionPath("all-ideas") },
+      { label: b?.name ?? (missing ? "Not found" : "…") },
+    ],
+    [b?.name, missing],
+  );
+
   if (missing) {
     return (
-      <>
-        <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: "Not found" }]} />
-        <main data-main>
-          <div data-empty>
-            <p>No published idea at <code>{slug}</code>.</p>
-            <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
-          </div>
-        </main>
-      </>
+      <main data-main>
+        <div data-empty>
+          <p>No published idea at <code>{slug}</code>.</p>
+          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
+        </div>
+      </main>
     );
   }
-  if (!b) {
-    return (
-      <>
-        <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: "…" }]} />
-        <main data-main><div data-empty>Loading…</div></main>
-      </>
-    );
-  }
+  if (!b) return <main data-main><div data-empty>Loading…</div></main>;
 
   // An authored profile if one exists for this slug; otherwise the page falls
   // back to whatever the DB alone can say.
   const profile = profileFor(slug);
 
   return (
-    <>
-      <Breadcrumbs crumbs={[{ label: "Ideas", to: collectionPath("all-ideas") }, { label: b.name }]} />
-      <main data-main>
+    <main data-main>
         <h1 style={{ fontSize: "2rem", fontWeight: 700 }}>{b.name}</h1>
         {b.tagline && (
           <p style={{ color: "var(--muted-foreground)", margin: "0.4rem 0 0", fontSize: "1.0625rem" }}>{b.tagline}</p>
@@ -159,9 +157,8 @@ export default function Business() {
                 </li>
               ))}
             </ol>
-          </section>
-        )}
-      </main>
-    </>
+        </section>
+      )}
+    </main>
   );
 }

@@ -1,106 +1,79 @@
-import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Logo } from "./Logo";
+import { CrumbTrail } from "./Breadcrumbs";
 import { useSession, signOut } from "@/lib/session";
 import { COLLECTIONS, MORE, collectionPath } from "@/data/collections.mjs";
 import { BRAND_NAME } from "@/data/site";
 
-function DataMenu() {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const { pathname } = useLocation();
-
-  // Close on outside click and on Escape. Hover alone opens this for pointer
-  // users (CSS), but touch has no hover, so the click path has to work — and
-  // once it does, it needs a way back out.
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  // Any /data/* route counts as being in this section.
-  const active = pathname.startsWith("/data");
-
+/** The thin strip across the top: mark, the breadcrumb trail beside it, and
+ *  auth pinned to the right. Deliberately shallow — the real navigation is the
+ *  rail below it. */
+export function TopBar() {
+  const { user, signedIn } = useSession();
   return (
-    <div data-menu data-open={open} ref={ref}>
-      <button
-        data-nav-link
-        data-active={active}
-        aria-expanded={open}
-        aria-haspopup="true"
-        onClick={() => setOpen((o) => !o)}
-        style={{ background: "none", border: "none", cursor: "pointer", font: "inherit" }}
-      >
-        Data <span aria-hidden="true" style={{ fontSize: "0.7em", opacity: 0.6 }}>▾</span>
-      </button>
-      <div data-menu-panel role="menu">
-        {COLLECTIONS.map((c) => (
-          <Link
-            key={c.slug}
-            data-menu-item
-            data-active={pathname.startsWith(collectionPath(c.slug))}
-            to={collectionPath(c.slug)}
-            role="menuitem"
-            onClick={() => setOpen(false)}
-          >
-            {c.navLabel ?? c.title}
-          </Link>
-        ))}
-        <Link
-          data-menu-item
-          data-active={pathname.startsWith(collectionPath(MORE.slug))}
-          to={collectionPath(MORE.slug)}
-          role="menuitem"
-          onClick={() => setOpen(false)}
-        >
-          {MORE.title}
-        </Link>
+    <header data-topbar>
+      <Link data-brand to="/">
+        <Logo size={26} />
+        <span>{BRAND_NAME}?</span>
+      </Link>
+
+      <CrumbTrail />
+
+      <div data-topbar-right>
+        {signedIn ? (
+          <>
+            <span data-topbar-email>{user?.email}</span>
+            <button data-btn data-variant="quiet" onClick={signOut}>Sign out</button>
+          </>
+        ) : (
+          <>
+            <Link data-btn data-variant="quiet" to="/login">Sign in</Link>
+            <Link data-btn to="/login">Join</Link>
+          </>
+        )}
       </div>
-    </div>
+    </header>
   );
 }
 
-export function Nav() {
-  const { user, signedIn } = useSession();
+function RailLink({ to, label, active }: { to: string; label: string; active: boolean }) {
+  return (
+    <Link data-rail-link data-active={active} to={to} aria-current={active ? "page" : undefined}>
+      {label}
+    </Link>
+  );
+}
+
+/** The left rail: the primary navigation. Sections are grouped under small
+ *  uppercase headings, and the active item is a filled pill. */
+export function SideRail() {
   const { pathname } = useLocation();
+  const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
+  const here = norm(pathname);
 
   return (
-    <header data-header>
-      <div data-header-inner>
-        <Link data-brand to="/">
-          <Logo size={30} />
-          {/* The wordmark carries the "?" that the mark does; BRAND_NAME itself
-              stays punctuation-free, because it also fills <title>, meta
-              descriptions and running prose where a stray "?" reads as a typo
-              rather than a name. */}
-          <span>{BRAND_NAME}?</span>
-        </Link>
+    <aside data-rail>
+      <nav aria-label="Sections">
+        <RailLink to="/" label="Home" active={here === "/"} />
 
-        <nav data-nav aria-label="Main">
-          <Link data-nav-link data-active={pathname === "/"} to="/">Home</Link>
-          <DataMenu />
-        </nav>
+        <div data-rail-group>Data</div>
+        {COLLECTIONS.map((c) => (
+          <RailLink
+            key={c.slug}
+            to={collectionPath(c.slug)}
+            label={c.navLabel ?? c.title}
+            active={here === norm(collectionPath(c.slug))}
+          />
+        ))}
+        <RailLink
+          to={collectionPath(MORE.slug)}
+          label={MORE.title}
+          active={here === norm(collectionPath(MORE.slug))}
+        />
 
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          {signedIn ? (
-            <>
-              <span style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>{user?.email}</span>
-              <button data-btn data-variant="quiet" onClick={signOut}>Sign out</button>
-            </>
-          ) : (
-            <Link data-btn to="/login">Sign in</Link>
-          )}
-        </div>
-      </div>
-    </header>
+        <div data-rail-group>About</div>
+        <RailLink to="/how-we-research/" label="How we research" active={here === "/how-we-research/"} />
+      </nav>
+    </aside>
   );
 }

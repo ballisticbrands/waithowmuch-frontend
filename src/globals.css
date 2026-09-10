@@ -116,80 +116,99 @@ h1, h2, h3, h4 {
   letter-spacing: -0.015em;
 }
 
-/* ─── Shell ───────────────────────────────────────────────────────────── */
+/* ─── Shell: top strip + left rail + content ──────────────────────────
+ *
+ * The primary navigation is a vertical RAIL down the left, with the content
+ * beside it — not a horizontal bar with content underneath. The top strip is
+ * deliberately shallow: identity, the breadcrumb trail, and auth.
+ */
 
 [data-shell] { min-height: 100vh; display: flex; flex-direction: column; }
 
-[data-header] {
+[data-topbar] {
   position: sticky; top: 0; z-index: 40;
-  background: rgb(255 255 255 / 0.86);
-  backdrop-filter: saturate(180%) blur(12px);
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.6rem var(--gutter);
+  background: var(--card);
   border-bottom: 1px solid var(--border);
 }
 
-/* Edge-to-edge, NOT a centered max-width container: the mark sits at the far
-   left of the viewport and the nav follows immediately beside it. --gutter is
-   the single source of that left offset, so the breadcrumbs below can line up
-   with the mark exactly rather than by eye. */
-:root { --gutter: 1.25rem; }
-
-[data-header-inner] {
-  width: 100%; padding: 0.7rem var(--gutter);
-  display: flex; align-items: center; gap: 1.25rem;
+[data-brand] {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-weight: 700; letter-spacing: -0.02em; flex-shrink: 0;
 }
 
-[data-brand] { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; letter-spacing: -0.02em; }
+[data-topbar-right] { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+[data-topbar-email] { font-size: 0.875rem; color: var(--muted-foreground); }
 
-[data-nav] { display: flex; align-items: center; gap: 0.25rem; }
-
-[data-nav-link] {
-  padding: 0.4rem 0.7rem; border-radius: var(--radius);
-  font-size: 0.9375rem; font-weight: 500; color: var(--muted-foreground);
-}
-[data-nav-link]:hover { background: var(--muted); color: var(--foreground); }
-[data-nav-link][data-active="true"] { color: var(--foreground); background: var(--muted); }
-
-/* ─── Dropdown ─────────────────────────────────────────────────────────
- * Opens on hover for pointers AND on click/focus for keyboard and touch —
- * hover alone is unreachable on a phone and invisible to a screen reader. */
-[data-menu] { position: relative; }
-[data-menu-panel] {
-  position: absolute; top: calc(100% + 0.375rem); left: 0; min-width: 13rem;
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius-lg); box-shadow: var(--shadow);
-  padding: 0.375rem; display: none;
-}
-[data-menu]:hover > [data-menu-panel],
-[data-menu][data-open="true"] > [data-menu-panel],
-[data-menu]:focus-within > [data-menu-panel] { display: block; }
-
-[data-menu-item] {
-  display: block; padding: 0.5rem 0.625rem; border-radius: var(--radius);
-  font-size: 0.9375rem; color: var(--foreground);
-}
-[data-menu-item]:hover { background: var(--muted); }
-[data-menu-item][data-active="true"] { color: var(--accent); background: var(--accent-tint); }
-
-/* ─── Breadcrumbs ─────────────────────────────────────────────────────── */
-
-/* Hangs off the mark: same left offset as the header, so the trail starts
-   directly beneath the logo rather than inside a narrower content column. */
+/* Inline with the mark, not on its own row below the header. */
 [data-crumbs] {
-  width: 100%; padding: 0.75rem var(--gutter) 0;
-  display: flex; align-items: center; gap: 0.4rem;
-  font-size: 0.8125rem; color: var(--muted-foreground);
+  display: flex; align-items: center; gap: 0.4rem; min-width: 0;
+  font-size: 0.875rem; color: var(--muted-foreground);
 }
 [data-crumbs] a:hover { color: var(--foreground); }
-[data-crumb-sep] { opacity: 0.45; }
-[data-crumbs] [aria-current="page"] { color: var(--foreground); font-weight: 500; }
+[data-crumb-sep] { opacity: 0.4; }
+[data-crumbs] [aria-current="page"] { color: var(--accent); font-weight: 550; }
 
-[data-main] { flex: 1; width: 100%; padding: 1.25rem var(--gutter) 5rem; }
+[data-body] { flex: 1; display: flex; align-items: flex-start; min-height: 0; }
+
+[data-rail] {
+  position: sticky; top: 3.1rem; align-self: flex-start;
+  width: 15rem; flex-shrink: 0;
+  height: calc(100vh - 3.1rem); overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 1rem 0.75rem 2rem;
+  background: var(--card);
+}
+
+[data-rail] nav { display: flex; flex-direction: column; gap: 0.1rem; }
+
+[data-rail-group] {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--muted-foreground);
+  padding: 0 0.65rem; margin: 1.1rem 0 0.4rem;
+}
+
+[data-rail-link] {
+  display: block; padding: 0.5rem 0.65rem; border-radius: var(--radius);
+  font-size: 0.9375rem; font-weight: 500; color: var(--foreground);
+}
+[data-rail-link]:hover { background: var(--muted); }
+/* Filled pill for the current section — the strongest signal in the rail, so
+   it is the one place the near-black is spent. */
+[data-rail-link][data-active="true"] {
+  background: var(--foreground); color: var(--background); font-weight: 600;
+}
+
+[data-content] { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+[data-main] { flex: 1; width: 100%; padding: 1.5rem var(--gutter) 4rem; }
 
 [data-footer] {
   border-top: 1px solid var(--border); background: var(--surface);
   padding: 2.5rem var(--gutter); color: var(--muted-foreground); font-size: 0.875rem;
 }
 [data-footer-inner] { width: 100%; }
+
+@media (max-width: 900px) {
+  /* The rail cannot stay vertical without eating the content column, so it
+     becomes a horizontal scrolling strip under the top bar. Scrolling rather
+     than wrapping: a wrapped rail changes height as items reflow and pushes
+     the page down by a different amount on every route. */
+  [data-body] { flex-direction: column; align-items: stretch; }
+  [data-rail] {
+    position: static; width: auto; height: auto;
+    border-right: none; border-bottom: 1px solid var(--border);
+    padding: 0.5rem var(--gutter); overflow-x: auto;
+  }
+  [data-rail] nav { flex-direction: row; gap: 0.25rem; align-items: center; }
+  [data-rail-link] { white-space: nowrap; }
+  [data-rail-group] {
+    margin: 0 0.15rem 0 0.5rem; padding: 0;
+    border-left: 1px solid var(--border); padding-left: 0.65rem;
+  }
+  [data-rail-group]:first-child { border-left: none; padding-left: 0; }
+}
 
 /* ─── Buttons + controls ──────────────────────────────────────────────── */
 

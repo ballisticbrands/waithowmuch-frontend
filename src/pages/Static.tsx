@@ -1,19 +1,17 @@
 import { Link } from "react-router-dom";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { BRAND_NAME } from "@/data/site";
 import { collectionPath } from "@/data/collections.mjs";
 
 function Page({ title, children }: { title: string; children: React.ReactNode }) {
+  useSetCrumbs(() => [{ label: title }], [title]);
   return (
-    <>
-      <Breadcrumbs crumbs={[{ label: title }]} />
-      <main data-main>
-        <div data-prose>
-          <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{title}</h1>
-          {children}
-        </div>
-      </main>
-    </>
+    <main data-main>
+      <div data-prose>
+        <h1 style={{ fontSize: "1.875rem", fontWeight: 700, marginBottom: "1.25rem" }}>{title}</h1>
+        {children}
+      </div>
+    </main>
   );
 }
 
