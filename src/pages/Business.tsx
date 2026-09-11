@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import {
-  getBusiness, getMetrics, linkFollowers, toChartPoints,
-  type BusinessDetail, type MetricsResponse,
+  getBusiness, getMetrics, getCaseStudies, linkFollowers, toChartPoints,
+  type BusinessDetail, type CaseStudy, type MetricsResponse,
 } from "@/lib/api";
 import { profileFor } from "@/businesses/index.mjs";
 import { localBusiness } from "@/businesses/local.mjs";
@@ -11,6 +11,7 @@ import { Toc, NextSection } from "@/components/Toc";
 import { TopMetrics } from "@/components/MetricCards";
 import { ProfileLinks } from "@/components/ProfileLinks";
 import { ResearchedNotice } from "@/components/ResearchedNotice";
+import { Headline } from "@/components/Headline";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { EarningsCard } from "@/components/Earnings";
 import { businessBootstrap } from "@/lib/bootstrap";
@@ -45,6 +46,10 @@ export default function Business() {
     local?.metrics ?? boot?.metrics ?? null,
   );
   const [missing, setMissing] = useState(false);
+  /* The published freeze for this business, if it has one. Seeded from the
+     bootstrap so the prerendered headline survives hydration instead of
+     blinking out while a fetch lands. */
+  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(boot?.caseStudy ?? null);
 
   useEffect(() => {
     const draft = localBusiness(slug);
@@ -55,11 +60,20 @@ export default function Business() {
       // business stays on screen under the new URL.
       setB(draft.business);
       setSeries(draft.metrics);
+      // A local draft has no row, so it can have no case study.
+      setCaseStudy(null);
       setMissing(false);
       return;
     }
     if (businessBootstrap(slug)) return;
     let cancelled = false;
+    /* Cleared before the fetch, not after it: arriving from another profile
+       leaves this component mounted, and without this the previous business's
+       headline sits under the new business's name until the request lands. */
+    setCaseStudy(null);
+    getCaseStudies(slug)
+      .then((r) => !cancelled && setCaseStudy(r.caseStudies[0] ?? null))
+      .catch(() => {});
     getBusiness(slug)
       .then((r) => !cancelled && setB(r.business))
       .catch(() => !cancelled && setMissing(true));
@@ -130,7 +144,29 @@ export default function Business() {
 
   // An authored profile if one exists for this slug; otherwise the page falls
   // back to whatever the DB alone can say.
-  const profile = profileFor(slug);
+  const authored = profileFor(slug);
+
+  /* The freeze, resolved ONCE and folded into the profile.
+   *
+   * 🚨 Everything downstream reads `headline` — the Headline component renders
+   * it and valuation/inputs.mjs scores the multiple as of its snapshotMonth —
+   * so resolving it here is what keeps the date on the page and the date the
+   * valuation was scored at from ever being two different answers.
+   *
+   * The published CaseStudy row WINS over the authored copy in the .mjs. The
+   * .mjs entry is the draft path, exactly as businesses/local.mjs is for a
+   * business that has no row yet: write it there, review it, seed it, and the
+   * row takes over without the page changing. */
+  const profile = authored && caseStudy
+    ? {
+        ...authored,
+        headline: {
+          title: caseStudy.title,
+          subtitle: caseStudy.subtitle,
+          snapshotMonth: caseStudy.snapshotMonth,
+        },
+      }
+    : authored;
   // Only FLOW types are charted; see toChartPoints.
   const points = toChartPoints(series);
 
@@ -215,6 +251,13 @@ export default function Business() {
             "as of" is the basis line under each average. */}
         {showOverview && (
           <section id="overview">
+            {/* First thing in the overview and NOWHERE else. Unlike the logo
+                and the ResearchedNotice above, this does not repeat onto every
+                section: it quotes one frozen month, and a reader landing on
+                /margin/ from a search result would get that figure with none
+                of the context that dates it. */}
+            {profile?.headline && <Headline headline={profile.headline} />}
+
             {/* Above the figures, not below them: a reader checks that the
                 business is real before they weigh what it earns. */}
             <ProfileLinks links={b.links} />

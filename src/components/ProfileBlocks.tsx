@@ -286,13 +286,13 @@ function Exhibit({
       // Nothing to price without a multiple — and the section is then empty by
       // design rather than broken.
       return profile.valuation ? (
-        <ValuationCards business={business} series={series} valuation={profile.valuation} />
+        <ValuationCards business={business} series={series} profile={profile} />
       ) : null;
     case "valuation-board":
       return (
         <ValuationBoard
           series={series}
-          valuation={profile.valuation}
+          profile={profile}
           currency={business.currency}
           note={block.note}
         />

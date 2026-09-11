@@ -381,13 +381,16 @@ export function TopMetrics({
 export function ValuationCards({
   business: b,
   series,
-  valuation,
+  profile,
 }: {
   business: BusinessDetail;
   series: MetricsResponse | null;
-  valuation: NonNullable<Profile["valuation"]>;
+  /* The whole profile, not profile.valuation — scoreProfile reads the frozen
+     scoring date off `headline.snapshotMonth`. */
+  profile: Profile;
 }) {
-  const scored = scoreProfile(valuation, series);
+  const valuation = profile.valuation;
+  const scored = scoreProfile(profile, series);
   const window = ttmWindow(series);
   if (!scored || scored.multiple === null || scored.value === null) return null;
   const { multiple, netProfitTtm: ttmProfit } = scored;
@@ -397,10 +400,10 @@ export function ValuationCards({
       <HeadlineCard
         label="Indicative valuation"
         value={money(scored.value, b.currency)}
-        sub={valuation.basis}
+        sub={valuation?.basis}
         big
       />
-      <HeadlineCard label="Multiple" value={`${multiple}×`} sub={valuation.note} />
+      <HeadlineCard label="Multiple" value={`${multiple}×`} sub={valuation?.note} />
       <HeadlineCard
         label="On"
         value={`${money(ttmProfit, b.currency)} net profit`}

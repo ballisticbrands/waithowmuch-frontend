@@ -50,17 +50,19 @@ const SIGNAL_NAMES: Record<string, string> = {
  */
 export function ValuationBoard({
   series,
-  valuation,
+  profile,
   currency,
   note,
 }: {
   series: MetricsResponse | null;
-  valuation: Profile["valuation"];
+  /* The whole profile, not profile.valuation: the scoring date lives on
+     `headline.snapshotMonth` and scoreProfile resolves it itself. */
+  profile: Profile;
   currency: string;
   /** What the figure excludes. Rendered under the columns. */
   note?: string;
 }) {
-  const scored: Valuation | null = scoreProfile(valuation, series);
+  const scored: Valuation | null = scoreProfile(profile, series);
   if (!scored || scored.value === null || scored.adjustments.length === 0) return null;
 
   const ups = scored.adjustments.filter((a: Adjustment) => a.delta > 0);

@@ -11,12 +11,18 @@ export const OFF_AMAZON: string;
 
 export function ttmNetProfit(series: MetricsResponse | null): number | null;
 export function ttmWindow(series: MetricsResponse | null): { from: string; to: string } | null;
+/** The instant a valuation is scored at — the end of the series' last profit
+ *  period, or the profile's own `asOf`. Never the wall clock; see RULE 4. */
+export function valuationAsOf(
+  series: MetricsResponse | null,
+  profile?: Profile,
+): Date | null;
 export function peakMonthSharePct(series: MetricsResponse | null): number | null;
 export function amazonConcentrationPct(
   revenueByMarketplace: Record<string, number>,
 ): number | null;
 
 export function scoreProfile(
-  valuation: Profile["valuation"] | undefined,
+  profile: Profile | undefined,
   series: MetricsResponse | null,
 ): Valuation | null;

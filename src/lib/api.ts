@@ -116,6 +116,40 @@ export type BusinessDetail = BusinessCard & {
   links: BusinessLink[];
 };
 
+/**
+ * A business FROZEN at one month — the counterpart to BusinessDetail above.
+ *
+ * 🚨 Every figure here is stamped, not live. `title` hardcodes a revenue
+ * figure ("$90K/Month") because a headline cannot be interpolated and stay
+ * readable, and `snapshotMonth` is the only thing that makes that safe: it
+ * says which month the sentence is true of, while the BusinessDetail beside it
+ * goes on being rewritten by every metric refresh. `valuation` is stamped for
+ * the same reason and carries the model `version` that produced it.
+ *
+ * The API serves PUBLISHED case studies only, so anything arriving here has
+ * been read by a human.
+ */
+export type CaseStudy = {
+  slug: string;
+  title: string;
+  subtitle: string;
+  /** ISO date, first of the snapshot month. THE frozen date. */
+  snapshotMonth: string;
+  /** The figures as they stood at snapshotMonth — a copy, never a join. */
+  snapshotFigures: Record<string, unknown>;
+  /** The valuation as scored AT snapshotMonth, with its model version. */
+  valuation: Record<string, unknown> | null;
+  /** Every figure quoted in the copy, with its tier and source. */
+  figures: unknown[];
+  /** Figures considered and rejected — the assumed plugs. */
+  excluded: unknown[];
+  researchMethod: ResearchMethod;
+  confidence: "LOW" | "MEDIUM" | "HIGH" | null;
+  sources: Array<{ title: string; url: string; retrievedAt?: string; note?: string }>;
+  writtenAt: string;
+  publishedAt: string | null;
+};
+
 /** One measurement of one thing over one period. */
 export type MetricRow = {
   type: string;
@@ -206,6 +240,17 @@ export const getBusiness = (slug: string) =>
 export const getMetrics = (slug: string, type?: string) =>
   apiFetch<MetricsResponse>(
     `/v1/businesses/${encodeURIComponent(slug)}/metrics${type ? `?type=${encodeURIComponent(type)}` : ""}`,
+  );
+
+/**
+ * The case studies for one business, newest freeze first.
+ *
+ * A list because a business accumulates them — the 2026 snapshot and the 2028
+ * one both stay. Callers wanting "the current one" take the first.
+ */
+export const getCaseStudies = (slug: string) =>
+  apiFetch<{ caseStudies: CaseStudy[] }>(
+    `/v1/businesses/${encodeURIComponent(slug)}/case-studies`,
   );
 
 export const listCategories = () => apiFetch<{ categories: FacetCategory[] }>("/v1/categories");

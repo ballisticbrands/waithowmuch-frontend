@@ -77,6 +77,28 @@ export const PROFILES = {
   },
 
   'spite-house-games': {
+    /* Case-study copy, verbatim from waithowmuch-research
+       research/spitehouse/headline.json (writtenAt 2026-09-11). Every figure
+       in it is tiered and traced there; the $0.50 freight plug is excluded
+       because nobody quoted it.
+
+       🚨 $90K is FROZEN at 2026-09 ($89,988, which money() renders $90k).
+       It is not "the latest month" and must not be re-typed to follow one.
+       When October lands, this sentence and the card under it will disagree
+       — and the snapshot line is what keeps that honest rather than wrong.
+
+       🚨 "NON-holiday high" — do not trim the qualifier. August 2026 was
+       $96,958; December 2025 was $349,150, so an unqualified "new high" is
+       simply false. The skill names this exact trap, and the sentence was
+       rewritten once already to drop the collapse framing WITHOUT dropping
+       this word. A qualifier that makes a sentence weaker usually makes it
+       true. */
+    headline: {
+      title: 'How A $6.97 Deck Of Cards Makes $90K/Month',
+      subtitle:
+        'They built the audience first: the TikTok account opened seven weeks before the first deck was listed, and it now carries 45,400 followers. That audience took the catalogue to a new non-holiday high in August.',
+      snapshotMonth: '2026-09',
+    },
     /* 🚨 The multiple is the ONE authored number on this page, and it is a
        placeholder rather than a finding. Nothing public prices this business;
        2.5× is the low end of the small-FBA range, picked for a catalogue that

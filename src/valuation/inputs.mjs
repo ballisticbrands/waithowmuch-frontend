@@ -101,6 +101,75 @@ export function ttmWindow(series) {
   return { from: rows[rows.length - 12].periodStart, to: rows[rows.length - 1].periodStart };
 }
 
+/**
+ * ── RULE 4: a valuation is scored AS OF its own data, never "today" ───────
+ *
+ * The model dates the age factor against a `today`, and left unset it reads
+ * the wall clock. That is right for a live seller dashboard and wrong here:
+ * these are researched CASE STUDIES, and a case study whose headline multiple
+ * changes because a calendar boundary passed is telling the reader something
+ * happened to the business when nothing did.
+ *
+ * 🚨 It is not hypothetical. Spite House lists from 2025-01-20, so on
+ * 2026-07-22 it crossed the model's 18-month line and the published multiple
+ * went 2.5 → 2.9 — a 16% move in the headline figure, with no edit, no new
+ * data and no VALUATION_VERSION bump. It would have moved again in 2028 and
+ * 2030. And because the prerender only rebuilds nightly, the static HTML and
+ * the app disagreed about what the business was worth until the next build.
+ *
+ * So the clock is the PAGE'S OWN FREEZE, in this order:
+ *
+ *   1. `valuation.asOf` — an explicit override, rarely needed.
+ *   2. `headline.snapshotMonth` — THE frozen date. A case study is one
+ *      business at one moment, and the valuation is part of that moment: if
+ *      the headline freezes at September while the multiple is scored on the
+ *      series end, the page carries two different "as of" dates and explains
+ *      neither. Reading the freeze here makes them agree BY CONSTRUCTION
+ *      rather than by the coincidence of both happening to be September.
+ *   3. The series' last profit period — the live fallback, for a Business
+ *      row that has no frozen copy on it. A live page should track its data.
+ *
+ * Append more months and (3) moves, because data arrived — which is the one
+ * reason a live figure should ever move. (2) does not move, because a case
+ * study does not.
+ *
+ * 🚨 When the CaseStudy model ships, `snapshotMonth` comes off that row and
+ * the scored valuation is STAMPED INTO IT at freeze rather than recomputed
+ * here — see the model's `valuation` field for why re-scoring at render time
+ * cannot be made safe.
+ */
+
+/**
+ * The END of the month a value names — "2026-09" and the API's
+ * "2026-09-01T00:00:00.000Z" both give 2026-09-30.
+ *
+ * 🚨 END, not start, and 🚨 normalised from the YEAR-MONTH rather than parsed
+ * as a date. A snapshot month means the whole of that month, and the trailing
+ * twelve it prices closes at the end of it.
+ *
+ * Both halves are load-bearing. Dating it to the start costs the business a
+ * month of age it has actually traded, which at a boundary is worth up to 0.5
+ * of the multiple. And the two sources spell the same month differently — the
+ * authored draft in businesses/index.mjs writes "2026-09" while CaseStudy.
+ * snapshotMonth arrives as a midnight-on-the-first timestamp — so parsing
+ * whatever arrives would make the multiple depend on WHERE the freeze was read
+ * from, which is the one thing it must never depend on.
+ */
+function monthEnd(value) {
+  const m = /^(\d{4})-(\d{2})/.exec(String(value));
+  if (!m) return new Date(value);
+  return new Date(Date.UTC(+m[1], +m[2], 0));
+}
+
+export function valuationAsOf(series, profile) {
+  /* An exact date, used exactly — unlike a snapshot MONTH, this names a day. */
+  if (profile?.valuation?.asOf) return new Date(profile.valuation.asOf);
+  if (profile?.headline?.snapshotMonth) return monthEnd(profile.headline.snapshotMonth);
+  const rows = rowsOfType(series, "profit");
+  if (rows.length === 0) return null;
+  return new Date(rows[rows.length - 1].periodEnd);
+}
+
 /** Share of trailing-twelve revenue falling in the single biggest period, 0–100.
  *
  *  The model's seasonality factor wants this. A perfectly flat business sits
@@ -141,11 +210,25 @@ export function amazonConcentrationPct(revenueByMarketplace) {
  * scored, so there is nothing to show a reader. The board renders nothing
  * rather than inventing a breakdown for a number somebody typed.
  */
-export function scoreProfile(valuation, series) {
+/* 🚨 Takes the whole PROFILE, not profile.valuation. The scoring date lives on
+   `headline.snapshotMonth` and the inputs live on `valuation`, so a function
+   handed only the second can never see the page's own freeze — and every
+   caller would have to thread the date in separately, which is three chances
+   to pass a different one. One argument, one answer. */
+export function scoreProfile(profile, series) {
+  const valuation = profile?.valuation;
   const ttm = ttmNetProfit(series);
   if (!valuation || ttm === null) return null;
 
-  if (valuation.inputs) return valueBusiness({ netProfitTtm: ttm, ...valuation.inputs });
+  if (valuation.inputs) {
+    return valueBusiness({
+      netProfitTtm: ttm,
+      /* Before the spread, so a profile that states its own `today` still
+         wins — see RULE 4 for the order the date is resolved in. */
+      today: valuationAsOf(series, profile) ?? undefined,
+      ...valuation.inputs,
+    });
+  }
 
   if (typeof valuation.multiple === "number") {
     return {
