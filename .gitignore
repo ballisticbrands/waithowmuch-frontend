@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 
 # Screenshot output — for looking at, not for committing.
 screenshots/
+public/logos/*

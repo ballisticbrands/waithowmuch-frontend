@@ -1,5 +1,5 @@
 import type { BusinessLink } from "@/lib/api";
-import { linkMetaNumber } from "@/lib/api";
+import { linkFollowers } from "@/lib/api";
 import { compact } from "@/lib/format";
 import { PlatformIcon, platformLabel } from "./PlatformIcon";
 
@@ -44,8 +44,9 @@ const shownHandle = (link: BusinessLink) =>
  */
 function detail(link: BusinessLink): string | null {
   const meta = link.meta ?? {};
-  // Follower counts live in the untyped meta blob now, one accessor per read.
-  const followers = linkMetaNumber(link, "followerCount");
+  // Column first, meta second — see linkFollowers. Reading only the blob is
+  // what blanked the TikTok and Instagram counts.
+  const followers = linkFollowers(link);
   if (followers != null) return `${compact(followers)} followers`;
   if (typeof meta.visitsPerMonth === "number") return `${compact(meta.visitsPerMonth)} visits / mo`;
   if (typeof meta.asins === "number") return `${meta.asins} ASINs`;

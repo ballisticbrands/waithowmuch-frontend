@@ -73,14 +73,41 @@ export type BusinessLink = {
   url: string;
   label: string | null;
   handle: string | null;
-  /** Every platform-specific fact — followerCount, posts, likes — lives here. */
+  /**
+   * 🚨 CANONICAL, and that includes followerCount. The backend dropped the
+   * `followerCount` column in "Generic metric series; drop summary and
+   * followerCount" — every platform-specific fact now lives in this blob.
+   */
   meta: Record<string, unknown>;
+  /**
+   * The dropped column, still sent by a backend that predates that change.
+   * Optional because the current API does not send it at all; read it through
+   * `linkFollowers` rather than directly, and delete it once no deployment
+   * this frontend talks to is older than that migration.
+   */
+  followerCount?: number | null;
 };
 
 /** Read a numeric fact out of a link's untyped meta blob. */
 export function linkMetaNumber(link: BusinessLink, key: string): number | null {
   const v = link.meta?.[key];
   return typeof v === "number" && Number.isFinite(v) ? v : null;
+}
+
+/**
+ * The audience on this link.
+ *
+ * Meta first, because that is where the current API puts it; the legacy
+ * top-level column is the fallback so the page still renders a count against
+ * a backend that has not taken the migration yet. Reading only one of the two
+ * is what left TikTok and Instagram showing a handle where they should have
+ * shown an audience — the one fact those chips exist to carry.
+ */
+export function linkFollowers(link: BusinessLink): number | null {
+  const fromMeta = linkMetaNumber(link, "followerCount");
+  if (fromMeta != null) return fromMeta;
+  const legacy = link.followerCount;
+  return typeof legacy === "number" && Number.isFinite(legacy) ? legacy : null;
 }
 
 export type BusinessDetail = BusinessCard & {

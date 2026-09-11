@@ -139,8 +139,37 @@ export type Block =
         sold?: number;
         price?: number;
         revenue: number;
+        /** The listing's own photo, as a site-absolute path under /public.
+         *
+         *  🚨 Carries an argument, not decoration. This block's whole claim is
+         *  that the catalogue is ONE object re-cut for a different target each
+         *  time, and nine near-identical boxes show that at a glance where nine
+         *  product names read as a range. A row without one still renders — the
+         *  cell is then empty rather than a broken frame. */
+        image?: string;
       }>;
       note?: string;
+    }
+  /**
+   * A photograph, at the reading measure.
+   *
+   * 🚨 `alt` is REQUIRED, and not for compliance. scripts/postbuild-spa-routes
+   * flattens the profile to static HTML for crawlers, where the alt text is
+   * the only part of this block that survives — an empty one ships them a
+   * blank. Describe what the picture shows, not that it is a picture.
+   */
+  | {
+      type: "image";
+      /** Site-absolute path under /public — not a remote URL. A third-party
+       *  host can re-crop or drop an asset without warning, and the page has
+       *  no way to notice. */
+      src: string;
+      alt: string;
+      /** Printed under the image, in the muted ink the table notes use. */
+      caption?: string;
+      /** Render width in px. Defaults to the full reading measure; set it
+       *  smaller for an object that does not earn the width. */
+      width?: number;
     }
   | { type: "prose"; text: string }
   | { type: "list"; items: string[] }
@@ -150,6 +179,18 @@ export type Block =
   | { type: "stat"; metric: MetricKey; label: string }
   /** Renders the monthly series from the DB. */
   | { type: "chart" }
+  /**
+   * The business's own links — store, site, socials — as the same chips the
+   * overview leads with, pulled from the DB record rather than authored.
+   *
+   * 🚨 Deliberately repeatable. The overview renders this row too, and that
+   * is not a duplication to clean up: a section page is a page in its own
+   * right, and on a split profile the reader on Socials and traffic may
+   * never have seen the overview. The alternative is a page that discusses
+   * a TikTok audience at length and makes the reader navigate away to find
+   * the account.
+   */
+  | { type: "links" }
   | {
       type: "timeline";
       items: Array<{

@@ -367,9 +367,18 @@ for (const b of all) {
             case 'breakdown': return [
               blk.intro ? `<p>${esc(blk.intro)}</p>` : '',
               `<ul>${blk.items.map((i) =>
-                `<li>${esc(i.name)}${i.asin ? ` (${esc(i.asin)})` : ''}: ${money(i.revenue, b.currency) ?? ''} a month${
+                `<li>${i.image ? `<img src="${esc(i.image)}" alt="" width="36" height="36" /> ` : ''}${
+                  esc(i.name)}${i.asin ? ` (${esc(i.asin)})` : ''}: ${money(i.revenue, b.currency) ?? ''} a month${
                   i.price ? ` at ${money(i.price, b.currency)}` : ''}</li>`).join('')}</ul>`,
               blk.note ? `<p>${esc(blk.note)}</p>` : '',
+            ].filter(Boolean).join('');
+            /* 🚨 The alt text is the whole of this block in the static copy —
+               a crawler gets no picture, so an image with a thin alt ships it
+               nothing at all. Which is why `alt` is required on the type. */
+            case 'image': return [
+              `<img src="${esc(blk.src)}" alt="${esc(blk.alt)}"${
+                blk.width ? ` width="${blk.width}"` : ''} />`,
+              blk.caption ? `<p>${esc(blk.caption)}</p>` : '',
             ].filter(Boolean).join('');
             /* Both figures AND the note. On the advertising and traffic
                sections the note is the row's whole point — without it a
@@ -385,6 +394,18 @@ for (const b of all) {
               blk.note ? `<p>${esc(blk.note)}</p>` : '',
             ].filter(Boolean).join('');
             case 'callout': return `<p>${esc(blk.text)}</p>`;
+            /* The links row is the one block whose content comes from the DB
+               record rather than from the authored profile. 🚨 Off `detail`,
+               NOT off `b`: `b` is the LISTING projection and carries no
+               links, so reading it here emitted an empty <ul> and the section
+               shipped a crawler a page discussing an audience with no account
+               on it. `detail` is null only when that fetch failed, in which
+               case there is nothing to list anyway. */
+            case 'links': return `<ul>${(detail?.links ?? []).map((l) =>
+              `<li><a href="${esc(l.url)}" rel="nofollow noopener">${
+                esc(l.label ?? l.handle ?? l.platform)}</a>${
+                typeof l.followerCount === 'number'
+                  ? ` — ${l.followerCount.toLocaleString('en-US')} followers` : ''}</li>`).join('')}</ul>`;
             case 'quote': return `<blockquote>${esc(blk.text)}</blockquote>`;
             case 'list': return `<ul>${blk.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
             case 'timeline': return `<ul>${blk.items.map((i) =>

@@ -19,6 +19,22 @@
  * A slug with no entry here falls back to the generic DB-driven page.
  */
 
+/**
+ * A Spite House listing photo, saved under public/products.
+ *
+ * Derived from the ASIN rather than typed out nine times, because the path IS
+ * the ASIN — and nine hand-copied 10-character ids is a transcription error
+ * waiting to point one row at another row's picture, which is the kind of
+ * mistake that looks fine and is wrong.
+ *
+ * 🚨 Local copies, not Amazon's CDN. The images are cut-out product shots
+ * lifted from the listings this profile already cites, and hotlinking them
+ * would let a listing edit silently blank a column here — the page has no way
+ * to notice a remote 404. Refresh them by re-running the fetch when the
+ * listings change.
+ */
+const deckPhoto = (asin) => `/products/spite-house-games/${asin}.jpg`;
+
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
   'dummy-widgets': {
@@ -282,13 +298,162 @@ export const PROFILES = {
     /* Section markers drive BOTH the page headings and the table of contents
        down the left — see components/Toc.tsx. The order follows the reference
        information architecture rather than the order the source wrote in:
-       what it earns, then why the economics work, then how it grew. */
+       how it got here, then what it earns, then why the economics work, then
+       where the demand came from. The timeline leads because every figure
+       after it is seasonal, and a reader who meets December's $349,150
+       before learning this catalogue is one year old reads a spike as a
+       run rate. */
     blocks: [
       { type: 'heading', text: 'One joke, sixteen ways' },
       {
         type: 'prose',
         text:
           'Boomers, Mom, Dad, Mom & Dad, Jesus Christ, America in red and blue. Sixteen ASINs, ten of them priced, seven carrying a sold badge, at an $8.87 average order.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION, and that is the same rule as the prose
+         above it. "62% of revenue" typed here would be a second copy of a
+         number the breakdown block already computes off the item rows, and
+         the two would part company the first time a row was corrected. The
+         caption says what the object IS; the block says what it earns.
+
+         Narrow on purpose: the box is portrait, and at the full reading
+         measure a single product shot stops being evidence and becomes a
+         banner. */
+      {
+        type: 'image',
+        src: '/products/spite-house-games/B0FMGJSSXT-hero.jpg',
+        alt: 'The “Go F*** Yourself!” card-game box — a blue deck box with a grinning cartoon goldfish and the strapline “Go fish? How about go f*** yourself!”',
+        caption:
+          '“Go F Yourself!” — the original deck, and the one the rest of the catalogue is a re-cut of. Every other listing is this object with a different target printed on the box.',
+        width: 300,
+      },
+
+      /* 🚨 Grouped with Overview, not with Brand owner, and the group is the
+         reason it can lead. A TOC group is a GAP (see Toc.tsx), so leaving
+         this on 'Who and when' would have split that group into two clusters
+         either end of the page with the same name. Sharing the synthetic
+         Overview group instead makes the two read as one opening cluster —
+         what it is, then how it got here — and puts the gap before Revenue,
+         which is where the page turns to money. */
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'Two listings in January 2025 that nobody bought, a badge in September, a Christmas that did $349,150 — and then a year spent building a business that does not need December.',
+      },
+      {
+        /* Oldest first, and strictly so: the source lists a few of these out
+           of order. Each entry names the strand it belongs to, because the
+           whole point of this business's story is that the audience strand
+           starts before the selling one. */
+        type: 'timeline',
+        items: [
+          {
+            when: '20 Feb 2021',
+            tag: 'Web',
+            what: 'wouldyoukillhitler.com registered',
+            detail:
+              'An earlier venture, five years before this catalogue — and still the support address on every legal page of the current store. Its game sits on the shelf here as “I Would Kill Hitler” at $29.',
+          },
+          {
+            when: '20 Oct 2024',
+            tag: 'Web',
+            what: 'spitehousestudios.com registered',
+            detail: 'Six months before the store opens, and three months before the first Amazon listing.',
+          },
+          {
+            when: '30 Nov 2024',
+            tag: 'Brand',
+            what: 'The TikTok account is created',
+            detail:
+              '18:15 UTC, from TikTok’s own createTime field, corroborated by the timestamp encoded in the user id 102 seconds apart. Six weeks after the domain and seven weeks before the first listing: the audience was started first.',
+          },
+          {
+            when: '20 Jan 2025',
+            tag: 'Amazon',
+            what: 'First two listings go up',
+            detail: 'The original deck and a second listing, on the same day. Neither carries a sold badge for another eight months.',
+          },
+          {
+            when: '4 Apr 2025',
+            tag: 'Web',
+            what: 'The Shopify store opens',
+            detail:
+              'First product published, with the Wayback Machine’s first capture three days later. The deck lists at $12.99 there — the same deck Amazon sells for $6.97.',
+          },
+          {
+            when: '25 Jun 2025',
+            tag: 'Brand',
+            what: 'A YouTube channel appears, and is left to idle',
+            detail:
+              '83 videos and 46 subscribers, describing itself as “reposting all of my viral TikTok content, literally phoning it in”. A one-person operation choosing where not to spend effort.',
+          },
+          {
+            when: '6 Aug 2025',
+            tag: 'Amazon',
+            what: 'Boomers and Jesus Christ',
+            detail: 'The first re-cuts of the same joke for a different target, at $12.99 against the original’s $6.97.',
+          },
+          {
+            when: '30 Sep 2025',
+            tag: 'Amazon',
+            what: 'The badge appears — $13,940',
+            detail:
+              'Amazon starts printing “bought in past month” on the original deck, which means it crossed roughly 50 sales a month. Keepa’s history starts here.',
+          },
+          {
+            when: '20 Oct 2025',
+            tag: 'Brand',
+            what: 'A post does 549,228 likes',
+            detail:
+              'Their pinned Instagram post, and the closest thing to a cause on this profile: October revenue was $69,700 and November was $278,800. The same content runs on TikTok, where the account holds 5.2M likes across 359 videos.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$349,150 — the Christmas month',
+            detail: '50,050 units, and four times any month since. A gag gift’s whole year happens in eight weeks.',
+          },
+          {
+            when: '31 Jan 2026',
+            tag: 'Amazon',
+            what: '82% of it disappears',
+            detail: '$62,717. Not a listing problem and not a ranking problem — Christmas ended. The next six months are spent rebuilding.',
+          },
+          {
+            when: '14 Apr 2026',
+            tag: 'Amazon',
+            what: 'Mom, Dad, and Mom & Dad',
+            detail: 'Three more targets in a day, and the first at $19.99 — nearly three times the original’s price for the same object.',
+          },
+          {
+            when: '30 Apr 2026',
+            tag: 'Web',
+            what: 'Organic search peaks at 8,257 visits',
+            detail:
+              'Ubersuggest’s estimate for the month, almost all of it landing on one how-to-play page. By August it is 2,859 — down 65% from the peak.',
+          },
+          {
+            when: '3 Jun 2026',
+            tag: 'Amazon',
+            what: 'America, in red and blue',
+            detail: 'Three listings for an election-season gift. The blue one sells; the red one has yet to carry a badge.',
+          },
+          {
+            when: '6 Jul 2026',
+            tag: 'Advertising',
+            what: 'Meta ads start',
+            detail:
+              '~32 ads go live under a page called “Spite House Games”, pointing at the $12.99 store price. Amazon revenue that month is $80,420, up from $61,494 in June.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: '$96,958 — a new non-holiday high',
+            detail:
+              'Above every month except last December, and on a wider catalogue than last December had. Whatever is driving demand is not the holiday.',
+          },
+        ],
       },
 
       { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
@@ -307,15 +472,15 @@ export const PROFILES = {
         intro:
           'One SKU is the business. The re-cuts at $12.99 and $19.99 are the attempt to sell the same object for more, and two of them have yet to sell at all.',
         items: [
-          { name: 'Go F Yourself! — the original Grown Up Go Fish', asin: 'B0FMGJSSXT', listed: '2025-01-20', sold: 8000, price: 6.97, revenue: 55760 },
-          { name: 'Go F Yourself Boomers!', asin: 'B0FLCJSFJP', listed: '2025-08-06', sold: 900, price: 12.99, revenue: 11691 },
-          { name: 'Go F Yourself Mom & Dad!', asin: 'B0GVKVZDR7', listed: '2026-04-14', sold: 500, price: 19.99, revenue: 9995 },
-          { name: 'Go F Yourself America!', asin: 'B0H1XPC49K', listed: '2026-06-03', sold: 400, price: 19.99, revenue: 7996 },
-          { name: 'Go F Yourself Jesus Christ!', asin: 'B0FLCSBZ2V', listed: '2025-08-06', sold: 200, price: 12.99, revenue: 2598 },
-          { name: 'Go F Yourself Mom!', asin: 'B0GT64XJVT', listed: '2026-04-14', sold: 100, price: 12.99, revenue: 1299 },
-          { name: 'Go F Yourself America Blue!', asin: 'B0H1XWG51R', listed: '2026-06-03', sold: 50, price: 12.99, revenue: 649.5 },
-          { name: 'Go F Yourself America Red!', asin: 'B0H1XM57YZ', listed: '2026-06-03', sold: 0, price: 12.99, revenue: 0 },
-          { name: 'Go F Yourself Dad!', asin: 'B0GT69P836', listed: '2026-04-14', sold: 0, price: 12.99, revenue: 0 },
+          { name: 'Go F Yourself! — the original Grown Up Go Fish', asin: 'B0FMGJSSXT', image: deckPhoto('B0FMGJSSXT'), listed: '2025-01-20', sold: 8000, price: 6.97, revenue: 55760 },
+          { name: 'Go F Yourself Boomers!', asin: 'B0FLCJSFJP', image: deckPhoto('B0FLCJSFJP'), listed: '2025-08-06', sold: 900, price: 12.99, revenue: 11691 },
+          { name: 'Go F Yourself Mom & Dad!', asin: 'B0GVKVZDR7', image: deckPhoto('B0GVKVZDR7'), listed: '2026-04-14', sold: 500, price: 19.99, revenue: 9995 },
+          { name: 'Go F Yourself America!', asin: 'B0H1XPC49K', image: deckPhoto('B0H1XPC49K'), listed: '2026-06-03', sold: 400, price: 19.99, revenue: 7996 },
+          { name: 'Go F Yourself Jesus Christ!', asin: 'B0FLCSBZ2V', image: deckPhoto('B0FLCSBZ2V'), listed: '2025-08-06', sold: 200, price: 12.99, revenue: 2598 },
+          { name: 'Go F Yourself Mom!', asin: 'B0GT64XJVT', image: deckPhoto('B0GT64XJVT'), listed: '2026-04-14', sold: 100, price: 12.99, revenue: 1299 },
+          { name: 'Go F Yourself America Blue!', asin: 'B0H1XWG51R', image: deckPhoto('B0H1XWG51R'), listed: '2026-06-03', sold: 50, price: 12.99, revenue: 649.5 },
+          { name: 'Go F Yourself America Red!', asin: 'B0H1XM57YZ', image: deckPhoto('B0H1XM57YZ'), listed: '2026-06-03', sold: 0, price: 12.99, revenue: 0 },
+          { name: 'Go F Yourself Dad!', asin: 'B0GT69P836', image: deckPhoto('B0GT69P836'), listed: '2026-04-14', sold: 0, price: 12.99, revenue: 0 },
         ],
         note:
           '“Sold / mo” is Amazon’s own badge, which is why every row reads n+. Revenue is that band times the buy-box price, so each row is a floor rather than a measurement.',
@@ -364,7 +529,7 @@ export const PROFILES = {
       },
       {
         type: 'table',
-        caption: 'What the deck costs to make',
+        caption: 'COGS — what the deck costs to make',
         columns: ['Quote', 'Region', 'MOQ', 'Lead time', 'Unit cost'],
         rows: [
           ['Guangzhou Miyi Printing Co., Ltd', 'Guangdong, CN', '500 sets', 'not quoted', '$0.50–1.00 / deck'],
@@ -505,12 +670,19 @@ export const PROFILES = {
           'The Meta entry is the one worth opening. The creative is public even though the budget is not, and it is the only place the two prices for the same deck sit side by side.',
       },
 
-      { type: 'section', id: 'traffic', title: 'Traffic and presence', group: 'Where demand comes from' },
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from' },
       {
         type: 'lede',
         text:
           'The half Amazon cannot see — and on this business the half that makes the demand, because at an $8.87 order there is no budget to buy it.',
       },
+      /* The same chips the overview opens with, repeated on purpose. Every
+         section here is its own page, so a reader who arrived on this one
+         from search has not seen them — and this is the page that spends
+         several hundred words on an audience whose accounts would otherwise
+         be two navigations away. Pulled from the DB record, not authored, so
+         the two rows cannot disagree. */
+      { type: 'links' },
       {
         type: 'prose',
         text:
@@ -624,127 +796,6 @@ export const PROFILES = {
         type: 'callout',
         text:
           'Two of these numbers are attention and none of them is a sale. The follower counts, the visit estimates and the search volumes are all real measurements of interest, and nothing public connects any of them to an order on Amazon.',
-      },
-
-      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Who and when' },
-      {
-        type: 'lede',
-        text:
-          'Two listings in January 2025 that nobody bought, a badge in September, a Christmas that did $349,150 — and then a year spent building a business that does not need December.',
-      },
-      {
-        /* Oldest first, and strictly so: the source lists a few of these out
-           of order. Each entry names the strand it belongs to, because the
-           whole point of this business's story is that the audience strand
-           starts before the selling one. */
-        type: 'timeline',
-        items: [
-          {
-            when: '20 Feb 2021',
-            tag: 'Web',
-            what: 'wouldyoukillhitler.com registered',
-            detail:
-              'An earlier venture, five years before this catalogue — and still the support address on every legal page of the current store. Its game sits on the shelf here as “I Would Kill Hitler” at $29.',
-          },
-          {
-            when: '20 Oct 2024',
-            tag: 'Web',
-            what: 'spitehousestudios.com registered',
-            detail: 'Six months before the store opens, and three months before the first Amazon listing.',
-          },
-          {
-            when: '30 Nov 2024',
-            tag: 'Brand',
-            what: 'The TikTok account is created',
-            detail:
-              '18:15 UTC, from TikTok’s own createTime field, corroborated by the timestamp encoded in the user id 102 seconds apart. Six weeks after the domain and seven weeks before the first listing: the audience was started first.',
-          },
-          {
-            when: '20 Jan 2025',
-            tag: 'Amazon',
-            what: 'First two listings go up',
-            detail: 'The original deck and a second listing, on the same day. Neither carries a sold badge for another eight months.',
-          },
-          {
-            when: '4 Apr 2025',
-            tag: 'Web',
-            what: 'The Shopify store opens',
-            detail:
-              'First product published, with the Wayback Machine’s first capture three days later. The deck lists at $12.99 there — the same deck Amazon sells for $6.97.',
-          },
-          {
-            when: '25 Jun 2025',
-            tag: 'Brand',
-            what: 'A YouTube channel appears, and is left to idle',
-            detail:
-              '83 videos and 46 subscribers, describing itself as “reposting all of my viral TikTok content, literally phoning it in”. A one-person operation choosing where not to spend effort.',
-          },
-          {
-            when: '6 Aug 2025',
-            tag: 'Amazon',
-            what: 'Boomers and Jesus Christ',
-            detail: 'The first re-cuts of the same joke for a different target, at $12.99 against the original’s $6.97.',
-          },
-          {
-            when: '30 Sep 2025',
-            tag: 'Amazon',
-            what: 'The badge appears — $13,940',
-            detail:
-              'Amazon starts printing “bought in past month” on the original deck, which means it crossed roughly 50 sales a month. Keepa’s history starts here.',
-          },
-          {
-            when: '20 Oct 2025',
-            tag: 'Brand',
-            what: 'A post does 549,228 likes',
-            detail:
-              'Their pinned Instagram post, and the closest thing to a cause on this profile: October revenue was $69,700 and November was $278,800. The same content runs on TikTok, where the account holds 5.2M likes across 359 videos.',
-          },
-          {
-            when: '31 Dec 2025',
-            tag: 'Amazon',
-            what: '$349,150 — the Christmas month',
-            detail: '50,050 units, and four times any month since. A gag gift’s whole year happens in eight weeks.',
-          },
-          {
-            when: '31 Jan 2026',
-            tag: 'Amazon',
-            what: '82% of it disappears',
-            detail: '$62,717. Not a listing problem and not a ranking problem — Christmas ended. The next six months are spent rebuilding.',
-          },
-          {
-            when: '14 Apr 2026',
-            tag: 'Amazon',
-            what: 'Mom, Dad, and Mom & Dad',
-            detail: 'Three more targets in a day, and the first at $19.99 — nearly three times the original’s price for the same object.',
-          },
-          {
-            when: '30 Apr 2026',
-            tag: 'Web',
-            what: 'Organic search peaks at 8,257 visits',
-            detail:
-              'Ubersuggest’s estimate for the month, almost all of it landing on one how-to-play page. By August it is 2,859 — down 65% from the peak.',
-          },
-          {
-            when: '3 Jun 2026',
-            tag: 'Amazon',
-            what: 'America, in red and blue',
-            detail: 'Three listings for an election-season gift. The blue one sells; the red one has yet to carry a badge.',
-          },
-          {
-            when: '6 Jul 2026',
-            tag: 'Advertising',
-            what: 'Meta ads start',
-            detail:
-              '~32 ads go live under a page called “Spite House Games”, pointing at the $12.99 store price. Amazon revenue that month is $80,420, up from $61,494 in June.',
-          },
-          {
-            when: '31 Aug 2026',
-            tag: 'Amazon',
-            what: '$96,958 — a new non-holiday high',
-            detail:
-              'Above every month except last December, and on a wider catalogue than last December had. Whatever is driving demand is not the holiday.',
-          },
-        ],
       },
 
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when' },

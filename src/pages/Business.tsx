@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import {
-  getBusiness, getMetrics, linkMetaNumber, toChartPoints,
+  getBusiness, getMetrics, linkFollowers, toChartPoints,
   type BusinessDetail, type MetricsResponse,
 } from "@/lib/api";
 import { profileFor } from "@/businesses/index.mjs";
@@ -184,6 +184,18 @@ export default function Business() {
       <div data-with-toc={sections.length > 0 ? "" : undefined}>
         {sections.length > 0 && <Toc items={sections} active={current} />}
         <div data-toc-body="">
+        {/* 🚨 Outside the `showOverview` guard, for the same reason as the
+            ResearchedNotice below it: a reader who lands on /margin/ from a
+            search result gets a page of somebody's unit economics, and the
+            mark is the fastest thing on it that says whose.
+
+            A LOCKUP, not an avatar. The listing renders this same field as a
+            44px square (IdeaRow), which is right for a row and wrong here —
+            most brand assets are wordmarks, and a wordmark in a small square
+            is either cropped or too small to read. Here it is sized by HEIGHT
+            with the width left to the artwork, so a square mark and a wide
+            wordmark both land correctly. */}
+        {b.logoUrl && <img data-business-logo="" src={b.logoUrl} alt={`${b.name} logo`} />}
         <h1>{b.name}</h1>
         {b.tagline && (
           <p style={{ color: "var(--muted-foreground)", margin: "0.4rem 0 0", fontSize: "1.0625rem" }}>{b.tagline}</p>
@@ -260,9 +272,9 @@ export default function Business() {
                   <a href={l.url} target="_blank" rel="noopener noreferrer nofollow">
                     {l.label ?? l.handle ?? l.platform.toLowerCase()}
                   </a>
-                  {linkMetaNumber(l, "followerCount") != null && (
+                  {linkFollowers(l) != null && (
                     <span style={{ color: "var(--muted-foreground)", fontSize: "0.875rem" }}>
-                      {" "}· {linkMetaNumber(l, "followerCount")!.toLocaleString("en-US")} followers
+                      {" "}· {linkFollowers(l)!.toLocaleString("en-US")} followers
                     </span>
                   )}
                 </li>

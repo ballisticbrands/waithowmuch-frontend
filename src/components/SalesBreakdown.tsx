@@ -228,23 +228,35 @@ export function SalesBreakdown({ block, currency }: { block: Breakdown; currency
                   onPointerLeave={hide}
                 >
                   <th scope="row">
-                    <span
-                      data-share-key=""
-                      style={index === -1 ? undefined : { background: segments[index].color }}
-                    />
-                    {/* Both the name and the ASIN link, because both are what a
-                        reader reaches for — the name when they want to see the
-                        product, the ASIN when they are checking our figure
-                        against the listing. A row with no ASIN has nothing to
-                        point at and stays plain text rather than becoming a
-                        dead link. */}
-                    {i.asin ? (
-                      <a href={listingUrl(i.asin, host)} target="_blank" rel="noopener noreferrer nofollow">
-                        {i.name}
-                      </a>
-                    ) : (
-                      i.name
-                    )}
+                    <span data-sku="">
+                      <span
+                        data-share-key=""
+                        style={index === -1 ? undefined : { background: segments[index].color }}
+                      />
+                      {/* alt="" on purpose: the product name is the very next
+                          thing in this cell, so a described thumbnail makes a
+                          screen reader read every row twice. The picture is
+                          here to be compared by eye, and there is nothing in
+                          it that the name does not already say. */}
+                      {i.image && (
+                        <img data-sku-thumb="" src={i.image} alt="" loading="lazy" decoding="async" />
+                      )}
+                      {/* Both the name and the ASIN link, because both are what a
+                          reader reaches for — the name when they want to see the
+                          product, the ASIN when they are checking our figure
+                          against the listing. A row with no ASIN has nothing to
+                          point at and stays plain text rather than becoming a
+                          dead link. */}
+                      <span data-sku-name="">
+                        {i.asin ? (
+                          <a href={listingUrl(i.asin, host)} target="_blank" rel="noopener noreferrer nofollow">
+                            {i.name}
+                          </a>
+                        ) : (
+                          i.name
+                        )}
+                      </span>
+                    </span>
                   </th>
                   <td data-figure="">
                     {i.asin ? (

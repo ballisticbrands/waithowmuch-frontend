@@ -46,6 +46,23 @@
   --series-revenue: var(--accent);
   --series-profit: #b9addf;
 
+  /* The margin donut. A SEQUENTIAL ramp, not a categorical palette: the four
+     cost slices are one hue at four lightnesses, stepped so the darkest is
+     the largest cost, and --accent is reserved for what is left. Costs
+     recede, the answer is the one chroma on the page — the same division of
+     labour the total row of the table already makes.
+
+     🚨 The steps are validated, not picked. Monotone lightness, every
+     adjacent gap >= 0.06 L, and the light end at 2.14:1 against the card so
+     the smallest slice is still visibly a slice. Two of them sit under 3:1,
+     which is exactly why every segment is named and figured in the legend
+     and repeated in the table below — the colour is never the only way to
+     read one. Re-run the palette validator before touching these. */
+  --slice-cost-1: #b0b0c2;   /* smallest cost */
+  --slice-cost-2: #9596a9;
+  --slice-cost-3: #78798d;
+  --slice-cost-4: #5f6072;   /* largest cost */
+
   --radius: 0.625rem;
   --radius-lg: 0.875rem;
 
@@ -372,6 +389,16 @@ h1, h2, h3, h4 {
 [data-row-logo] {
   width: 2.75rem; height: 2.75rem; border-radius: var(--radius);
   object-fit: cover; background: var(--muted); display: block;
+}
+/* 🚨 `contain` once there is an actual image, overriding the `cover` above.
+   A brand asset is usually a WORDMARK — this row's first real one is 10:7 —
+   and cover crops a wide lockup down to its middle two letters. The padding
+   keeps it off the tile edge so it reads as a mark rather than as a
+   screenshot. `cover` stays the rule for the fallback tile, which has no
+   artwork to crop. */
+img[data-row-logo] {
+  object-fit: contain; padding: 0.2rem; background: var(--background);
+  border: 1px solid var(--border); box-sizing: border-box;
 }
 /* Lettermark fallback for a business with no logo — a normal state. */
 [data-row-logo][data-fallback] {
@@ -1023,6 +1050,16 @@ h1, h2, h3, h4 {
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
 }
 
+/* 🚨 Specificity, not repetition. This row now renders inside [data-prose]
+   too — the Socials and traffic section declares a `links` block — where
+   `[data-prose] ul/li/a` would otherwise give every chip a bullet, an indent
+   and an underline. These selectors are deliberately two attributes deep so
+   they outrank those rules wherever the component is dropped, rather than
+   relying on source order. */
+[data-links] [data-link-row] { list-style: none; margin: 0; padding: 0; }
+[data-links] [data-link-row] > li { margin: 0; }
+[data-links] [data-link-chip] { text-decoration: none; color: inherit; }
+
 [data-link-chip] {
   height: 100%; box-sizing: border-box;
   display: flex; align-items: center; gap: 0.6rem;
@@ -1151,6 +1188,21 @@ h1, h2, h3, h4 {
   display: inline-block; width: 0.55rem; height: 0.55rem;
   margin-right: 0.5rem; border-radius: 2px;
   background: var(--border-strong);
+  flex: none;
+}
+
+/* Swatch, photo, name on one baseline-free row, so a two-line product name
+   wraps against the name column rather than under the thumbnail. */
+[data-sku] { display: flex; align-items: center; gap: 0.5rem; }
+[data-sku] [data-share-key] { margin-right: 0; }
+[data-sku-name] { min-width: 0; }
+/* `contain`, not `cover`. These are nine near-identical boxes and the only
+   thing separating them is the artwork on the front — a cover crop eats the
+   edges of exactly that, which would defeat the reason the column exists. */
+[data-sku-thumb] {
+  flex: none; width: 2.25rem; height: 2.25rem;
+  object-fit: contain; border-radius: 3px;
+  background: var(--background);
 }
 /* Out to the listing. Underlined rather than accent-coloured: eighteen links
    in a nine-row table turns the whole thing violet and buries the figures,
@@ -1233,6 +1285,80 @@ h1, h2, h3, h4 {
 @media (max-width: 640px) {
   [data-margin] li { grid-template-columns: minmax(0, 1fr) auto; }
   [data-margin-unit] { grid-column: 2; }
+}
+
+/* The margin donut. Inside the same card as the rows and separated from them
+   by the card's own divider — a bordered chart box inside a bordered table
+   card reads as two unrelated components stacked, rather than one answer
+   shown twice. */
+[data-donut] {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: center;
+  gap: 1.5rem 2.25rem;
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+[data-donut-plot] { position: relative; }
+[data-donut] svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+/* Hovering a slice names it. Four of the five fills are steps of one gray
+   ramp, so "which slice is this" is a real question the chart has to answer
+   on demand — see the note in MarginBreakdown.tsx. */
+[data-donut] path { cursor: default; transition: opacity 120ms ease; }
+[data-donut] path[data-dim] { opacity: 0.4; }
+[data-donut] path:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+[data-donut-tip] {
+  position: absolute; z-index: 2;
+  /* Centred on the slice's own mid-ring point rather than following the
+     cursor: it lands in the same place for a mouse and for keyboard focus,
+     it cannot jitter, and it can never be pushed outside the card — which a
+     cursor-anchored tip would be, at the edge of a narrow one. */
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: 0.4rem 0.6rem; border-radius: var(--radius);
+  background: var(--foreground); color: var(--background);
+  white-space: nowrap; pointer-events: none;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+}
+[data-donut-tip-name] { font-size: 0.8125rem; font-weight: 650; }
+[data-donut-tip-figure] { font-size: 0.75rem; opacity: 0.8; font-variant-numeric: tabular-nums; }
+
+/* The hole carries the margin, at the weight the total row gives it — the
+   same figure, in the place the eye is already looking. */
+[data-donut-figure] {
+  font-size: 2.25rem; font-weight: 700; fill: var(--accent);
+  font-variant-numeric: tabular-nums; dominant-baseline: middle;
+}
+[data-donut-caption] {
+  font-size: 0.75rem; fill: var(--muted-foreground);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  dominant-baseline: middle;
+}
+
+/* 🚨 The legend is not optional decoration — it is how a segment is
+   identified without relying on its colour, which two of the cost steps are
+   too light to carry on their own. Name and figure, every row. */
+[data-donut-key] { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+[data-donut-key] li {
+  display: grid; grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+  align-items: center; gap: 0.65rem; font-size: 0.875rem;
+  padding: 0.15rem 0.4rem; margin: -0.15rem -0.4rem;
+  border-radius: var(--radius); cursor: default;
+}
+/* The legend is the other end of the same hover: a reader who cannot tell
+   two grays apart in the ring can point at the name instead. */
+[data-donut-key] li[data-on] { background: var(--muted); }
+[data-donut-swatch] { width: 0.75rem; height: 0.75rem; border-radius: 3px; }
+[data-donut-name] { color: var(--foreground); }
+[data-donut-pct] { color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 640px) {
+  [data-donut] { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  [data-donut] > svg { max-width: 210px; }
+  [data-donut-key] { width: 100%; }
 }
 
 /* ─── Channels ─────────────────────────────────────────────────────────
@@ -1455,6 +1581,42 @@ h1, h2, h3, h4 {
 [data-prose] ol { margin: 0 0 0.875rem; padding-left: 1.15rem; list-style: decimal; }
 [data-prose] li { margin-bottom: 0.3rem; }
 [data-prose] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ─── Pictures ─────────────────────────────────────────────────────────
+   Two of them, and they are different objects.
+
+   The LOGO is identity: who this page is about, answered before the reader
+   has read anything. Sized by height with `width: auto` because most brand
+   assets are wordmarks — fixing the width instead squashes a 10:7 lockup or
+   blows a square mark up to banner size.
+
+   The FIGURE is evidence: the thing being discussed, at the reading measure
+   rather than the full column. See the note in ProfileBlocks for why it is
+   not an Exhibit. */
+[data-business-logo] {
+  display: block; height: 2.5rem; width: auto; max-width: 15rem;
+  margin-bottom: 0.85rem; object-fit: contain; object-position: left center;
+}
+
+[data-figure] {
+  margin: 1.5rem 0; max-width: 100%;
+}
+[data-figure] img {
+  /* `width: auto` with a max, not `width: 100%`: the cap arrives as a
+     max-width on this element, and a photo narrower than its cap should stay
+     its own size rather than being stretched up to it. */
+  display: block; width: auto; max-width: 100%; height: auto;
+  border-radius: var(--radius);
+  /* The product shots are cut out on white, which is also the page. Without
+     an edge they float with no boundary — the border is what makes a
+     photograph read as a plate rather than as a gap in the text. */
+  border: 1px solid var(--border);
+  background: var(--muted);
+}
+[data-figure] figcaption {
+  margin-top: 0.5rem; font-size: 0.8125rem; color: var(--muted-foreground);
+  max-width: 60ch;
+}
 
 @media (max-width: 640px) {
   :root { --gutter: 1rem; --gutter-chrome: 0.875rem; }

@@ -8,6 +8,7 @@ import { SalesBreakdown } from "./SalesBreakdown";
 import { MarginBreakdown, BlockTable } from "./MarginBreakdown";
 import { Channels } from "./Channels";
 import { SellingMethods } from "./SellingMethods";
+import { ProfileLinks } from "./ProfileLinks";
 
 /** Resolve a stat reference against the live DB record. Never a literal. */
 function statValue(metric: MetricKey, b: BusinessDetail): string {
@@ -55,6 +56,30 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
       );
     case "callout":
       return <div data-notice style={{ margin: "1.25rem 0" }}><div>{block.text}</div></div>;
+    case "image":
+      /* Not an Exhibit. The wide blocks break out of the 44rem measure because
+         a chart or a table needs the column; a photograph of one object does
+         not, and at full width it stops being evidence and becomes a banner. */
+      return (
+        <figure data-figure="">
+          {/* 🚨 The cap is on the IMAGE, not the figure. Narrowing the figure
+              narrows the caption with it, and a 300px-wide picture then gets a
+              300px-wide column of text under it — four ragged lines of what is
+              one sentence. The picture is narrow; the sentence is not. */}
+          <img
+            src={block.src}
+            alt={block.alt}
+            loading="lazy"
+            decoding="async"
+            style={block.width ? { maxWidth: `${block.width}px` } : undefined}
+          />
+          {block.caption && <figcaption>{block.caption}</figcaption>}
+        </figure>
+      );
+    case "links":
+      /* Same component and same record as the overview's row, so the two can
+         never drift — a follower count corrected in the DB moves both. */
+      return <ProfileLinks links={business.links} />;
     case "stat":
       return (
         <dl data-stat-row style={{ margin: "1rem 0" }}>
