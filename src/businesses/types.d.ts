@@ -43,6 +43,24 @@ export type Block =
        * fixing the ORDER; it does not need a label on screen.
        */
       group?: string;
+      /**
+       * Date this section's facts were true of, printed under the heading.
+       *
+       * `true` derives it from the business's own `sources[].retrievedAt`, so
+       * one research pass dates every section it touched and a re-run moves
+       * them all at once — type a date per section and they drift the first
+       * time somebody refreshes half the page.
+       *
+       * A string overrides it, for a section whose data has its OWN effective
+       * date rather than a read date: the FBA fee card is published as
+       * effective from a day, and when we happened to read it is irrelevant.
+       *
+       * 🚨 Not for every section. A chart already dates every bar and a
+       * timeline dates every row; stamping those implies they are snapshots,
+       * which is the opposite of what they argue. Use it where the facts are
+       * READINGS — traffic, followers, ad counts, rank, feedback.
+       */
+      asOf?: true | string;
     }
   /** A label/value grid — the operator block, and anything else shaped like it. */
   | { type: "facts"; items: Fact[] }
@@ -207,6 +225,30 @@ export type Profile = {
   /** Rendered under the name, above the figures. */
   intro?: string;
   /**
+   * CASE-STUDY copy: the title and subtitle a reader is sold the page on.
+   * Authored by waithowmuch-research (skills/write-profile-headline →
+   * research/<slug>/headline.json) and copied here by hand after review.
+   *
+   * 🚨 The title HARDCODES a revenue figure, because a headline cannot be
+   * interpolated and stay readable — which is the one place this file's
+   * figures-never-in-prose rule cannot apply. That makes `snapshotMonth`
+   * load-bearing rather than decorative: it is the only thing standing
+   * between a frozen sentence and the live figure rendered directly beneath
+   * it. `headline`/`subhead` columns on the Business row were built and
+   * reverted on 2026-09-11 for exactly this reason; when the CaseStudy model
+   * ships, this moves there and stops being authored here.
+   */
+  headline?: {
+    /** 6–12 words, title case, no colon. */
+    title: string;
+    /** 25–45 words, and the point lands in the first 25 — the card clamps. */
+    subtitle: string;
+    /** The month every figure in `title` and `subtitle` is true of, "2026-09".
+     *  NEVER "the latest month": that means something different every time the
+     *  page is read, which is the whole failure this field prevents. */
+    snapshotMonth: string;
+  };
+  /**
    * Turns on the valuation card. The VALUE is not stored: it is the multiple
    * applied to trailing-twelve net profit from the metric series, so it
    * cannot disagree with the chart. Omit and the whole row is not rendered —
@@ -229,6 +271,16 @@ export type Profile = {
     /** A stated multiple, for a business nobody has run the model over yet.
      *  Ignored when `inputs` is present. Say where it came from in `note`. */
     multiple?: number;
+    /**
+     * Score the model as of this date instead of the end of the series.
+     *
+     * Rarely needed: the default is the last period the figures cover, which
+     * is the instant the valuation was ever true at. Set it only where the
+     * research was done at a materially different time from the last month of
+     * data. It is NEVER "today" — see RULE 4 in valuation/inputs.mjs for the
+     * 2.5 → 2.9 drift that rule exists to stop.
+     */
+    asOf?: string;
     /** Shown under the valuation. What the figure is and is not. */
     basis: string;
     /** Shown under the multiple. Where the multiple itself came from. */

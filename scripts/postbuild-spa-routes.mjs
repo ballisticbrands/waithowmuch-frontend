@@ -20,8 +20,7 @@ import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, DESCRIPTIONS, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
-import { valueBusiness } from '../src/valuation/model.mjs';
-import { ttmNetProfit } from '../src/valuation/inputs.mjs';
+import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -69,6 +68,28 @@ const money = (v, c = 'USD') => {
   if (v === null || v === undefined || v === '') return null;
   const sym = c === 'USD' ? '$' : c === 'EUR' ? '€' : c === 'GBP' ? '£' : '';
   return `${sym}${Math.round(Number(v)).toLocaleString('en-US')}`;
+};
+
+/* "Sep 2026". Mirrors monthLabel in lib/format.ts — this script is plain Node
+   and cannot import the TypeScript module, and a headline's frozen month has
+   to read identically in the crawler HTML and in the app. */
+const monthLabel = (iso) =>
+  new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+/* "Sep 9, 2026". Mirrors dayLabel in lib/format.ts. */
+const dayLabel = (iso) =>
+  new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+/* Mirrors sourceWindow + SectionAsOf. Both ends, not the latest: sources read
+   across a week are a window, and collapsing it would claim the oldest figure
+   was still current on the newest day. */
+const sectionAsOf = (value, sources) => {
+  if (typeof value === 'string') return `Effective ${dayLabel(value)}.`;
+  const days = (sources ?? []).map((s) => s.retrievedAt).filter(Boolean).sort();
+  if (days.length === 0) return '';
+  const [from, to] = [days[0], days[days.length - 1]];
+  const when = from === to ? `Read ${dayLabel(to)}.` : `Read ${dayLabel(from)} – ${dayLabel(to)}.`;
+  return `${when} Figures here are a reading taken then, not a live feed.`;
 };
 
 function render({ path, title, description, body, bootstrap }) {
@@ -163,8 +184,15 @@ function softGuard(path, html, itemCount) {
   }
 }
 
+/* The live API by default. WHM_API_BASE overrides it so a build can be run
+   against a local backend — the only way to check that a change depending on
+   data production does not have yet actually reaches the crawler HTML. Not a
+   config knob: site.mjs stays the one source of the real base, and
+   check-site-constants goes on asserting it matches site.ts. */
+const API = process.env.WHM_API_BASE ?? API_BASE;
+
 const get = async (path) => {
-  const res = await fetch(`${API_BASE}${path}`);
+  const res = await fetch(`${API}${path}`);
   if (!res.ok) throw new Error(`${res.status} ${path}`);
   return res.json();
 };
@@ -280,11 +308,17 @@ const METHOD_PHRASE = {
 for (const b of all) {
   let detail = null;
   let metrics = null;
+  let caseStudy = null;
   try {
     detail = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}`)).business;
     // The whole MetricsResponse, not just the rows: the client needs `types`
     // to know which series are FLOW and safe to chart.
     metrics = await get(`/v1/businesses/${encodeURIComponent(b.slug)}/metrics`);
+    /* The published freeze, newest first. Fetched HERE rather than left to the
+       client because the headline it carries is the first thing on the page —
+       a crawler that has to run JavaScript to see it does not see it. */
+    caseStudy =
+      (await get(`/v1/businesses/${encodeURIComponent(b.slug)}/case-studies`)).caseStudies[0] ?? null;
   } catch { /* the page still works, it just fetches on mount */ }
 
   const rev = money(b.latestMonthlyRevenue, b.currency);
@@ -298,10 +332,23 @@ for (const b of all) {
   // src/businesses/*.mjs is JSX-free: prose that lives only in a component is
   // invisible here, and the page would ship thin while looking perfect.
   const profile = profileFor(b.slug);
+  /* Same precedence as pages/Business.tsx: the PUBLISHED row wins over the
+     authored draft in the .mjs. Two renderers reading the same order is the
+     only way the crawler HTML and the app can agree about which month the
+     headline is frozen at. */
+  const headline = caseStudy
+    ? { title: caseStudy.title, subtitle: caseStudy.subtitle, snapshotMonth: caseStudy.snapshotMonth }
+    : profile?.headline ?? null;
   const flatten = (blocks) =>
     blocks.map((blk) => {
           switch (blk.type) {
-            case 'section': return `<h2>${esc(blk.title)}</h2>`;
+            case 'section': return [
+              `<h2>${esc(blk.title)}</h2>`,
+              /* Mirrors SectionAsOf in components/ProfileBlocks.tsx. A section
+                 dated for a reader and undated for a crawler is the same page
+                 making two different claims about how current it is. */
+              blk.asOf ? `<p>${esc(sectionAsOf(blk.asOf, detail?.sources ?? []))}</p>` : '',
+            ].filter(Boolean).join('');
             case 'facts': return `<ul>${blk.items.map((f) =>
               `<li>${esc(f.label)}: ${esc(f.value)}${f.note ? ` — ${esc(f.note)}` : ''}</li>`).join('')}</ul>`;
             case 'heading': return `<h2>${esc(blk.text)}</h2>`;
@@ -327,17 +374,24 @@ for (const b of all) {
                computes it, off the same series, so the two cannot disagree. */
             case 'valuation': {
               const v = profile?.valuation;
-              const ttm = ttmNetProfit(metrics);
-              if (!v || ttm === null) return '';
-              /* Same two paths as components/MetricCards.tsx, and the same
-                 order: the scoring model where a profile wires it up, a stated
-                 multiple otherwise. Computing it differently here is how the
-                 static page comes to print a figure the app does not. */
-              const scored = v.inputs ? valueBusiness({ netProfitTtm: ttm, ...v.inputs }) : null;
-              const multiple = scored?.multiple ?? v.multiple ?? null;
-              if (multiple === null) return '';
-              return `<p>Indicative valuation: <strong>${money(ttm * multiple, b.currency)}</strong> —
-                ${multiple}× a trailing-twelve net profit of ${money(ttm, b.currency)}.
+              /* 🚨 scoreProfile, NOT valueBusiness. This branch used to pick
+                 between the model and a stated multiple itself, which made it
+                 the second place that decision was written down — and the two
+                 had already drifted: the app pinned the model's clock to the
+                 series while this one still read `new Date()`, so the static
+                 page and the app printed different multiples for the same
+                 business on either side of an age boundary. One function now
+                 answers for both. */
+              /* The resolved headline, not the authored one: scoreProfile dates
+                 the multiple from `headline.snapshotMonth`, so handing it the
+                 .mjs draft while the page prints the published row's month
+                 would put two different freeze dates on one page. */
+              const scored = scoreProfile(profile ? { ...profile, headline } : profile, metrics);
+              if (!v || !scored || scored.multiple === null) return '';
+              const valAsOf = valuationAsOf(metrics, profile ? { ...profile, headline } : profile);
+              return `<p>Indicative valuation: <strong>${money(scored.value, b.currency)}</strong> —
+                ${scored.multiple}× a trailing-twelve net profit of ${money(scored.netProfitTtm, b.currency)}${
+                valAsOf ? `, scored as of ${esc(monthLabel(valAsOf.toISOString()))}` : ''}.
                 ${esc(v.basis)}</p>`;
             }
             /* 🚨 Renders from `profile.selling`, not from the block — the
@@ -439,6 +493,9 @@ for (const b of all) {
     <p><strong>Researched profile.</strong> Nobody from this business wrote this page —
        the figures are ${method}, published with the sources they were drawn from.
        <a href="/how-we-research/">How we research</a>.</p>
+    ${headline ? `<h2>${esc(headline.title)}</h2>
+    <p>${esc(headline.subtitle)}</p>
+    <p>Headline frozen at ${esc(monthLabel(headline.snapshotMonth))}. The figures below are current.</p>` : ''}
     <p>${esc(b.name)} is estimated to make ${rev ?? 'an undisclosed amount'} per month in
        revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.${
        cost ? ` It is estimated to have cost around ${cost} to start.` : ''}
@@ -451,7 +508,9 @@ for (const b of all) {
     title: `${b.name}${rev ? ` — ${rev}/mo` : ''} | ${BRAND_NAME}`,
     description: `${b.name}: ${rev ?? 'revenue'} per month${margin ? `, ${margin} margin` : ''}. ${method}, with sources.`,
     body,
-    bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
+    bootstrap: detail
+      ? { route: 'business', slug: b.slug, business: detail, metrics, caseStudy }
+      : undefined,
   });
   guard(businessPath(b.slug), html);
   write(businessPath(b.slug), html);

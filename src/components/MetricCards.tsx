@@ -3,7 +3,7 @@ import { latestOfType, rowsOfType } from "@/lib/api";
 import type { Block, Fact, Profile } from "@/businesses/types";
 import { exactMoney, money, percent, price, monthLabel } from "@/lib/format";
 import { METRIC_INFO } from "@/data/metric-info";
-import { scoreProfile, ttmWindow } from "@/valuation/inputs.mjs";
+import { scoreProfile, ttmWindow, valuationAsOf } from "@/valuation/inputs.mjs";
 import { InfoTip } from "./InfoTip";
 
 /**
@@ -381,13 +381,21 @@ export function TopMetrics({
 export function ValuationCards({
   business: b,
   series,
-  valuation,
+  profile,
 }: {
   business: BusinessDetail;
   series: MetricsResponse | null;
-  valuation: NonNullable<Profile["valuation"]>;
+  /* The whole profile, not profile.valuation — scoreProfile reads the frozen
+     scoring date off `headline.snapshotMonth`. */
+  profile: Profile;
 }) {
-  const scored = scoreProfile(valuation, series);
+  const valuation = profile.valuation;
+  const scored = scoreProfile(profile, series);
+  /* 🚨 The date the model actually scored at, read from the same function that
+     scores it rather than restated here. The age factor moves the multiple by
+     up to 0.5 depending on this date, so a multiple published without it is a
+     figure a reader cannot check. */
+  const asOf = valuationAsOf(series, profile);
   const window = ttmWindow(series);
   if (!scored || scored.multiple === null || scored.value === null) return null;
   const { multiple, netProfitTtm: ttmProfit } = scored;
@@ -397,10 +405,21 @@ export function ValuationCards({
       <HeadlineCard
         label="Indicative valuation"
         value={money(scored.value, b.currency)}
-        sub={valuation.basis}
+        sub={valuation?.basis}
         big
       />
-      <HeadlineCard label="Multiple" value={`${multiple}×`} sub={valuation.note} />
+      <HeadlineCard
+        label="Multiple"
+        value={`${multiple}×`}
+        /* Where the multiple came from AND when it was struck. The second half
+           is not housekeeping: this business crossed the model's 18-month line
+           in July 2026 and the multiple moved 2.5 -> 2.9 on the calendar
+           alone. It is pinned now, and saying which month it is pinned to is
+           what makes that visible rather than merely fixed. */
+        sub={[valuation?.note, asOf ? `Scored as of ${monthLabel(asOf.toISOString())}` : null]
+          .filter(Boolean)
+          .join(" · ")}
+      />
       <HeadlineCard
         label="On"
         value={`${money(ttmProfit, b.currency)} net profit`}

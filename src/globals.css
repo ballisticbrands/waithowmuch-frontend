@@ -1627,6 +1627,56 @@ img[data-row-logo] {
   margin-bottom: 0.85rem; object-fit: contain; object-position: left center;
 }
 
+/* The "as of" line under a section heading.
+   Small and muted — it is a qualifier on everything below it, not a finding —
+   but NOT invisible: on a page of researched estimates, when the reading was
+   taken is part of the claim rather than a footnote to it. Sits tight under
+   the h2 so it reads as belonging to that heading. */
+[data-section-asof] {
+  margin: -0.35rem 0 1.1rem;
+  font-size: 0.8125rem; line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* ── The case-study headline ──────────────────────────────────────────
+   The hook, at the top of the overview: a title that carries a frozen
+   revenue figure and a subtitle that carries the finding.
+
+   Capped at the reading measure rather than run to the full column. It is
+   two sentences of prose, and a 41-word subtitle set across a wide content
+   column is the one thing here a reader will genuinely fail to read.
+
+   🚨 [data-headline-asof] is load-bearing, not a caption. It is the only
+   thing distinguishing the frozen $90K in the title from the live figure in
+   the cards a few hundred pixels below, so it is styled to be READ — full
+   opacity ink and its own rule above it — rather than dropped to the
+   whisper-grey the site uses for genuine asides. */
+[data-headline] {
+  max-width: 44rem;
+  margin: 0 0 1.75rem;
+}
+[data-headline-title] {
+  font-size: 1.75rem; line-height: 1.2; font-weight: 680;
+  letter-spacing: -0.018em; margin: 0;
+  text-wrap: balance;
+}
+[data-headline-sub] {
+  font-size: 1.0625rem; line-height: 1.55;
+  color: var(--muted-foreground);
+  margin: 0.7rem 0 0;
+}
+[data-headline-asof] {
+  font-size: 0.8125rem; line-height: 1.4;
+  color: var(--foreground);
+  margin: 0.9rem 0 0; padding-top: 0.7rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  [data-headline-title] { font-size: 1.4375rem; }
+  [data-headline-sub] { font-size: 1rem; }
+}
+
 [data-figure] {
   margin: 1.5rem 0; max-width: 100%;
 }

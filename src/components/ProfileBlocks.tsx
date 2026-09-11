@@ -1,7 +1,7 @@
 import type { Block, MetricKey, Profile } from "@/businesses/types";
-import type { BusinessDetail, ChartPoint, MetricsResponse } from "@/lib/api";
+import { sourceWindow, type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
-import { exactMoney, percent } from "@/lib/format";
+import { dayLabel, exactMoney, percent } from "@/lib/format";
 import { MetricCell, ValuationCards } from "./MetricCards";
 import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
@@ -24,13 +24,45 @@ function statValue(metric: MetricKey, b: BusinessDetail): string {
   }
 }
 
+/**
+ * "As of" for one section — the day its facts were read.
+ *
+ * 🚨 A different date from the headline's frozen MONTH and from the date the
+ * valuation was scored at, and deliberately so. Those describe a reporting
+ * period; this describes when somebody looked. A traffic figure read on Sep 9
+ * is not a statement about September, and flattening the three into one date
+ * would make two of them wrong.
+ */
+function SectionAsOf({ value, business }: { value: true | string; business: BusinessDetail }) {
+  if (typeof value === "string") {
+    return <p data-section-asof="">Effective {dayLabel(value)}.</p>;
+  }
+  const win = sourceWindow(business.sources);
+  /* No dated sources, no claim. Printing "as of —" would be worse than
+     silence: it asserts that the question was asked and answered. */
+  if (!win) return null;
+  return (
+    <p data-section-asof="">
+      {win.from === win.to
+        ? `Read ${dayLabel(win.to)}.`
+        : `Read ${dayLabel(win.from)} – ${dayLabel(win.to)}.`}{" "}
+      Figures here are a reading taken then, not a live feed.
+    </p>
+  );
+}
+
 function BlockView({ block, business }: { block: Block; business: BusinessDetail }) {
   switch (block.type) {
     case "section":
       /* The marker IS the heading. ProfileBlocks wraps everything up to the
          next marker in a <section> carrying this id, which is what the table
          of contents links to. */
-      return <h2>{block.title}</h2>;
+      return (
+        <>
+          <h2>{block.title}</h2>
+          {block.asOf && <SectionAsOf value={block.asOf} business={business} />}
+        </>
+      );
     case "facts":
       return (
         <dl data-metric-grid="" data-facts-block="">
@@ -286,13 +318,13 @@ function Exhibit({
       // Nothing to price without a multiple — and the section is then empty by
       // design rather than broken.
       return profile.valuation ? (
-        <ValuationCards business={business} series={series} valuation={profile.valuation} />
+        <ValuationCards business={business} series={series} profile={profile} />
       ) : null;
     case "valuation-board":
       return (
         <ValuationBoard
           series={series}
-          valuation={profile.valuation}
+          profile={profile}
           currency={business.currency}
           note={block.note}
         />

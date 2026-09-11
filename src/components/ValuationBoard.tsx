@@ -1,8 +1,8 @@
 import type { MetricsResponse } from "@/lib/api";
 import type { Profile } from "@/businesses/types";
 import type { Adjustment, Valuation } from "@/valuation/model.mjs";
-import { scoreProfile } from "@/valuation/inputs.mjs";
-import { money } from "@/lib/format";
+import { scoreProfile, valuationAsOf } from "@/valuation/inputs.mjs";
+import { money, monthLabel } from "@/lib/format";
 import { InfoTip } from "./InfoTip";
 
 /** The model reports what it could not score by input key. These are the
@@ -50,17 +50,20 @@ const SIGNAL_NAMES: Record<string, string> = {
  */
 export function ValuationBoard({
   series,
-  valuation,
+  profile,
   currency,
   note,
 }: {
   series: MetricsResponse | null;
-  valuation: Profile["valuation"];
+  /* The whole profile, not profile.valuation: the scoring date lives on
+     `headline.snapshotMonth` and scoreProfile resolves it itself. */
+  profile: Profile;
   currency: string;
   /** What the figure excludes. Rendered under the columns. */
   note?: string;
 }) {
-  const scored: Valuation | null = scoreProfile(valuation, series);
+  const scored: Valuation | null = scoreProfile(profile, series);
+  const asOf = valuationAsOf(series, profile);
   if (!scored || scored.value === null || scored.adjustments.length === 0) return null;
 
   const ups = scored.adjustments.filter((a: Adjustment) => a.delta > 0);
@@ -74,6 +77,7 @@ export function ValuationBoard({
           <h3>Indicative valuation</h3>
           <p>
             {scored.multiple}× on {money(scored.netProfitTtm, currency)} trailing-twelve net profit
+            {asOf && <>, scored as of {monthLabel(asOf.toISOString())}</>}
           </p>
         </div>
         <strong data-val-figure="" data-figure="">
