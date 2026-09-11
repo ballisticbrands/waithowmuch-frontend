@@ -520,7 +520,7 @@ export const PROFILES = {
          it. Two sections running one argument, and the one holding the
          evidence was second. The cost story now lives once, under Margin
          breakdown; this one is the channel story, which nothing else told. */
-      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns' },
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
@@ -538,7 +538,7 @@ export const PROFILES = {
       },
       { type: 'selling' },
 
-      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns' },
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
@@ -647,7 +647,7 @@ export const PROFILES = {
           'What the public record cannot tell us is whether the audience converts. The follower counts and the visit estimates are real numbers about attention, and nothing public ties either of them to an order.',
       },
 
-      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from' },
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
         type: 'lede',
         text:
@@ -692,7 +692,7 @@ export const PROFILES = {
           'The Meta entry is the one worth opening. The creative is public even though the budget is not, and it is the only place the two prices for the same deck sit side by side.',
       },
 
-      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from' },
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
         type: 'lede',
         text:
@@ -820,7 +820,7 @@ export const PROFILES = {
           'Two of these numbers are attention and none of them is a sale. The follower counts, the visit estimates and the search volumes are all real measurements of interest, and nothing public connects any of them to an order on Amazon.',
       },
 
-      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when' },
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
       {
         type: 'facts',
         items: [

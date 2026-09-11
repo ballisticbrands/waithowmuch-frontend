@@ -62,6 +62,15 @@ export function monthLabel(iso: string | null | undefined): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 }
 
+/** "Sep 9, 2026" — day grain, for a reading taken on a particular day rather
+ *  than a figure reported for a month. */
+export function dayLabel(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "short", day: "numeric", year: "numeric", timeZone: "UTC",
+  });
+}
+
 export function yearsSince(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const years = (Date.now() - new Date(iso).getTime()) / (365.25 * 24 * 3600 * 1000);

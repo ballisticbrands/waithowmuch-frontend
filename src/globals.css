@@ -1627,6 +1627,17 @@ img[data-row-logo] {
   margin-bottom: 0.85rem; object-fit: contain; object-position: left center;
 }
 
+/* The "as of" line under a section heading.
+   Small and muted — it is a qualifier on everything below it, not a finding —
+   but NOT invisible: on a page of researched estimates, when the reading was
+   taken is part of the claim rather than a footnote to it. Sits tight under
+   the h2 so it reads as belonging to that heading. */
+[data-section-asof] {
+  margin: -0.35rem 0 1.1rem;
+  font-size: 0.8125rem; line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
 /* ── The case-study headline ──────────────────────────────────────────
    The hook, at the top of the overview: a title that carries a frozen
    revenue figure and a subtitle that carries the finding.

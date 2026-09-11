@@ -20,7 +20,7 @@ import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, DESCRIPTIONS, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
-import { scoreProfile } from '../src/valuation/inputs.mjs';
+import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -75,6 +75,22 @@ const money = (v, c = 'USD') => {
    to read identically in the crawler HTML and in the app. */
 const monthLabel = (iso) =>
   new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+/* "Sep 9, 2026". Mirrors dayLabel in lib/format.ts. */
+const dayLabel = (iso) =>
+  new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+
+/* Mirrors sourceWindow + SectionAsOf. Both ends, not the latest: sources read
+   across a week are a window, and collapsing it would claim the oldest figure
+   was still current on the newest day. */
+const sectionAsOf = (value, sources) => {
+  if (typeof value === 'string') return `Effective ${dayLabel(value)}.`;
+  const days = (sources ?? []).map((s) => s.retrievedAt).filter(Boolean).sort();
+  if (days.length === 0) return '';
+  const [from, to] = [days[0], days[days.length - 1]];
+  const when = from === to ? `Read ${dayLabel(to)}.` : `Read ${dayLabel(from)} – ${dayLabel(to)}.`;
+  return `${when} Figures here are a reading taken then, not a live feed.`;
+};
 
 function render({ path, title, description, body, bootstrap }) {
   let html = shell
@@ -168,8 +184,15 @@ function softGuard(path, html, itemCount) {
   }
 }
 
+/* The live API by default. WHM_API_BASE overrides it so a build can be run
+   against a local backend — the only way to check that a change depending on
+   data production does not have yet actually reaches the crawler HTML. Not a
+   config knob: site.mjs stays the one source of the real base, and
+   check-site-constants goes on asserting it matches site.ts. */
+const API = process.env.WHM_API_BASE ?? API_BASE;
+
 const get = async (path) => {
-  const res = await fetch(`${API_BASE}${path}`);
+  const res = await fetch(`${API}${path}`);
   if (!res.ok) throw new Error(`${res.status} ${path}`);
   return res.json();
 };
@@ -319,7 +342,13 @@ for (const b of all) {
   const flatten = (blocks) =>
     blocks.map((blk) => {
           switch (blk.type) {
-            case 'section': return `<h2>${esc(blk.title)}</h2>`;
+            case 'section': return [
+              `<h2>${esc(blk.title)}</h2>`,
+              /* Mirrors SectionAsOf in components/ProfileBlocks.tsx. A section
+                 dated for a reader and undated for a crawler is the same page
+                 making two different claims about how current it is. */
+              blk.asOf ? `<p>${esc(sectionAsOf(blk.asOf, detail?.sources ?? []))}</p>` : '',
+            ].filter(Boolean).join('');
             case 'facts': return `<ul>${blk.items.map((f) =>
               `<li>${esc(f.label)}: ${esc(f.value)}${f.note ? ` — ${esc(f.note)}` : ''}</li>`).join('')}</ul>`;
             case 'heading': return `<h2>${esc(blk.text)}</h2>`;
@@ -359,8 +388,10 @@ for (const b of all) {
                  would put two different freeze dates on one page. */
               const scored = scoreProfile(profile ? { ...profile, headline } : profile, metrics);
               if (!v || !scored || scored.multiple === null) return '';
+              const valAsOf = valuationAsOf(metrics, profile ? { ...profile, headline } : profile);
               return `<p>Indicative valuation: <strong>${money(scored.value, b.currency)}</strong> —
-                ${scored.multiple}× a trailing-twelve net profit of ${money(scored.netProfitTtm, b.currency)}.
+                ${scored.multiple}× a trailing-twelve net profit of ${money(scored.netProfitTtm, b.currency)}${
+                valAsOf ? `, scored as of ${esc(monthLabel(valAsOf.toISOString()))}` : ''}.
                 ${esc(v.basis)}</p>`;
             }
             /* 🚨 Renders from `profile.selling`, not from the block — the

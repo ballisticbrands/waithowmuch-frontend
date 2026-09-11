@@ -43,6 +43,24 @@ export type Block =
        * fixing the ORDER; it does not need a label on screen.
        */
       group?: string;
+      /**
+       * Date this section's facts were true of, printed under the heading.
+       *
+       * `true` derives it from the business's own `sources[].retrievedAt`, so
+       * one research pass dates every section it touched and a re-run moves
+       * them all at once — type a date per section and they drift the first
+       * time somebody refreshes half the page.
+       *
+       * A string overrides it, for a section whose data has its OWN effective
+       * date rather than a read date: the FBA fee card is published as
+       * effective from a day, and when we happened to read it is irrelevant.
+       *
+       * 🚨 Not for every section. A chart already dates every bar and a
+       * timeline dates every row; stamping those implies they are snapshots,
+       * which is the opposite of what they argue. Use it where the facts are
+       * READINGS — traffic, followers, ad counts, rank, feedback.
+       */
+      asOf?: true | string;
     }
   /** A label/value grid — the operator block, and anything else shaped like it. */
   | { type: "facts"; items: Fact[] }

@@ -112,9 +112,29 @@ export function linkFollowers(link: BusinessLink): number | null {
 
 export type BusinessDetail = BusinessCard & {
   startingCostNote: string | null;
-  sources: Array<{ title: string; url: string; note?: string }>;
+  /** 🚨 `retrievedAt` is first-class, not a footnote. Half of what a researched
+   *  profile rests on is a READING taken at a moment — a visit count, a
+   *  follower number, a best-seller rank — and one published without the day
+   *  it was taken quietly claims to be current forever. */
+  sources: Array<{ title: string; url: string; retrievedAt?: string; note?: string }>;
   links: BusinessLink[];
 };
+
+/**
+ * The span of days a business's sources were read over.
+ *
+ * Returns both ends rather than one date: sources gathered across a week are
+ * honestly described as a window, and collapsing that to the most recent read
+ * would claim the oldest figure was still current on the newest day. When
+ * every source shares a date — the normal case for one research pass — both
+ * ends are equal and the caller prints a single day.
+ */
+export function sourceWindow(
+  sources: BusinessDetail["sources"],
+): { from: string; to: string } | null {
+  const days = sources.map((s) => s.retrievedAt).filter((d): d is string => !!d).sort();
+  return days.length ? { from: days[0]!, to: days[days.length - 1]! } : null;
+}
 
 /**
  * A business FROZEN at one month — the counterpart to BusinessDetail above.
