@@ -414,6 +414,35 @@ img[data-row-logo] {
 }
 [data-row-tags] { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
 
+/* Provenance + "as of" — where a figure came from and what month it was true
+   of. Sits under the copy rather than beside the number: it qualifies the
+   whole row, not one column. */
+[data-row-provenance] {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+[data-row-asof] { font-size: 0.75rem; color: var(--muted-foreground); }
+
+/* ─── Provenance badge ────────────────────────────────────────────────
+   Previously styled nowhere, because it only ever rendered inside the
+   grid-card layout that fell out of use. It carries the distinction between
+   "we modelled this" and "we read it off a connected account", so it gets a
+   real badge rather than fine print — see Provenance.tsx. */
+[data-provenance] {
+  display: inline-block; font-size: 0.6875rem; font-weight: 600;
+  padding: 0.1rem 0.45rem; border-radius: 999px;
+  background: var(--muted); color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+/* Only VERIFIED gets the accent. The whole point of the badge is that the
+   tiers are not interchangeable, and colouring the modelled ones too would
+   flatten exactly the distinction it exists to draw. */
+[data-provenance][data-method="VERIFIED"] {
+  background: var(--accent-tint); color: var(--accent);
+  border-color: transparent;
+}
+
 /* Dissolve the wrapper so its three children become grid items of the row. */
 [data-row-stats] { display: contents; }
 [data-row-stat] { display: flex; flex-direction: column; gap: 0.05rem; text-align: right; margin: 0; }
