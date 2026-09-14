@@ -189,6 +189,17 @@ export type Block =
        *  smaller for an object that does not earn the width. */
       width?: number;
     }
+  /**
+   * Photographs side by side under one caption — for a pair that says more
+   * together than either does alone. Same hosting rule as `image`: our own
+   * storage (a /public path or our bucket), never a third-party URL that can
+   * be re-cropped or dropped without the page noticing.
+   */
+  | {
+      type: "images";
+      items: Array<{ src: string; alt: string }>;
+      caption?: string;
+    }
   | { type: "prose"; text: string }
   | { type: "list"; items: string[] }
   | { type: "quote"; text: string; attribution?: string }
@@ -247,6 +258,12 @@ export type Profile = {
      *  NEVER "the latest month": that means something different every time the
      *  page is read, which is the whole failure this field prevents. */
     snapshotMonth: string;
+    /** The brand's leading image, beside the title. By convention its
+     *  best-selling product, so the first thing a reader sees is the object the
+     *  figures are about. Site-absolute path under /public, like the image
+     *  block. Optional: without one the words keep their half and the other
+     *  half stays empty. */
+    image?: { src: string; alt: string };
   };
   /**
    * Turns on the valuation card. The VALUE is not stored: it is the multiple

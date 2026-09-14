@@ -1757,30 +1757,62 @@ img[data-row-logo] {
    the cards a few hundred pixels below, so it is styled to be READ — full
    opacity ink and its own rule above it — rather than dropped to the
    whisper-grey the site uses for genuine asides. */
-[data-headline] {
-  max-width: 44rem;
-  margin: 0 0 1.75rem;
+/* The top of the overview in two halves: logo, name and headline on the left,
+   the brand's leading image on the right. The image starts level with the
+   logo rather than under the name, which is what lets a laptop screen hold
+   the whole top of the page and the top of the chart beneath it. */
+[data-hero][data-with-image] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem 2.5rem; align-items: start;
 }
+[data-hero-text] { min-width: 0; }
+
+/* Name and tagline on one line; the tagline drops under the name only when
+   the column is too narrow for both. */
+[data-name-row] {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 0.15rem 0.65rem;
+}
+[data-business-name] { font-size: 1.75rem; font-weight: 720; letter-spacing: -0.025em; }
+[data-tagline] { margin: 0; font-size: 1rem; color: var(--muted-foreground); }
+
+/* Contained, not cropped: a product shot cut off at the box edge reads as a
+   broken image. Capped at about the height of the text column beside it, so
+   the image never makes the top of the page taller than the words do. */
+[data-hero-image] { margin: 0; min-width: 0; }
+[data-hero-image] img {
+  display: block; width: 100%; height: auto; max-height: 17.5rem;
+  object-fit: contain;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card);
+}
+
+[data-headline] { margin: 1.1rem 0 0; }
 [data-headline-title] {
-  font-size: 1.75rem; line-height: 1.2; font-weight: 680;
+  font-size: 1.5rem; line-height: 1.22; font-weight: 680;
   letter-spacing: -0.018em; margin: 0;
   text-wrap: balance;
 }
 [data-headline-sub] {
-  font-size: 1.0625rem; line-height: 1.55;
+  font-size: 0.9375rem; line-height: 1.55;
   color: var(--muted-foreground);
-  margin: 0.7rem 0 0;
+  margin: 0.6rem 0 0;
 }
 [data-headline-asof] {
-  font-size: 0.8125rem; line-height: 1.4;
+  font-size: 0.78rem; line-height: 1.4;
   color: var(--foreground);
-  margin: 0.9rem 0 0; padding-top: 0.7rem;
+  margin: 0.85rem 0 0; padding-top: 0.65rem;
   border-top: 1px solid var(--border);
 }
 
+/* One column on a phone, words first: half of 390px is too narrow for a
+   title, and the reader decides on the sentence before the picture. */
 @media (max-width: 640px) {
-  [data-headline-title] { font-size: 1.4375rem; }
-  [data-headline-sub] { font-size: 1rem; }
+  [data-hero][data-with-image] { grid-template-columns: minmax(0, 1fr); }
+  [data-business-name] { font-size: 1.5rem; }
+  [data-headline-title] { font-size: 1.3125rem; }
+  [data-headline-sub] { font-size: 0.9375rem; }
 }
 
 [data-figure] {
@@ -1798,6 +1830,16 @@ img[data-row-logo] {
   border: 1px solid var(--border);
   background: var(--muted);
 }
+/* The side-by-side block: equal columns, and a pair stays side by side even on
+   a phone (two ~170px squares still read; stacked, each filled the screen).
+   The images fill their column — the single-image rule above sizes to the
+   picture, which here would leave two photos at different widths. */
+[data-image-row] {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.75rem;
+}
+[data-figure] [data-image-row] img { width: 100%; }
+
 [data-figure] figcaption {
   margin-top: 0.5rem; font-size: 0.8125rem; color: var(--muted-foreground);
   max-width: 60ch;

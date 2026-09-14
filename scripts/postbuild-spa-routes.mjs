@@ -434,6 +434,10 @@ for (const b of all) {
                 blk.width ? ` width="${blk.width}"` : ''} />`,
               blk.caption ? `<p>${esc(blk.caption)}</p>` : '',
             ].filter(Boolean).join('');
+            case 'images': return [
+              blk.items.map((img) => `<img src="${esc(img.src)}" alt="${esc(img.alt)}" />`).join(''),
+              blk.caption ? `<p>${esc(blk.caption)}</p>` : '',
+            ].filter(Boolean).join('');
             /* Both figures AND the note. On the advertising and traffic
                sections the note is the row's whole point — without it a
                crawler gets a list of channel names and one modelled range. */

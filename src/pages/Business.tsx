@@ -214,6 +214,9 @@ export default function Business() {
      profile that is the same page, so it stays an anchor. */
   const chartSection = profile ? chartSectionId(profile) : null;
   const chartHref = paginated && chartSection ? `${base}/${chartSection}/` : "#earnings";
+  /* The leading image belongs to the overview's headline; a section page has
+     neither. */
+  const heroImage = showOverview ? profile?.headline?.image : undefined;
 
   return (
     <main data-main>
@@ -221,7 +224,7 @@ export default function Business() {
         {sections.length > 0 && <Toc items={sections} active={current} />}
         <div data-toc-body="">
         {/* 🚨 Outside the `showOverview` guard, for the same reason as the
-            ResearchedNotice below it: a reader who lands on /margin/ from a
+            ResearchedNotice at the foot of the page: a reader who lands on /margin/ from a
             search result gets a page of somebody's unit economics, and the
             mark is the fastest thing on it that says whose.
 
@@ -231,18 +234,32 @@ export default function Business() {
             is either cropped or too small to read. Here it is sized by HEIGHT
             with the width left to the artwork, so a square mark and a wide
             wordmark both land correctly. */}
-        {b.logoUrl && <img data-business-logo="" src={b.logoUrl} alt={`${b.name} logo`} />}
-        <h1>{b.name}</h1>
-        {b.tagline && (
-          <p style={{ color: "var(--muted-foreground)", margin: "0.4rem 0 0", fontSize: "1.0625rem" }}>{b.tagline}</p>
-        )}
-
-        {/* 🚨 On every section, not only the overview. A reader who arrives on
-            the Growth page from a search result has to be told these figures
-            are estimates there, not on a page they may never see. */}
-        <div style={{ margin: "1.25rem 0" }}>
-          <ResearchedNotice method={b.researchMethod} />
+        {/* The top of the page. On the overview it is two halves — logo, name
+            and headline on the left, the leading image on the right, starting
+            level with the logo — so a laptop screen holds all of it and the
+            top of the chart. A section page has no image and no headline, so
+            there it is simply the logo and the name. */}
+        <div data-hero="" data-with-image={heroImage ? "" : undefined}>
+          <div data-hero-text="">
+            {b.logoUrl && <img data-business-logo="" src={b.logoUrl} alt={`${b.name} logo`} />}
+            <div data-name-row="">
+              <h1 data-business-name="">{b.name}</h1>
+              {b.tagline && <p data-tagline="">{b.tagline}</p>}
+            </div>
+            {/* The overview and NOWHERE else. Unlike the logo and the
+                ResearchedNotice, this does not repeat onto every section: it
+                quotes one frozen month, and a reader landing on /margin/ from a
+                search result would get that figure with none of the context
+                that dates it. */}
+            {showOverview && profile?.headline && <Headline headline={profile.headline} />}
+          </div>
+          {heroImage && (
+            <figure data-hero-image="">
+              <img src={heroImage.src} alt={heroImage.alt} />
+            </figure>
+          )}
         </div>
+
 
         {/* The cards replace the five-figure stat row this page used to open
             with. Everything it carried is still here: revenue, profit and
@@ -251,17 +268,14 @@ export default function Business() {
             "as of" is the basis line under each average. */}
         {showOverview && (
           <section id="overview">
-            {/* First thing in the overview and NOWHERE else. Unlike the logo
-                and the ResearchedNotice above, this does not repeat onto every
-                section: it quotes one frozen month, and a reader landing on
-                /margin/ from a search result would get that figure with none
-                of the context that dates it. */}
-            {profile?.headline && <Headline headline={profile.headline} />}
-
-            {/* Above the figures, not below them: a reader checks that the
-                business is real before they weigh what it earns. */}
-            <ProfileLinks links={b.links} />
             <TopMetrics business={b} metrics={points} series={series} profile={profile} chartHref={chartHref} />
+
+            {/* Under the figures rather than above them, so the averages and
+                the chart come first; the store and the accounts follow as the
+                receipts for them. */}
+            <div style={{ marginTop: "1.25rem" }}>
+              <ProfileLinks links={b.links} />
+            </div>
 
             {b.categories.length > 0 && (
               <div data-tags style={{ marginTop: "1.25rem" }}>
@@ -341,6 +355,14 @@ export default function Business() {
       )}
 
         {next && <NextSection item={next} />}
+
+        {/* 🚨 On every section, not only the overview. A reader who arrives on
+            the Growth page from a search result has to be told these figures
+            are estimates there, not on a page they may never see — so it closes
+            every page rather than opening one. */}
+        <div style={{ margin: "2.5rem 0 0" }}>
+          <ResearchedNotice method={b.researchMethod} />
+        </div>
         </div>
       </div>
     </main>
