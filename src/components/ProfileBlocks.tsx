@@ -108,6 +108,17 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
           {block.caption && <figcaption>{block.caption}</figcaption>}
         </figure>
       );
+    case "images":
+      return (
+        <figure data-figure="">
+          <div data-image-row="">
+            {block.items.map((img) => (
+              <img key={img.src} src={img.src} alt={img.alt} loading="lazy" decoding="async" />
+            ))}
+          </div>
+          {block.caption && <figcaption>{block.caption}</figcaption>}
+        </figure>
+      );
     case "links":
       /* Same component and same record as the overview's row, so the two can
          never drift — a follower count corrected in the DB moves both. */

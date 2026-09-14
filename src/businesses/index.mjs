@@ -98,6 +98,13 @@ export const PROFILES = {
       subtitle:
         'They built the audience first: the TikTok account opened seven weeks before the first deck was listed, and it now carries 45,400 followers. That audience took the catalogue to a new non-holiday high in August.',
       snapshotMonth: '2026-09',
+      /* The best seller: the original deck is 62% of the revenue, so it is
+         the object this whole page is about. The overview's image further
+         down shows the second-best seller instead of repeating it. */
+      image: {
+        src: '/products/spite-house-games/B0FMGJSSXT-hero.jpg',
+        alt: 'The “Go F*** Yourself!” card-game box — the best-selling deck, a blue box with a grinning cartoon goldfish',
+      },
     },
     /* 🚨 The multiple is the ONE authored number on this page, and it is a
        placeholder rather than a finding. Nothing public prices this business;
@@ -333,21 +340,29 @@ export const PROFILES = {
           'Boomers, Mom, Dad, Mom & Dad, Jesus Christ, America in red and blue. Sixteen ASINs, ten of them priced, seven carrying a sold badge, at an $8.87 average order.',
       },
       /* 🚨 NO FIGURES IN THE CAPTION, and that is the same rule as the prose
-         above it. "62% of revenue" typed here would be a second copy of a
-         number the breakdown block already computes off the item rows, and
-         the two would part company the first time a row was corrected. The
-         caption says what the object IS; the block says what it earns.
+         above it: a number typed here would be a second copy of one the
+         breakdown block computes, and the two would part company the first
+         time a row was corrected.
 
-         Narrow on purpose: the box is portrait, and at the full reading
-         measure a single product shot stops being evidence and becomes a
-         banner. */
+         The brand's own listing images, not the box. The box is already the
+         headline image at the top of the page; these show how the brand sells
+         it. Copied into our bucket (products/spite-house-games/) rather than
+         hotlinked, so Amazon re-cropping or dropping them cannot change this
+         page. */
       {
-        type: 'image',
-        src: '/products/spite-house-games/B0FMGJSSXT-hero.jpg',
-        alt: 'The “Go F*** Yourself!” card-game box — a blue deck box with a grinning cartoon goldfish and the strapline “Go fish? How about go f*** yourself!”',
+        type: 'images',
+        items: [
+          {
+            src: 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/3a4ef3ca9afdc031b3256f9a8410734af057bf3387b59d23582908f903117ff9.jpg',
+            alt: 'Listing image: “So easy a baby could play!” above a cartoon goldfish with a dummy, captioned “(do not play with babies)”',
+          },
+          {
+            src: 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/77cc37b8b258535cf663f00436db50bb8de311c2b8248fbdf91fada448edce6c.jpg',
+            alt: 'Listing image: “Fish for shameful secrets. ‘Do you have?’” over a fan of illustrated cards with censored prompts',
+          },
+        ],
         caption:
-          '“Go F Yourself!” — the original deck, and the one the rest of the catalogue is a re-cut of. Every other listing is this object with a different target printed on the box.',
-        width: 300,
+          'Two of the brand’s own Amazon listing images. The pitch is the joke: a game anyone can pick up, played for the secrets you would rather not say out loud.',
       },
 
       /* 🚨 Grouped with Overview, not with Brand owner, and the group is the
