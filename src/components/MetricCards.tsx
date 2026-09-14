@@ -238,6 +238,8 @@ export function TopMetrics({
     (blk): blk is Extract<Block, { type: "margin" }> => blk.type === "margin",
   );
   const cogsLine = marginBlock?.lines.find((l) => l.key === "cogs");
+  const timeline =
+    profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
   if (marginBlock && cogsLine) {
     const marginHref = profile ? sectionOf(profile, (blk) => blk.type === "margin") : null;
     derivedFacts.push({
@@ -348,7 +350,7 @@ export function TopMetrics({
         <PerformanceChart
           points={metrics}
           adSpend={adRows}
-          events={b.events ?? []}
+          timeline={timeline}
           currency={b.currency}
           detail={{ href: chartHref, label: "See Revenue" }}
         />

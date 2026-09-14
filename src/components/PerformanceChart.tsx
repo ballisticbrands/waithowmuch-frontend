@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent } from "react";
-import type { BusinessEvent, ChartPoint, MetricRow } from "@/lib/api";
-import { eventDateLabel, exactMoney, money, monthLabel } from "@/lib/format";
+import type { ChartPoint, MetricRow } from "@/lib/api";
+import type { Block } from "@/businesses/types";
+import { exactMoney, money, monthLabel } from "@/lib/format";
 import { scale } from "./Earnings";
 
 /**
- * Revenue, profit and ad spend as three lines on one axis, with the business's
- * dated events (BusinessEvent rows) sitting on the revenue line.
+ * Revenue, profit and ad spend as three lines on one axis, with the dated
+ * events from the profile's timeline sitting on the revenue line.
  *
  * Ported from VerifiedMargins' sourced-dossier ProfitChart (DemoSourced.tsx)
  * and re-cut for this site:
@@ -23,6 +24,8 @@ import { scale } from "./Earnings";
  *
  * The palette is validated, not picked — see --series-* in globals.css.
  */
+
+type TimelineItem = Extract<Block, { type: "timeline" }>["items"][number];
 
 type Month = {
   key: string;
@@ -46,6 +49,17 @@ const SERIES: Array<{ key: Series; label: string }> = [
 const DAY = 86_400_000;
 const HEIGHT = 280;
 const PAD = { top: 16, right: 12, bottom: 30, left: 56 };
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+/** "20 Feb 2021" → epoch ms. Null for a `when` that names no day ("Early",
+ *  "Q3 2025"): those stay on the Timeline section and off the plot. Parsed by
+ *  hand because Date.parse reads this format differently across browsers. */
+function parseWhen(when: string): number | null {
+  const m = /^(\d{1,2}) ([A-Za-z]{3})[A-Za-z]* (\d{4})$/.exec(when.trim());
+  if (!m) return null;
+  const month = MONTHS.indexOf(m[2]!.toLowerCase());
+  return month < 0 ? null : Date.UTC(Number(m[3]), month, Number(m[1]));
+}
 
 function monthEnd(iso: string): number {
   const d = new Date(iso);
@@ -85,7 +99,7 @@ function useMeasuredWidth() {
 export function PerformanceChart({
   points,
   adSpend,
-  events: timeline,
+  timeline,
   currency,
   detail,
 }: {
@@ -93,9 +107,9 @@ export function PerformanceChart({
   points: ChartPoint[];
   /** `ad_spend` rows, oldest first. */
   adSpend: MetricRow[];
-  /** The business's events, oldest first. Those dated to a day or a month
-   *  inside the plotted months become dots; a year is too vague to place. */
-  events: BusinessEvent[];
+  /** The profile's timeline items. Only those dated to a day inside the plotted
+   *  months become dots. */
+  timeline: TimelineItem[];
   currency: string;
   /** Where a reader goes to dig deeper — the Revenue section, which carries the
    *  period controls and the exact monthly table this chart deliberately does
@@ -135,9 +149,8 @@ export function PerformanceChart({
     const t0 = months[0]!.t;
     const t1 = months[months.length - 1]!.t;
     return timeline.flatMap((item) => {
-      if (item.datePrecision === "year") return [];
-      const t = Date.parse(item.date);
-      if (Number.isNaN(t) || t < t0 - DAY || t > t1) return [];
+      const t = parseWhen(item.when);
+      if (t === null || t < t0 - DAY || t > t1) return [];
       const v = revenueAt(months, t);
       const month = months.find((m) => m.t >= t);
       return v === null || !month ? [] : [{ item, t, v, month }];
@@ -222,8 +235,8 @@ export function PerformanceChart({
   /* The card opens away from the nearer edge, so it is never clipped by it. */
   const flip = anchor ? anchor.cx > w / 2 : false;
 
-  const hasAmazon = events.some((e) => e.item.tag === "amazon");
-  const hasOther = events.some((e) => e.item.tag !== "amazon");
+  const hasAmazon = events.some((e) => e.item.tag?.toLowerCase() === "amazon");
+  const hasOther = events.some((e) => e.item.tag?.toLowerCase() !== "amazon");
 
   return (
     <section data-perf="" aria-label="Revenue, profit and ad spend by month">
@@ -325,12 +338,12 @@ export function PerformanceChart({
                   const on = hover?.kind === "event" && hover.i === i;
                   return (
                     <g
-                      key={`${ev.item.date}-${ev.item.title}`}
+                      key={`${ev.item.when}-${ev.item.what}`}
                       data-perf-event=""
-                      data-amazon={ev.item.tag === "amazon" ? "" : undefined}
+                      data-amazon={ev.item.tag?.toLowerCase() === "amazon" ? "" : undefined}
                       tabIndex={0}
                       role="button"
-                      aria-label={`${eventDateLabel(ev.item.date, ev.item.datePrecision)}: ${ev.item.title}`}
+                      aria-label={`${ev.item.when}: ${ev.item.what}`}
                       onPointerEnter={() => {
                         overDot.current = true;
                         setHover({ kind: "event", i });
@@ -379,9 +392,10 @@ export function PerformanceChart({
               {hoveredEvent ? (
                 <>
                   <p data-perf-card-when="">
-                    {eventDateLabel(hoveredEvent.item.date, hoveredEvent.item.datePrecision)} · {hoveredEvent.item.tagLabel}
+                    {hoveredEvent.item.when}
+                    {hoveredEvent.item.tag ? ` · ${hoveredEvent.item.tag}` : ""}
                   </p>
-                  <p data-perf-card-title="">{hoveredEvent.item.title}</p>
+                  <p data-perf-card-title="">{hoveredEvent.item.what}</p>
                   {hoveredEvent.item.detail && <p data-perf-card-detail="">{hoveredEvent.item.detail}</p>}
                   <p data-perf-card-detail="">
                     Revenue that month: <span data-perf-num="">{exactMoney(hoveredEvent.month.revenue, currency)}</span>

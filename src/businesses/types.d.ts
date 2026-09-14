@@ -209,12 +209,17 @@ export type Block =
    * the account.
    */
   | { type: "links" }
-  /**
-   * The business's events, from the DB. Authored nowhere: events are
-   * BusinessEvent rows the research pipeline writes, so this block only marks
-   * where on the page the list goes — the same way `chart` does.
-   */
-  | { type: "timeline" };
+  | {
+      type: "timeline";
+      items: Array<{
+        when: string;
+        what: string;
+        /** Which strand of the story this belongs to — AMAZON, BRAND, WEB. */
+        tag?: string;
+        /** The paragraph under the headline. */
+        detail?: string;
+      }>;
+    };
 
 export type Profile = {
   /** Rendered under the name, above the figures. */

@@ -191,16 +191,6 @@ function softGuard(path, html, itemCount) {
    check-site-constants goes on asserting it matches site.ts. */
 const API = process.env.WHM_API_BASE ?? API_BASE;
 
-const EVENT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-/** "20 Jan 2025", "Jan 2025" or "2025" — as much of an event's date as is known. */
-const eventDate = (e) => {
-  const d = new Date(e.date);
-  const y = d.getUTCFullYear();
-  if (e.datePrecision === 'year') return String(y);
-  const m = EVENT_MONTHS[d.getUTCMonth()];
-  return e.datePrecision === 'month' ? `${m} ${y}` : `${d.getUTCDate()} ${m} ${y}`;
-};
-
 const get = async (path) => {
   const res = await fetch(`${API}${path}`);
   if (!res.ok) throw new Error(`${res.status} ${path}`);
@@ -472,11 +462,9 @@ for (const b of all) {
                   ? ` — ${l.followerCount.toLocaleString('en-US')} followers` : ''}</li>`).join('')}</ul>`;
             case 'quote': return `<blockquote>${esc(blk.text)}</blockquote>`;
             case 'list': return `<ul>${blk.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
-            /* Events are rows on the business record, so off `detail` for the
-               same reason as the links row above. */
-            case 'timeline': return detail?.events?.length ? `<ul>${detail.events.map((e) =>
-              `<li>${esc(eventDate(e))} — ${esc(e.tagLabel)}: ${esc(e.title)}${
-                e.detail ? ` ${esc(e.detail)}` : ''}</li>`).join('')}</ul>` : '';
+            case 'timeline': return `<ul>${blk.items.map((i) =>
+              `<li>${esc(i.when)}${i.tag ? ` — ${esc(i.tag)}` : ''}: ${esc(i.what)}${
+                i.detail ? ` ${esc(i.detail)}` : ''}</li>`).join('')}</ul>`;
             default: return ''; // stat/chart are figures, emitted below
           }
         }).filter(Boolean).join('\n    ');
