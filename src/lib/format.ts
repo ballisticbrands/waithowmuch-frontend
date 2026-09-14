@@ -84,3 +84,15 @@ export const METHOD_LABEL: Record<string, string> = {
   INTERVIEW: "Interview",
   VERIFIED: "Verified",
 };
+
+const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "20 Jan 2025", "Jan 2025" or "2025" — only as much of the date as is known.
+ *  Built by hand: toLocaleDateString's en-GB spells September "Sept". */
+export function eventDateLabel(iso: string, precision: "day" | "month" | "year"): string {
+  const d = new Date(iso);
+  const year = d.getUTCFullYear();
+  if (precision === "year") return String(year);
+  const month = SHORT_MONTHS[d.getUTCMonth()];
+  return precision === "month" ? `${month} ${year}` : `${d.getUTCDate()} ${month} ${year}`;
+}

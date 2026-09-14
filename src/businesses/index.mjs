@@ -61,14 +61,7 @@ export const PROFILES = {
         ],
       },
       { type: 'heading', text: 'Timeline' },
-      {
-        type: 'timeline',
-        items: [
-          { when: 'Early', what: 'Audience built before there was anything to sell' },
-          { when: 'Launch', what: 'First product listed' },
-          { when: 'Peak', what: 'Seasonal spike, then the long rebuild' },
-        ],
-      },
+      { type: 'timeline' },
       {
         type: 'callout',
         text: 'Figures on this page are modelled from public information, not read from the company’s accounts.',
@@ -363,120 +356,9 @@ export const PROFILES = {
         text:
           'Two listings in January 2025 that nobody bought, a badge in September, a Christmas that did $349,150 — and then a year spent building a business that does not need December.',
       },
-      {
-        /* Oldest first, and strictly so: the source lists a few of these out
-           of order. Each entry names the strand it belongs to, because the
-           whole point of this business's story is that the audience strand
-           starts before the selling one. */
-        type: 'timeline',
-        items: [
-          {
-            when: '20 Feb 2021',
-            tag: 'Web',
-            what: 'wouldyoukillhitler.com registered',
-            detail:
-              'An earlier venture, five years before this catalogue — and still the support address on every legal page of the current store. Its game sits on the shelf here as “I Would Kill Hitler” at $29.',
-          },
-          {
-            when: '20 Oct 2024',
-            tag: 'Web',
-            what: 'spitehousestudios.com registered',
-            detail: 'Six months before the store opens, and three months before the first Amazon listing.',
-          },
-          {
-            when: '30 Nov 2024',
-            tag: 'Brand',
-            what: 'The TikTok account is created',
-            detail:
-              '18:15 UTC, from TikTok’s own createTime field, corroborated by the timestamp encoded in the user id 102 seconds apart. Six weeks after the domain and seven weeks before the first listing: the audience was started first.',
-          },
-          {
-            when: '20 Jan 2025',
-            tag: 'Amazon',
-            what: 'First two listings go up',
-            detail: 'The original deck and a second listing, on the same day. Neither carries a sold badge for another eight months.',
-          },
-          {
-            when: '4 Apr 2025',
-            tag: 'Web',
-            what: 'The Shopify store opens',
-            detail:
-              'First product published, with the Wayback Machine’s first capture three days later. The deck lists at $12.99 there — the same deck Amazon sells for $6.97.',
-          },
-          {
-            when: '25 Jun 2025',
-            tag: 'Brand',
-            what: 'A YouTube channel appears, and is left to idle',
-            detail:
-              '83 videos and 46 subscribers, describing itself as “reposting all of my viral TikTok content, literally phoning it in”. A one-person operation choosing where not to spend effort.',
-          },
-          {
-            when: '6 Aug 2025',
-            tag: 'Amazon',
-            what: 'Boomers and Jesus Christ',
-            detail: 'The first re-cuts of the same joke for a different target, at $12.99 against the original’s $6.97.',
-          },
-          {
-            when: '30 Sep 2025',
-            tag: 'Amazon',
-            what: 'The badge appears — $13,940',
-            detail:
-              'Amazon starts printing “bought in past month” on the original deck, which means it crossed roughly 50 sales a month. Keepa’s history starts here.',
-          },
-          {
-            when: '20 Oct 2025',
-            tag: 'Brand',
-            what: 'A post does 549,228 likes',
-            detail:
-              'Their pinned Instagram post, and the closest thing to a cause on this profile: October revenue was $69,700 and November was $278,800. The same content runs on TikTok, where the account holds 5.2M likes across 359 videos.',
-          },
-          {
-            when: '31 Dec 2025',
-            tag: 'Amazon',
-            what: '$349,150 — the Christmas month',
-            detail: '50,050 units, and four times any month since. A gag gift’s whole year happens in eight weeks.',
-          },
-          {
-            when: '31 Jan 2026',
-            tag: 'Amazon',
-            what: '82% of it disappears',
-            detail: '$62,717. Not a listing problem and not a ranking problem — Christmas ended. The next six months are spent rebuilding.',
-          },
-          {
-            when: '14 Apr 2026',
-            tag: 'Amazon',
-            what: 'Mom, Dad, and Mom & Dad',
-            detail: 'Three more targets in a day, and the first at $19.99 — nearly three times the original’s price for the same object.',
-          },
-          {
-            when: '30 Apr 2026',
-            tag: 'Web',
-            what: 'Organic search peaks at 8,257 visits',
-            detail:
-              'Ubersuggest’s estimate for the month, almost all of it landing on one how-to-play page. By August it is 2,859 — down 65% from the peak.',
-          },
-          {
-            when: '3 Jun 2026',
-            tag: 'Amazon',
-            what: 'America, in red and blue',
-            detail: 'Three listings for an election-season gift. The blue one sells; the red one has yet to carry a badge.',
-          },
-          {
-            when: '6 Jul 2026',
-            tag: 'Advertising',
-            what: 'Meta ads start',
-            detail:
-              '~32 ads go live under a page called “Spite House Games”, pointing at the $12.99 store price. Amazon revenue that month is $80,420, up from $61,494 in June.',
-          },
-          {
-            when: '31 Aug 2026',
-            tag: 'Amazon',
-            what: '$96,958 — a new non-holiday high',
-            detail:
-              'Above every month except last December, and on a wider catalogue than last December had. Whatever is driving demand is not the holiday.',
-          },
-        ],
-      },
+      /* The events are BusinessEvent rows on the business record, written by
+         the research pipeline — this only places the list. */
+      { type: 'timeline' },
 
       { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
       {

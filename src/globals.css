@@ -39,12 +39,22 @@
   --warning: #8a5a00;
   --danger: #b42318;
 
-  /* The two chart series. One hue at two lightnesses, because --accent is the
-     only chroma in the system — which is also why the earnings card ships a
-     table view: the lighter step is under 3:1 against the card, and exact
-     figures in a table are the honest relief for that. */
+  /* The chart series. Revenue is the accent and profit a lighter step of the
+     same violet. Ad spend is the one second hue in the system — a magenta —
+     because a third line needs identity a grey cannot carry (it reads as "no
+     series"), and --warning / --danger are reserved for status.
+
+     🚨 Validated, not picked. With every pair checked, because each line can
+     cross every other:
+       validate_palette.js "#5b3df5,#a08ff0,#c2378f" --mode light --pairs all
+     Lightness band, chroma floor and CVD separation all pass — worst pair
+     ΔE 15.5 deutan, 21.2 normal vision. Profit sits at 2.73:1 against the
+     card, under 3:1, which is why every line also differs by dash, and why the
+     overview chart links to the Revenue section, whose earnings card carries
+     the exact figures in a table. Re-run it before touching these. */
   --series-revenue: var(--accent);
-  --series-profit: #b9addf;
+  --series-profit: #a08ff0;
+  --series-ads: #c2378f;
 
   /* The margin donut. A SEQUENTIAL ramp, not a categorical palette: the four
      cost slices are one hue at four lightnesses, stepped so the darkest is
@@ -514,9 +524,15 @@ img[data-row-logo] {
   gap: 0.75rem;
 }
 
+/* The overview's averages are four cards, and at 13.5rem the fourth wrapped
+   onto a row of its own in the content column. A narrower floor keeps them
+   one row on a desktop and folds them 2×2 on a phone. Scoped to the overview
+   row: the valuation cards keep the wider floor. */
+[data-glance] > [data-cards] { grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); }
+
 [data-card] {
   display: flex; flex-direction: column; gap: 0.15rem;
-  padding: 0.875rem 1rem;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--border); border-radius: var(--radius-lg);
   background: var(--card);
   /* Without this a grid child's min-width is its content, so one long
@@ -530,6 +546,11 @@ img[data-row-logo] {
   color: var(--muted-foreground); font-weight: 600;
 }
 [data-card-value] { font-size: 1.5rem; font-weight: 650; line-height: 1.15; }
+/* 🚨 Scoped under [data-card] on purpose. The value also carries
+   [data-figure], which further down this sheet is the block-level IMAGE
+   figure and hands it a 1.5rem margin above and below — the empty band that
+   made the averages row tall enough to hide the chart under it. */
+[data-card] [data-card-value] { margin: 0.3rem 0 0.1rem; }
 [data-card][data-big] [data-card-value] { font-size: 2rem; }
 [data-card-sub] {
   margin-top: 0.15rem; font-size: 0.75rem; line-height: 1.45;
@@ -541,14 +562,6 @@ img[data-row-logo] {
   margin-top: 0.4rem; font-size: 0.8125rem; color: var(--accent);
 }
 [data-card-jump]:hover { text-decoration: underline; text-underline-offset: 2px; }
-
-/* The accent is the only chroma in the system, so both sparklines use it —
-   they sit in separately labelled cards and never share an axis. */
-[data-spark] {
-  width: 100%; height: 2.125rem; margin-top: 0.35rem; display: block;
-  overflow: visible;
-}
-[data-spark] polyline { stroke: var(--accent); vector-effect: non-scaling-stroke; }
 
 /* One card holding a grid, not one card per figure: past about six, separate
    boxes stop being scannable and start being wallpaper. */
@@ -637,6 +650,99 @@ img[data-row-logo] {
 [data-earnings-table] th:first-child, [data-earnings-table] tbody th {
   text-align: left; font-weight: 550;
 }
+
+/* ─── Performance chart ────────────────────────────────────────────────
+ *
+ * components/PerformanceChart.tsx — revenue, profit and ad spend on one axis
+ * under the overview's cards, with the timeline's dated events on the
+ * revenue line. Solid, dashed and dotted, so colour is never the only key.
+ */
+[data-perf] {
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); padding: 1rem 1.25rem 1.1rem;
+  min-width: 0;
+}
+[data-perf-head] {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.6rem 1rem;
+}
+[data-perf-head] h2 { margin: 0; font-size: 1.05rem; font-weight: 650; letter-spacing: -0.01em; }
+[data-perf-detail] {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.8125rem; color: var(--accent);
+}
+[data-perf-detail]:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+[data-perf-legend] {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 1.1rem;
+  margin: 0.6rem 0 0.25rem; font-size: 0.78rem; color: var(--muted-foreground);
+}
+[data-perf-legend-item] { display: inline-flex; align-items: center; gap: 0.45rem; }
+/* Each key redraws its line — a zero-height box with a top border, so a
+   dashed key reads as a line rather than as a dotted chip. */
+[data-perf-key] { flex: none; width: 18px; height: 0; border-top: 2.5px solid var(--series-revenue); }
+[data-perf-key="profit"] { border-top: 2.5px dashed var(--series-profit); }
+[data-perf-key="ads"] { border-top: 2.5px dotted var(--series-ads); }
+[data-perf-key="event"] {
+  width: 9px; height: 9px; box-sizing: border-box;
+  border: 2px solid var(--series-revenue); border-radius: 50%; background: var(--card);
+}
+[data-perf-key="event"][data-amazon] { background: var(--series-revenue); }
+
+[data-perf-body] { margin-top: 0.5rem; }
+[data-perf-figure] { position: relative; margin: 0; }
+/* pan-y so a thumb dragging across the plot still scrolls the page. */
+[data-perf-plot] svg { display: block; overflow: visible; touch-action: pan-y; }
+[data-perf-grid] { stroke: var(--border); stroke-width: 1; }
+[data-perf-ytick], [data-perf-xtick] {
+  fill: var(--muted-foreground); font-size: 11px; font-variant-numeric: tabular-nums;
+}
+[data-perf-ytick] { text-anchor: end; dominant-baseline: middle; }
+
+[data-perf-area] { fill: var(--series-revenue); fill-opacity: 0.08; }
+[data-perf-line] { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+[data-perf-line="revenue"] { stroke: var(--series-revenue); }
+[data-perf-line="profit"] { stroke: var(--series-profit); stroke-dasharray: 7 5; }
+[data-perf-line="ads"] { stroke: var(--series-ads); stroke-width: 2.5; stroke-dasharray: 0.5 5; }
+
+[data-perf-crosshair] { stroke: var(--muted-foreground); stroke-opacity: 0.35; stroke-width: 1; }
+/* A 2px surface ring, so a point stays legible where it crosses a line. */
+[data-perf-point] { stroke: var(--card); stroke-width: 2; }
+[data-perf-point="revenue"] { fill: var(--series-revenue); }
+[data-perf-point="profit"] { fill: var(--series-profit); }
+[data-perf-point="ads"] { fill: var(--series-ads); }
+
+[data-perf-event] { cursor: pointer; outline: none; }
+[data-perf-hit] { fill: transparent; }
+[data-perf-dot] { fill: var(--card); stroke: var(--series-revenue); stroke-width: 2; }
+[data-perf-event][data-amazon] [data-perf-dot] { fill: var(--series-revenue); stroke: var(--card); }
+[data-perf-event]:focus-visible [data-perf-dot] { stroke: var(--foreground); stroke-width: 3; }
+
+[data-perf-card] {
+  position: absolute; z-index: 3; pointer-events: none;
+  width: max-content; max-width: 15rem; padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); box-shadow: var(--shadow);
+}
+[data-perf-card][data-flip] { transform: translateX(-100%); }
+[data-perf-card][data-wide] { max-width: 17.5rem; }
+[data-perf-card] p { margin: 0; font-size: 0.8rem; line-height: 1.45; }
+[data-perf-card] [data-perf-card-when] { color: var(--muted-foreground); font-size: 0.72rem; }
+[data-perf-card] [data-perf-card-title] { font-weight: 600; margin: 0.1rem 0 0.15rem; }
+[data-perf-card] [data-perf-card-detail] { color: var(--muted-foreground); }
+[data-perf-card] [data-perf-card-detail] + [data-perf-card-detail] { margin-top: 0.3rem; }
+[data-perf-card] [data-perf-card-row] {
+  display: flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+  color: var(--muted-foreground);
+}
+[data-perf-card] [data-perf-card-row] strong { color: var(--foreground); font-weight: 650; }
+[data-perf-card] [data-perf-card-row] [data-perf-key] { width: 14px; }
+
+/* Not [data-figure]: that attribute is also the block-level image figure
+   further down this sheet, and on an inline value it spread the card's rows
+   apart. Tabular here so the three figures align down the card. */
+[data-perf-num] { font-variant-numeric: tabular-nums; }
+[data-perf-note] { margin: 0.6rem 0 0; font-size: 0.75rem; line-height: 1.5; color: var(--muted-foreground); }
 
 /* ── Controls ──────────────────────────────────────────────────────────
    One exclusive choice of period, then a toggle for how it is drawn. The

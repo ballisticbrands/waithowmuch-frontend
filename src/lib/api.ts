@@ -118,6 +118,23 @@ export type BusinessDetail = BusinessCard & {
    *  it was taken quietly claims to be current forever. */
   sources: Array<{ title: string; url: string; retrievedAt?: string; note?: string }>;
   links: BusinessLink[];
+  /** Dated moments in the business's story, oldest first. Optional only until
+   *  every API the frontend can meet serves it. */
+  events?: BusinessEvent[];
+};
+
+export type BusinessEvent = {
+  /** Midnight UTC on the day — or on the 1st of the month or year, when that
+   *  is all that is known. `datePrecision` says which. */
+  date: string;
+  datePrecision: "day" | "month" | "year";
+  /** Registry key: amazon | brand | web | ads. */
+  tag: string;
+  /** What to print for `tag`, from the backend's registry. */
+  tagLabel: string;
+  title: string;
+  detail: string | null;
+  sourceUrl: string | null;
 };
 
 /**

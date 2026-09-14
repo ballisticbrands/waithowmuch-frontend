@@ -1,7 +1,7 @@
 import type { Block, MetricKey, Profile } from "@/businesses/types";
 import { sourceWindow, type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
-import { dayLabel, exactMoney, percent } from "@/lib/format";
+import { dayLabel, exactMoney, percent, eventDateLabel } from "@/lib/format";
 import { MetricCell, ValuationCards } from "./MetricCards";
 import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
@@ -132,21 +132,26 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
       /* Hoisted out of the prose run by ProfileBlocks below, so these are
          unreachable — kept only because the switch is exhaustive over Block. */
       return null;
-    case "timeline":
+    case "timeline": {
+      /* From the business record, not the profile: events are rows, so a new
+         one lands without a frontend deploy. */
+      const events = business.events ?? [];
+      if (events.length === 0) return null;
       return (
         <ol data-timeline="">
-          {block.items.map((i, n) => (
-            <li key={n}>
-              <span data-timeline-when="">{i.when}</span>
+          {events.map((e) => (
+            <li key={`${e.date}-${e.title}`}>
+              <span data-timeline-when="">{eventDateLabel(e.date, e.datePrecision)}</span>
               <span data-timeline-head="">
-                {i.tag && <em data-timeline-tag="">{i.tag}</em>}
-                <strong>{i.what}</strong>
+                <em data-timeline-tag="">{e.tagLabel}</em>
+                <strong>{e.title}</strong>
               </span>
-              {i.detail && <span data-timeline-detail="">{i.detail}</span>}
+              {e.detail && <span data-timeline-detail="">{e.detail}</span>}
             </li>
           ))}
         </ol>
       );
+    }
   }
 }
 
