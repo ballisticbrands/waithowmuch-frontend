@@ -13,7 +13,8 @@
  * src/businesses/index.mjs — which is precisely why those are plain .mjs.
  * Copy that lives only inside JSX is invisible to this script.
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
@@ -82,19 +83,42 @@ const monthLabel = (iso) =>
 const READING_NOTE = 'Figures here are a reading taken then, not a live feed.';
 const readingStamp = (month) => (month ? `Read ${monthLabel(month)}. ${READING_NOTE}` : '');
 
-function render({ path, title, description, body, bootstrap }) {
+/**
+ * `share` is what a link preview shows — Slack, iMessage, WhatsApp, X,
+ * LinkedIn — when it differs from the tab title. A business profile shares its
+ * headline title and subtitle, and its preview card when one exists
+ * (scripts/build-og.mjs); every other page shares its title and description.
+ *
+ * 🚨 These have to be in the static HTML: no link-preview crawler runs
+ * JavaScript, so a tag React sets is never seen.
+ */
+function render({ path, title, description, body, bootstrap, share }) {
   let html = shell
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(description)}" />`);
 
+  const image = share?.image;
+  /* The shell carries the site-wide logo as its og:image. A page with its own
+     card REPLACES it — two og:image tags and each app picks whichever it
+     likes, which is usually the first. */
+  if (image) html = html.replace(/\s*<meta property="og:image(?::width|:height|:alt)?" content="[^"]*"\s*\/>/g, '');
+
   const canonical = `${SITE}${path}`;
   const head = [
     `<link rel="canonical" href="${esc(canonical)}" />`,
-    `<meta property="og:title" content="${esc(title)}" />`,
-    `<meta property="og:description" content="${esc(description)}" />`,
+    `<meta property="og:title" content="${esc(share?.title ?? title)}" />`,
+    `<meta property="og:description" content="${esc(share?.description ?? description)}" />`,
     `<meta property="og:url" content="${esc(canonical)}" />`,
     `<meta property="og:type" content="website" />`,
-    `<meta name="twitter:card" content="summary" />`,
+    ...(image
+      ? [
+          `<meta property="og:image" content="${esc(image.url)}" />`,
+          `<meta property="og:image:width" content="${image.width}" />`,
+          `<meta property="og:image:height" content="${image.height}" />`,
+          `<meta property="og:image:alt" content="${esc(image.alt)}" />`,
+          `<meta name="twitter:card" content="summary_large_image" />`,
+        ]
+      : [`<meta name="twitter:card" content="summary" />`]),
   ].join('\n    ');
   html = insertIntoHead(html, `  ${head}\n  `);
 
@@ -110,6 +134,23 @@ function render({ path, title, description, body, bootstrap }) {
   }
 
   return html.replace('<div id="root"></div>', `<div id="root" data-prerender>${body}</div>`);
+}
+
+/**
+ * The link-preview card for a business, if one has been generated and
+ * committed (scripts/build-og.mjs writes public/og/<slug>.png). Null when
+ * there is none, so the page keeps the site-wide preview rather than a broken
+ * image.
+ *
+ * The URL carries a hash of the file: apps cache a preview image by URL, often
+ * for days, and a card regenerated under the same URL would keep showing the
+ * old one.
+ */
+function ogCard(slug) {
+  const file = join(dist, 'og', `${slug}.png`);
+  if (!existsSync(file)) return null;
+  const v = createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 10);
+  return { url: `${SITE}/og/${encodeURIComponent(slug)}.png?v=${v}`, width: 1200, height: 630 };
 }
 
 function write(path, html) {
@@ -497,6 +538,17 @@ for (const b of all) {
     ${authored}
     <p><a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
 
+  /* Every page of the profile shares the same preview — the headline and its
+     card — whichever section the link points at. */
+  const card = headline ? ogCard(b.slug) : null;
+  const share = headline
+    ? {
+        title: headline.title,
+        description: headline.subtitle,
+        image: card ? { ...card, alt: `${b.name}: ${headline.title}` } : null,
+      }
+    : undefined;
+
   const html = render({
     path: businessPath(b.slug),
     title: `${b.name}${rev ? ` — ${rev}/mo` : ''} | ${BRAND_NAME}`,
@@ -505,6 +557,7 @@ for (const b of all) {
     bootstrap: detail
       ? { route: 'business', slug: b.slug, business: detail, metrics, caseStudy }
       : undefined,
+    share,
   });
   guard(businessPath(b.slug), html);
   write(businessPath(b.slug), html);
@@ -525,6 +578,7 @@ for (const b of all) {
       description: `${part.title} for ${b.name}. ${method}, with sources.`,
       body: sectionBody,
       bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
+      share,
     });
     /* ⚠️ WARN, not fail. A section is deliberately short — that is the whole
        point of splitting the profile — so the 120-word floor written for a
