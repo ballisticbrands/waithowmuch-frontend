@@ -32,7 +32,7 @@ const num = (v: number | string | null | undefined): number =>
 /* ─── Scales ──────────────────────────────────────────────────────────── */
 
 /** A round ceiling and step, so gridlines land on $50,000 rather than $48,730. */
-function scale(max: number): { top: number; ticks: number[] } {
+export function scale(max: number): { top: number; ticks: number[] } {
   if (max <= 0) return { top: 1, ticks: [0, 1] };
   const raw = max / 5;
   const mag = 10 ** Math.floor(Math.log10(raw));

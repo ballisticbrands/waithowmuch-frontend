@@ -1,10 +1,11 @@
 import type { BusinessDetail, ChartPoint, MetricsResponse } from "@/lib/api";
-import { latestOfType, rowsOfType } from "@/lib/api";
+import { rowsOfType } from "@/lib/api";
 import type { Block, Fact, Profile } from "@/businesses/types";
 import { exactMoney, money, percent, price, monthLabel } from "@/lib/format";
 import { METRIC_INFO } from "@/data/metric-info";
 import { scoreProfile, ttmWindow, valuationAsOf } from "@/valuation/inputs.mjs";
 import { InfoTip } from "./InfoTip";
+import { PerformanceChart } from "./PerformanceChart";
 
 /**
  * The cards at the top of a business profile.
@@ -64,13 +65,11 @@ export function AverageCard({
   label,
   value,
   basis,
-  series,
   link,
 }: {
   label: string;
   value: string;
   basis: string;
-  series?: number[];
   link?: { href: string; label: string };
 }) {
   return (
@@ -79,9 +78,6 @@ export function AverageCard({
       <strong data-card-value="" data-figure="">
         {value}
       </strong>
-      {/* Three points is the floor. Below it the line is a corner, which
-          suggests a trajectory the data cannot support. */}
-      {series && series.length >= 3 && <Sparkline series={series} />}
       <span data-card-sub="">{basis}</span>
       {link && (
         <a data-card-jump="" href={link.href}>
@@ -141,34 +137,20 @@ export function MetricCell({
   );
 }
 
-/** Shape only — no axis, no labels. It says "rising", "spiky" or "flat". */
-export function Sparkline({ series }: { series: number[] }) {
-  const w = 200;
-  const h = 34;
-  const min = Math.min(...series);
-  const max = Math.max(...series);
-  // A flat series would divide by zero and put every point at NaN.
-  const span = max - min || 1;
-  const pts = series
-    .map((v, i) => {
-      const x = (i / (series.length - 1)) * w;
-      const y = h - 2 - ((v - min) / span) * (h - 4);
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} data-spark="" preserveAspectRatio="none" aria-hidden="true">
-      <polyline points={pts} fill="none" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 /* ─── The composed section ────────────────────────────────────────────── */
 
 const num = (v: number | string | null | undefined): number | null =>
   v === null || v === undefined || v === "" ? null : Number(v);
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
+
+/** "Averaged over 13 months, Sep 2025 – Sep 2026" — the divisor no average on
+ *  this page is printed without. `periods` must be oldest first. */
+function averagedOver(periods: string[]): string {
+  const n = periods.length;
+  if (n === 1) return `${monthLabel(periods[0]!)} only`;
+  return `Averaged over ${n} months, ${monthLabel(periods[0]!)} – ${monthLabel(periods[n - 1]!)}`;
+}
 
 /** Per-order money at the grain an order is actually priced in — $1.24, not
  *  $1. exactMoney rounds to whole units, which on an $8.87 order collapses
@@ -213,8 +195,14 @@ export function TopMetrics({
   const revenues = metrics.map((p) => num(p.revenue) ?? 0);
   const profits = metrics.map((p) => num(p.profit) ?? 0);
   /* Ad spend is a metric TYPE now, not a field on a charted point — the chart
-     pivot carries revenue and profit only. */
-  const adSpends = rowsOfType(series ?? null, "adSpend").map((r) => Number(r.value));
+     pivot carries revenue and profit only.
+
+     🚨 The type is `ad_spend`, the backend registry's spelling. This read
+     `adSpend` before, matched no row, and silently hid both the ad spend
+     figure and TACoS on every profile. */
+  const adRows = rowsOfType(series ?? null, "ad_spend");
+  const adSpends = adRows.map((r) => Number(r.value));
+  const avgAdSpend = adSpends.length ? sum(adSpends) / adSpends.length : null;
 
   const n = metrics.length;
   const avgRevenue = n ? sum(revenues) / n : num(b.latestMonthlyRevenue);
@@ -224,23 +212,15 @@ export function TopMetrics({
   // weights a $14k month the same as a $349k one.
   const margin = n && sum(revenues) ? (sum(profits) / sum(revenues)) * 100 : num(b.latestMarginPct);
 
-  const basis = n
-    ? n === 1
-      ? `${monthLabel(metrics[0]!.periodStart)} only`
-      : `Averaged over ${n} months, ${monthLabel(metrics[0]!.periodStart)} – ${monthLabel(metrics[n - 1]!.periodStart)}`
-    : "Latest published month";
+  const basis = n ? averagedOver(metrics.map((p) => p.periodStart)) : "Latest published month";
+  // Its own basis: ad spend is not guaranteed to cover the same months.
+  const adBasis = averagedOver(adRows.map((r) => r.periodStart));
 
-  // Ad spend is on the series but has no home in the headline rows, so it
-  // lands here — derived, never typed. TACoS is a ratio, so it takes the
-  // totals rather than the mean of the monthly rates.
+  // Ad spend has its own card in the headline row; what the grid keeps is
+  // TACoS. A ratio, so it takes the totals rather than the mean of the monthly
+  // rates — and only when both series cover the same months.
   const derivedFacts: Fact[] = [];
   if (adSpends.length === n && n > 0) {
-    derivedFacts.push({
-      label: "Ad spend / mo",
-      value: exactMoney(latestOfType(series ?? null, "adSpend"), b.currency),
-      note: "Latest month",
-      info: "adSpend",
-    });
     if (sum(revenues)) {
       derivedFacts.push({
         label: "TACoS",
@@ -258,6 +238,8 @@ export function TopMetrics({
     (blk): blk is Extract<Block, { type: "margin" }> => blk.type === "margin",
   );
   const cogsLine = marginBlock?.lines.find((l) => l.key === "cogs");
+  const timeline =
+    profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
   if (marginBlock && cogsLine) {
     const marginHref = profile ? sectionOf(profile, (blk) => blk.type === "margin") : null;
     derivedFacts.push({
@@ -339,13 +321,11 @@ export function TopMetrics({
           label="Avg. monthly revenue"
           value={avgRevenue === null ? "—" : exactMoney(Math.round(avgRevenue), b.currency)}
           basis={basis}
-          series={revenues}
         />
         <AverageCard
           label="Avg. monthly profit"
           value={avgProfit === null ? "—" : exactMoney(Math.round(avgProfit), b.currency)}
           basis={basis}
-          series={profits}
         />
         <AverageCard
           label="Profit margin"
@@ -353,7 +333,28 @@ export function TopMetrics({
           basis={n ? "Total profit against total revenue over the same months" : "Latest published month"}
           link={n ? { href: chartHref, label: "View the figures" } : undefined}
         />
+        {/* Only where the series carries it. A "—" card on every business that
+            publishes no ad spend would read as "spends nothing". */}
+        {avgAdSpend !== null && (
+          <AverageCard
+            label="Avg. monthly ad spend"
+            value={exactMoney(Math.round(avgAdSpend), b.currency)}
+            basis={adBasis}
+          />
+        )}
       </div>
+
+      {/* Directly under the averages: the chart is the months they were taken
+          over. The additional metrics follow it. */}
+      {n >= 2 && (
+        <PerformanceChart
+          points={metrics}
+          adSpend={adRows}
+          timeline={timeline}
+          currency={b.currency}
+          detail={{ href: chartHref, label: "See Revenue" }}
+        />
+      )}
 
       {facts.length > 0 && (
         <div data-card="" data-metric-card="">
