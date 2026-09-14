@@ -1,7 +1,7 @@
 import type { Block, MetricKey, Profile } from "@/businesses/types";
-import { sourceWindow, type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
+import { type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
-import { dayLabel, exactMoney, percent } from "@/lib/format";
+import { exactMoney, percent } from "@/lib/format";
 import { MetricCell, ValuationCards } from "./MetricCards";
 import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
@@ -9,6 +9,7 @@ import { MarginBreakdown, BlockTable } from "./MarginBreakdown";
 import { Channels } from "./Channels";
 import { SellingMethods } from "./SellingMethods";
 import { ProfileLinks } from "./ProfileLinks";
+import { businessReadingStamp } from "@/lib/reading";
 
 /** Resolve a stat reference against the live DB record. Never a literal. */
 function statValue(metric: MetricKey, b: BusinessDetail): string {
@@ -25,30 +26,16 @@ function statValue(metric: MetricKey, b: BusinessDetail): string {
 }
 
 /**
- * "As of" for one section — the day its facts were read.
+ * The date stamp under a section heading.
  *
- * 🚨 A different date from the headline's frozen MONTH and from the date the
- * valuation was scored at, and deliberately so. Those describe a reporting
- * period; this describes when somebody looked. A traffic figure read on Sep 9
- * is not a statement about September, and flattening the three into one date
- * would make two of them wrong.
+ * The same sentence and the same date as the headline's stamp — the business's
+ * snapshotMonth from the database, via lib/reading.ts — so every dated part of
+ * a profile says it the same way: a reading taken then, not a live feed. No
+ * snapshotMonth on the row, no stamp.
  */
-function SectionAsOf({ value, business }: { value: true | string; business: BusinessDetail }) {
-  if (typeof value === "string") {
-    return <p data-section-asof="">Effective {dayLabel(value)}.</p>;
-  }
-  const win = sourceWindow(business.sources);
-  /* No dated sources, no claim. Printing "as of —" would be worse than
-     silence: it asserts that the question was asked and answered. */
-  if (!win) return null;
-  return (
-    <p data-section-asof="">
-      {win.from === win.to
-        ? `Read ${dayLabel(win.to)}.`
-        : `Read ${dayLabel(win.from)} – ${dayLabel(win.to)}.`}{" "}
-      Figures here are a reading taken then, not a live feed.
-    </p>
-  );
+function SectionAsOf({ business }: { business: BusinessDetail }) {
+  const stamp = businessReadingStamp(business);
+  return stamp ? <p data-section-asof="">{stamp}</p> : null;
 }
 
 function BlockView({ block, business }: { block: Block; business: BusinessDetail }) {
@@ -60,7 +47,7 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
       return (
         <>
           <h2>{block.title}</h2>
-          {block.asOf && <SectionAsOf value={block.asOf} business={business} />}
+          {block.asOf && <SectionAsOf business={business} />}
         </>
       );
     case "facts":

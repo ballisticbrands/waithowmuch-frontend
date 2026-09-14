@@ -1752,11 +1752,12 @@ img[data-row-logo] {
    two sentences of prose, and a 41-word subtitle set across a wide content
    column is the one thing here a reader will genuinely fail to read.
 
-   🚨 [data-headline-asof] is load-bearing, not a caption. It is the only
-   thing distinguishing the frozen $90K in the title from the live figure in
-   the cards a few hundred pixels below, so it is styled to be READ — full
-   opacity ink and its own rule above it — rather than dropped to the
-   whisper-grey the site uses for genuine asides. */
+   🚨 [data-headline-asof] is load-bearing, not a caption. It carries the same
+   stamp, with the same date, as every dated section — "Read Sep 2026. Figures
+   here are a reading taken then, not a live feed." — because a profile is a story told
+   at one point in time, and nothing on the page promises to be updated after
+   it. Styled to be READ — full-opacity ink and its own rule above it — rather
+   than dropped to the whisper-grey the site uses for genuine asides. */
 /* The top of the overview in two halves: logo, name and headline on the left,
    the brand's leading image on the right. The image starts level with the
    logo rather than under the name, which is what lets a laptop screen hold

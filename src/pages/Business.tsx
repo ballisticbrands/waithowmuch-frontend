@@ -251,7 +251,7 @@ export default function Business() {
                 quotes one frozen month, and a reader landing on /margin/ from a
                 search result would get that figure with none of the context
                 that dates it. */}
-            {showOverview && profile?.headline && <Headline headline={profile.headline} />}
+            {showOverview && profile?.headline && <Headline headline={profile.headline} snapshotMonth={b.snapshotMonth ?? null} />}
           </div>
           {heroImage && (
             <figure data-hero-image="">

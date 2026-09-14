@@ -76,21 +76,11 @@ const money = (v, c = 'USD') => {
 const monthLabel = (iso) =>
   new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 
-/* "Sep 9, 2026". Mirrors dayLabel in lib/format.ts. */
-const dayLabel = (iso) =>
-  new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-
-/* Mirrors sourceWindow + SectionAsOf. Both ends, not the latest: sources read
-   across a week are a window, and collapsing it would claim the oldest figure
-   was still current on the newest day. */
-const sectionAsOf = (value, sources) => {
-  if (typeof value === 'string') return `Effective ${dayLabel(value)}.`;
-  const days = (sources ?? []).map((s) => s.retrievedAt).filter(Boolean).sort();
-  if (days.length === 0) return '';
-  const [from, to] = [days[0], days[days.length - 1]];
-  const when = from === to ? `Read ${dayLabel(to)}.` : `Read ${dayLabel(from)} – ${dayLabel(to)}.`;
-  return `${when} Figures here are a reading taken then, not a live feed.`;
-};
+/* Mirrors lib/reading.ts: the ONE sentence every date stamp on a profile uses,
+   under the headline and under each dated section, dated by the business's
+   snapshotMonth from the database. No month on the row, no stamp. */
+const READING_NOTE = 'Figures here are a reading taken then, not a live feed.';
+const readingStamp = (month) => (month ? `Read ${monthLabel(month)}. ${READING_NOTE}` : '');
 
 function render({ path, title, description, body, bootstrap }) {
   let html = shell
@@ -347,7 +337,7 @@ for (const b of all) {
               /* Mirrors SectionAsOf in components/ProfileBlocks.tsx. A section
                  dated for a reader and undated for a crawler is the same page
                  making two different claims about how current it is. */
-              blk.asOf ? `<p>${esc(sectionAsOf(blk.asOf, detail?.sources ?? []))}</p>` : '',
+              blk.asOf && detail?.snapshotMonth ? `<p>${esc(readingStamp(detail.snapshotMonth))}</p>` : '',
             ].filter(Boolean).join('');
             case 'facts': return `<ul>${blk.items.map((f) =>
               `<li>${esc(f.label)}: ${esc(f.value)}${f.note ? ` — ${esc(f.note)}` : ''}</li>`).join('')}</ul>`;
@@ -499,7 +489,7 @@ for (const b of all) {
        <a href="/how-we-research/">How we research</a>.</p>
     ${headline ? `<h2>${esc(headline.title)}</h2>
     <p>${esc(headline.subtitle)}</p>
-    <p>Headline frozen at ${esc(monthLabel(headline.snapshotMonth))}. The figures below are current.</p>` : ''}
+    <p>${esc(readingStamp(detail?.snapshotMonth ?? headline.snapshotMonth))}</p>` : ''}
     <p>${esc(b.name)} is estimated to make ${rev ?? 'an undisclosed amount'} per month in
        revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.${
        cost ? ` It is estimated to have cost around ${cost} to start.` : ''}

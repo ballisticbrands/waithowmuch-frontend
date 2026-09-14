@@ -112,6 +112,10 @@ export function linkFollowers(link: BusinessLink): number | null {
 
 export type BusinessDetail = BusinessCard & {
   startingCostNote: string | null;
+  /** The month this profile's story is told as of — the date every stamp on
+   *  the page carries (lib/reading.ts). Null for a business with no researched
+   *  headline. Optional only until every API the frontend can meet serves it. */
+  snapshotMonth?: string | null;
   /** 🚨 `retrievedAt` is first-class, not a footnote. Half of what a researched
    *  profile rests on is a READING taken at a moment — a visit count, a
    *  follower number, a best-seller rank — and one published without the day

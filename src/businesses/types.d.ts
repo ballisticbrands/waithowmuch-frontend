@@ -44,23 +44,13 @@ export type Block =
        */
       group?: string;
       /**
-       * Date this section's facts were true of, printed under the heading.
-       *
-       * `true` derives it from the business's own `sources[].retrievedAt`, so
-       * one research pass dates every section it touched and a re-run moves
-       * them all at once — type a date per section and they drift the first
-       * time somebody refreshes half the page.
-       *
-       * A string overrides it, for a section whose data has its OWN effective
-       * date rather than a read date: the FBA fee card is published as
-       * effective from a day, and when we happened to read it is irrelevant.
-       *
-       * 🚨 Not for every section. A chart already dates every bar and a
-       * timeline dates every row; stamping those implies they are snapshots,
-       * which is the opposite of what they argue. Use it where the facts are
-       * READINGS — traffic, followers, ad counts, rank, feedback.
+       * Print the profile's date stamp under this section's heading — "Read
+       * Sep 2026. Figures here are a reading taken then, not a live feed." The
+       * date is always the business's snapshotMonth from the database, the same
+       * one the headline carries (lib/reading.ts), so a section cannot state a
+       * date of its own. Set it on sections whose facts are readings.
        */
-      asOf?: true | string;
+      asOf?: true;
     }
   /** A label/value grid — the operator block, and anything else shaped like it. */
   | { type: "facts"; items: Fact[] }
