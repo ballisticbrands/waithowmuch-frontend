@@ -1134,11 +1134,23 @@ export const PROFILES = {
             detail: 'By the company’s own About page.',
           },
           {
+            when: '31 Dec 2023',
+            tag: 'Amazon',
+            what: '$893,712 — December',
+            detail: 'The first Christmas in Amazon’s badge history, and already the biggest month of its year.',
+          },
+          {
             when: '11 Oct 2024',
             tag: 'Amazon',
             what: 'Did You Know and Crazy State Laws, on the same day',
             detail:
               'Now the first and third best sellers. Ten of the fifteen best-selling listings today went up on or after this date.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '$1,309,574 — December',
+            detail: 'Nearly six times the September before it, which at $226,000 is the lowest month in the three years.',
           },
           {
             when: '30 Nov 2025',
@@ -1161,7 +1173,7 @@ export const PROFILES = {
           {
             when: '31 May 2026',
             tag: 'Amazon',
-            what: 'The low: $246,072',
+            what: 'The year’s low: $246,072',
             detail:
               'Only 150 listings carried a badge that month, against 224 in June. A listing that dips under Amazon’s threshold of roughly 50 a month counts as zero, so part of this trough is the floor rather than the business.',
           },
@@ -1178,7 +1190,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The badge history makes the year visible. November doubles October, December passes $1.5M, January falls 65% — and for the rest of the year the catalogue moves between roughly $250,000 and $570,000 a month. Of each month about a third is kept, before returns and overhead — and on a cost of goods nobody has quoted.',
+          'The badge history reaches back to September 2023, where Amazon’s record of the badge begins, and it holds three Christmases: December came to $893,712 in 2023, $1.31M in 2024 and $1.53M in 2025, and each January gave back between 43% and 67% of it. Outside November to January the catalogue moves between roughly $226,000 and $571,000 a month. The older months are the softer floor — a puzzle discontinued since is not in today’s catalogue and counts as zero — so some of the climb between those Decembers is the method rather than the business. Of each month about a third is kept, before returns and overhead — and on a cost of goods nobody has quoted.',
       },
       { type: 'chart' },
       {
