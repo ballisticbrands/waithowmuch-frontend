@@ -1059,6 +1059,18 @@ export const PROFILES = {
         text:
           'And the catalogue keeps moving. Their own site runs a New Puzzles section — 87 titles, 62 of them added in 2026 so far, the latest on 24 August — and a Coming Soon shelf already stocked with this year’s Christmas puzzles. Amazon shows the same cadence: 68 new listings in 2026.',
       },
+      /* The brand's own banner, closing the overview on the shape the first
+         paragraph describes. A 1600px JPEG of the screenshot, in the bucket. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/644a2d58dfe78a138339c8a1d7b63a50cbcbf645f5f475566569243575795d04.jpg',
+            alt: 'White Mountain’s “Shop by Piece Count” banner: tiles for 1,000-, 500- and 300-piece puzzles, each showing box art such as Family Retreat, Harvest Market and Card Games',
+          },
+        ],
+        caption: 'White Mountain’s own banner. The range is shopped by piece count first, then by the theme on the box.',
+      },
 
       { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
       {
