@@ -27,6 +27,7 @@ entirely from the public npm registry.
 - `src/components/Chart.tsx` — hand-rolled SVG bars (a chart library would cost
   more than the whole performance budget)
 - `scripts/postbuild-spa-routes.mjs` — the prerender
+- `BRAND.md` — logo, colour, type and shape: the brand guide
 
 ## Analytics: three loaders, one facade, and a deliberate delay
 
@@ -93,10 +94,6 @@ curl -s https://waithowmuch.com/business/<slug>/ | grep -ci "<slug>"   # > 0
 
 ## Known placeholders
 
-- Visual design is inherited tokens only; there is no real branding yet.
-- The logo is a bare `?`. The raster icons (`favicon-32.png`,
-  `apple-touch-icon.png`, `logo-512.png`) are **still VerifiedMargins' "VM"
-  artwork** and need regenerating.
 - **No Turnstile.** The backend has no `TURNSTILE_SECRET_KEY`, so the widget
   would be theatre. Magic-link abuse is currently held off by a 60s per-user
   cooldown and a constant 202 response.
