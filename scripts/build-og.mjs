@@ -1,6 +1,6 @@
-/* The link preview for a business profile: public/og/<slug>.png, 1200×630.
+/* The link preview for a business profile: og-out/<slug>.png, 1200×630.
  *
- *     node scripts/build-og.mjs            # then commit public/og/*.png
+ *     node scripts/build-og.mjs            # then upload og-out/*.png
  *     node scripts/build-og.mjs <slug>     # just one
  *
  * ── What it shows ────────────────────────────────────────────────────────
@@ -9,7 +9,7 @@
  * or a post, where the preview IS the page for most of the people who see it,
  * so it should make the page's point before anybody clicks.
  *
- * 🚨 The title quotes a revenue figure, and a number in a preview travels
+ * 🚨 The title quotes a profit figure, and a number in a preview travels
  * further than the page it came from. So the caveat travels with it, in the
  * image itself: "Researched estimate · Read Sep 2026". A screenshot of this
  * card must not be able to imply that a real business asserted these figures,
@@ -17,10 +17,11 @@
  *
  * ── Why this is not part of `npm run build` ──────────────────────────────
  * It needs Chrome, and the GitHub Pages workflow has no browser to drive. So
- * the PNG is COMMITTED and this script regenerates it (the same arrangement as
- * VerifiedMargins' build-og.mjs). Run it whenever a profile's headline or
- * leading image changes. The prerender only links a card that exists, so a
- * profile without one keeps the site-wide preview rather than a broken image.
+ * the card is rendered here, uploaded to the bucket (backend: `npm run
+ * product-image`) and linked from the profile as `headline.ogImage` — never
+ * committed. Run it whenever a profile's headline or leading image changes;
+ * the upload's new URL is the cache-bust. A profile with no ogImage keeps the
+ * site-wide preview rather than a broken image.
  *
  * Title, subtitle and image come from the authored profile
  * (src/businesses/index.mjs), exactly as the page renders them. Name, logo and
@@ -33,7 +34,7 @@ import puppeteer from 'puppeteer-core';
 import { PROFILES } from '../src/businesses/index.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const outDir = join(root, 'public', 'og');
+const outDir = join(root, 'og-out');
 const API = process.env.WHM_API ?? 'https://api.waithowmuch.com';
 
 function chromePath() {
@@ -156,7 +157,7 @@ for (const slug of slugs) {
     subtitle: headline.subtitle,
     month: monthLabel(b.snapshotMonth ?? headline.snapshotMonth),
     logo: b.logoUrl ? await remoteUri(b.logoUrl) : null,
-    image: headline.image ? fileUri(join(root, 'public', headline.image.src)) : null,
+    image: headline.image ? await remoteUri(headline.image.src) : null,
     font,
     mark,
   };
@@ -184,7 +185,7 @@ for (const slug of slugs) {
 
   const out = join(outDir, `${slug}.png`);
   writeFileSync(out, await page.screenshot({ clip: { x: 0, y: 0, width: 1200, height: 630 } }));
-  console.log(`build-og: wrote public/og/${slug}.png`);
+  console.log(`build-og: wrote og-out/${slug}.png — upload it (backend: npm run product-image -- ${slug} <path>) and set headline.ogImage`);
   await page.close();
 }
 await browser.close();

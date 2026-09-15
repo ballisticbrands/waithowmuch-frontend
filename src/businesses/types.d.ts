@@ -147,7 +147,8 @@ export type Block =
         sold?: number;
         price?: number;
         revenue: number;
-        /** The listing's own photo, as a site-absolute path under /public.
+        /** The listing's own photo, as its URL in our bucket — never a /public
+         *  path, never the marketplace's CDN.
          *
          *  🚨 Carries an argument, not decoration. This block's whole claim is
          *  that the catalogue is ONE object re-cut for a different target each
@@ -168,9 +169,9 @@ export type Block =
    */
   | {
       type: "image";
-      /** Site-absolute path under /public — not a remote URL. A third-party
-       *  host can re-crop or drop an asset without warning, and the page has
-       *  no way to notice. */
+      /** Its URL in our bucket — not a /public path, and not a third-party
+       *  host, which can re-crop or drop an asset without warning while the
+       *  page has no way to notice. */
       src: string;
       alt: string;
       /** Printed under the image, in the muted ink the table notes use. */
@@ -181,9 +182,9 @@ export type Block =
     }
   /**
    * Photographs side by side under one caption — for a pair that says more
-   * together than either does alone. Same hosting rule as `image`: our own
-   * storage (a /public path or our bucket), never a third-party URL that can
-   * be re-cropped or dropped without the page noticing.
+   * together than either does alone. Same hosting rule as `image`: our bucket,
+   * never a /public path or a third-party URL that can be re-cropped or
+   * dropped without the page noticing.
    */
   | {
       type: "images";
@@ -230,7 +231,7 @@ export type Profile = {
    * Authored by waithowmuch-research (skills/write-profile-headline →
    * research/<slug>/headline.json) and copied here by hand after review.
    *
-   * 🚨 The title HARDCODES a revenue figure, because a headline cannot be
+   * 🚨 The title HARDCODES a profit figure, because a headline cannot be
    * interpolated and stay readable — which is the one place this file's
    * figures-never-in-prose rule cannot apply. That makes `snapshotMonth`
    * load-bearing rather than decorative: it is the only thing standing
@@ -250,9 +251,12 @@ export type Profile = {
     snapshotMonth: string;
     /** The brand's leading image, beside the title. By convention its
      *  best-selling product, so the first thing a reader sees is the object the
-     *  figures are about. Site-absolute path under /public, like the image
-     *  block. Optional: without one the words keep their half and the other
-     *  half stays empty. */
+     *  figures are about. A bucket URL, like the image block. Optional:
+     *  without one the words keep their half and the other half stays empty.
+     *
+     *  Also the link preview: a shared link to the profile shows this photo
+     *  under the headline title and subtitle. Without one it shows the
+     *  site-wide preview. */
     image?: { src: string; alt: string };
   };
   /**
