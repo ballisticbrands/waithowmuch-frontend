@@ -51,6 +51,7 @@ import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs
 import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
+import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -3336,6 +3337,560 @@ export const PROFILES = {
         text:
           'These details are resolved from the seller record behind the brand’s Amazon storefront and from the buy-box history of the brand’s other listings.',
       },
+    ],
+  },
+
+  'kajun-loaded-tea': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-kajun-loaded-tea-headline.ts, from
+       waithowmuch-research research/kajun-loaded-tea/headline.json (reviewed
+       2026-09-15) — and the page reads them from the row alone. */
+    headline: {
+      /* The best seller, the Louisiana Legends 10-pack — though at 6.8% of the
+         month it leads by very little, which is the point of the subtitle. */
+      image: {
+        src: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/358a9367e37488e32c0f96083281b194a9d0fdcb2b1be5b6e7884b6c355856b5.jpg',
+        alt: 'The Kajun Loaded Tea variety 10-pack: ten cartoon-gator flavour packets — Crawdaddy Candy, Jazz Berry Jam, Fat Tuesday, Rougarou Rush and others — lined up in front of a gator-print mailer, between a purple and a red iced drink. The best-selling Amazon listing',
+      },
+    },
+
+    /* 🚨 NO `valuation` and no Valuation section, on purpose. The badge series
+       is nine months (Jan–Sep 2026); the model multiplies trailing-twelve net
+       profit and valuation/inputs.mjs refuses to annualise fewer months. Add
+       `valuation.inputs` once twelve profit months exist — not before. */
+
+    facts: [
+      { label: 'SKUs', value: '44', note: '43 priced, 43 carrying a sold badge', info: 'skus' },
+      {
+        label: 'Category',
+        value: 'Grocery & Gourmet Food › Beverages › Bottled Beverages, Water & Drink Mixes › Powdered Drink Mixes & Flavorings › Soft Drink Mixes',
+        note: '40 of the 44 listings; best rank #7,268 in Grocery & Gourmet Food',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Top-20 figures, not one hero's, so NO `info` key: the shared ⓘ copy
+         describes a single best-selling listing, and here that listing is 6.8%
+         of revenue with 30 reviews. */
+      { label: 'Product reviews', value: '3,439', note: 'Across the top 20 listings — a floor' },
+      { label: 'Product rating', value: '4.45★', note: 'Review-weighted, top 20 listings' },
+      { label: 'Seller feedback', value: '94%', note: 'Over 141 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Who makes the packets is not known', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      /* An INFERENCE, placed by us: one product type — a box of five packets —
+         in every flavour, holding 34 of 48 organic results on its own category
+         search. The case against is that "loaded tea" is a narrow term and a
+         rival outspends them on it. Differentiation is left out rather than
+         guessed: nothing scores it on this profile, and the formula is unknown. */
+      { label: 'Catalogue', value: 'Category dominance', note: 'One box in 40 flavours — inferred', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store; TikTok Shop and Etsy unsized', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it. Every figure on this profile — the chart, the breakdown, the margin — is Amazon US and nothing else.',
+      },
+      'amazon-international': {
+        status: 'no',
+        note:
+          'The seller id does not exist on Amazon UK, Germany or Canada. Other Amazon marketplaces were not looked up.',
+      },
+      'own-store': {
+        status: 'yes',
+        flag: true,
+        note:
+          'kajunloadedtea.com, on Shopify, read directly: 69 products, singles at $3.19 and five-packs at $15.95 — the Amazon price. It came before Amazon, and Shopify publishes no sales, so the channel that may be the older and larger one is unsized.',
+      },
+      /* 🚨 unchecked, NOT yes and NOT no. A TikTok Shop and an Etsy shop under
+         the brand name exist in search results, but both pages refused a
+         direct read (404 / 403), so neither was opened, let alone sized. */
+      'tiktok-shop': {
+        status: 'unchecked',
+        note:
+          'A store page appears in a search engine’s index with 38.3K followers and 272.4K items sold over its life; a direct fetch returned 404. Probably live and possibly large — but not read, and not sized.',
+      },
+      'other-marketplace': {
+        status: 'unchecked',
+        note: 'An Etsy shop under the brand name appears in search results; the page returned 403 and nothing on it was read.',
+      },
+      'wholesale-out': {
+        status: 'no',
+        note:
+          'Not yet: their wholesale page reads “Coming Soon”, with an email sign-up and a login at wholesale.kajunloadedtea.com but no terms. One to re-check.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the 44 storefront listings, nor any of the 65 other listings under the brand name.',
+      },
+      // licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'From the seller record, with a per-listing FBA fee on every box — the largest line in the cost stack.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the listings between FBA and FBM. Their own store ships from a “facility” of its own, by its About page.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand, flavour names and packet art, on listings where they hold 100% of the buy box.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note:
+          'Where the packets are filled is not known. The cost model prices them from Chinese OEM sachet quotes, which says nothing about who actually makes them.',
+      },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/KajunLoadedTea, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'Kajun Loaded Tea sells sugar-free energy-tea powder from Denham Springs, Louisiana, in packets named for the state — Crawdaddy Candy, Fat Tuesday, Rougarou Rush. It sold through its own store before it came to Amazon, where the catalogue is one box of five packets in 40 flavours.',
+
+    blocks: [
+      { type: 'heading', text: 'One box, forty flavours' },
+      /* Dated readings only — prices and counts as read on 2026-09-15. No live
+         headline figure is typed in. */
+      {
+        type: 'prose',
+        text:
+          'Almost every listing is the same object: a box of five single-serve powder packets, each made up into a large iced drink with caffeine from green tea and guarana and no sugar. Forty single-flavour boxes sell at $15.95, beside a Crew Favorites variety 5-pack at the same price, a Louisiana Legends 10-pack at $31.90 and a caffeine-free 6-pack at $19.14.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The names do the selling. Voodoo Queen, Gumbo Yaya, Atchafalaya Apple, Fais do-do — each flavour is a blend of two to five candy and fruit notes with a Louisiana name and its own cartoon gator on the packet, and the range is organised by flavour rather than by what the drink does. Every Amazon box carries the same caffeine; the one exception is the caffeine-free UNLoaded variety pack listed in August 2026.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Buyers rate them well rather than exceptionally. The twenty best-selling listings run from 4.2 to 4.8 stars, with 3,439 reviews between them at a review-weighted 4.45, and the seller account holds 94% positive feedback over 141 ratings — a young account by count.',
+      },
+      /* The brand's own images from its Shopify store, not listing thumbnails —
+         the breakdown already shows every box. In our bucket, not hotlinked. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/b2ae883b58c90f99aef717bf121452f2b51c40b51c9307dc4666220b194d040a.jpg',
+            alt: 'Kajun’s own product image for Crawdaddy Candy: a red iced drink in a clear cup beside its packet, which shows a cartoon crawfish-gator in a top hat, over copy about zero calories, zero sugar and caffeine from green tea and guarana',
+          },
+          {
+            src: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/7c6809d904136ee4f6b7f326bd6c7555dcfb6cfaaf9adaa240e08908512a665a.jpg',
+            alt: 'Kajun’s own “What’s in a Kajun Loaded Tea?” image: a blue drink in a glass jar beside a tie-dyed packet with the Mardi Gras heart logo, listing a green tea base, caffeine and vitamins',
+          },
+        ],
+        caption: 'Two of the brand’s own product images, from its Shopify store: a packet beside the drink it makes, and what goes into one.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A brand with its own domain since 2023 and its own store before Amazon — then nine months of badge history in which Amazon revenue rose every month.',
+      },
+      {
+        /* Oldest first. 🚨 The trademark dates (first use 2023-02-28, filed
+           2025-08-07, registered 2026-02-24) are NOT dots: they were read from a
+           search engine's index of a page that returned 403, and the dossier
+           says to check TSDR before quoting any of them. */
+        type: 'timeline',
+        items: [
+          {
+            when: '23 Mar 2023',
+            tag: 'Web',
+            what: 'kajunloadedtea.com registered',
+            detail:
+              'From the domain record. The trademark claims use in commerce from a month earlier, but that date is a reading of a search index and has not been checked against the USPTO’s own record.',
+          },
+          {
+            when: '22 Apr 2025',
+            tag: 'Web',
+            what: 'The oldest product record in their Shopify store: Crawdaddy Candy',
+            detail:
+              'Most of the core flavours follow on 29 April, at $3.19 a packet and $15.95 a five-pack — the price Amazon carries now. Shopify publishes no sales, so what the store sold before Amazon is not known.',
+          },
+          {
+            when: '2 Oct 2025',
+            tag: 'Amazon',
+            what: 'The first Amazon listings go up',
+            detail:
+              '38 of today’s 44 storefront listings were listed in October 2025 and four more in November: one catalogue launched at once, not a stream of launches.',
+          },
+          {
+            when: '31 Jan 2026',
+            tag: 'Amazon',
+            what: '$6,380 — the first month with a badge',
+            detail:
+              'Only three listings had crossed Amazon’s threshold of roughly 50 sales a month; the rest count as zero. October to December are unmeasured, not empty, so this is a starting point for the data rather than for the business.',
+          },
+          {
+            when: '28 Feb 2026',
+            tag: 'Amazon',
+            what: 'February: $94,105, with 22 listings badged',
+            detail:
+              'The steepest step on the chart. Much of it is listings crossing the badge threshold — partly the business, partly the method.',
+          },
+          {
+            when: '8 Apr 2026',
+            tag: 'Amazon',
+            what: 'Sour Swamp Pop reaches 1,000 a month',
+            detail:
+              'Since July its badge has flipped between 1,000 and 2,000 more than a dozen times. This page counts it, and twelve other listings, at 1,000.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: 'June: $376,420, up 55% on May',
+            detail:
+              '40 listings badged, the same as May — so this rise is the same listings selling more, not more listings being counted.',
+          },
+          {
+            when: '24 Jul 2026',
+            tag: 'Amazon',
+            what: 'The Louisiana Legends variety 10-pack is listed',
+            detail: 'At $31.90, twice the single box. By September it is the best-selling listing in the catalogue.',
+          },
+          {
+            when: '4 Aug 2026',
+            tag: 'Amazon',
+            what: 'A caffeine-free UNLoaded variety 6-pack',
+            detail:
+              'The first Amazon listing outside the caffeinated format. The UNLoaded flavours were already on their own store, where the product records date from February 2026.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: 'August: $464,145',
+            detail: '41 listings badged. The climb flattens here: the live September reading is only just above it.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        /* 🚨 "About half the month is capped" is load-bearing: 13 listings,
+           47.5% of September, show the 1,000 badge, which is the bottom of a
+           bracket. Keep it wherever revenue is explained. */
+        type: 'prose',
+        text:
+          'The series is Amazon’s own “bought in past month” badge on every listing, read at each month end since January 2026 and priced at the September buy box — nine months, because no listing sold enough to carry a badge before then. It is a floor twice over. A listing under about 50 sales a month counts as zero, and about half of the latest month sits on thirteen listings showing 1,000, which is the bottom of a bracket rather than a count; six of them have shown 2,000 at points since July. Of what it sells, a little over a third is kept once Amazon’s fees, the packets and modelled advertising come off — before returns, storage and overhead, and on two costs nobody has quoted.',
+      },
+      { type: 'chart' },
+      {
+        /* From the Keepa seller record looked up on each marketplace
+           (2026-09-15). UK, DE and CA stay in at 0% because "looked and found no
+           account" is the finding. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of it is Amazon US. The same seller id does not exist on Amazon UK, Germany or Canada.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon UK, Germany and Canada', short: 'UK, DE, CA', share: 0, note: 'No seller account on any of the three' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Other Amazon marketplaces were not looked up.',
+      },
+      {
+        /* Generated from the Keepa catalogue — see the module's header. The 43
+           rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'No listing is 7% of the month. The ten best sellers are 37% of revenue and the top twenty about two thirds — and 40 of the 43 rows are the same $15.95 box in a different flavour.',
+        items: KAJUN_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, which is a band — hence n+ — and 13 rows sit on 1,000, the bottom of a bracket that runs to 2,000. Revenue is that band times the 15 September 2026 buy box, so every row is a floor. The 44th storefront listing, a 25-packet variety bundle, has no price and no badge and is not a row.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The floor is the badge: about half the month is capped at 1,000 a listing. The ceiling is the cost model: returns, storage and overhead are zero, and two of its five lines are placeholders. Margin breakdown says which.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon is the only channel with a number behind it, and it may not be the biggest. The brand sold through its own store first, and its TikTok Shop and Etsy shop are real but unsized.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The two channels that could be read agree on price: $15.95 for a box of five on Amazon and on kajunloadedtea.com, where a single packet is $3.19 — exactly what the Amazon box works out to per packet. Nobody else sells on their listings either: this seller holds 100% of the buy box on each of its twenty best sellers, and Amazon itself offers none of the 44.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What follows is presence rather than share. Nobody publishes what a Shopify store, a TikTok Shop or an Etsy shop takes, so this says which methods are in use and not what each is worth. A channel only glimpsed in a search index, or never looked for, is listed as unchecked rather than counted.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $16.56 average sale, down to the little over a third that is left — after Amazon takes more than twice what the box and its packets cost.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon’s two cuts are the largest part of the stack. Grocery’s referral fee is 15% on a sale above $15.00 and 8% at or below it, and the box sells at $15.95 — 95 cents over the line. FBA charges $3.54 to pick, pack and ship a box of five whatever it sells for. Together they take 37% of the sale.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what the box costs to make',
+        columns: ['Quote', 'Region', 'MOQ', 'Unit cost', 'Per box of five'],
+        rows: [
+          ['Guangdong Jbyk Pharmaceutical Technology — electrolyte drink-mix sachets', 'Guangdong, CN', '30,000 pieces', '$0.22–0.35 / packet', '$1.10–1.75'],
+          ['Shenzhen Lifeworth Biotechnology — energy drink-mix sachets', 'Guangdong, CN', '500 bags', '$0.45–0.50 / packet', '$2.25–2.50'],
+          ['Used below — the midpoint of the two ranges', '—', '—', '$0.36 / packet', '$1.80'],
+          ['Outer box + inbound freight to FBA — a placeholder, not a quote', '—', '—', '—', '$0.75'],
+        ],
+        note:
+          'These price the category, not Kajun: Chinese OEM quotes for similar sachets, published on Alibaba. Where Kajun’s packets are actually filled is not known, and a US co-packer would cost more. The box-and-freight line is our placeholder; nobody quoted it.',
+      },
+      {
+        /* 🚨 The margin row is 100% less these lines — 36.7% — and the backend
+           seed builds the profit and ad-spend series from the SAME five numbers
+           (COST_LINES). Change one, change both. Two lines are placeholders and
+           must keep saying so. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 16.56 },
+        lines: [
+          {
+            label: 'Packets — powder, sachet, fill',
+            key: 'cogs',
+            pct: -11.3,
+            detail:
+              '147,400 packets at $0.36 each — a little over five packets per sale on average, because of the 10-pack. Derived from the published sachet prices above, not a quote to Kajun.',
+          },
+          {
+            label: 'Outer box + inbound freight',
+            pct: -4.5,
+            detail: '$0.75 a box. A placeholder, not a quote — nobody published a carton or a freight lane for this business.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published Grocery & Gourmet rate for a sale above $15.00.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -21.6,
+            emphasis: true,
+            detail:
+              '$3.54 per box of five and $4.35 per 10-pack, from Keepa’s per-listing fees. The largest line, and one the price does not move. The 6-pack’s fee was not read and is charged at $3.54.',
+          },
+          {
+            label: 'Advertising',
+            pct: -10.9,
+            detail:
+              'Computed on a placeholder. A Food and Grocery click at $0.80–1.10 converting at 15–17% costs $4.71–7.33 per ad-attributed sale, $6.02 at the midpoint; taking 30% of units as ad-attributed is our placeholder, not a reading. The sponsored footprint under it is measured — see Advertising.',
+          },
+        ],
+        note:
+          'Before returns, storage, overhead and owner pay, all set to zero, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The shape is the reverse of most physical products. What is inside the box is the smallest real cost, and the largest is getting it to the customer through Amazon — which charges by the box, not by the price, and takes its referral cut at the higher of Grocery’s two rates.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Two lines here are ours, not theirs: $0.75 a box for the carton and freight, and the 30% of units taken as ad-attributed. Across the ranges the dossier tested, they are the difference between keeping under a third of a sale and over two fifths — and both are the first things to replace with real numbers.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'A brand new to Amazon, not a new brand: the names, the store and the following existed first, and the Amazon catalogue went up in one go and filled in month by month.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Almost the whole catalogue went up in October and November 2025, and nothing sold enough to carry a badge until January. Then the badges spread — 3 listings in January, 22 in February, 32 in April, 40 by May — and from May the count barely moved while revenue kept climbing. The first half of the chart is listings arriving in the data; the second half is the same listings selling more.',
+      },
+      {
+        type: 'prose',
+        text:
+          'That is demand that arrived already formed. The brand’s own press pitch calls it women-founded and “well-known on TikTok” with “a strong, community-driven following”, and a search engine’s index of its TikTok Shop shows 38.3K followers and 272.4K items sold over its life. Neither figure was read on the page itself, so they describe a following rather than measure one.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The newer growth is format, not flavour. The two listings added since launch are bundles — the Louisiana Legends 10-pack in July 2026, now the best seller, and a caffeine-free 6-pack in August — a bigger order on the same packets rather than another name.',
+      },
+      {
+        type: 'callout',
+        text:
+          'What the public record cannot say is how much of this demand Amazon created and how much it only collected. Their own store and their TikTok Shop sell the same boxes, and neither publishes a number.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'They pay to be seen on their own category and still sit below a rival who buys the top of it. The spend is arithmetic; the placements under it were counted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On “loaded tea packets” and “loaded tea” Kajun holds 34 and 31 of the 48 organic results on the first page, yet The Loaded Tea Shop takes sponsored positions 1 to 4 and the Sponsored Brands banner on both, and Kajun’s own sponsored cards begin at 12 and 14. They buy all twelve sponsored slots on their own name — and on the wider “energy drink packets sugar free” they appear nowhere, sponsored or organic.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=loaded+tea+packets',
+            value: '≈ 10.9% of revenue',
+            counted:
+              '6 of 12 sponsored slots on “loaded tea packets”, 5 of 12 on “loaded tea”, 12 of 12 on “kajun loaded tea”, 0 of 12 on “energy drink packets sugar free” — read 15 Sep 2026',
+            flag: true,
+            note:
+              'Computed, not observed, and on a placeholder: $6.02 per ad-attributed sale from Food and Grocery benchmarks, times 30% of units — a share nobody published. Nobody publishes the bill.',
+          },
+          {
+            label: 'Amazon Sponsored Brands',
+            value: 'None seen',
+            counted: 'The banner on both category searches was The Loaded Tea Shop’s — read 15 Sep 2026',
+            note: 'One logged-out read of one results page per search. Not seen on the day, which is not proof of none.',
+          },
+          {
+            label: 'Meta, TikTok and Google ads',
+            value: 'Not checked',
+            note: 'No ad library or paid-search history was read for this profile. Absent here means unexamined, not zero.',
+          },
+        ],
+        note: 'Search results are localised and change by the hour. These are one read each, first page only, with delivery set to Denham Springs (70726).',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Traffic was not measured. What can be shown is where they appear: on Amazon’s search page, where most of their category’s organic results are theirs, and off it, where most figures are readings from a search index.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Their own site links Facebook, Instagram, TikTok, Pinterest, Snapchat and Discord, but only the store itself was read directly. The TikTok and Instagram counts below come from a search engine’s index of pages that refused a direct read, and are labelled so; the chips above carry no follower count for the same reason.',
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — kajunloadedtea.com',
+            href: 'https://kajunloadedtea.com/',
+            value: '69 products',
+            flag: true,
+            note:
+              'Shopify, read from the store’s public products.json: 41 base flavours, 13 bundles, 6 caffeine-free, 6 free gifts and 2 “Kajun Kicker” packets. The Shop app rates the store 4.8 over 4.3K reviews. Its wholesale page reads “Coming Soon”. No sales and no visit count were read.',
+          },
+          {
+            label: 'TikTok Shop — KaJun Loaded Tea',
+            href: 'https://shop.tiktok.com/us/store/kajun-loaded-tea/7495049602692581527',
+            value: '38.3K followers · 272.4K items sold (search-index reading)',
+            note:
+              'From a search engine’s index of the store page, not the page itself, which returned 404 to a direct fetch. “Items sold” is TikTok’s lifetime counter, not a monthly figure. Possibly a large channel; nothing public sizes it.',
+          },
+          {
+            label: 'Instagram — @kajunloadedtea',
+            href: 'https://www.instagram.com/kajunloadedtea/',
+            value: '12K followers · 148 posts (search-index reading)',
+            note: 'From a search engine’s index of the profile; not opened.',
+          },
+          {
+            label: 'Facebook — Kajun Loaded Tea',
+            href: 'https://www.facebook.com/kajunloadedtea/',
+            note: 'Located in Denham Springs, matching the seller’s registered address.',
+          },
+          {
+            label: 'Etsy — KaJunLoadedTea',
+            href: 'https://www.etsy.com/shop/KaJunLoadedTea',
+            note: 'A shop under the brand name appears in search results. The page returned 403 and its sales were not read, and their own site does not link it.',
+          },
+          {
+            /* 🚨 No href, deliberately: ownership unconfirmed. */
+            label: 'kajunloaded.shop',
+            note:
+              'A second store selling caffeine-free “UNLoaded” blends under the same flavour names, with no address, no owner and no link to kajunloadedtea.com. Whether it belongs to KajunTea LLC is not known, so it is not linked here and not counted anywhere.',
+          },
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Grocery & Gourmet Food', 'Subcategory', 'Rating'],
+        rows: [
+          ['Variety 5-pack — Crew Favorites', '#7,268', '#70 Soft Drink Mixes', '4.3★ over 39 reviews'],
+          ['Kajun Cotton Candy', '#8,942', '#93 Soft Drink Mixes', '4.2★ over 286 reviews'],
+          ['Crawdaddy Candy', '#9,169', '#94 Soft Drink Mixes', '4.5★ over 396 reviews'],
+          ['Variety 10-pack — Louisiana Legends', '#10,129', '#1 Tea Gifts', '4.5★ over 30 reviews'],
+          ['Sour Swamp Pop', '#10,479', '#109 Soft Drink Mixes', '4.4★ over 303 reviews'],
+        ],
+        note:
+          'Best-seller rank, read through Keepa on 15 September 2026; it moves daily. The twenty best-selling listings run from #7,268 to #23,366 in the whole Grocery & Gourmet Food department.',
+      },
+      {
+        type: 'table',
+        caption: 'Search presence on Amazon',
+        columns: ['Search', 'Organic results theirs', 'Sponsored slots theirs', 'Sponsored positions 1–4'],
+        rows: [
+          ['loaded tea packets', '34 of 48', '6 of 12', 'The Loaded Tea Shop'],
+          ['loaded tea', '31 of 48', '5 of 12', 'The Loaded Tea Shop'],
+          ['kajun loaded tea', '45 of 48', '12 of 12', 'Kajun'],
+          ['energy drink packets sugar free', '0 of 48', '0 of 12', 'Other brands'],
+        ],
+        note:
+          'One logged-out read per search: the first results page of 60 cards, delivery set to 70726, 15 September 2026. Amazon localises results and publishes no search volumes, so this is a snapshot of placement, not a rank history.',
+      },
+      {
+        type: 'callout',
+        text:
+          'None of this is a visit or a sale. Traffic to their store was not measured and the off-Amazon follower counts were read from an index rather than the platforms, so the size of the business off Amazon is the largest unknown on this profile.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'KajunTea LLC' },
+          { label: 'Seller', value: 'Kajun Loaded Tea', note: 'Merchant A3QX48VACMQW7I' },
+          { label: 'Registered address', value: 'Denham Springs, LA, US', note: '9072 Lockhart Rd, 70726' },
+          { label: 'Seller feedback', value: '94%', note: 'Over 141 ratings', info: 'sellerFeedback' },
+          { label: 'First Amazon listing', value: '2 Oct 2025' },
+          { label: 'Domain registered', value: '23 Mar 2023', note: 'kajunloadedtea.com' },
+          { label: 'Trademark', value: 'KAJUN LOADED TEA', note: 'Reg. 8154318 — read from a search index, not checked on TSDR' },
+        ],
+      },
+      {
+        /* 🚨 No founder name. A search summary offers one; no page that was
+           opened carries it, so it is not used (dossier README). */
+        type: 'prose',
+        text:
+          'Women-founded, by the brand’s own press pitch, and based in Denham Springs, where both the seller record and the Facebook page place it. No founder is named here: a search summary offers a name, but no page that was opened does. The seller account is the brand’s own — it holds the buy box on every one of its twenty best sellers, and Keepa first tracked it in November 2025, a few weeks after the first listing.',
+      },
+      {
+        type: 'prose',
+        text: 'These details are resolved from the seller record behind the brand’s Amazon storefront.',
+      },
+      /* Valuation omitted: nine profit months, and the model needs twelve. */
     ],
   },
 };
