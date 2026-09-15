@@ -1,6 +1,7 @@
 import type { FacetCategory } from "@/lib/api";
 import { money } from "@/lib/format";
 import { RangeSlider } from "./RangeSlider";
+import { DEFAULT_SORT } from "@/data/collections.mjs";
 
 /** Track ceilings. A thumb at the top means "and everything above", so these
  *  bound the CONTROL, never the results — see the note in RangeSlider. */
@@ -20,12 +21,12 @@ export type FilterState = {
   sort: string;
 };
 
-export const EMPTY_FILTERS: FilterState = { growth: [], audience: [], niche: [], sort: "revenue" };
+export const EMPTY_FILTERS: FilterState = { growth: [], audience: [], niche: [], sort: DEFAULT_SORT };
 
 const SORTS = [
+  { value: "profit", label: "Profit — high to low" },
   { value: "revenue", label: "Revenue — high to low" },
   { value: "revenueAsc", label: "Revenue — low to high" },
-  { value: "profit", label: "Profit — high to low" },
   { value: "margin", label: "Best margin" },
   { value: "costAsc", label: "Starting cost — low to high" },
   { value: "cost", label: "Starting cost — high to low" },

@@ -7,6 +7,7 @@ export type Collection = {
   inNav: boolean;
 };
 
+export const DEFAULT_SORT: string;
 export const COLLECTIONS: Collection[];
 export const MORE: { slug: string; title: string; blurb: string; icon?: string; inNav: boolean };
 export const DESCRIPTIONS: Record<string, string>;

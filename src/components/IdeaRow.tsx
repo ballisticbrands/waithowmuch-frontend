@@ -11,9 +11,9 @@ export function IdeaRowHead() {
     <div data-row-head aria-hidden="true">
       <span />
       <span>Business</span>
-      <span>Revenue / mo</span>
+      <span>Profit / mo</span>
       <span>Margin</span>
-      <span>To start</span>
+      <span>Established</span>
     </div>
   );
 }
@@ -55,16 +55,16 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
           able to override it, and an inline style always wins over a media query. */}
       <div data-row-stats>
         <dl data-row-stat>
-          <dt>Revenue / mo</dt>
-          <dd data-figure>{money(b.latestMonthlyRevenue, b.currency)}</dd>
+          <dt>Profit / mo</dt>
+          <dd data-figure>{money(b.latestMonthlyProfit, b.currency)}</dd>
         </dl>
         <dl data-row-stat>
           <dt>Margin</dt>
           <dd data-figure>{percent(b.latestMarginPct)}</dd>
         </dl>
         <dl data-row-stat>
-          <dt>To start</dt>
-          <dd data-figure>{money(b.startingCost, b.currency)}</dd>
+          <dt>Established</dt>
+          <dd data-figure>{monthLabel(b.establishedAt)}</dd>
         </dl>
       </div>
     </Link>

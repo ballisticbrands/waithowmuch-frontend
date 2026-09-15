@@ -1,3 +1,9 @@
+/** The listing's default order. 🚨 Shared by the Filters default AND the
+ *  prerender's fetch: the page skips its first fetch when it has inlined
+ *  results, so if these disagreed the landed-on list would be in one order
+ *  while the Sort dropdown claimed another. */
+export const DEFAULT_SORT = 'profit';
+
 /**
  * The "Data" section's collections — one per navbar entry.
  *

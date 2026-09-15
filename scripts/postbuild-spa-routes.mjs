@@ -17,7 +17,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
-import { COLLECTIONS, MORE, DESCRIPTIONS, collectionPath } from '../src/data/collections.mjs';
+import { COLLECTIONS, MORE, DESCRIPTIONS, DEFAULT_SORT, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
 import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
@@ -261,7 +261,7 @@ for (const c of [...COLLECTIONS]) {
   let businesses = [];
   let total = 0;
   try {
-    const data = await get(`/v1/businesses?limit=100${c.query ? `&${c.query}` : ''}`);
+    const data = await get(`/v1/businesses?limit=100&sort=${DEFAULT_SORT}${c.query ? `&${c.query}` : ''}`);
     businesses = data.businesses ?? [];
     total = data.total ?? businesses.length;
   } catch (err) {
@@ -269,11 +269,11 @@ for (const c of [...COLLECTIONS]) {
   }
 
   const list = businesses.slice(0, 40).map((b) => {
-    const rev = money(b.latestMonthlyRevenue, b.currency);
+    const profit = money(b.latestMonthlyProfit, b.currency);
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
-    const cost = money(b.startingCost, b.currency);
+    const est = b.establishedAt ? `est. ${monthLabel(b.establishedAt)}` : null;
     return `<li><a href="${businessPath(b.slug)}">${esc(b.name)}</a>${b.tagline ? ` — ${esc(b.tagline)}` : ''}${
-      rev ? ` · ${rev}/mo` : ''}${margin ? ` · ${margin}` : ''}${cost ? ` · ${cost} to start` : ''}</li>`;
+      profit ? ` · ${profit} profit/mo` : ''}${margin ? ` · ${margin}` : ''}${est ? ` · ${est}` : ''}</li>`;
   }).join('\n      ');
 
   const body = `

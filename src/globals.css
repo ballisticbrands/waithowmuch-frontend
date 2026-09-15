@@ -388,7 +388,7 @@ h1, h2, h3, h4 {
 
 [data-row] {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 7rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 6rem;
   align-items: center; gap: 1rem;
   padding: 0.875rem 1.125rem;
   border-bottom: 1px solid var(--border);
@@ -469,7 +469,7 @@ img[data-row-logo] {
 
 [data-row-head] {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 7rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 6rem;
   gap: 1rem; padding: 0.5rem 1.125rem;
   font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
   color: var(--muted-foreground); font-weight: 600;
@@ -479,10 +479,11 @@ img[data-row-logo] {
 
 @media (max-width: 760px) {
   /* Below this the five columns cannot hold their widths without the figures
-     colliding, so the row folds: mark + name on one line, figures beneath. */
+     colliding, so the row folds: mark + name on one line, figures beneath.
+     The figures wrap, so a longer figure never pushes the row past the edge. */
   [data-row] { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: 0.6rem; }
   [data-row-stats] {
-    grid-column: 1 / -1; display: flex; gap: 1.75rem;
+    grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0.6rem 1.75rem;
   }
   [data-row-stat] { text-align: left; }
   /* Un-hide: with no column heading on narrow screens, each figure has to
