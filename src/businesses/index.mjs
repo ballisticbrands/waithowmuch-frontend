@@ -49,6 +49,7 @@ const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PH
 /* 199 generated rows — too many to author inline. See the module's header. */
 import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
 import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
+import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -2070,6 +2071,684 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Five inputs are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken from the public record; seller feedback is a blend of three accounts, two of them tied to the brand by inference; and the FBA-and-FBM answer is read from which listings carry Amazon’s fee. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All of them are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  maryruth: {
+    /* 🚨 No headline copy here. Title, subtitle and snapshot month live on the
+       Business row — backend prisma/seed-maryruth-headline.ts, from
+       waithowmuch-research research/maryruth/headline.json (reviewed
+       2026-09-15). This entry carries only the image beside them. */
+    headline: {
+      image: {
+        src: MARYRUTH_PHOTOS.hero,
+        alt: 'MaryRuth’s Liquid Morning Multivitamin + Hair Growth in Peach Mango — an amber 15.22 fl oz bottle standing beside its orange-and-white box. The best-selling listing in the catalogue',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand, their own
+             formulations, their own listings; whose factory makes them is not
+             public. Private label is what transfers in a sale. */
+          primaryMethod: 'private_label',
+          /* Broad. 617 listings carry the name, the top 20 are half of revenue
+             and the top 50 are 73%; the single largest listing is about 7% of
+             the month. */
+          catalogStructure: 'broad',
+          /* Level 3, and the most arguable answer here. A liquid, USDA-organic
+             formulation is a real change of form and materials from a capsule
+             multivitamin; no tooling protects it. The case for level 2 is that
+             a contract manufacturer can approximate a supplement formula for
+             anyone. The step is worth 0.55 of the multiple. */
+          diffTooling: 'no',
+          diffCustom: 'yes',
+          /* A READ: the Brand Store at /stores/MaryRuthOrganics is gated behind
+             enrolment. */
+          brandRegistry: 'yes',
+        },
+        derived: {
+          /* RULE 1: the first listing, 2014-09-07 — also establishedAt. */
+          sellingSince: '2014-09-07',
+          /* 🚨 The research's reading of "39,143 Amazon ratings" at 4.5 stars.
+             Which listings that count covers is not stated. It lands in the
+             25,000+ band with room to spare; the 4.5 sits EXACTLY on a band
+             boundary, and anything lower drops the factor from +0.20 to +0.05. */
+          reviewTotal: 39143,
+          ratingWeighted: 4.5,
+          sellerFeedbackPct: 99,
+          /* 🚨 topMarketplaceSharePct and marketplaces deliberately UNSET. The
+             pull was Amazon US and no other marketplace was read, so how
+             concentrated the Amazon business is cannot be answered — and 100
+             would be a guess. The model lists it as missing; the board note
+             says so. */
+          /* Largest month against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 11.19,
+          /* RULE 3: offAmazonSharePct unset. 22,780 retail doors and their own
+             store are real, and most of the company, and unsized. */
+        },
+      },
+      basis:
+        'Trailing-twelve modelled net profit at a modelled multiple. The Amazon listings only — other sellers’ sales on them included — and not the company.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '617', note: '268 in their own storefront · 253 priced', info: 'skus' },
+      /* Top level only: the research read ranks in Health & Household and not
+         the deeper branch, so no `info` (its copy promises the full breadcrumb). */
+      { label: 'Category', value: 'Health & Household', note: 'Hair-growth parent listing #143', wide: true },
+      /* No `info` on these two: the shared ⓘ describes the hero listing, and
+         the research does not say which listings the 39,143 covers. */
+      { label: 'Product reviews', value: '39,143', note: 'Amazon ratings, as read 9 Sep 2026' },
+      { label: 'Product rating', value: '4.5★', note: 'Against 2.6 on Trustpilot, over 25 reviews' },
+      { label: 'Seller feedback', value: '99%', note: 'Over 36,747 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Own formulations; the factory is not public', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Broad catalogue, long tail', note: 'Top 20 listings are half of revenue', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Differentiation', value: 'Level 3', note: 'Functional customisation — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, 22,780 retail doors', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it, and every figure on this profile is it. It is also a LISTING figure: Amazon’s badge counts what a listing sold, and the brand shares its listings with other sellers.',
+      },
+      'own-store': {
+        status: 'yes',
+        note:
+          'maryruthorganics.com, on Shopify: 267 products at a $24.95 median, with Subscribe & Save at 10% off. The hero Liquid Morning Multivitamin is $42.95 there against $26.77 for the comparable Amazon listing. Shopify publishes no sales.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        flag: true,
+        note:
+          'The channel that reframes the rest. Their own store locator returns 22,780 US doors across 323 retailer banners — CVS, Walmart, Target, Ulta, Kroger, Whole Foods — and live product pages at Walmart, Target and Whole Foods were confirmed independently. Nobody publishes what a door sells.',
+      },
+      // amazon-international, tiktok-shop, other-marketplace and licensing
+      // left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'FBA enabled on the seller record, and the margin model charges an FBA fee on every unit.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits their 268 storefront listings between FBA and FBM.',
+      },
+      'vendor-1p': {
+        status: 'unchecked',
+        note:
+          'Amazon itself appears as one of the offers on their top listings, which can mean Amazon buys the stock wholesale. The offer lists do not say on what terms.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand and formulations, sold under their own name. The buy box on the top listings resolves to MaryRuth Organics, LLC.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note: 'The products are described as largely US-made, which does not say whose factory. Left open rather than read as yes.',
+      },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+      pod: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/MaryRuthOrganics, which Amazon gates behind enrolment.',
+      },
+      'subscribe-save': {
+        status: 'yes',
+        note: 'Advertised in the best-selling listing’s own images, and offered at 10% off on their own store. Subscription billing is also what the two open law-firm investigations are about.',
+      },
+    },
+
+    intro:
+      'MaryRuth’s makes liquid vitamins — a morning multivitamin you drink rather than swallow — along with gummies, liposomals and probiotic drops. Amazon is one of the ways it sells them, and the only one with a public number behind it.',
+
+    blocks: [
+      { type: 'heading', text: 'A multivitamin you drink' },
+      {
+        type: 'prose',
+        text:
+          'It started as a fix for one complaint. By the founder’s own account, clients of her Manhattan nutrition practice said capsule vitamins made them nauseous, so she made a liquid one and sold the first bottles off a bookshelf in the office — and, in her words, “I just happened to start putting them on Amazon.” The listing dates agree with her: the first ASIN went up on 7 September 2014, and maryruthorganics.com was registered on 31 December 2014.',
+      },
+      /* 🚨 The README's first rule for this business: say it is one channel
+         before saying anything else about money. Kept in the overview so no
+         reader reaches the chart without it. */
+      {
+        type: 'prose',
+        text:
+          'Read every figure on this page as one channel. The brand’s own store locator returns 22,780 US retail doors across 323 banners, and Forbes estimated the whole company at about $600M of trailing revenue in August 2026. Next to that estimate, the Amazon listings measured here are less than a third of the company.',
+      },
+      {
+        type: 'prose',
+        text:
+          'And the Amazon figure is softer than a channel figure usually is. 617 listings carry the MaryRuth’s name; their own storefront holds 268 of them, and one kids’ multivitamin listing carries 298 competing offers. Amazon’s sales badge counts what a listing sold, not what each seller on it sold, and nothing public splits the two.',
+      },
+      /* No figures in the caption. The best seller's own secondary images —
+         the hero already shows the bottle. Before/after claim images on the
+         same listing were left out on purpose. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: MARYRUTH_PHOTOS.drink,
+            alt: 'Listing image: a woman drinking an orange shot of the liquid multivitamin under the words “Upgrade your hair routine”, with Clean Label Project and B Corp marks',
+          },
+          {
+            src: MARYRUTH_PHOTOS.serving,
+            alt: 'Listing image: a MaryRuth’s measuring glass filled with orange liquid, labelled “Multiple essential nutrients in each serving” — vitamins A, B, C, E and zinc',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images for its best seller. The pitch is the format: a daily multivitamin taken as a measured shot rather than a capsule.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'Amazon came first, the website second and the retail doors later — the first listing went up four months before the domain was registered, the reverse of the usual order.',
+      },
+      {
+        /* Oldest first — the dossier had 2024-12-31 before 2024-08-15. Events
+           with no published day stay month- or year-only: on this list, off the
+           chart, rather than given a day nobody recorded. */
+        type: 'timeline',
+        items: [
+          {
+            when: '2013',
+            tag: 'Brand',
+            what: 'A nutrition practice in Manhattan, before there is a product',
+            detail:
+              'The founder’s own account: a private practice whose clients said capsule vitamins made them nauseous. The liquid multivitamin is the answer to that complaint, and she says she sold the first bottles off a bookshelf in the office.',
+          },
+          {
+            when: '7 Sep 2014',
+            tag: 'Amazon',
+            what: 'First Amazon listing — before the website',
+            detail:
+              'The Liquid Morning Multivitamin that went up a week later is still among the five largest earners twelve years on.',
+          },
+          {
+            when: '31 Dec 2014',
+            tag: 'Web',
+            what: 'maryruthorganics.com registered',
+            detail: 'Four months after the first ASIN. The first archived capture of the site is 22 June 2015.',
+          },
+          {
+            when: 'Oct 2018',
+            tag: 'Brand',
+            what: 'A YouTube channel, and $11M in sales',
+            detail:
+              'The channel joined in October 2018. Forbes reports that year’s revenue at $11M, attributed to the company, on the way to $23M in 2019.',
+          },
+          {
+            when: '15 Aug 2019',
+            tag: 'Amazon',
+            what: 'Kids Multivitamin Gummies',
+            detail:
+              'The move from liquids into gummies and into children’s vitamins. Today it sells 30,000+ a month — on a listing that carries 298 offers.',
+          },
+          {
+            when: '21 Jan 2021',
+            tag: 'Brand',
+            what: 'The TikTok account is created',
+            detail:
+              'From TikTok’s own createTime, corroborated by the timestamp inside the user id. It now carries 624,900 followers and 1,691 videos — the brand’s largest owned channel.',
+          },
+          {
+            when: 'Aug 2021',
+            tag: 'Brand',
+            what: 'Butterfly Equity buys in',
+            detail: 'A private-equity stake, in a year Forbes reports the company’s revenue at $135M.',
+          },
+          {
+            when: '27 Sep 2022',
+            tag: 'Amazon',
+            what: 'USDA Organic gummies, for kids',
+            detail:
+              'Two of today’s fifteen largest listings went up this day, in a 2022 cohort of 113 new listings — the year the catalogue stops being a product line and becomes a shelf.',
+          },
+          {
+            when: 'Jul 2023',
+            tag: 'Brand',
+            what: 'B Corp certified, at a score of 81.6',
+            detail:
+              'Against a passing mark of 80 and a median of 50.9 — a third-party audit of how the company operates, which is a different thing from an audit of its numbers.',
+          },
+          {
+            when: '25 Aug 2023',
+            tag: 'Amazon',
+            what: 'Liquid Multivitamin + Hair Growth',
+            detail:
+              'The listing that changes the catalogue. It is the single biggest earner today, and “mary ruth hair growth” is now the second-largest Google search they rank for, at 74,000 a month.',
+          },
+          {
+            when: '15 Aug 2024',
+            tag: 'Brand',
+            what: 'Butterfly sells the majority of its stake',
+            detail:
+              'Per the law firm that ran the deal, Butterfly kept a board seat and King Street financed the buyer. No price was disclosed. The claim that Butterfly “nearly tripled” the company is the seller describing its own track record.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '153 listings in a year, the catalogue’s biggest cohort',
+            detail: 'More new ASINs in 2024 than in 2014 through 2021 combined.',
+          },
+          {
+            when: '31 Mar 2025',
+            tag: 'Advertising',
+            what: 'Paid search peaks, then stops',
+            detail:
+              'Ubersuggest’s paid series runs from September 2024 and peaks in March 2025 at 19 keywords. From October 2025 it reads zero — while Similarweb calls paid search their largest channel in August 2026. The two do not agree.',
+          },
+          {
+            when: 'Oct 2025',
+            tag: 'Brand',
+            what: '$420M of debt, and ~97% ownership',
+            detail:
+              'A Capital One facility due 2030, which Forbes reports left the founder owning about 97% of the company — in the year EBITDA first topped $100M.',
+          },
+          {
+            when: '30 Nov 2025',
+            tag: 'Amazon',
+            what: '$18.0M — the biggest month in the series',
+            detail:
+              '693,100 units. Unlike a gift business, December dips below November in every year of this series, and January recovers.',
+          },
+          {
+            when: '27 Aug 2026',
+            tag: 'Brand',
+            what: 'Forbes puts the company at ~$600M and ~$125M EBITDA',
+            detail:
+              'An estimate, not a filing: this is a private company and none of it is audited. Set against it, the Amazon listings on this page are less than a third of the company — one estimate divided by another.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The line is Amazon’s own sales badge across the hundred best-selling listings, month by month from August 2023, which is as far back as Keepa recorded it for them. It climbs from about $5.7M that August to a high of $18.0M in November 2025; calendar 2025 came in 32% above 2024, and the last twelve months only about 3% above the twelve before. Of each month, a little under half is kept after cost of goods, Amazon’s fees and modelled advertising.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Some of the month-to-month wobble is Amazon’s rounding rather than the business. The badge moves in brackets, and at this volume a single listing stepping from 20,000 to 40,000 a month moves the total by half a million dollars.',
+      },
+      { type: 'chart' },
+      {
+        /* A table, not a breakdown — see maryruth.breakdown.mjs for why. */
+        type: 'table',
+        caption: 'The fifteen largest listings',
+        columns: ['Listing', 'ASIN', 'Listed', 'Sold / mo', 'Buy box', 'Revenue / mo'],
+        rows: MARYRUTH_TOP_LISTINGS,
+        note:
+          'The fifteen largest of 253 priced listings, read 9 September 2026 — together a little under half of the month on the chart, which is the top hundred. The other 85 are not itemised in this research, so no full breakdown is drawn. “Sold / mo” is Amazon’s badge, a bracket floor, and it counts the listing’s sales whoever made them. Five hair-growth listings share one parent.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue cuts both ways here. Listings outside the top hundred count as zero, which makes it a floor on the catalogue; other sellers’ sales on the same listings count in full, which makes it a ceiling on the brand. Profit is a ceiling twice over — it takes the same margin off every unit and sets returns, overhead and inbound freight to zero.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Three channels are visible — Amazon, their own store and thousands of retail doors — and Amazon is the only one that publishes anything countable, which is not the same as being the biggest.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The channels do not agree on price. The hero Liquid Morning Multivitamin is $42.95 on maryruthorganics.com against $26.77 for the comparable Amazon listing, where the brand holds the buy box but shares the page: 177 offers on the original morning multivitamin, 38 on the hair-growth listing, 298 on the kids’ gummies.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The retail footprint comes from their own store locator, which returns every door: 6,750 CVS, 4,581 Walmart, 2,019 Target, 1,511 Ulta and 427 Whole Foods among 323 banners. Nobody publishes what a door sells, so what follows says which methods are in use and not what each is worth. A method nobody looked for is listed as unchecked.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $25.15 average sale, down to the little under half that is left — on a model that treats every unit sold on these listings as theirs.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Three of the four lines are published rates or quotes. The referral fee is Amazon’s own schedule, fulfilment the 2026 FBA rate card, and cost of goods is priced from supplier quotes for comparable bottles and gummies. Advertising is the one computed line.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what it costs to make',
+        columns: ['Quote', 'Region', 'MOQ', 'Lead time', 'Unit cost'],
+        rows: [
+          ['Guangzhou Green Health Pharmaceutical Technology Co., Ltd', 'Guangdong, CN', '3,000 bottles', 'not quoted', '$2.80–3.10 / bottle'],
+          ['Guangzhou Marian Health Food Co., Ltd — gummies', 'Guangdong, CN', '500 pieces', 'not quoted', '$1.00–3.00 / unit'],
+          /* 🚨 INVENTED in the dossier: nobody quoted it and it has no number.
+             Kept, labelled, never quoted — and deducted nowhere. */
+          ['Freight, duty and inbound — invented, nobody measured this', 'CN → US', '—', '—', 'not quoted'],
+        ],
+        note:
+          'These price the category, not this brand: small minimums, from factories making product that is neither USDA-organic nor US-made, which much of MaryRuth’s is. So the cost-of-goods line could be high for a buyer of this volume or low for what it actually buys. The freight row has no figure, and nothing is deducted for it anywhere — which leaves the profit higher than a real month.',
+      },
+      {
+        /* 🚨 100% less these lines is the profit rate the backend seed builds the
+           series from (COST_LINES in seed-maryruth.ts). Change one, change both —
+           check-profile.mjs fails if they drift. */
+        type: 'margin',
+        basis: { label: 'Average selling price, Sep 2026', value: 25.15 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -12,
+            detail:
+              'About $3.00 a unit, from the published quotes above. Not this brand’s cost: the quotes are small-order, non-organic and made in China.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published rate for Beauty, Health and Personal Care items above $10.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -18,
+            emphasis: true,
+            detail:
+              'About $4.50 a unit blended: liquid vitamins in 15oz glass are large-standard at $4.60–5.42, gummies small-standard at $3.45–3.78. Which band a listing falls in depends on dimensions nobody published.',
+          },
+          {
+            label: 'Advertising',
+            pct: -8,
+            detail:
+              'Computed, not observed. A $1.10–1.40 Health & Household click at an 11–14% conversion rate is $7.86–12.73 per ad-attributed sale, a 32–51% ACoS; with an assumed 20–40% of units carried by ads, that is about 8% of revenue.',
+          },
+        ],
+        note:
+          'Before returns, overhead and inbound freight, all set to zero, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The model has a blind spot that matters more here than on most profiles: it applies the margin to every unit a listing sold, and on these listings some of those units are other sellers’. Forbes puts the whole company at roughly 20% EBITDA margins, after the overheads, retail costs and marketing this waterfall leaves out — so what is left below is what the listings could clear, not what the brand does.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The cost-of-goods line is the least certain figure on this profile, and the freight line has no figure at all. A real quote for either moves the margin more than anything else here.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'Demand here is people looking for MaryRuth’s by name — and the founder is a bigger audience than the brand.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The five largest Google searches they rank for all contain the brand name: “mary ruths” at 90,500 a month, then “mary ruth hair growth” at 74,000. Organic search brings about 230,000 visits a month across 18,032 ranking keywords, and the first generic term, “kids vitamins”, sits at #3.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The product that moved the catalogue was hair growth. The Liquid Multivitamin + Hair Growth listing went up in August 2023, is now the largest earner, shares a parent ranked #143 in Health & Household with four other listings, and has turned its own name into their second-largest search term.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The audience is split between a person and a brand. The founder’s Instagram carries 733K followers against 28K on the brand’s own account, she runs her own Meta advertiser page, and creator handles run branded content paired with her name. TikTok is the brand’s real owned channel, at 624,900 followers since January 2021.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon, the growth is on shelves: 22,780 doors across 323 banners by their own locator, and an Inc. 5000 record of 1,336% three-year growth in 2022 and 642% in 2023.',
+      },
+      {
+        type: 'callout',
+        text:
+          'What the public record cannot say is how the channels split. Forbes’ company estimate and the Amazon series are two estimates by different methods, and no public source divides the company’s revenue between Amazon, its own store and retail.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One channel is counted, one is arithmetic, and one is a disagreement — and the page shows the disagreement rather than choosing a side.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Meta’s library gives an authoritative count of live ads on their own page. Amazon spend is computed from published category benchmarks, and it is the same model as the advertising line in Margin breakdown. On Google, Similarweb says paid search is their largest channel while Ubersuggest says they buy no paid keywords at all.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: '≈ $1.0M–2.6M / mo',
+            note:
+              'Computed, not observed. A $1.10–1.40 Health & Household click at an 11–14% conversion rate is $7.86–12.73 per ad-attributed sale, a 32–51% ACoS on a $24.87 order. Carrying 20–40% of the catalogue’s badge units that way lands the spend here, at 6–16% TACoS; the 20–40% is the one assumption. Amazon publishes nothing about a competitor’s spend.',
+          },
+          {
+            label: 'Meta (Facebook and Instagram)',
+            href: 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=582115538507595&search_type=page&media_type=all',
+            value: 'Not estimable',
+            counted: '~390 active US ads on the brand page',
+            note:
+              'The page-scoped count, three times what a keyword search shows. The founder has her own advertiser page and creator handles run branded content paired with her name — a whitelisting operation rather than a few boosted posts. Meta publishes the ads and never the money, and the library shows only active ads.',
+          },
+          {
+            label: 'Google Ads',
+            value: 'The two sources disagree',
+            counted: '25.95% of site traffic from paid search (Similarweb) vs 0 paid keywords (Ubersuggest), August 2026',
+            flag: true,
+            note:
+              'Ubersuggest’s paid series ran from September 2024, peaked at 19 keywords in March 2025 and reads zero from October 2025. The likely reconciliation is Shopping and Performance Max, which Ubersuggest does not index — but neither source settles it, so both are shown.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'For this business the half Amazon cannot see is most of the business: thousands of retail doors, a founder with a larger following than the brand, and a site found almost entirely by its own name.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'The site figure needs one correction. Similarweb’s 750.8K visits is labelled a three-month total, so the store runs about 250,000 visits a month — 83.5% of them from the US, from an audience Similarweb reads as 76.9% female and concentrated in the 25–34 bracket.',
+      },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Own-site visits', value: '~250K / mo', note: '750.8K reported over three months, not one' },
+          { label: 'Month on month', value: '+6.6%', note: 'Similarweb, read 9 Sep 2026' },
+          { label: 'Of which organic search', value: '230,773 / mo', note: 'August 2026, across 18,032 keywords' },
+          { label: 'Domain authority', value: '40', note: '594,768 backlinks from 4,248 domains' },
+          { label: 'Live Meta ads', value: '~390', note: 'Page-scoped count on their own page' },
+          { label: 'Retail doors', value: '22,780', note: '323 banners, from their own store locator' },
+        ],
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: '22,780 retail doors — their own store locator',
+            href: 'https://www.maryruthorganics.com/pages/find-a-store',
+            value: '323 retailer banners',
+            flag: true,
+            note:
+              'The finding that reframes everything else here. The locator’s API returns every door: 6,750 CVS, 4,581 Walmart, 2,019 Target, 1,511 Ulta, 1,193 Kroger, 826 Publix, 640 Vitamin Shoppe, 598 Sam’s Club, 576 GNC, 497 Sprouts, 427 Whole Foods. Live product pages at Walmart, Target and Whole Foods were confirmed independently.',
+          },
+          {
+            label: 'Founder’s Instagram — @maryruthghiyam',
+            href: 'https://www.instagram.com/maryruthghiyam/',
+            value: '733K followers · 750 posts',
+            flag: true,
+            note:
+              '26 times the brand’s own Instagram, which has 28K followers and 156 posts. On this business the founder is the channel: she has her own Meta advertiser page, and creator handles pair their branded content with her name rather than the brand’s.',
+          },
+          {
+            label: 'TikTok — @maryruthorganics',
+            href: 'https://www.tiktok.com/@maryruthorganics',
+            value: '624.9K followers · 2.4M likes',
+            note:
+              '1,691 videos, and the account was created on 21 January 2021 — measured twice, from TikTok’s own createTime and from the timestamp in the user id, which agree to within 106 seconds. The brand’s largest owned channel.',
+          },
+          {
+            label: 'Facebook — MaryRuth Organics',
+            href: 'https://www.facebook.com/maryruthorganics/',
+            value: '264,031 likes',
+            note:
+              '6,874 “talking about this”, and the page that runs their ~390 live ads. Its transparency panel claims a creation date of 2004, before Facebook Pages existed — a merged-page artifact rather than a date.',
+          },
+          {
+            label: 'YouTube and the dormant channels',
+            href: 'https://www.youtube.com/@maryruthorganics',
+            value: '8.98K subscribers · 945 videos',
+            note:
+              'Joined October 2018. X (@MaryRuths, 9,874 followers) is their oldest account, from July 2013, and last posted in 2025; Pinterest’s newest board is from 2021. Two channels left to idle is a choice, and at this size a visible one.',
+          },
+          {
+            label: 'Own store — maryruthorganics.com',
+            href: 'https://www.maryruthorganics.com/',
+            value: '~250K visits / mo',
+            note:
+              'Shopify, 267 products, median price $24.95, Subscribe & Save at 10% off. The hero Liquid Morning Multivitamin is $42.95 here against $26.77 for the comparable Amazon listing.',
+          },
+          {
+            label: 'Organic search — 18,032 keywords',
+            href: 'https://neilpatel.com/ubersuggest/',
+            value: '230,773 visits / mo',
+            note:
+              'Domain authority 40 on 594,768 backlinks from 4,248 domains. The five largest keywords by volume are all the brand’s own name — “mary ruths” at #1 against 90,500 searches, “mary ruth hair growth” at #2 against 74,000. They rank #3 for “kids vitamins” too, where a click costs $9.14.',
+          },
+        ],
+      },
+      {
+        /* Best-seller rank, not Amazon keyword positions: Amazon publishes no
+           volumes and localises results, while BSR is the same for everyone. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Health & Household', 'Note'],
+        rows: [
+          ['Liquid Multivitamin + Hair Growth, and its variations', '#143', 'Five ASINs share this parent listing; between them, the largest earner in the catalogue.'],
+          ['Kids Multivitamin Gummies', '#535', '30,000+ a month at $14.46 — on a listing with 298 competing offers.'],
+          ['Liquid Morning Multivitamin (2014)', '#1,063', 'The original product, still among the five largest earners twelve years after it was listed. 177 offers on it.'],
+          ['Organic Lymphatic Support Liquid Drops', '#3,015', '30,000+ a month at $15.15 — high volume at a modest rank, which is what a cheap repeat purchase looks like.'],
+        ],
+        note:
+          'Read from Keepa on 9 September 2026. Rank rather than keyword position, because Amazon publishes no search volumes and localises results to whoever is looking; best-seller rank is the same number for everyone. It moves daily.',
+      },
+      {
+        type: 'table',
+        caption: 'Search presence off Amazon',
+        columns: ['Term', 'Where', 'Rank', 'Volume / mo'],
+        rows: [
+          ['mary ruths', 'Google', '#1', '90,500'],
+          ['mary ruth hair growth', 'Google', '#2', '74,000'],
+          ['mary ruth vitamins', 'Google', '#1', '40,500'],
+          ['mary ruth organics', 'Google', '#1', '18,100'],
+          ['mary ruth hair growth max', 'Google', '#4', '14,800'],
+          ['liquid morning multivitamin hair growth', 'Google', '#3', '12,100'],
+          ['kids vitamins', 'Google', '#3', '9,900'],
+          ['vegan iron vitamins', 'Google', '#5', '9,900'],
+          ['hair skin & nails gummy', 'Google', '#6', '8,100'],
+          ['vegan liquid vitamins', 'Google', '#2', '6,600'],
+        ],
+        note:
+          'Read 9 September 2026 from Ubersuggest, across 18,032 ranking keywords. The five largest all contain the brand name. Volumes are a keyword tool’s model of Google, not a count Google published, and say nothing about Amazon.',
+      },
+      {
+        type: 'callout',
+        text:
+          'None of these numbers is a sale. Follower counts, visit estimates and search volumes measure attention, and nothing public connects any of them to an order on Amazon or in a store.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'MRO MaryRuth, LLC' },
+          { label: 'Seller', value: 'MaryRuth Organics, LLC', note: 'Merchant A3V1QNHQ2M2TBN' },
+          { label: 'First listing', value: '7 Sep 2014', note: 'Four months before the domain' },
+          { label: 'Registered address', value: 'Los Angeles, CA, US', note: '1171 S Robertson #148, 90035' },
+          { label: 'Seller feedback', value: '99%', note: 'Over 36,747 ratings · 345 in 30 days', info: 'sellerFeedback' },
+          { label: 'Ownership', value: 'Founder, ~97%', note: 'Per Forbes, after a $420M facility in Oct 2025' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'A private, founder-led company. Butterfly Equity took a stake in 2021 and sold the majority of it in August 2024, and Forbes reports the founder owning about 97% after a $420M Capital One facility closed in October 2025. The seller record is the sharpest thing about it: 99% positive over 36,747 ratings, 345 of them in the last thirty days. Where it operates from is less clear — the seller record gives Los Angeles, and the site’s terms give only a Delaware registered agent and New York governing law.',
+      },
+      {
+        /* 🚨 The dossier's `record`, under its own rules: the regulator's
+           classification leads, the company's framing sits beside it, the checks
+           that came back clean are here too, and a law firm advertising for
+           claimants is labelled as that and not as a case. */
+        type: 'table',
+        caption: 'The public record',
+        columns: ['Record', 'Finding', 'What it is'],
+        rows: [
+          ['FDA recall, Class I', 'F-0214-2022', 'Organic Infants Liquid Probiotic, 25,673 units, for Pseudomonas aeruginosa. Initiated October 2021, terminated February 2022. Class I is the FDA’s most serious tier and the classification is the FDA’s; the company’s own notice is headed “Out of an Abundance of Caution”.'],
+          ['FDA warning letters', 'None', 'Checked across the FDA’s published set for 2017 to 8 September 2026. No second recall either.'],
+          ['California Prop 65 notices', 'None', 'No 60-day notice names the company; the search was validated against terms that do return results.'],
+          ['Lead disclosed, highest lot', '33 ppb', 'Consumer Reports found MaryRuth’s among the few brands publishing lot-level heavy-metal results at all, and its highest disclosed lead figure the highest of those reviewed. A disclosure finding, not a contamination ranking.'],
+          ['Subscription-billing investigations', '2 open', 'A plaintiffs’ firm inviting customers to get in touch, April and May 2026 — not a filed case, not a regulator and not a finding against anyone.'],
+          ['Lawsuits', 'None open', 'A 2022 trademark suit with the company as defendant and a 2025 website-accessibility suit, both terminated; a 2024 state false-advertising class action over a kids’ focus product, voluntarily dismissed without prejudice. None concerned product safety.'],
+          ['Better Business Bureau', 'F', 'Not accredited, driven by failure to respond to 10 of 12 complaints rather than by the complaints’ merit.'],
+          ['Trustpilot', '2.6 / 5', 'On only 25 reviews — too thin to set against 39,143 Amazon ratings at 4.5, and shown beside them rather than instead.'],
+        ],
+        note: 'Read 9 September 2026 from the regulators’ and courts’ own records and the sources named for each.',
+      },
+      {
+        type: 'prose',
+        text:
+          'These details are resolved from the buy-box seller on the brand’s best-selling products and from the public records above.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business, and this is not a price for the company. It is a model — a 2.6 base multiple moved by what the public record supports — applied to trailing-twelve modelled profit on the Amazon listings alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Retail and their own store are excluded, and on Forbes’ estimate they are most of the company. Marketplace concentration is unscored too: no Amazon marketplace outside the US was read, so it is left out rather than guessed. And the profit being multiplied is a ceiling twice over — other sellers’ sales on the same listings, and a cost model with returns, overhead and freight at zero. Confidence on this profile is low.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are durability and depth: twelve years of listings, a seller record at 99% over tens of thousands of ratings, reviews in the top band and revenue spread across the year rather than piled into one season. The model has no factor for what most weakens the figure — the reseller share of the listings — so the multiple is only as good as the profit under it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple: a liquid, organic formulation is a real change of form, but a supplement is also something a contract manufacturer can approximate. The rating of 4.5 sits exactly on a band boundary. Brand Registry is firmer — Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
     ],
   },
