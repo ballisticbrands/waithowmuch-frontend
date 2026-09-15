@@ -48,6 +48,7 @@ const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PH
 
 /* 199 generated rows — too many to author inline. See the module's header. */
 import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
+import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -1393,6 +1394,682 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers in the model, taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All four are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  kalotoys: {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-kalotoys-headline.ts, from
+       waithowmuch-research research/kalotoys/headline.json (reviewed
+       2026-09-15) — and the page reads them from the row alone. */
+    headline: {
+      /* The best seller, and the object the headline is about: one of the four
+         $34.96 name puzzles that are half of September 2026. */
+      image: {
+        src: kalotoysPhoto('B0GSZSCM69'),
+        alt: 'A toddler holding up a personalised wooden name puzzle spelling ADELYNN in pink letters, framed by a unicorn, butterfly, rainbow and other animal pieces — the best-selling KALOTOYS listing on Amazon',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand and designs,
+             made — by their own account — in their own Hanoi workshops, and the
+             customs trail runs from their street address. The model has no
+             "own manufacturing" answer; private label is the nearest one that
+             describes what transfers. */
+          primaryMethod: 'private_label',
+          /* Flagship. One product — the personalised name puzzle, in four
+             listings on one account — is 51% of the month, and the top ten
+             listings 78%, with 370 listings behind them. Not "broad": the tail
+             is wide but it does not carry the revenue. The case for "churn" is
+             that the hit changed accounts within a year; one hit replacing
+             another is not yet a pattern the series can show. */
+          catalogStructure: 'flagship',
+          /* Level 3. Every best seller is personalised to order — a child's
+             name cut from plywood — on their own designs. No tooling nobody
+             else has: laser-cut plywood is a commodity process, and rivals
+             sell name puzzles on the same search page. */
+          diffTooling: 'no',
+          diffCustom: 'yes',
+          /* A READ: the Brand Store at /stores/KALOTOYS is gated behind
+             enrolment. */
+          brandRegistry: 'yes',
+        },
+        derived: {
+          /* RULE 1: B0DNVSDMM4, 2024-11-23 — the first plausible listing.
+             B0H3KVJ54K's 2022-08-15 is an artefact (impossible for a B0H ASIN);
+             2020 is the company. */
+          sellingSince: '2024-11-23',
+          /* Top listings of both storefronts, a floor; variations share
+             counts. */
+          reviewTotal: 3766,
+          ratingWeighted: 4.4,
+          /* 🚨 An INFERENCE of a different kind: three accounts, weighted by
+             rating count — 30% over 40, 60% over 152, 26% over 43 → 49%. Any
+             blend lands in the model's "under 85%" band, so the choice of
+             blend does not move the multiple; including the two accounts
+             attributed by inference does not either, since KALO KIDS alone is
+             30%. */
+          sellerFeedbackPct: 49,
+          /* A read from Keepa's fees: busy boards and Halloween kits carry an
+             FBA fee; the made-to-order name puzzles and nursery signs carry no
+             FBA fee and no package dimensions, and KALOTOYS GROUP has no FBA. */
+          channels: 'both',
+          /* RULE 2. Giftora's account exists on Amazon Canada with 0 ratings;
+             Amazon US is all of the measured Amazon revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* August 2026 against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 19.47,
+          /* RULE 3: offAmazonSharePct unset. Etsy and the websites are, by the
+             founders' account, most of the company, and none is sized. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. The KALOTOYS brand on Amazon US only — Etsy, their own sites, the Vietnamese store and the company’s other unnamed brands are excluded.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '370', note: '234 priced, 29 carrying a sold badge', info: 'skus' },
+      /* The best seller's own breadcrumb. No rank beside it: Keepa files these
+         listings' main rank under a root node the pull did not name, and a rank
+         in an unnamed category says nothing. */
+      {
+        label: 'Category',
+        value: 'Toys & Games › Puzzles › Pegged Puzzles',
+        note: 'The best-selling name puzzle',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Top-listing figures across both storefronts, so NO `info` key — the
+         shared ⓘ copy describes one hero listing. */
+      { label: 'Product reviews', value: '3,766', note: 'Across the top listings — variations share counts' },
+      { label: 'Product rating', value: '4.4★', note: 'Review-weighted, top listings' },
+      /* 🚨 Shown, not hidden, and dated: measured and unflattering. A default
+         pending the owner-of-the-page's decision (research README). */
+      { label: 'Seller feedback', value: '26–60%', note: 'Three US accounts · read 15 Sep 2026', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Made in their own Hanoi workshops, by their own account', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'Four name puzzles are half of Sep 2026', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Differentiation', value: 'Level 3', note: 'Functional customisation', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own stores, Etsy', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it, through three US seller accounts. Every figure on this profile — the chart, the margin, the valuation — is the KALOTOYS brand on Amazon US and nothing else.',
+      },
+      /* Unchecked rather than no: an account exists in Canada, but nobody
+         looked for a badge there. */
+      'amazon-international': {
+        status: 'unchecked',
+        note:
+          'Giftora’s account exists on Amazon Canada with 0 ratings, and no Canadian listing was checked for a badge. None of the three accounts exists on Amazon UK or Germany.',
+      },
+      'own-store': {
+        status: 'yes',
+        note:
+          'kalotoys.com (Shopify, 175 products at a median $12.99) and kalokid.com (15 products at a median $39.99), plus kalotoys.vn for Vietnam. The founders put their website at 40% of 2023. Shopify publishes no sales.',
+      },
+      'other-marketplace': {
+        status: 'yes',
+        flag: true,
+        note:
+          'Etsy, as KalotoysOfficial — by the founders’ account their primary channel and a top-10 Etsy seller by orders in November 2023. The shop refused a direct fetch, so no sales count was read and the claim is unchecked.',
+      },
+      // tiktok-shop and wholesale-out left unchecked: nobody looked. The TikTok
+      // account is Vietnamese-language and was not opened.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Two of the three accounts carry FBA, and the busy boards and Halloween kits carry Amazon pick-and-pack fees of $4.09–6.13.',
+      },
+      fbm: {
+        status: 'yes',
+        flag: true,
+        note:
+          'The name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. That is the half of the month the four name puzzles make up. KALOTOYS GROUP has no FBA at all.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the listings on any of the three seller records.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand and designs, on listings no outside seller carries a badge on.',
+      },
+      manufacturer: {
+        status: 'yes',
+        note:
+          'Two workshops in Hanoi, 2,300 m², by the founders’ own account — self-reported. The customs trail agrees with the shape: the shipper to the US sits at Kalo JSC’s own Hanoi street address.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/KALOTOYS, which Amazon gates behind enrolment.',
+      },
+      'amazon-handmade': {
+        status: 'yes',
+        note: 'Some KALOTOYS variations are listed under Handmade Products. The referral rate is 15% either way.',
+      },
+      // amazon-custom left unchecked: the personalised listings may use it, and
+      // nobody looked.
+    },
+
+    intro:
+      'KaloToys is a Hanoi company that makes wooden Montessori toys and personalised baby gifts in its own workshops. On Amazon US it sells under the KALOTOYS brand through three American seller accounts, none of which carries the company’s name.',
+
+    blocks: [
+      { type: 'heading', text: 'Name puzzles, busy boards and school signs' },
+      {
+        type: 'prose',
+        text:
+          'Three product families carry the Amazon catalogue: personalised wooden name puzzles, made to order with a child’s name cut from plywood; Montessori busy boards of latches, zips and gears; and, since June 2026, personalised first-day-of-school signs. Around them sit nursery name signs, Halloween sign kits, ornaments and baby baskets — 370 listings in all, 176 of them added between June and August 2026.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The brand is not the company. The founders told Shark Tank Vietnam in 2024 that in the US they run “a school of small fish”: many small brands they would not name. Everything on this page is the KALOTOYS brand on Amazon US, found across all three seller accounts and counted once — not the company’s Amazon business, and not the company.',
+      },
+      /* No figures in the caption. The busy board is what the storefront leads
+         with; the sign is what summer 2026 was built on. Bucket copies. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: kalotoysPhoto('B0DQZKTNCB'),
+            alt: 'A pink wooden Montessori busy board with number tiles, bells, an abacus, a zip, a shoelace, shape pegs, a bus and a clock, shown beside a baby holding it and its KALO TOYS gift box',
+          },
+          {
+            src: kalotoysPhoto('B0H3KTSB4M'),
+            alt: 'A wooden first-day-of-school sign with the name MADISON in raised red letters over dry-erase panels for age, height, favourites and teacher, with a washable marker',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images: the busy board the storefront leads with, and the personalised school sign that arrived in summer 2026.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A workshop business founded in 2020, on national television in 2024, and on Amazon US through three seller accounts that appeared one after another.',
+      },
+      {
+        /* Oldest first. "2020" is the founders' own claim with no day on it;
+           it stays on this list and off the overview chart. */
+        type: 'timeline',
+        items: [
+          {
+            when: '2020',
+            tag: 'Brand',
+            what: 'Founded in Hanoi by Đồng Đức Thành and Lê Trung Anh',
+            detail:
+              'By their own account, when both were expecting their first children. Two workshops of 2,300 m² today, self-reported, and 100–199 staff on an employer listing.',
+          },
+          {
+            when: '7 Nov 2023',
+            tag: 'Web',
+            what: 'kalotoys.com registered',
+            detail:
+              'The Shopify store now lists 175 products at a median $12.99, and prints a Vernon Hills, Illinois address and a Garland, Texas fulfilment address.',
+          },
+          {
+            when: '18 Nov 2023',
+            tag: 'Brand',
+            what: 'A top-10 Etsy seller by orders, by their own account',
+            detail:
+              'Not checked: the Etsy shop refused a direct fetch. The founders call Etsy their primary channel and put 2023 at 40% website, 60% marketplaces.',
+          },
+          {
+            when: '6 Aug 2024',
+            tag: 'Brand',
+            what: 'Shark Tank Vietnam airs: $1M asked for 10%',
+            detail:
+              'The first $1M deal of season 7, on VTV. On air the founders gave 2023 revenue of 95 billion VND and profit of 9.6 billion VND — company-wide, self-reported and unaudited — and the cost shares the margin on this page is built from.',
+          },
+          {
+            when: '13 Aug 2024',
+            tag: 'Brand',
+            what: 'The deal is signed, and the “school of small fish” explained',
+            detail:
+              'Shark Bình and Shark Minh Beta sign $1M for 10%, disbursement conditional; whether it was paid is not public. The CEO says the US business runs many small unnamed brands, after competitors interfered with them.',
+          },
+          {
+            when: '4 Oct 2024',
+            tag: 'Web',
+            what: 'kalokid.com registered',
+            detail: 'A second storefront carrying the same Illinois and Texas addresses. Its 15 products were all created on 22 July 2026.',
+          },
+          {
+            when: '23 Nov 2024',
+            tag: 'Amazon',
+            what: 'The first KALOTOYS listing with a believable date',
+            detail: 'A busy board, B0DNVSDMM4. One listing reads 2022 in Keepa, which is impossible for its ASIN, and is ignored.',
+          },
+          {
+            when: '2 Dec 2024',
+            tag: 'Amazon',
+            what: 'The Giftora account, trading as “Kalotoys”, is first tracked',
+            detail:
+              'A Worcester, Massachusetts entity, by Keepa’s first-tracked date, which trails an account’s real opening. Tied to KaloToys by its seller name and listings — an inference, not a document.',
+          },
+          {
+            when: '4 Mar 2025',
+            tag: 'Amazon',
+            what: 'The first sold badge anywhere in the catalogue',
+            detail: 'Amazon prints “bought in past month” from roughly 50 sales a month. The series on this page starts the month after.',
+          },
+          {
+            when: '29 Jul 2025',
+            tag: 'Brand',
+            what: 'The first public customs record',
+            detail:
+              'SNAP ECOM JSC — at the same Hanoi street address as Kalo Joint Stock Company — ships busy boards, signs and décor from Hai Phong to KALO KIDS CORPORATION in Illinois. Five bills of lading to June 2026 are visible.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$140,330 — the Christmas month',
+            detail: '4.4 times the January that followed. Ordinary for toys, and not the year’s high.',
+          },
+          {
+            when: '16 Feb 2026',
+            tag: 'Amazon',
+            what: 'KALO KIDS CORPORATION is first tracked',
+            detail: 'The account behind the brand store’s landing listing, at the Vernon Hills address kalotoys.com prints.',
+          },
+          {
+            when: '18 Mar 2026',
+            tag: 'Amazon',
+            what: 'Four personalised name puzzles go up on Giftora',
+            detail: 'All four at $34.96. Six months later they are 51% of September’s brand revenue.',
+          },
+          {
+            when: '10 Jun 2026',
+            tag: 'Amazon',
+            what: 'KALOTOYS GROUP is first tracked',
+            detail:
+              'Sachse, Texas, a few miles from the Garland fulfilment address, with no FBA. It holds the buy box on every badged listing probed outside the other two storefronts. Tied to KaloToys by name, listings and geography — an inference, not a document.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: '$181,557 — back to school beats Christmas',
+            detail:
+              'Personalised first-day-of-school signs and 176 new listings in three months, most of them outside the original storefront. The best month on record.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The brand’s Amazon year has two peaks, not one. December 2025 did $140,330, ordinary for toys; August 2026 then did $181,557 on back-to-school signs, and September 2026 was 4.1 times September 2025. Of each month a little under a third is left after Amazon’s fee, the goods, fulfilment and advertising — before overhead, and on cost shares the founders gave for the whole company in 2023.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts all 370 listings carrying the KALOTOYS brand, manufacturer or name, each once, whichever of the three accounts lists it. That matters here more than usual: the storefront’s own seller accounts for under a fifth of the month, and measured off that account alone this page would describe a business about a fifth of the size.',
+      },
+      { type: 'chart' },
+      {
+        /* From each account's Keepa seller record on UK, DE and CA
+           (2026-09-15). 🚨 The largest share is valuation
+           derived.topMarketplaceSharePct — check-profile.mjs holds the two
+           together. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of it is Amazon US. One of the three accounts exists in Canada, with no ratings.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Giftora’s account exists with 0 ratings; no Canadian listing was checked for a badge' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No account for any of the three sellers' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Each account’s seller id was looked up on every marketplace.',
+      },
+      {
+        /* Generated from the three Keepa catalogues — see the module's header.
+           The rows sum to the 2026-09 revenue row, which check-profile.mjs
+           asserts. */
+        type: 'breakdown',
+        intro:
+          'Four name puzzles at $34.96 are half of the month, and all four sit on the Giftora account. The school signs behind them arrived in June; the busy boards the storefront leads with are a small part of what sells.',
+        items: KALOTOYS_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band — hence n+. Revenue is that band times the buy box on 15 September 2026, so every row is a floor. 205 more priced listings carry no badge, each under roughly 50 a month, and count as zero; at up to 50 each they could add as much again. The account after each name is the storefront that lists it, not who held the buy box.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. Three of the four cost lines under the profit are the founders’ own company-wide shares for 2023, not measurements of this brand — Margin breakdown says which, and why the same founders’ reported margin was far lower.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon is one of at least three ways KaloToys sells, and by the founders’ own account not the main one. It is the only one with a public number behind it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The founders put 2023 at 40% through their own website and 60% through marketplaces, with Etsy the one they called primary. On Amazon, fulfilment is split by product rather than by account: the busy boards and Halloween kits carry Amazon FBA fees, while the name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What follows is presence rather than share. Nobody publishes what a Shopify store or an Etsy shop takes, so this says which methods are in use and not what each is worth. A method nobody has looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $25.07 average sale, down to a little under a third of it — a contribution ceiling built on the founders’ own cost shares, not a net margin.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Only one line here is measured for this brand: Amazon’s 15% referral fee. The other three are the founders’ own shares for the whole company in 2023, stated on Shark Tank Vietnam and applied here to one brand on one marketplace three years later. The one cross-check available agrees with the fulfilment line: Amazon charges $5.52–6.13 to pick and pack a $29–33 busy board, 17–19% of its price.',
+      },
+      {
+        type: 'table',
+        caption: 'The cost shares — what the founders said, and what is used here',
+        columns: ['Line', 'Stated by the founders (2023, company-wide)', 'Used here', 'Basis'],
+        rows: [
+          ['Amazon referral fee', '—', '15%', 'Measured: Amazon’s published Toys & Games and Handmade rate; 15.01% per listing in Keepa'],
+          ['Cost of goods', '~16%', '16%', 'Self-reported, VTV, 6 Aug 2024'],
+          ['Shipping and fulfilment', '20–22%', '21%', 'Self-reported midpoint. FBA pick-and-pack on the busy boards is 17–19%; the made-to-order listings carry their own freight'],
+          ['Advertising', '30–33% “marketing, including platform commissions”', '16.5%', 'Self-reported midpoint less the 15% referral fee it included. The weakest line'],
+          ['Operating costs', '3–4% of revenue a month', 'Not deducted', 'Self-reported; left out, which is one reason the remainder is a ceiling'],
+        ],
+        note:
+          'Unaudited figures given on television for the whole company — Etsy, their websites and every brand they run. Nothing here is a supplier quote or a figure from this brand’s books.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 31.5% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           four numbers (COST_LINES in seed-kalotoys.ts). Change one, change
+           both. Three of the four are DERIVED from self-reported shares; the
+           labels below must keep saying so. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 25.07 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -16,
+            detail:
+              'About $4.01 of a $25.07 sale. Derived from the founders’ self-reported ~16% for the whole company in 2023, not quoted for any product. Plywood imported from Russia and cut in their own Hanoi workshops, by their own account.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published rate for Toys & Games and for Handmade — 15% either way, and 15.01% per listing in Keepa. The one measured line.',
+          },
+          {
+            label: 'Shipping and fulfilment',
+            pct: -21,
+            /* The largest line — the component labels the emphasised line
+               "Biggest line", so it belongs here, not on advertising. */
+            emphasis: true,
+            detail:
+              'Freight from Vietnam and delivery to the customer, at the founders’ self-reported 20–22% midpoint. Derived. Consistent with the $5.52–6.13 FBA fee on the busy boards; the made-to-order listings ship themselves.',
+          },
+          {
+            label: 'Advertising',
+            pct: -16.5,
+            detail:
+              'Derived, on a self-reported basis: the founders’ 30–33% marketing share, which they said included platform commissions, less the 15% referral fee. The weakest line — the sponsored footprint on Amazon neither confirms nor contradicts it.',
+          },
+        ],
+        note:
+          'Derived, self-reported basis: three of the four lines are the founders’ own 2023 company-wide shares. Returns, payroll, overhead and the US entities’ own costs are all at zero here, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The same founders reported 2023 profit of 9.6 billion VND on 95 billion of revenue: a 10.1% net margin. Their cost shares leave 31.5%, or about 28% after the operating costs they named, so roughly 18 points of cost go unnamed — payroll, R&D, depreciation, interest, or the costs of Etsy and the websites that sit outside “marketing”. The profit on this page is what one Amazon brand contributes before those, and the company-level margin may be nearer 10%.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The margin block and the profit series on the chart are one model, so they cannot disagree. What neither can say is which side of that 18-point gap this brand sits on — the first thing to put to the owner.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'Growth here is listing, not buying: new personalised products, put up on new seller accounts, fast enough that the account holding the hit changed within a year.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Almost none of the year’s growth came from the listings that were selling a year earlier. Four name puzzles went up on the Giftora account on 18 March 2026 and reached about 2,300 units a month by September. A run of personalised first-day-of-school signs followed in June, largely on the KALOTOYS GROUP account Keepa first saw that month, and 176 listings went up between June and August.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On a made-to-order catalogue that is the model rather than an accident. A personalised product is cheap to design and list, and whichever account lists the one that catches becomes, for a season, most of the business. The other side of it is a wide tail that sells little: of 234 priced listings, 29 carry a sold badge.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Television did not visibly move Amazon. The Shark Tank episode aired in August 2024, months before the first KALOTOYS listing with a believable date, and nothing in the catalogue carried a sold badge until March 2025.',
+      },
+      {
+        type: 'callout',
+        text:
+          'What the public record cannot yet show is whether summer 2026 is a new level or a season. The series holds one back-to-school with the school signs in it.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Brand defence, and a toe in one generic niche. Nobody publishes the bill, so the figure below is the founders’ share; the counted lines are what a US search showed.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On the two generic busy-board searches, none of 24 sponsored slots was theirs: the product the storefront leads with buys no generic demand. On “personalized name puzzle for toddlers” they held one sponsored slot, at position 2, beside four organic results in the top ten. The sharpest finding is on their own name — a Sponsored Brands banner and 5 of 12 Sponsored Products slots are theirs, and the other 7 are competitors buying the KALOTOYS search.',
+      },
+      {
+        type: 'prose',
+        text:
+          'A first read delivered to Israel and showed no KALOTOYS ads anywhere, their own name included. Amazon serves sponsored placements by delivery address, so it was discarded and redone for New York.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products and Sponsored Brands',
+            href: 'https://www.amazon.com/s?k=kalotoys',
+            value: '≈ 16.5% of revenue',
+            counted:
+              '0 of 24 slots on two busy-board searches · 1 of 12 on “personalized name puzzle for toddlers” · 5 of 12 and a brand banner on “kalotoys” · 2 of 12 on “kalotoys busy board” — New York delivery, 15 Sep 2026',
+            flag: true,
+            note:
+              'Derived on a self-reported basis, not observed: the founders’ 30–33% company-wide marketing share less the 15% referral fee inside it. The footprint looks lighter than that — defence and one niche — but a footprint is not a spend, so it neither confirms nor contradicts the level.',
+          },
+          {
+            label: 'Competitors on their name',
+            value: '7 of 12',
+            counted: 'Sponsored slots on the search “kalotoys” held by other brands, among them Joyreal and Potatomato',
+            note: 'Rivals pay to appear when a shopper types this brand. The name has search demand worth taking, and they do not hold all of it.',
+          },
+          {
+            label: 'Meta and Google',
+            value: 'Not checked',
+            note:
+              'The Meta Ad Library and paid-search history were not read. Absent here means unexamined, not zero — and the founders’ marketing share covers every channel, not Amazon alone.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Off Amazon there are three stores, an Etsy shop and three social accounts — and no reading of how many people visit any of them.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Traffic was not measured and no follower count was read. The Instagram and Facebook accounts are the ones kalotoys.com links to; the TikTok account is a Vietnamese-language one, whose follower figure came from a search summary and was not checked. The addresses are the stranger part: an Illinois registered address, a Texas fulfilment address, an Instagram tagged Houston, and a Hanoi company behind all of them.',
+      },
+      {
+        /* 🚨 No rank table and no keyword table. Keepa files these listings'
+           main rank under a root node the pull did not name, and no off-Amazon
+           keyword read was taken — the Amazon search read is on Advertising. */
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Etsy — KalotoysOfficial',
+            href: 'https://www.etsy.com/shop/KalotoysOfficial',
+            value: 'Not read',
+            flag: true,
+            note:
+              'By the founders’ account their primary channel, and a top-10 Etsy seller by orders in November 2023. The shop page returned 403 to a direct fetch, so no sales count was read and the claim is unchecked.',
+          },
+          {
+            label: 'Own store — kalotoys.com',
+            href: 'https://kalotoys.com/',
+            value: '175 products',
+            note:
+              'Shopify, median $12.99 (range $2–59.99), products created November 2024 to September 2025. Prints a Vernon Hills, Illinois address and a fulfilment address at 1121 S Jupiter Road, Garland, Texas.',
+          },
+          {
+            label: 'Own store — kalokid.com',
+            href: 'https://kalokid.com/pages/about-us',
+            value: '15 products',
+            note: 'All created on 22 July 2026, at a median $39.99. The same Illinois and Texas addresses, with a US and an Australian phone number.',
+          },
+          {
+            label: 'Vietnamese store — kalotoys.vn',
+            href: 'https://kalotoys.vn/',
+            note: 'The domestic line the founders described launching in 2024. Found through search, not opened.',
+          },
+          {
+            label: 'Instagram — @kalotoys_official',
+            href: 'https://www.instagram.com/kalotoys_official/',
+            value: 'Count not read',
+            note: 'Linked from kalotoys.com, and tagged Houston, Texas.',
+          },
+          {
+            label: 'Facebook — kalotoys.official',
+            href: 'https://www.facebook.com/kalotoys.official',
+            value: 'Count not read',
+            note: 'Linked from kalotoys.com.',
+          },
+          {
+            label: 'TikTok — @kalotoys',
+            href: 'https://www.tiktok.com/@kalotoys',
+            value: '~18.7K, unchecked',
+            note: '“KaloToys – Đồ Chơi Montessori”, in Vietnamese. The count is a search summary’s; the page was not opened.',
+          },
+        ],
+      },
+      {
+        type: 'callout',
+        text:
+          'None of these can be sized from outside, and by the founders’ account together they are most of the company. The figures on this page describe the part that can be.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Công ty Cổ phần Kalo', note: 'Kalo Joint Stock Company · tax code 0110509128' },
+          { label: 'Registered address', value: 'Hanoi, Vietnam', note: 'No. 35 Nguyen Xien, Khuong Dinh Ward' },
+          { label: 'Founded', value: '2020', note: 'By Đồng Đức Thành (CEO) and Lê Trung Anh, by their own account' },
+          { label: 'Staff', value: '100–199', note: 'Employer listing' },
+          { label: 'Seller feedback', value: '26–60%', note: 'Three US accounts · read 15 Sep 2026', info: 'sellerFeedback' },
+          { label: 'First listing', value: '23 Nov 2024' },
+        ],
+      },
+      {
+        /* 🚨 All three accounts named, and the two tied to KaloToys by
+           inference SAY so in their row. A default pending the page owner's
+           decision on how to name them (research README). */
+        type: 'table',
+        caption: 'The three US seller accounts',
+        columns: ['Account', 'Legal name and address', 'Seller feedback', 'First tracked', 'Link to KaloToys'],
+        rows: [
+          [
+            'KALOTOYS OFFICIAL · A343UID6F5X37S',
+            'KALO KIDS CORPORATION, Vernon Hills, IL',
+            '30% over 40 ratings',
+            '16 Feb 2026',
+            'Printed address and customs trail: kalotoys.com prints the same address, and US customs records ship to it from SNAP ECOM JSC at Kalo JSC’s Hanoi street address',
+          ],
+          [
+            'Kalotoys · A2PA1HBQL5NIQH',
+            'Giftora, Worcester, MA',
+            '60% over 152 ratings',
+            '2 Dec 2024',
+            'Inference: its seller name, 31 KALOTOYS listings and a share of the buy box on two KALO KIDS listings — no document',
+          ],
+          [
+            'KALOTOYS GROUP · A3783D15T8P9ZQ',
+            'KALOTOYS GROUP, Sachse, TX',
+            '26% over 43 ratings',
+            '10 Jun 2026',
+            'Inference: its name, its listings and a Texas address a few miles from the brand’s Garland fulfilment address — no document',
+          ],
+        ],
+        note:
+          'Feedback and addresses from Keepa’s seller records, read 15 September 2026; first-tracked dates are Keepa’s and trail an account’s real opening. Of September 2026’s brand revenue, 58.6% came through listings in Giftora’s storefront, 13.1% in KALO KIDS CORPORATION’s, 5.1% in both, and 23.2% outside both, where KALOTOYS GROUP holds the buy box.',
+      },
+      {
+        type: 'prose',
+        text:
+          'None of the three carries the company’s name, and all three run seller feedback far under Amazon’s comfort line — 26%, 30% and 60% positive when read. That rates dispatch and service rather than the products, which hold 4.4 stars across the top listings. The founders explained the unnamed accounts on air: many small brands, kept anonymous because competitors had interfered with them before.',
+      },
+      {
+        type: 'prose',
+        text:
+          'These details are resolved from Keepa’s seller records for the three accounts, the brand store, US customs records and the founders’ interviews. Nobody at KaloToys has confirmed the link between the company and the Giftora or KALOTOYS GROUP accounts.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model — a 2.6 base multiple moved by what the public record supports — applied to trailing-twelve profit, and it prices the KALOTOYS brand on Amazon US alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Etsy, kalotoys.com, kalokid.com, the Vietnamese store and the company’s other unnamed US brands are excluded: by the founders’ account most of the company, and none of it sizeable from outside. The profit being multiplied is a contribution ceiling on self-reported cost shares — the same founders reported a 10.1% net margin for 2023 — so on that basis this figure is an upper bound.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are what the brand owns: its own designs made in its own workshops, personalisation a copier has to rebuild, an enrolled brand store and the reviews its top listings have gathered. The negatives are service and concentration: seller feedback of 26–60% across all three accounts, every measured dollar on Amazon US, and four listings carrying half the month.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Five inputs are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken from the public record; seller feedback is a blend of three accounts, two of them tied to the brand by inference; and the FBA-and-FBM answer is read from which listings carry Amazon’s fee. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All of them are the first things to put to the owner.',
       },
     ],
   },
