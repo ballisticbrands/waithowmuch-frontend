@@ -50,6 +50,7 @@ const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PH
 import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
 import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
+import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -2749,6 +2750,591 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple: a liquid, organic formulation is a real change of form, but a supplement is also something a contract manufacturer can approximate. The rating of 4.5 sits exactly on a band boundary. Brand Registry is firmer — Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  'virora-mahjong': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-virora-mahjong-headline.ts, from
+       waithowmuch-research research/virora-mahjong/headline.json — and the
+       page reads them from the row alone. */
+    headline: {
+      /* The best seller, and more than half of the snapshot month by itself. */
+      image: {
+        src: viroraPhoto('B0H793VVWP'),
+        alt: 'The Rose Pink 160-tile American mahjong set laid out in rows — dots, bams, craks, flowers, winds and butterfly jokers in pink and green on white tiles. Virora’s best-selling Amazon listing',
+      },
+    },
+
+    /* 🚨 NO `valuation`, deliberately. The series is ten months (December 2025
+       to September 2026), so there is no trailing twelve to multiply, and the
+       page would render an empty section. Add it — with inputs, and
+       peakMonthSharePct from score-valuation.mjs — once twelve profit months
+       exist, which will include the brand's first Christmas. */
+
+    facts: [
+      { label: 'SKUs', value: '53', note: '21 in the storefront seller’s own list; 8 badged in September', info: 'skus' },
+      {
+        label: 'Category',
+        value: 'Toys & Games › Games & Accessories › Tile Games',
+        note: 'Best seller #21,842 in Toys & Games',
+        info: 'category',
+        wide: true,
+      },
+      /* The best seller's own listing — it is 54% of the snapshot month, so it
+         can stand for the catalogue the way Spite House's hero did. */
+      { label: 'Product reviews', value: '80', note: 'On the best-selling listing', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'Best-selling listing', info: 'rating' },
+      { label: 'Seller feedback', value: '95%', note: 'Storefront seller, over 22 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Own brand and trademark; the factory is unnamed', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      /* Sets carry the money and mats are the add-on sold to the same buyer.
+         Not "Trend / seasonal churn": the relisting churn is the same set under
+         new ASINs, not a catalogue retired and replaced. */
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'Sets are 74% of September; mats sold alongside', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* Not placed. A 4-layer acrylic set that Alibaba lists in volume argues
+         for a low level; their own "hand-painted" claim argues higher and is
+         unchecked. A "?" is the honest state until someone looks. */
+      { label: 'Differentiation', value: '?', note: 'Not placed yet', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it. Every figure on this profile is Amazon US — counted across all three seller accounts that sell the brand’s listings, not the storefront seller alone.',
+      },
+      'amazon-international': {
+        status: 'unchecked',
+        note:
+          'The storefront seller has an Amazon Canada account with no ratings, and no Canadian listing was read. It has no account on Amazon UK or Germany.',
+      },
+      'own-store': {
+        status: 'yes',
+        flag: true,
+        note:
+          'viroramahjong.com, on Shopify: 30 products, the oldest record from 12 February 2026. Sets at $229, as on Amazon, and Christmas sets on pre-order at $299 — which Amazon does not carry. Shopify publishes no sales.',
+      },
+      'tiktok-shop': {
+        status: 'unchecked',
+        note: 'Their site links a TikTok account. Whether it runs a shop was not checked.',
+      },
+      // other-marketplace, wholesale-out and licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note:
+          'From the seller record, and Amazon charges an FBA fee on each listing read: $8.97 on a set and $11.29 on a mat, which is rolled and ships oversize.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the 53 listings between FBA and FBM.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the brand’s listings.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note:
+          'Their own brand name, on listings under a trademark the storefront seller’s LLC owns — the trademark read second-hand, from a search index.',
+      },
+      /* 🚨 Unchecked, not yes. "Handcrafted by experienced artisans" is their
+         own marketing, and a 4-layer acrylic set is listed in volume by
+         Alibaba factories. A self-report does not answer this. */
+      handmade: {
+        status: 'unchecked',
+        note:
+          'Their marketing says the sets are shaped and painted by hand. Nobody has checked it, and near-identical 4-layer acrylic sets are listed in volume by factories.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note:
+          'Two of the three seller accounts are e-commerce companies in Xuzhou, China. Whether any of them owns the factory is not known.',
+      },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/ViroraMahjong, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'Virora Mahjong sells 160-tile acrylic American mahjong sets and rubber table mats, almost entirely on Amazon. The brand is ten months old there, and three different seller accounts sell its listings.',
+
+    blocks: [
+      { type: 'heading', text: 'One set, listed many times' },
+      {
+        type: 'prose',
+        text:
+          'Fifty-three Amazon listings carry the brand. Most are 160-tile, 4-layer acrylic American sets in Rose Pink, Purple, Green and Pink, with racks, dice and a tile bag in a gift box. Beside them sit mini sets for children, 3mm rubber table mats in a run of floral colourways, and — in the same storefront — three Pumiboo Christian sound books for toddlers.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The same set is often listed several times over. The Rose Pink set exists as at least five ASINs, and Amazon’s sold badge moves from one to the next within weeks. Two of the three accounts that sell the listings are e-commerce companies in Xuzhou, China, and one of them trades under the brand’s own name.',
+      },
+      /* 🚨 No figures in the caption. The brand's own secondary listing images
+         from the best seller, in our bucket — the hero already shows the set. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: viroraPhoto('rack-and-mat'),
+            alt: 'Listing image: layered pink, white and green mahjong tiles standing on clear acrylic racks over one of the brand’s pink-and-green floral mats',
+          },
+          {
+            src: viroraPhoto('hand-painting'),
+            alt: 'Listing image: a hand painting a tile with a fine brush beside rows of finished tiles, captioned “A Rare Traditional Craft, Mastered by Few and Made to Last”',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images: the set on its racks over one of their mats, and the hand-painting their marketing leans on — their own claim, and not one anybody has checked.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A Washington LLC, a trademark, a toddler’s sound book — and then, in eight months, a mahjong line that went from a first badge to its biggest month, sold through three accounts.',
+      },
+      {
+        /* Oldest first. The LLC formation and trademark dates were read
+           through a search index because both pages blocked the fetch, and
+           each says so. Month-end revenue events sit on the last day of the
+           month so the dot lands on the chart's point. */
+        type: 'timeline',
+        items: [
+          {
+            when: '4 Jun 2024',
+            tag: 'Brand',
+            what: 'Pacific Edge Innovations LLC is formed in Washington',
+            detail:
+              'The LLC behind the Amazon storefront. Read second-hand: the state-filing page was blocked, and the date comes from a search index’s copy of it.',
+          },
+          {
+            when: '10 Sep 2025',
+            tag: 'Brand',
+            what: 'The VIRORA MAHJONG trademark is filed',
+            detail: 'In the LLC’s name, by a search index’s copy of the record — also second-hand.',
+          },
+          {
+            when: '20 Oct 2025',
+            tag: 'Amazon',
+            what: 'The catalogue’s first listing is a sound book',
+            detail: 'A Pumiboo Christian sound book for toddlers. Three of them still sit in the storefront beside the mahjong line.',
+          },
+          {
+            when: '11 Nov 2025',
+            tag: 'Amazon',
+            what: 'The first mahjong listing: a pink 160-tile set',
+            detail:
+              'First seen at $199. Over the last 90 days the account leading its buy box is Xuzhou Yuesu, not the storefront seller.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$27,135 — the first month with a sold badge',
+            detail: 'One set listing at 100+ and the Pumiboo books. The chart starts here.',
+          },
+          {
+            when: '31 Jan 2026',
+            tag: 'Amazon',
+            what: '$19,900 — the lowest month on the chart',
+            detail: 'Two set listings at 50+ each, and nothing else badged.',
+          },
+          {
+            when: '11 Feb 2026',
+            tag: 'Brand',
+            what: 'A YouTube channel opens',
+            detail: 'Four videos reviewing their own sets, and nine subscribers when it was read.',
+          },
+          {
+            when: '12 Feb 2026',
+            tag: 'Web',
+            what: 'The oldest product record in their Shopify store',
+            detail: 'viroramahjong.com now carries 30 products, with sets at the same $229 as on Amazon.',
+          },
+          {
+            when: '8 Apr 2026',
+            tag: 'Amazon',
+            what: 'A second account called “Virora Mahjong” appears',
+            detail:
+              'Xuzhou Yuesu E-commerce Co., Ltd., first tracked by Keepa on this day. It now leads the buy box on 19 of the 32 brand listings outside the storefront.',
+          },
+          {
+            when: '21 Apr 2026',
+            tag: 'Brand',
+            what: 'The trademark is registered',
+            detail: 'Owner Pacific Edge Innovations LLC — read second-hand, and worth checking on the USPTO’s own system.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: '$158,142 — June more than doubles May',
+            detail: 'Mats show up in the badge history for the first time. Most of the month sits on listings the Xuzhou account leads.',
+          },
+          {
+            when: '30 Jul 2026',
+            tag: 'Amazon',
+            what: 'Today’s best seller goes up',
+            detail: 'The Rose Pink set at $229, with the storefront seller holding its buy box outright.',
+          },
+          {
+            when: '31 Jul 2026',
+            tag: 'Amazon',
+            what: '$213,050 — July',
+            detail: 'An older Rose Pink listing carries 500+ at month end. It loses its badge on 18 August.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: '$302,245 — the biggest month so far',
+            detail:
+              'Eleven times December, and split almost evenly: $152,950 on the storefront seller’s listings and $149,295 on listings mostly held by Xuzhou Yuesu.',
+          },
+          {
+            when: '8 Sep 2026',
+            tag: 'Amazon',
+            what: 'Six new listings in a day',
+            detail: 'Among them four mats in new colourways. The relisting has not slowed.',
+          },
+          {
+            when: '15 Sep 2026',
+            tag: 'Web',
+            what: 'Christmas sets on pre-order at $299',
+            detail:
+              'Read on their own store this day; when pre-orders opened is not recorded. The refund policy already stretches returns for deliveries from 15 November to 25 December.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'Amazon’s badge history for this brand starts in December 2025, its first month with a sold badge, so the chart holds ten months and no Christmas. Spring sat between $65,000 and $81,000 a month; June doubled it, and August came to $302,245, eleven times December. The last point is the live badge on 15 September — a trailing thirty days, not a calendar month — and it is lower mostly because listings the Xuzhou account holds lost their badges while the storefront seller’s held theirs. Of each month a little under half is kept, at September’s cost rates, and on a set cost nobody has quoted.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup only: the account exists
+           with no ratings, and no Canadian listing was read (Keepa tokens ran
+           out). The note says so rather than letting 0% read as measured. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US. The storefront seller has a Canadian account, but nothing there was read.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with no ratings; listings not examined' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further, so a small Canadian trade would not show here.',
+      },
+      {
+        /* See virora-mahjong.breakdown.mjs. The rows sum to the 2026-09
+           revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'Four set listings at $229 and four mats at $45 or less. The best seller, a Rose Pink set listed at the end of July, is more than half of the month on its own, and mats outsell sets nearly two to one by units.',
+        items: VIRORA_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band — hence n+. Revenue is that band times the price in effect, so every row is a floor. The purple set has no buy box today and is counted at the $229 set price. Two rows are listings another seller account leads; they are in because the series counts the brand, not one seller. The other 45 listings carry no badge and count as zero.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The series counts every listing carrying the brand, whichever of three seller accounts holds it — the storefront seller’s listings alone read nothing at all for May and June. Ten months is not a trailing twelve, so this profile carries no valuation yet.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Two channels are visible — Amazon and their own store — and on Amazon the brand is sold by three seller accounts rather than one.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The channels agree on price. A set is $229 on Amazon and $229 on viroramahjong.com, and a mat is $45 on both. The store also sells what Amazon does not: bags, a rack-and-pusher set and, when it was read, Christmas sets on pre-order at $299. It has no About page, and Shopify publishes no sales.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon the storefront seller holds the buy box on its own best sellers, 100% of the time on the top set. The listings outside its storefront are a different picture: an account in Xuzhou leads the buy box on most of them. What follows is presence rather than share, and a method nobody looked for is listed as unchecked.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'A little under half of a $110 average sale is left — and the line that decides it, what a set costs to make, is the one nobody has quoted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two products carry the costs. A set sells for $229 and a mat for $45, and in September the brand sold 550 sets and 1,000 mats. The set cost comes from Alibaba search results for the same 4-layer, 160-tile acrylic set; the product pages returned a CAPTCHA, so no price tier was ever read. The mat cost comes from a search result in the same way. Every $10 on the set cost moves September’s profit by about $6,600.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what a set and a mat cost to make and land',
+        columns: ['Line', 'What was read', 'MOQ', 'Tier', 'Unit cost'],
+        rows: [
+          ['160-tile 4-layer acrylic set', 'An Alibaba listing, from its search snippet — the page is behind a CAPTCHA', '1 set', 'Search snippet', '$69–129'],
+          ['Custom acrylic mahjong sets', 'Alibaba search results', '50 sets', 'Search snippet', '$18–70'],
+          ['Set cost used below', 'Inside the volume range — not a quote', '—', 'Derived, weak', '$45 / set'],
+          ['3mm rubber mahjong mat', 'An Alibaba listing, from its search snippet — the page is behind a CAPTCHA', '1 mat', 'Derived, weak', '$8.18 / mat'],
+          ['Tariff', '7.5% Section 301 List 4A plus a 12.5% China tier, from a secondary summary; China origin assumed', '—', 'Derived', '20% of unit cost'],
+          ['Freight and inbound — a placeholder, not a quote', 'Ocean freight alone is about $0.30 a set on the FBX01 index', '—', 'ASSUMED', '$1.50 / unit'],
+          ['Mini sets and sound books', 'No basis at all; neither sold in September', '—', 'ASSUMED', '$30 / $4'],
+        ],
+        note:
+          'Search snippets price the category, not this brand’s supplier. The $45 sits inside the volume range and is our choice, and the freight line is ours too — the two things to replace with a real quote first.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 46% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           six numbers (COST_LINES). Change one, change both.
+           🚨 Whole percents on purpose: they are September's pnl.json rates
+           rounded (19.3, 3.86, 1.36, 9.51, 15, 5), and one-decimal rounding
+           would sum to 54.1% and move the headline's $78.5k to $78.3k. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 110.1 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -19,
+            emphasis: true,
+            detail:
+              '$45 a set and $8.18 a mat, on September’s 550 sets and 1,000 mats: 19.3% of revenue. Both from Alibaba search snippets — derived, and weak.',
+          },
+          {
+            label: 'Tariff',
+            pct: -4,
+            detail: '20% of unit cost, from a secondary summary of the Section 301 rates, assuming China origin. 3.9% of revenue.',
+          },
+          {
+            label: 'Freight and inbound',
+            pct: -1,
+            detail: 'ASSUMED: $1.50 a unit. Only about $0.30 of it derives from the ocean-freight index; the rest is a placeholder. 1.4% of revenue.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -10,
+            detail:
+              'Measured per listing: $8.97 on a set and $11.29 on a mat, which is rolled to 876 mm and ships oversize. 9.5% of revenue.',
+          },
+          {
+            label: 'Advertising',
+            pct: -5,
+            detail:
+              'ASSUMED: a 5% placeholder. No sponsored placement of theirs was seen on four searches, which argues for less — but one read cannot rule out other ad types.',
+          },
+        ],
+        note:
+          'The rates are September’s mix, rounded to whole percents, and every month on the chart carries them — months that sold more sets, mini sets or books would come out differently at their own mix. Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The shape is the reverse of a cheap product’s. On a $229 set Amazon’s fulfilment fee is under 4% of the price and the factory is the cost; on a $45 mat the fee is a quarter of the price. So the mix matters: a month heavy on mats keeps less of each dollar than a month heavy on sets.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read, with advertising and freight as placeholders beside it — the first three numbers to replace.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'Eleven times in eight months, with almost no audience off Amazon — whatever grew this brand, the public record did not catch it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The climb came in two steps. December to May was a small business finding its level; June doubled it and August added half again. Both steps sit on a handful of badged listings, and in June and July most of the volume was on listings the Xuzhou account holds — so the growth belongs to the brand, and whose account booked it moved from one month to the next.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Relisting is how the catalogue grows, and it blurs the record. The Rose Pink set exists as at least five ASINs. One carried a 400–500 badge in late July and lost it on 18 August; another picked up 400–500 in September; six new ASINs went up on 8 September. A month-end read misses whatever moved mid-month, so each month here is more of a floor than a badge series usually is.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Sets are $229 now. Set listings were read at $169–209 before July, but those were different ASINs and several of the older prices are fallbacks, so the record shows newer listings at $229 more clearly than it shows the same set being repriced.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The first Christmas is ahead of the series, and they are preparing for it: Christmas sets on pre-order on their own store, and a refund policy that already extends returns across the holiday.',
+      },
+      {
+        type: 'callout',
+        text:
+          'What the record cannot say is where the buyers come from. No bought placement was seen on Amazon, and the social accounts are close to empty — which leaves organic search, off-Amazon spend nobody read, or something else entirely.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One read on one day, and the finding is an absence — including on their own brand name, where competitors bought every sponsored slot.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On “virora mahjong” all twelve sponsored results were other American mahjong sets and a mat, and nothing of theirs defended the term — while Virora’s own listings held organic #1 and 17 of the 60 results. On three generic searches they ranked organically between #9 and #41 and bought nothing. A logged-out read cannot see Sponsored Brands or Display elsewhere on the page, dayparting, or TikTok and influencer spend, and it says nothing about earlier months.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: '≈ 5% of revenue — assumed',
+            counted: '0 of 48 sponsored slots on four searches — read 15 Sep 2026',
+            flag: true,
+            note:
+              'The figure is a placeholder, and the same 5% the margin takes off. The count is the measured part, and it argues for less than 5%, not more. Nobody publishes the bill.',
+          },
+          {
+            label: 'Meta, TikTok and Google',
+            value: 'Not checked',
+            note: 'No ad library or paid-search history was read for this profile. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Four Amazon searches, 15 September 2026',
+        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
+        rows: [
+          ['american mahjong set', '12', '0', '#31'],
+          ['mahjong mat', '12', '0', '#28, #41'],
+          ['mahjong tiles', '12', '0', '#9, #24'],
+          ['virora mahjong', '12', '0 — all 12 are competitors', '#1, and 16 more of 60'],
+        ],
+        note:
+          'Headless Chrome, logged out, US, one read per term, matched against all 53 brand listings. Amazon localises and rotates its results, so this is a reading on a day, not a rank that holds.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'A Shopify store and three social accounts their site links to — one with nine subscribers, two whose counts could not be read.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon there is little to measure. The YouTube channel opened in February 2026 and holds four videos of their own sets. Instagram and TikTok showed no follower count to a logged-out reader, so their size is unknown rather than small. Visits to the store were not measured, and there is no keyword data for it.',
+      },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Shopify products', value: '30', note: 'Oldest record 12 Feb 2026' },
+          { label: 'YouTube', value: '9 subscribers', note: '4 videos, joined 11 Feb 2026' },
+          { label: 'Instagram and TikTok', value: 'Unread', note: 'No count shown logged out' },
+          { label: 'Store visits', value: 'Not measured' },
+        ],
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — viroramahjong.com',
+            href: 'https://www.viroramahjong.com/',
+            value: '30 products',
+            flag: true,
+            note:
+              'Shopify, with sets at $229 as on Amazon, mats at $45, bags at $59 and Christmas sets on pre-order at $299. No About page. Its footer links the three accounts below and a Facebook profile.',
+          },
+          {
+            label: 'Instagram — @viroramahjongofficial',
+            href: 'https://www.instagram.com/viroramahjongofficial/',
+            value: 'Count unread',
+            note: 'A post seen in search results calls it “the official home of Virora Mahjong”. The follower count did not show logged out.',
+          },
+          {
+            label: 'TikTok — @viroramahjong',
+            href: 'https://www.tiktok.com/@viroramahjong',
+            value: 'Count unread',
+            note: 'Linked from their store. The follower count did not show logged out, and whether it runs a TikTok Shop was not checked.',
+          },
+          {
+            label: 'YouTube — @ViroraMahjong',
+            href: 'https://www.youtube.com/@ViroraMahjong/about',
+            value: '9 subscribers · 4 videos',
+            note: 'Joined 11 February 2026. Reviews of their own tile sets.',
+          },
+        ],
+      },
+      {
+        /* Best-seller rank off the listing via Keepa, not keyword positions —
+           those are under Advertising, where the read is dated to one search. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Toys & Games', 'Subcategory', 'Rating'],
+        rows: [
+          ['Rose Pink 160-tile set', '#21,842', '#178 · Tile Games', '4.6★ over 80 reviews'],
+          ['Pink and green rubber mat', '#15,463', '#24 · Game Mats & Boards', '4.9★ over 56 reviews'],
+          ['Orange rubber mat', '#16,721', '#29 · Game Mats & Boards', '4.7★ over 71 reviews'],
+          ['Green 160-tile set', '#31,653', '#256 · Tile Games', '4.8★ over 41 reviews'],
+        ],
+        note:
+          'Read through Keepa on 15 September 2026. Rank moves daily. Variations share a parent listing, so a colour can carry its siblings’ rank and reviews.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Pacific Edge Innovations LLC', note: 'A Washington LLC' },
+          { label: 'Seller', value: 'Virora Mahjong Official', note: 'Merchant A3UF1IAE6RV84W' },
+          { label: 'Registered address', value: 'Spokane, WA, US', note: '100 N Howard St #7045, 99201 — a suite number' },
+          { label: 'LLC formed', value: '4 Jun 2024', note: 'Read second-hand, from a search index' },
+          { label: 'Trademark', value: 'VIRORA MAHJONG', note: 'Registered 21 Apr 2026 — read second-hand' },
+          { label: 'Seller feedback', value: '95%', note: 'Over 22 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '20 Oct 2025', note: 'First mahjong listing 11 Nov 2025' },
+          { label: 'Also selling the brand', value: 'Two accounts in Xuzhou, China', note: 'Xuzhou Yuesu E-commerce · Pacikwest USA' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The storefront seller is a Washington LLC with a Spokane suite address and a young account: 22 seller ratings. Its state filing and its trademark could not be opened — both pages blocked the fetch — so the formation date, a principal address in Lynnwood, Washington, and the trademark’s registration were read from a search engine’s copy of those pages. They are second-hand until someone reads the originals.',
+      },
+      {
+        /* 🚨 The relationship between the three accounts is an INFERENCE and
+           must stay worded as one. Shared brand name, shared listings and a
+           shared county are circumstantial; nothing read ties them by
+           ownership. Do not tighten this into a finding. */
+        type: 'prose',
+        text:
+          'Two more Amazon accounts sell the brand’s listings, and both are e-commerce companies in Feng County, Xuzhou, Jiangsu, at the same postcode. Xuzhou Yuesu E-commerce Co., Ltd. trades as “Virora Mahjong” itself and leads the buy box on 19 of the 32 brand listings outside the storefront. Pacikwest USA, whose registered business name is run-together pinyin for Xuzhou Maixi E-commerce, turns up in earlier buy-box history. The shared name, shared listings and shared county read like one group selling through a US company — but that is an inference, not an established fact, and this profile’s decision to count all three accounts’ revenue as one brand’s rests on the same inference.',
+      },
+      {
+        type: 'prose',
+        text:
+          'These details are resolved from the seller record behind the brand’s Amazon storefront and from the buy-box history of the brand’s other listings.',
       },
     ],
   },
