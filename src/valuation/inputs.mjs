@@ -120,7 +120,8 @@ export function ttmWindow(series) {
  * So the clock is the PAGE'S OWN FREEZE, in this order:
  *
  *   1. `valuation.asOf` — an explicit override, rarely needed.
- *   2. `headline.snapshotMonth` — THE frozen date. A case study is one
+ *   2. `snapshotMonth` — THE frozen date, off the Business row (the page
+ *      folds it onto the profile; it is never authored). A case study is one
  *      business at one moment, and the valuation is part of that moment: if
  *      the headline freezes at September while the multiple is scored on the
  *      series end, the page carries two different "as of" dates and explains
@@ -133,10 +134,8 @@ export function ttmWindow(series) {
  * reason a live figure should ever move. (2) does not move, because a case
  * study does not.
  *
- * 🚨 When the CaseStudy model ships, `snapshotMonth` comes off that row and
- * the scored valuation is STAMPED INTO IT at freeze rather than recomputed
- * here — see the model's `valuation` field for why re-scoring at render time
- * cannot be made safe.
+ * 🚨 The row also carries the valuation STAMPED at freeze, and
+ * check-profile.mjs fails when this score disagrees with it.
  */
 
 /**
@@ -149,11 +148,10 @@ export function ttmWindow(series) {
  *
  * Both halves are load-bearing. Dating it to the start costs the business a
  * month of age it has actually traded, which at a boundary is worth up to 0.5
- * of the multiple. And the two sources spell the same month differently — the
- * authored draft in businesses/index.mjs writes "2026-09" while CaseStudy.
- * snapshotMonth arrives as a midnight-on-the-first timestamp — so parsing
- * whatever arrives would make the multiple depend on WHERE the freeze was read
- * from, which is the one thing it must never depend on.
+ * of the multiple. And the same month is spelled two ways — "2026-09" in the
+ * research and a midnight-on-the-first timestamp from the API — so parsing
+ * whatever arrives would make the multiple depend on how the freeze was
+ * spelled, which is the one thing it must never depend on.
  */
 function monthEnd(value) {
   const m = /^(\d{4})-(\d{2})/.exec(String(value));
@@ -164,7 +162,7 @@ function monthEnd(value) {
 export function valuationAsOf(series, profile) {
   /* An exact date, used exactly — unlike a snapshot MONTH, this names a day. */
   if (profile?.valuation?.asOf) return new Date(profile.valuation.asOf);
-  if (profile?.headline?.snapshotMonth) return monthEnd(profile.headline.snapshotMonth);
+  if (profile?.snapshotMonth) return monthEnd(profile.snapshotMonth);
   const rows = rowsOfType(series, "profit");
   if (rows.length === 0) return null;
   return new Date(rows[rows.length - 1].periodEnd);
@@ -211,7 +209,7 @@ export function amazonConcentrationPct(revenueByMarketplace) {
  * rather than inventing a breakdown for a number somebody typed.
  */
 /* 🚨 Takes the whole PROFILE, not profile.valuation. The scoring date lives on
-   `headline.snapshotMonth` and the inputs live on `valuation`, so a function
+   `snapshotMonth` (from the row) and the inputs on `valuation`, so a function
    handed only the second can never see the page's own freeze — and every
    caller would have to thread the date in separately, which is three chances
    to pass a different one. One argument, one answer. */

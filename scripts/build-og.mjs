@@ -23,9 +23,9 @@
  * the upload's new URL is the cache-bust. A profile with no ogImage keeps the
  * site-wide preview rather than a broken image.
  *
- * Title, subtitle and image come from the authored profile
- * (src/businesses/index.mjs), exactly as the page renders them. Name, logo and
- * snapshotMonth come from the live API, exactly as the page renders those.
+ * Title, subtitle, snapshotMonth, name and logo come from the Business row via
+ * the live API, exactly as the page renders them — never from the authored
+ * profile, which holds no headline copy. Only the image comes from the profile.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -150,12 +150,16 @@ for (const slug of slugs) {
     continue;
   }
   const { business: b } = await res.json();
+  if (!b.title || !b.subtitle || !b.snapshotMonth) {
+    console.warn(`build-og: ${slug}: the Business row has no title, subtitle or snapshotMonth, skipped`);
+    continue;
+  }
 
   const c = {
     name: b.name,
-    title: headline.title,
-    subtitle: headline.subtitle,
-    month: monthLabel(b.snapshotMonth ?? headline.snapshotMonth),
+    title: b.title,
+    subtitle: b.subtitle,
+    month: monthLabel(b.snapshotMonth),
     logo: b.logoUrl ? await remoteUri(b.logoUrl) : null,
     image: headline.image ? await remoteUri(headline.image.src) : null,
     font,

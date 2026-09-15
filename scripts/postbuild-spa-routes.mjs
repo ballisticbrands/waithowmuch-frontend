@@ -84,9 +84,9 @@ const readingStamp = (month) => (month ? `Read ${monthLabel(month)}. ${READING_N
 
 /**
  * `share` is what a link preview shows — Slack, iMessage, WhatsApp, X,
- * LinkedIn — when it differs from the tab title. A business profile shares its
- * headline title and subtitle, and its preview card when one exists
- * (scripts/build-og.mjs); every other page shares its title and description.
+ * LinkedIn — when it differs from the tab title. A business profile shares the
+ * headline title and subtitle from its Business row, and its leading image;
+ * every other page shares its title and description.
  *
  * 🚨 These have to be in the static HTML: no link-preview crawler runs
  * JavaScript, so a tag React sets is never seen.
@@ -362,17 +362,11 @@ const METHOD_PHRASE = {
 for (const b of all) {
   let detail = null;
   let metrics = null;
-  let caseStudy = null;
   try {
     detail = (await get(`/v1/businesses/${encodeURIComponent(b.slug)}`)).business;
     // The whole MetricsResponse, not just the rows: the client needs `types`
     // to know which series are FLOW and safe to chart.
     metrics = await get(`/v1/businesses/${encodeURIComponent(b.slug)}/metrics`);
-    /* The published freeze, newest first. Fetched HERE rather than left to the
-       client because the headline it carries is the first thing on the page —
-       a crawler that has to run JavaScript to see it does not see it. */
-    caseStudy =
-      (await get(`/v1/businesses/${encodeURIComponent(b.slug)}/case-studies`)).caseStudies[0] ?? null;
   } catch { /* the page still works, it just fetches on mount */ }
 
   const rev = money(b.latestMonthlyRevenue, b.currency);
@@ -386,13 +380,15 @@ for (const b of all) {
   // src/businesses/*.mjs is JSX-free: prose that lives only in a component is
   // invisible here, and the page would ship thin while looking perfect.
   const profile = profileFor(b.slug);
-  /* Same precedence as pages/Business.tsx: the PUBLISHED row wins over the
-     authored draft in the .mjs. Two renderers reading the same order is the
-     only way the crawler HTML and the app can agree about which month the
-     headline is frozen at. */
-  const headline = caseStudy
-    ? { title: caseStudy.title, subtitle: caseStudy.subtitle, snapshotMonth: caseStudy.snapshotMonth }
-    : profile?.headline ?? null;
+  /* 🚨 Same rule as pages/Business.tsx: the headline comes off the Business
+     row and nothing else. A row missing its title, subtitle or month has no
+     headline here — never an authored stand-in — so the crawler HTML and the
+     app cannot disagree about what the page says or which month it is frozen
+     at. The month is folded onto the profile for scoreProfile, as the app does. */
+  const headline = detail?.title && detail?.subtitle && detail?.snapshotMonth
+    ? { title: detail.title, subtitle: detail.subtitle, snapshotMonth: detail.snapshotMonth }
+    : null;
+  const scoredProfile = profile ? { ...profile, snapshotMonth: detail?.snapshotMonth ?? null } : profile;
   const flatten = (blocks) =>
     blocks.map((blk) => {
           switch (blk.type) {
@@ -436,13 +432,11 @@ for (const b of all) {
                  page and the app printed different multiples for the same
                  business on either side of an age boundary. One function now
                  answers for both. */
-              /* The resolved headline, not the authored one: scoreProfile dates
-                 the multiple from `headline.snapshotMonth`, so handing it the
-                 .mjs draft while the page prints the published row's month
-                 would put two different freeze dates on one page. */
-              const scored = scoreProfile(profile ? { ...profile, headline } : profile, metrics);
+              /* The row's month, not anything authored: scoreProfile dates the
+                 multiple from `snapshotMonth`, and the page prints the row's. */
+              const scored = scoreProfile(scoredProfile, metrics);
               if (!v || !scored || scored.multiple === null) return '';
-              const valAsOf = valuationAsOf(metrics, profile ? { ...profile, headline } : profile);
+              const valAsOf = valuationAsOf(metrics, scoredProfile);
               return `<p>Indicative valuation: <strong>${money(scored.value, b.currency)}</strong> —
                 ${scored.multiple}× a trailing-twelve net profit of ${money(scored.netProfitTtm, b.currency)}${
                 valAsOf ? `, scored as of ${esc(monthLabel(valAsOf.toISOString()))}` : ''}.
@@ -553,7 +547,7 @@ for (const b of all) {
        <a href="/how-we-research/">How we research</a>.</p>
     ${headline ? `<h2>${esc(headline.title)}</h2>
     <p>${esc(headline.subtitle)}</p>
-    <p>${esc(readingStamp(detail?.snapshotMonth ?? headline.snapshotMonth))}</p>` : ''}
+    <p>${esc(readingStamp(headline.snapshotMonth))}</p>` : ''}
     <p>${esc(b.name)} is estimated to make ${rev ?? 'an undisclosed amount'} per month in
        revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.${
        cost ? ` It is estimated to have cost around ${cost} to start.` : ''}
@@ -573,7 +567,7 @@ for (const b of all) {
     description: `${b.name}: ${rev ?? 'revenue'} per month${margin ? `, ${margin} margin` : ''}. ${method}, with sources.`,
     body,
     bootstrap: detail
-      ? { route: 'business', slug: b.slug, business: detail, metrics, caseStudy }
+      ? { route: 'business', slug: b.slug, business: detail, metrics }
       : undefined,
     share,
   });

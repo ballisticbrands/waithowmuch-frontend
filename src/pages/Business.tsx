@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import {
-  getBusiness, getMetrics, getCaseStudies, linkFollowers, toChartPoints,
-  type BusinessDetail, type CaseStudy, type MetricsResponse,
+  getBusiness, getMetrics, linkFollowers, toChartPoints,
+  type BusinessDetail, type MetricsResponse,
 } from "@/lib/api";
 import { profileFor } from "@/businesses/index.mjs";
 import { localBusiness } from "@/businesses/local.mjs";
@@ -46,10 +46,6 @@ export default function Business() {
     local?.metrics ?? boot?.metrics ?? null,
   );
   const [missing, setMissing] = useState(false);
-  /* The published freeze for this business, if it has one. Seeded from the
-     bootstrap so the prerendered headline survives hydration instead of
-     blinking out while a fetch lands. */
-  const [caseStudy, setCaseStudy] = useState<CaseStudy | null>(boot?.caseStudy ?? null);
 
   useEffect(() => {
     const draft = localBusiness(slug);
@@ -60,20 +56,11 @@ export default function Business() {
       // business stays on screen under the new URL.
       setB(draft.business);
       setSeries(draft.metrics);
-      // A local draft has no row, so it can have no case study.
-      setCaseStudy(null);
       setMissing(false);
       return;
     }
     if (businessBootstrap(slug)) return;
     let cancelled = false;
-    /* Cleared before the fetch, not after it: arriving from another profile
-       leaves this component mounted, and without this the previous business's
-       headline sits under the new business's name until the request lands. */
-    setCaseStudy(null);
-    getCaseStudies(slug)
-      .then((r) => !cancelled && setCaseStudy(r.caseStudies[0] ?? null))
-      .catch(() => {});
     getBusiness(slug)
       .then((r) => !cancelled && setB(r.business))
       .catch(() => !cancelled && setMissing(true));
@@ -146,27 +133,18 @@ export default function Business() {
   // back to whatever the DB alone can say.
   const authored = profileFor(slug);
 
-  /* The freeze, resolved ONCE and folded into the profile.
+  /* 🚨 The headline — title, subtitle and the month it is frozen at — comes
+   * from the Business row and ONLY from it. The .mjs holds no copy to stand in:
+   * a row missing any of the three renders no headline.
    *
-   * 🚨 Everything downstream reads `headline` — the Headline component renders
-   * it and valuation/inputs.mjs scores the multiple as of its snapshotMonth —
-   * so resolving it here is what keeps the date on the page and the date the
-   * valuation was scored at from ever being two different answers.
-   *
-   * The published CaseStudy row WINS over the authored copy in the .mjs. The
-   * .mjs entry is the draft path, exactly as businesses/local.mjs is for a
-   * business that has no row yet: write it there, review it, seed it, and the
-   * row takes over without the page changing. */
-  const profile = authored && caseStudy
-    ? {
-        ...authored,
-        headline: {
-          title: caseStudy.title,
-          subtitle: caseStudy.subtitle,
-          snapshotMonth: caseStudy.snapshotMonth,
-        },
-      }
-    : authored;
+   * The month is folded onto the profile because valuation/inputs.mjs scores
+   * the multiple as of it. Reading it off the same row the stamps read is what
+   * keeps the date on the page and the date the valuation was scored at from
+   * ever being two different answers. */
+  const profile = authored ? { ...authored, snapshotMonth: b.snapshotMonth ?? null } : authored;
+  const headline = b.title && b.subtitle && b.snapshotMonth
+    ? { title: b.title, subtitle: b.subtitle, snapshotMonth: b.snapshotMonth }
+    : null;
   // Only FLOW types are charted; see toChartPoints.
   const points = toChartPoints(series);
 
@@ -251,7 +229,7 @@ export default function Business() {
                 quotes one frozen month, and a reader landing on /margin/ from a
                 search result would get that figure with none of the context
                 that dates it. */}
-            {showOverview && profile?.headline && <Headline headline={profile.headline} snapshotMonth={b.snapshotMonth ?? null} />}
+            {showOverview && headline && <Headline {...headline} />}
           </div>
           {heroImage && (
             <figure data-hero-image="">

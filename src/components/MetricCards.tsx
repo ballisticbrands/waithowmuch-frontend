@@ -387,7 +387,7 @@ export function ValuationCards({
   business: BusinessDetail;
   series: MetricsResponse | null;
   /* The whole profile, not profile.valuation — scoreProfile reads the frozen
-     scoring date off `headline.snapshotMonth`. */
+     scoring date off `snapshotMonth`, which the page sets from the row. */
   profile: Profile;
 }) {
   const valuation = profile.valuation;

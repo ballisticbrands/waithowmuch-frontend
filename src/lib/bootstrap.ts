@@ -1,4 +1,4 @@
-import type { BusinessCard, BusinessDetail, CaseStudy, FacetCategory, MetricsResponse } from "./api.js";
+import type { BusinessCard, BusinessDetail, FacetCategory, MetricsResponse } from "./api.js";
 
 /**
  * Data the prerender inlined into the page, so the first render does not wait
@@ -14,11 +14,6 @@ type Bootstrap =
       slug: string;
       business: BusinessDetail;
       metrics: MetricsResponse | null;
-      /* 🚨 Inlined alongside the business, not fetched on mount. The prerender
-         writes the headline into the static HTML, so a first render that had
-         to wait for /case-studies would hydrate without it — the headline
-         would vanish and then reappear, which is worse than not having one. */
-      caseStudy?: CaseStudy | null;
     };
 
 declare global {

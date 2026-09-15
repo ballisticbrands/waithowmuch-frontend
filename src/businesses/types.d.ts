@@ -227,28 +227,15 @@ export type Profile = {
   /** Rendered under the name, above the figures. */
   intro?: string;
   /**
-   * CASE-STUDY copy: the title and subtitle a reader is sold the page on.
-   * Authored by waithowmuch-research (skills/write-profile-headline →
-   * research/<slug>/headline.json) and copied here by hand after review.
+   * What the profile adds to the headline — the image, and nothing else.
    *
-   * 🚨 The title HARDCODES a profit figure, because a headline cannot be
-   * interpolated and stay readable — which is the one place this file's
-   * figures-never-in-prose rule cannot apply. That makes `snapshotMonth`
-   * load-bearing rather than decorative: it is the only thing standing
-   * between a frozen sentence and the live figure rendered directly beneath
-   * it. `headline`/`subhead` columns on the Business row were built and
-   * reverted on 2026-09-11 for exactly this reason; when the CaseStudy model
-   * ships, this moves there and stops being authored here.
+   * 🚨 The headline COPY is not authored here. Its title, subtitle and
+   * snapshotMonth are columns on the Business row (seeded from
+   * waithowmuch-research research/<slug>/headline.json after review), and the
+   * page, the prerender and the share preview read them from the row alone.
+   * There is no fallback: a row without a title renders no headline.
    */
   headline?: {
-    /** 6–12 words, title case, no colon. */
-    title: string;
-    /** 25–45 words, and the point lands in the first 25 — the card clamps. */
-    subtitle: string;
-    /** The month every figure in `title` and `subtitle` is true of, "2026-09".
-     *  NEVER "the latest month": that means something different every time the
-     *  page is read, which is the whole failure this field prevents. */
-    snapshotMonth: string;
     /** The brand's leading image, beside the title. By convention its
      *  best-selling product, so the first thing a reader sees is the object the
      *  figures are about. A bucket URL, like the image block. Optional:
@@ -259,6 +246,9 @@ export type Profile = {
      *  site-wide preview. */
     image?: { src: string; alt: string };
   };
+  /** Business.snapshotMonth, set by the page from the row — NEVER authored.
+   *  The frozen date the valuation is scored at (valuation/inputs.mjs RULE 4). */
+  snapshotMonth?: string | null;
   /**
    * Turns on the valuation card. The VALUE is not stored: it is the multiple
    * applied to trailing-twelve net profit from the metric series, so it

@@ -56,7 +56,8 @@ export function ValuationBoard({
 }: {
   series: MetricsResponse | null;
   /* The whole profile, not profile.valuation: the scoring date lives on
-     `headline.snapshotMonth` and scoreProfile resolves it itself. */
+     `snapshotMonth` (set by the page from the row) and scoreProfile resolves
+     it itself. */
   profile: Profile;
   currency: string;
   /** What the figure excludes. Rendered under the columns. */

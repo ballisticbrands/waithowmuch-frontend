@@ -91,32 +91,12 @@ export const PROFILES = {
   },
 
   'spite-house-games': {
-    /* Case-study copy, verbatim from waithowmuch-research
-       research/spitehouse/headline.json (writtenAt 2026-09-11). Every figure
-       in it is tiered and traced there; the $0.50 freight plug is excluded
-       because nobody quoted it.
-
-       🚨 $90K is FROZEN at 2026-09 ($89,988, which money() renders $90k).
-       It is not "the latest month" and must not be re-typed to follow one.
-       When October lands, this sentence and the card under it will disagree
-       — and the snapshot line is what keeps that honest rather than wrong.
-
-       🚨 "NON-holiday high" — do not trim the qualifier. August 2026 was
-       $96,958; December 2025 was $349,150, so an unqualified "new high" is
-       simply false. The skill names this exact trap, and the sentence was
-       rewritten once already to drop the collapse framing WITHOUT dropping
-       this word. A qualifier that makes a sentence weaker usually makes it
-       true.
-
-       🚨 $12.99, not the $6.97 in headline.json. $6.97 is the discounted buy
-       box the research happened to read and every revenue row is priced at;
-       the deck sells for $12.99 most of the time, and a title naming a sale
-       price describes the week it was read rather than the product. */
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-spite-house-headline.ts, from
+       waithowmuch-research research/spitehouse/headline.json, where every
+       figure in them is tiered and traced — and the page reads them from the
+       row alone. This entry carries only the image beside them. */
     headline: {
-      title: 'How A $12.99 Deck Of Cards Makes $90K/Month',
-      subtitle:
-        'They built the audience first: the TikTok account opened seven weeks before the first deck was listed, and it now carries 45,400 followers. That audience took the catalogue to a new non-holiday high in August.',
-      snapshotMonth: '2026-09',
       /* The best seller: the original deck is 62% of the revenue, so it is
          the object this whole page is about. The overview's image further
          down shows the second-best seller instead of repeating it. */
@@ -124,9 +104,6 @@ export const PROFILES = {
         src: `${SPITE_HOUSE_BUCKET}ee184f37f7cb5332977b8e15bdbc157d0d0d87a194bbaddb3fcecf4dcf579293.jpg`,
         alt: 'The “Go F*** Yourself!” card-game box — the best-selling deck, a blue box with a grinning cartoon goldfish',
       },
-      /* Rendered by scripts/build-og.mjs, then uploaded. Re-render and re-upload
-         whenever the title, subtitle or image above changes. */
-      ogImage: `${SPITE_HOUSE_BUCKET}f0b8c68ef6e8b7616e2551883eda9ce5c5e71c0cbb80c7e08dd208c9745f99a6.png`,
     },
     /* 🚨 The multiple is the ONE authored number on this page, and it is a
        placeholder rather than a finding. Nothing public prices this business;
@@ -905,36 +882,18 @@ export const PROFILES = {
   },
 
   'white-mountain-puzzles': {
-    /* Case-study copy, verbatim from waithowmuch-research
-       research/white-mountain-puzzles/headline.json (writtenAt 2026-09-14).
-       🚨 A DRAFT until a human has reviewed it. The backend headline seed
-       carries the same two strings and they must stay character-identical.
-
-       🚨 PROFIT, by reviewer decision (2026-09-15). $126.2K is how money()
-       renders the 2026-09 profit, $126,189.20 — 33% of revenue, after a cost of
-       goods that is still a placeholder and says so on the Margin breakdown.
-       Replace that line and this figure moves: re-title then, from the new
-       profit row, not from memory. headline.json's profitBasis has the detail.
-
-       🚨 "$6.42 of every $19.46" is what is left after ALL four cost lines;
-       "46%" is only Amazon's two. The sentence keeps them apart on purpose.
-
-       🚨 $19.99 is the price these puzzles usually carry, on Amazon and on
-       their own store alike — not a discount read on one day. */
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — the backend's White Mountain headline seed, from
+       waithowmuch-research research/white-mountain-puzzles/headline.json —
+       and the page reads them from the row alone. This entry carries only the
+       image beside them. */
     headline: {
-      title: 'How $19.99 Puzzles From New Hampshire Clear $126.2K/Month In Profit',
-      subtitle:
-        'No single puzzle carries them — the ten best sellers are 18% of Amazon revenue — and they buy no ads on generic searches. About $6.42 of every $19.46 sale is left, even with Amazon taking 46% of it.',
-      snapshotMonth: '2026-09',
       /* The best seller, but only by a hair: it is 2.6% of the month, which is
          the whole point of this profile. */
       image: {
         src: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/9a9f54e3fe2b3a497d2aa1b81f09e912f094a3c44f4cbf3132dfc67ca52cfc6c.jpg',
         alt: 'The “Did You Know” 1,000-piece jigsaw puzzle box by Steve Cameron — a collage of retro trivia signs, marked Made in USA. White Mountain’s best-selling Amazon listing',
       },
-      /* Rendered by scripts/build-og.mjs, then uploaded. Re-render and re-upload
-         whenever the title, subtitle or image above changes. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/9d59db20812cebb26f5ded6896fc27ed815f88a2d6525b641678a39452f3de5d.png',
     },
 
     valuation: {
