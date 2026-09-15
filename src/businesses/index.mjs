@@ -48,6 +48,7 @@ const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PH
 
 /* 199 generated rows — too many to author inline. See the module's header. */
 import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
+import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -1393,6 +1394,474 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers in the model, taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All four are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  'wet-noses': {
+    /* 🚨 No headline copy here. Title, subtitle and snapshot month live on the
+       Business row — backend prisma/seed-wet-noses-headline.ts, from
+       waithowmuch-research research/wet-noses/headline.json (reviewed
+       2026-09-15). This entry carries only the image beside them. */
+    headline: {
+      /* The best seller by revenue, and only just: the 5 lb box and its
+         two-bag sibling are within a dollar of each other. */
+      image: {
+        src: wetNosesPhoto('B006M3Y5WS'),
+        alt: 'A 5 lb box of Wet Noses Organic Crunchy Peanut Butter & Banana dog treats, with a beagle behind it — the best-selling Amazon listing',
+      },
+    },
+
+    /* 🚨 NO `valuation`, and no valuation section. The series is eleven months
+       — it starts at November 2025, when Wet Noses' own account took the buy
+       box (see the Revenue section and the backend seed) — and the model will
+       not price a trailing twelve it does not have. The reseller months before
+       it are not this business's revenue, so borrowing them to reach twelve
+       would value the wrong thing. Add it back after 2026-10 is in the series. */
+
+    /* 🚨 This profile is the AMAZON CHANNEL of a manufacturer. Every figure is
+       Amazon US; the distributor, Petco, co-manufacturing and wet-noses.com are
+       real and unsized. Prose that reads the Amazon number as the company's is
+       wrong, however natural it sounds. */
+    facts: [
+      { label: 'SKUs', value: '31', note: '31 priced, 12 carrying a sold badge', info: 'skus' },
+      {
+        label: 'Category',
+        value: 'Pet Supplies › Dogs › Treats › Cookies, Biscuits & Snacks',
+        note: 'Best seller #6,294 in Pet Supplies, #501 in Cookies, Biscuits & Snacks',
+        info: 'category',
+        wide: true,
+      },
+      /* The best seller's own listing, like Spite House's pair — Amazon counts
+         reviews per flavour across this parent, so a summed top-20 total would
+         count the same reviews two or three times. */
+      { label: 'Product reviews', value: '2,161', note: 'On the best-selling listing', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'Best-selling listing', info: 'rating' },
+      /* 29 ratings is a young ACCOUNT, not a young business — Keepa first saw
+         it on 8 November 2025. */
+      { label: 'Seller feedback', value: '93%', note: 'Over 29 ratings', info: 'sellerFeedback' },
+      /* 🚨 No Sourcing cell. The attribute is one phrase from a fixed list
+         (/business-attributes/) and the list has no "own manufacturing" —
+         and they are not private label: they bake their own, by their own
+         account and the deal press, and their private-label work is for other
+         brands. White Mountain took "Private label" as the nearest answer
+         because its valuation needed one; with no valuation here, a gap beats
+         a wrong phrase. The selling matrix records `manufacturer: yes`. */
+      /* Concentrated, not flagship: twelve badged listings, the top one 20% of
+         the month — but every one is the same Organic Crunchy treat in three
+         pack sizes. A plateau, not a cliff. Placed by us; not scored, since
+         there is no valuation. */
+      { label: 'Catalogue', value: 'Concentrated bets, few SKUs', note: 'One treat line in three pack sizes', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      // Differentiation left out: not placed, and nothing here scores it.
+      { label: 'Channels', value: 'Amazon US, own store, a national pet distributor, Petco, co-manufacturing', info: 'channels', wide: true },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it, and every figure on this profile. Their own account has held the buy box since November 2025; before that, resellers did.',
+      },
+      'amazon-international': {
+        status: 'no',
+        note: 'The seller id was looked up on Amazon UK, Germany and Canada and does not exist on any of them.',
+      },
+      'own-store': {
+        status: 'yes',
+        note:
+          'wet-noses.com, on Shopify: 36 products at a median of $12.99, including 20 lb bulk buckets at $119.99. The 14oz bag is $12.99 there and on Amazon. Shopify publishes no sales.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        flag: true,
+        note:
+          'Probably the larger business. Pet Food Experts has been their exclusive US distributor to independent pet retail since 1 April 2024, Purrks cat treats sell in Petco by the company’s account, and their wholesale page sells 5 lb boxes and 20 lb buckets to retailers at prices given on request. The distributor’s “12,000+ locations” are the stores it serves, not stores stocking Wet Noses. Nothing public sizes any of it.',
+      },
+      // tiktok-shop, other-marketplace and licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'From the seller record. $4.76 to $8.04 a unit by pack size, and the largest line in the Amazon cost stack.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the 31 listings between FBA and FBM.',
+      },
+      /* Unchecked rather than no: Amazon itself won 11% of the buy box on one
+         Soft & Chewy listing over 90 days, which is an Amazon offer but does
+         not say whether it is a vendor relationship. */
+      'vendor-1p': {
+        status: 'unchecked',
+        note: 'Amazon holds an offer on one storefront listing and on none of the 150 outside it. Whether that is a Vendor Central relationship is not visible from outside.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      manufacturer: {
+        status: 'yes',
+        flag: true,
+        note:
+          '“We run our own kitchens and work our own ovens”, in their words, and the 2020 and 2023 deal press describes an 80,000 sq ft SQF Level III certified plant in Monroe, Washington. Not checked independently. The same plant makes private-label and co-manufactured treats for other brands.',
+      },
+      'private-label': {
+        status: 'no',
+        note: 'They make their own brand rather than buying it in. Their private-label work runs the other way, for other brands.',
+      },
+      'wholesale-in': { status: 'no' },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+      pod: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/WetNoses, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'Wet Noses bakes organic, human-grade dog treats in Monroe, Washington, and has since 1998 by its own account; private equity has controlled it since 2023. This profile is the part of it that sells on Amazon — one channel among several, and the only one with a public number.',
+
+    blocks: [
+      { type: 'heading', text: 'A treat maker, seen through one channel' },
+      {
+        type: 'prose',
+        text:
+          'On Amazon the brand lists 31 products, and every one that sells enough to carry a badge is the same product: the Organic Crunchy treat, in peanut butter, pumpkin, berry, apple and carrot flavours, sold as a 14oz bag, two bags or a 5 lb box. Newer lines — Soft Baked dog treats and Purrks cat treats — are listed and have yet to show a badge.',
+      },
+      {
+        type: 'prose',
+        text:
+          'This page describes that channel, not the company. Wet Noses also sells through a national pet distributor, puts its cat treats into Petco, runs its own store and makes treats for other brands from its own plant. None of those publishes a figure, so none of them is in the numbers here — and nothing public says whether Amazon is a large part of the business or a small one.',
+      },
+      /* 🚨 No figures in the caption. The brand's own site photographs, not
+         the listing images — the best seller's box is already the headline
+         image, and these show the object inside it. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: wetNosesPhoto('dogWithBags'),
+            alt: 'A black-and-tan puppy eating paw-stamped treats from the floor of a kitchen, beside three 14oz Wet Noses bags: Berry Blast, Pumpkin & Quinoa and Peanut Butter & Molasses',
+          },
+          {
+            src: wetNosesPhoto('stackedTreats'),
+            alt: 'A stack of round orange Wet Noses biscuits on a granite counter, the front one stamped with a paw print and “Organic dog treats”, with carrots and berries behind',
+          },
+        ],
+        caption: 'Two of the brand’s own photographs, from wet-noses.com: the crunchy treat in its 14oz bags, and the biscuit itself.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A 1998 brand whose Amazon listings were sold by other people for at least two years, until its own seller account took them over in November 2025.',
+      },
+      {
+        /* Oldest first. Year-only entries are the company’s own claims with no
+           day attached; they stay on this list and off the chart. Only the
+           events from November 2025 fall inside the chart's series. */
+        type: 'timeline',
+        items: [
+          {
+            when: '1998',
+            tag: 'Brand',
+            what: 'Wet Noses is founded',
+            detail: 'By Jasmine Galligan, by the company’s own account. Not checked.',
+          },
+          {
+            when: '24 Aug 2001',
+            tag: 'Web',
+            what: 'wet-noses.com registered',
+            detail: 'From the domain record. The first archived capture of the site follows eleven months later.',
+          },
+          {
+            when: '20 Jul 2002',
+            tag: 'Web',
+            what: 'The Wayback Machine’s first capture of the site',
+          },
+          {
+            when: '14 Dec 2011',
+            tag: 'Amazon',
+            what: 'The oldest listing still live: the 5 lb Peanut Butter & Banana box',
+            detail: 'Fifteen years on it is the best-selling listing in the catalogue.',
+          },
+          {
+            when: '6 Feb 2020',
+            tag: 'Brand',
+            what: 'Recapitalised by VisioCap and Beach Point Capital',
+            detail:
+              'Cascadia Capital advised, and described a maker of branded and private-label treats under Wet Noses, Doggy Delirious and Best Homies, in an 80,000 sq ft SQF Level III facility. No deal value was published.',
+          },
+          {
+            when: '18 Nov 2021',
+            tag: 'Web',
+            what: 'The oldest product record in their Shopify store',
+          },
+          {
+            when: '16 Feb 2023',
+            tag: 'Brand',
+            what: 'Beach Point Capital takes a controlling stake',
+            detail:
+              'Its Tactical Fund, on terms nobody published. The founder returns as chief executive, and the money is for manufacturing capacity, including private-label contract manufacturing. From deal press.',
+          },
+          {
+            when: '30 Sep 2023',
+            tag: 'Amazon',
+            what: 'Amazon’s badge history begins — with resellers in the buy box',
+            detail:
+              'NaturVet’s seller account holds it on most of the listings that sell, and Petco’s on three. Sales on these listings from here to October 2025 are the brand’s, not Wet Noses’ own revenue, which is why the chart does not start here.',
+          },
+          {
+            when: '1 Apr 2024',
+            tag: 'Brand',
+            what: 'Pet Food Experts becomes the exclusive US distributor',
+            detail: 'To independent pet retailers, announced by the distributor.',
+          },
+          {
+            when: '13 May 2025',
+            tag: 'Amazon',
+            what: 'MODA Works takes over the buy box',
+            detail:
+              'A Florida multi-brand pet reseller, first on the 5 lb box and within eight days on most of the listings that sell. It holds them through October.',
+          },
+          {
+            when: '8 Nov 2025',
+            tag: 'Amazon',
+            what: 'Wet Noses’ own seller account appears, and starts winning its listings',
+            detail:
+              'Keepa first tracks the account that day, and it wins its first buy box the same day. Nothing public announced the change or says why it happened: it is read from the buy-box record, listing by listing, through to February 2026.',
+          },
+          {
+            when: '30 Nov 2025',
+            tag: 'Amazon',
+            what: '$11,995 — the handover month, and the weakest of the series',
+            detail: 'Less than half of October’s total on the same listings, while the buy box changed hands.',
+          },
+          {
+            when: '6 Apr 2026',
+            tag: 'Amazon',
+            what: 'Purrks cat treats and Soft Baked dog treats listed',
+            detail: 'Six listings in a day. None of them carries a sold badge by September.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: '$30,640 — the best month',
+            detail: 'Not a holiday month. Across the whole badge history these listings show no December peak; dog treats are bought all year.',
+          },
+          {
+            when: '15 Sep 2026',
+            tag: 'Amazon',
+            what: 'Their own account wins 82% of the buy box',
+            detail: 'Weighted by revenue, over the 90 days to this read. MODA Works still wins 6.5%.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The chart starts in November 2025 on purpose. Amazon’s badge history on these listings reaches back to September 2023, but until October 2025 resellers held the buy box — NaturVet’s seller account and Petco, then MODA Works — so the retail revenue in those months was theirs, and Wet Noses was paid a wholesale price nobody publishes. November 2025 is the first month its own account held the buy box, and it was the weakest month since: the listings changed hands through it. From then on the months run between about $12,600 and $30,600 with no December spike. Of each month roughly three dollars in ten is left after Amazon’s fees, cost of goods and advertising, before returns and overhead — and two of those cost lines are our placeholders.',
+      },
+      { type: 'chart' },
+      {
+        /* From the Keepa seller record looked up on each marketplace
+           (2026-09-15). No valuation, so no RULE 2 figure to agree with — but
+           100 is still what it would be. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Amazon US is all of it. The seller account does not exist on the UK, German or Canadian marketplaces.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon UK, Germany and Canada', short: 'UK, DE, CA', share: 0, note: 'Seller id looked up on each; no account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. This is the Amazon channel alone — the distributor, Petco, co-manufacturing and wet-noses.com are not in it.',
+      },
+      {
+        /* Generated from the Keepa catalogue — see the module's header. The
+           rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'Every listing that sells enough to carry a badge is the same Organic Crunchy treat in three pack sizes. The 5 lb Peanut Butter & Banana box and its two-bag sibling are 40% of the month between them.',
+        items: WET_NOSES_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s badge, and every one here sits in its lowest brackets — 50+, 100+ or 200+ — so each row is a coarse floor: a listing showing 50+ could be selling 99. Revenue is that band times the buy box on 15 September 2026. 19 more priced listings carry no badge and count as zero.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The badge brackets are coarse, the cost of goods and the advertising under the profit are placeholders rather than quotes, and returns and overhead are set to zero.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'On Amazon the story is who does the selling. Off Amazon there are at least four more channels, and none of them can be counted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Keepa records who held the buy box on the twelve listings that carry a badge. NaturVet’s seller account held most of them, and Petco three, through April 2025; MODA Works, a Florida multi-brand pet reseller, held them from May to October 2025; and Wet Noses’ own account has held them since November 2025. Over the 90 days to 15 September 2026 their own account won 82% of the buy box, weighted by revenue. That the company began selling its own listings is an inference from that record — nothing public announces it, or says why.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon, the company sells through Pet Food Experts, its exclusive US distributor to independent pet retail since April 2024; puts Purrks cat treats into Petco; runs a 36-product Shopify store; and offers private-label and co-manufacturing to other brands. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $23.46 average sale, down to the roughly three dollars in ten that are left — and the largest thing Amazon takes is not its commission but the cost of moving a heavy box.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Baked treats are heavy for their price, and Amazon charges fulfilment by size and weight: $4.76 to pick, pack and ship a 14oz bag and $8.04 for a 5 lb box, $6.83 a unit across September — more than the 15% referral fee takes. Cost of goods is the line nobody could source. No bakery, co-packer or Wet Noses’ own wholesale page publishes a per-pound price, so the figure below is ours.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what it costs to make',
+        columns: ['Line', 'Per lb', '14oz bag', 'Two 14oz bags', '5 lb box'],
+        rows: [
+          ['Made in their own plant — a placeholder, not a quote', '$2.00', '$1.75', '$3.50', '$10.00'],
+          ['Inbound freight to an FBA warehouse — a placeholder, not a quote', '$0.25', '$0.22', '$0.44', '$1.25'],
+          ['For comparison: their own 20 lb bulk bucket, retail on wet-noses.com', '$6.00', '—', '—', '—'],
+          ['Buy box on Amazon', '—', '$12.99', '$19.99', '$39.99'],
+        ],
+        note:
+          'Net weights from the listing titles. The bucket is $119.99 for 20 lb — a retail price, so a ceiling on cost rather than a cost. Both placeholder rows are the first thing to replace with a real figure: on the 5 lb box they come to more than a quarter of the price.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 31.23% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           four numbers (COST_LINES). Change one, change both. Two decimals
+           because September's P&L gives them; the page rounds for display. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 23.46 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -22.64,
+            detail:
+              '$2.00 a pound to make and $0.25 to land, over the weight of every badged unit sold in September. Our placeholder, not a quote — nobody publishes the figure.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published Pet Products rate: 15%, with a $0.30 minimum.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -29.13,
+            emphasis: true,
+            detail:
+              'Measured: each listing’s own pick-and-pack fee, $4.76 on a 14oz bag to $8.04 on a 5 lb box, times September’s badged units. The largest line here.',
+          },
+          {
+            label: 'Advertising',
+            pct: -2,
+            detail:
+              'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
+          },
+        ],
+        note: 'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Two of these four lines are ours. Referral and fulfilment are Amazon’s own fees and measured; cost of goods and advertising are placeholders, and cost of goods moves the margin more than any other line. It is also where a manufacturer selling its own treats should be strongest — which nobody outside the company can see.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One channel was read, and it shows defence: they buy their own name on Amazon and nothing else. The figure is arithmetic; the counted line under it is what was actually seen.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=wet+noses+dog+treats',
+            value: '≈ 2% of revenue',
+            counted: '0 of 36 sponsored slots on three generic searches; 6 of 12 on “wet noses dog treats” — read 15 Sep 2026',
+            flag: true,
+            note:
+              'Modelled, not observed. On “organic dog treats”, “grain free dog treats” and “human grade dog treats” none of the twelve sponsored slots was theirs; on their own name they held positions 1, 2, 3, 4, 11 and 19. Brand-term clicks are cheap and few, so spend sits in the low single digits of revenue; 2% is the figure the margin uses. Read with a Monroe, Washington delivery address — an earlier read from another country showed no ads at all and was discarded.',
+          },
+          {
+            label: 'Meta and Google',
+            value: 'Not checked',
+            note: 'The Meta Ad Library and a paid-search history were not read for this profile. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Their site links four social accounts, and on Amazon the demand arrives already typing the brand’s name.',
+      },
+      /* The same chips the overview opens with. 🚨 None carries a follower
+         count: nobody read them, and the seed says so rather than guessing. */
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Follower counts and site traffic were not read for this profile, so the chips above carry no audience figure. What was read is Amazon search. On “wet noses dog treats”, 24 of the first page’s organic results carry the brand’s name; across three generic searches, one Wet Noses listing appears once, at position 48 on “organic dog treats”.',
+      },
+      {
+        type: 'table',
+        caption: 'Where they show up in Amazon search',
+        columns: ['Search', 'Sponsored slots theirs', 'Organic results with the name', 'Best organic position'],
+        rows: [
+          ['wet noses dog treats', '6 of 12', '24', '#5'],
+          ['organic dog treats', '0 of 12', '1', '#48'],
+          ['grain free dog treats', '0 of 12', '0', '—'],
+          ['human grade dog treats', '0 of 12', '0', '—'],
+        ],
+        note:
+          'Read 15 September 2026 in Chrome with delivery set to Monroe, Washington, 60 results a page. Amazon localises search to whoever is looking, so these positions describe that reader on that day. A few organic results on the brand term are listings outside the brand’s own storefront.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Nothing public says where that branded demand comes from — the distributor’s shelves, the brand’s own site or its socials — because none of them publishes a number.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Wet Noses Natural Dog Treat Company, LLC' },
+          { label: 'Seller', value: 'Wet Noses Natural Dog Treats', note: 'Merchant A3IMT2GVAXXI9L' },
+          { label: 'Founded', value: '1998', note: 'By the company’s own account' },
+          { label: 'Seller account first seen', value: '8 Nov 2025', note: 'By Keepa — the account, not the brand' },
+          { label: 'Registered address', value: 'Monroe, WA, US', note: '14439 167th Ave, 98272' },
+          { label: 'Seller feedback', value: '93%', note: 'Over 29 ratings', info: 'sellerFeedback' },
+          { label: 'Controlling owner', value: 'Beach Point Capital', note: 'Tactical Fund, since Feb 2023 — deal press, terms undisclosed' },
+          { label: 'Oldest live listing', value: '14 Dec 2011' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'An old company on a new seller account. Private equity has been in the business since at least February 2020, when VisioCap and Beach Point Capital recapitalised it with Cascadia Capital advising; in February 2023 Beach Point’s Tactical Fund took a controlling stake and the founder, Jasmine Galligan, returned as chief executive. Neither deal’s terms were published. The 80,000 sq ft plant and its SQF and human-grade certifications are the company’s, its advisers’ and its distributor’s descriptions, not checked here.',
+      },
+      {
+        type: 'prose',
+        text: 'These details are resolved from the seller record behind the brand’s Amazon storefront, and from the deal announcements.',
       },
     ],
   },
