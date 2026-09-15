@@ -99,6 +99,12 @@ is kept for what's left over:
 | `--slice-cost-3` | `#78798d` |
 | `--slice-cost-4` | `#5f6072` (largest) |
 
+Marketplace ring (`MarketplaceSplit.tsx`) — no new tokens. The largest
+marketplace takes `--series-revenue`; the rest step down the same gray ramp
+from `--slice-cost-4`, darkest to the next largest; past four slices the tail
+folds into one on `--slice-cost-1`. A marketplace with no sales is an outlined
+swatch in the legend, never a slice.
+
 Light mode only (`color-scheme: light`); there is no dark theme.
 
 ## Type

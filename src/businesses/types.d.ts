@@ -160,6 +160,32 @@ export type Block =
       note?: string;
     }
   /**
+   * Amazon revenue by marketplace — one ring and its legend.
+   *
+   * 🚨 `share` is percent of the snapshot month's Amazon revenue, and the
+   * legend's money is that share of `latestMonthlyRevenue`. So the series must
+   * be Amazon revenue alone: on a profile whose series also counts Shopify,
+   * every marketplace would print inflated by it.
+   *
+   * A marketplace that was checked and sells nothing stays in at `share: 0`,
+   * with a `note` saying what was found — a legend row, never a slice. Shares
+   * sum to 100, and the largest is valuation `topMarketplaceSharePct` (RULE 2);
+   * check-profile.mjs asserts both.
+   */
+  | {
+      type: "marketplaces";
+      title: string;
+      intro?: string;
+      items: Array<{
+        label: string;
+        /** The ring's centre label, "US" — the full name does not fit in the hole. */
+        short: string;
+        share: number;
+        note?: string;
+      }>;
+      note?: string;
+    }
+  /**
    * A photograph, at the reading measure.
    *
    * 🚨 `alt` is REQUIRED, and not for compliance. scripts/postbuild-spa-routes

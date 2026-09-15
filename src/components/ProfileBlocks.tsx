@@ -7,6 +7,7 @@ import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
 import { MarginBreakdown, BlockTable } from "./MarginBreakdown";
 import { Channels } from "./Channels";
+import { MarketplaceSplit } from "./MarketplaceSplit";
 import { SellingMethods } from "./SellingMethods";
 import { ProfileLinks } from "./ProfileLinks";
 import { businessReadingStamp } from "@/lib/reading";
@@ -126,6 +127,7 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
     case "margin":
     case "table":
     case "channels":
+    case "marketplaces":
     case "selling":
       /* Hoisted out of the prose run by ProfileBlocks below, so these are
          unreachable — kept only because the switch is exhaustive over Block. */
@@ -180,6 +182,7 @@ type Wide = Extract<
       | "margin"
       | "table"
       | "channels"
+      | "marketplaces"
       | "selling";
   }
 >;
@@ -216,6 +219,7 @@ function groupSections(blocks: Block[]): Section[] {
       block.type === "margin" ||
       block.type === "table" ||
       block.type === "channels" ||
+      block.type === "marketplaces" ||
       block.type === "selling"
     ) {
       section.runs.push({ kind: "wide", block, first: block.type === "chart" && !seenChart });
@@ -335,6 +339,8 @@ function Exhibit({
       return <BlockTable block={block} />;
     case "channels":
       return <Channels block={block} />;
+    case "marketplaces":
+      return <MarketplaceSplit block={block} business={business} />;
     case "selling":
       return <SellingMethods profile={profile} />;
   }

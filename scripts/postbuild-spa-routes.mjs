@@ -499,6 +499,20 @@ for (const b of all) {
               }).join('')}</ul>`,
               blk.note ? `<p>${esc(blk.note)}</p>` : '',
             ].filter(Boolean).join('');
+            /* Mirrors components/MarketplaceSplit.tsx: every share and note, and
+               the month's money where there is some. A crawler gets no ring. */
+            case 'marketplaces': {
+              const month = detail?.latestMonthlyRevenue == null ? null : Number(detail.latestMonthlyRevenue);
+              return [
+                `<h3>${esc(blk.title)}</h3>`,
+                blk.intro ? `<p>${esc(blk.intro)}</p>` : '',
+                `<ul>${blk.items.map((m) =>
+                  `<li>${esc(m.label)}: ${Math.round(m.share)}% of Amazon revenue${
+                    month != null && m.share > 0 ? ` (${money((m.share / 100) * month, b.currency)} a month)` : ''}${
+                    m.note ? ` — ${esc(m.note)}` : ''}</li>`).join('')}</ul>`,
+                blk.note ? `<p>${esc(blk.note)}</p>` : '',
+              ].filter(Boolean).join('');
+            }
             case 'callout': return `<p>${esc(blk.text)}</p>`;
             /* The links row is the one block whose content comes from the DB
                record rather than from the authored profile. 🚨 Off `detail`,

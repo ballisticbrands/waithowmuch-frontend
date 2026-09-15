@@ -1496,6 +1496,65 @@ img[data-row-logo] {
   [data-donut-key] { width: 100%; }
 }
 
+/* ─── Amazon marketplaces ──────────────────────────────────────────────
+   Revenue by marketplace as one ring beside its legend. Carded like the
+   breakdown it sits above, so the two read as a pair of exhibits. */
+
+[data-marketplaces] {
+  margin: 1.5rem 0;
+  padding: 1.15rem 1.25rem 1.25rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card);
+}
+[data-marketplaces] h3 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
+[data-market-body] {
+  display: grid; grid-template-columns: 9rem minmax(0, 1fr);
+  align-items: center; gap: 1.25rem 2rem; margin-top: 1.1rem;
+}
+[data-market-body] svg { width: 100%; height: auto; display: block; overflow: visible; }
+/* Everything else steps back, as on the margin donut, rather than the hovered
+   arc changing the colour a reader is matching against the legend. */
+[data-market-body] circle { cursor: default; transition: opacity 120ms ease; }
+[data-market-body] circle[data-dim] { opacity: 0.4; }
+[data-market-body] circle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[data-market-figure] {
+  /* 1.5rem, not larger: "100%" is the widest this ever gets, and at 1.75rem it
+     touched the inside of the ring. */
+  font-size: 1.5rem; font-weight: 700; letter-spacing: -0.015em;
+  fill: var(--foreground); font-variant-numeric: tabular-nums;
+}
+[data-market-caption] {
+  font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+  fill: var(--muted-foreground);
+}
+
+[data-market-key] { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.25rem; max-width: 30rem; }
+[data-market-key] li {
+  display: grid; grid-template-columns: 0.75rem minmax(0, 1fr) auto;
+  align-items: baseline; gap: 0.1rem 0.65rem; font-size: 0.875rem;
+  padding: 0.35rem 0.4rem; margin: 0 -0.4rem; border-radius: var(--radius); cursor: default;
+}
+[data-market-key] li[data-on] { background: var(--muted); }
+[data-market-swatch] { width: 0.75rem; height: 0.75rem; border-radius: 3px; align-self: center; }
+/* No sales, no slice: the swatch is an outline, so the row reads as checked
+   and empty rather than as a colour that is missing from the ring. */
+[data-market-key] li[data-none] [data-market-swatch] { box-shadow: inset 0 0 0 1.5px var(--border-strong); }
+[data-market-name] { display: flex; flex-direction: column; gap: 0.1rem; font-weight: 600; color: var(--foreground); }
+[data-market-note] { font-size: 0.78rem; font-weight: 400; line-height: 1.4; color: var(--muted-foreground); }
+[data-market-pct] { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; letter-spacing: -0.015em; }
+[data-market-key] li[data-none] [data-market-name],
+[data-market-key] li[data-none] [data-market-pct] { color: var(--muted-foreground); }
+[data-market-money] {
+  grid-column: 3; font-size: 0.78rem; text-align: right;
+  color: var(--muted-foreground); font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  [data-market-body] { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  [data-market-body] svg { max-width: 9rem; }
+  [data-market-key] { width: 100%; }
+}
+
 /* ─── Channels ─────────────────────────────────────────────────────────
    A name, one figure, and the paragraph that says what the figure is: ad
    spend by channel, the off-marketplace presences, the best-seller positions.

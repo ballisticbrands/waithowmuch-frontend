@@ -1182,6 +1182,23 @@ export const PROFILES = {
       },
       { type: 'chart' },
       {
+        /* From the Keepa seller record on each marketplace (2026-09-14) and the
+           first pass's per-marketplace read (2026-09-04). 🚨 The largest share
+           is valuation derived.topMarketplaceSharePct — the same fact, which
+           check-profile.mjs holds the two to. Canada and UK/Germany stay in at
+           0% because "looked and found nothing" is the finding. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro:
+          'One marketplace carries all of it. The seller account reaches Canada, but nothing listed there sells enough to count.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account live; no listing shows a sold badge' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges on each marketplace. A listing under roughly 50 sales a month shows no badge, so a small Canadian trade would not appear here.',
+      },
+      {
         /* Generated from the Keepa catalogue — see the module's header. The
            rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
         type: 'breakdown',
