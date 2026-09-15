@@ -20,20 +20,34 @@
  */
 
 /**
- * A Spite House listing photo, saved under public/products.
+ * A Spite House listing photo, by ASIN, from our bucket.
  *
- * Derived from the ASIN rather than typed out nine times, because the path IS
- * the ASIN — and nine hand-copied 10-character ids is a transcription error
- * waiting to point one row at another row's picture, which is the kind of
- * mistake that looks fine and is wrong.
+ * Keyed by ASIN with the URL derived from it, so no row types a 64-character
+ * hash — a hand-copied one is a transcription error waiting to point one row at
+ * another row's picture, which is the kind of mistake that looks fine and is
+ * wrong. The values are the content hashes `npm run product-image` printed.
  *
- * 🚨 Local copies, not Amazon's CDN. The images are cut-out product shots
- * lifted from the listings this profile already cites, and hotlinking them
- * would let a listing edit silently blank a column here — the page has no way
- * to notice a remote 404. Refresh them by re-running the fetch when the
- * listings change.
+ * 🚨 Bucket copies, not Amazon's CDN and not /public. Hotlinking would let a
+ * listing edit silently blank a column here, and the repo carries no images
+ * (research: publish-business-profile §4). When a listing changes, re-upload
+ * and paste the new hash.
  */
-const deckPhoto = (asin) => `/products/spite-house-games/${asin}.jpg`;
+const SPITE_HOUSE_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/';
+const DECK_PHOTOS = {
+  B0FMGJSSXT: '934f61cfb5ff4af0de9c174b5dff48e38312a8e79a05f415c9abd95da9d21b0a',
+  B0FLCJSFJP: '0f96abf0ad4842007f9bd22bcfdc3f7b050c226131ce2f14658921d462a744b2',
+  B0GVKVZDR7: '8889ab6dd0a3407283056bf9eca0ff865da8e9d1525914bfeb91702a9a854727',
+  B0H1XPC49K: '45f88d5b2a561db9391a389b5ecc99d6fb1b6c8e45e0fb18abcb08cc36a00089',
+  B0FLCSBZ2V: 'a6234dccbd300ba8fc3c665d751139e684b3fba5161fd75aa671b2b613611a85',
+  B0GT64XJVT: 'c2a4299498a14930df2f612f48a5d1096ccedba3973699b01282bfce6d85fe1b',
+  B0H1XWG51R: 'd6fca2bfea588c674f6348436045ba541e7356cc5cb104bdc756f4dae09cfb7a',
+  B0H1XM57YZ: '9471449101f945b7d9d6d911a089d309d089af64ded14e518d908c0179c7f893',
+  B0GT69P836: 'a3ac534f9fd1675aa46aea00eba3d052eb2d39266c51768df829e35023d6bcbb',
+};
+const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PHOTOS[asin]}.jpg`;
+
+/* 199 generated rows — too many to author inline. See the module's header. */
+import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -92,9 +106,14 @@ export const PROFILES = {
        simply false. The skill names this exact trap, and the sentence was
        rewritten once already to drop the collapse framing WITHOUT dropping
        this word. A qualifier that makes a sentence weaker usually makes it
-       true. */
+       true.
+
+       🚨 $12.99, not the $6.97 in headline.json. $6.97 is the discounted buy
+       box the research happened to read and every revenue row is priced at;
+       the deck sells for $12.99 most of the time, and a title naming a sale
+       price describes the week it was read rather than the product. */
     headline: {
-      title: 'How A $6.97 Deck Of Cards Makes $90K/Month',
+      title: 'How A $12.99 Deck Of Cards Makes $90K/Month',
       subtitle:
         'They built the audience first: the TikTok account opened seven weeks before the first deck was listed, and it now carries 45,400 followers. That audience took the catalogue to a new non-holiday high in August.',
       snapshotMonth: '2026-09',
@@ -102,9 +121,12 @@ export const PROFILES = {
          the object this whole page is about. The overview's image further
          down shows the second-best seller instead of repeating it. */
       image: {
-        src: '/products/spite-house-games/B0FMGJSSXT-hero.jpg',
+        src: `${SPITE_HOUSE_BUCKET}ee184f37f7cb5332977b8e15bdbc157d0d0d87a194bbaddb3fcecf4dcf579293.jpg`,
         alt: 'The “Go F*** Yourself!” card-game box — the best-selling deck, a blue box with a grinning cartoon goldfish',
       },
+      /* Rendered by scripts/build-og.mjs, then uploaded. Re-render and re-upload
+         whenever the title, subtitle or image above changes. */
+      ogImage: `${SPITE_HOUSE_BUCKET}f0b8c68ef6e8b7616e2551883eda9ce5c5e71c0cbb80c7e08dd208c9745f99a6.png`,
     },
     /* 🚨 The multiple is the ONE authored number on this page, and it is a
        placeholder rather than a finding. Nothing public prices this business;
@@ -256,7 +278,7 @@ export const PROFILES = {
         status: 'yes',
         flag: true,
         note:
-          'spitehousestudios.com, live since 4 April 2025: 37 products from $5.99 to $39.99, and the core deck at $12.99 — 86% more than Amazon charges for it. Shopify publishes no revenue and a visit count is not an order count, so the second-largest thing about this business is invisible from outside.',
+          'spitehousestudios.com, live since 4 April 2025: 37 products from $5.99 to $39.99, and the core deck at $12.99 — what Amazon usually charges for it too, though Amazon had it at $6.97 when this was read. Shopify publishes no revenue and a visit count is not an order count, so the second-largest thing about this business is invisible from outside.',
       },
       'tiktok-shop': {
         status: 'yes',
@@ -285,7 +307,7 @@ export const PROFILES = {
       fba: {
         status: 'yes',
         note:
-          'From the seller record, and the margin model charges an FBA fee on every unit. It is the largest line in the whole cost stack: $2.56 to move a $6.97 deck, more than twice what the printer charges to make it.',
+          'From the seller record, and the margin model charges an FBA fee on every unit. It is the largest line in the whole cost stack: $2.56 to move the deck at today’s $6.97 and $3.45 at its usual $12.99 — either way more than twice what the printer charges to make it.',
       },
       fbm: {
         status: 'unchecked',
@@ -416,7 +438,7 @@ export const PROFILES = {
             tag: 'Web',
             what: 'The Shopify store opens',
             detail:
-              'First product published, with the Wayback Machine’s first capture three days later. The deck lists at $12.99 there — the same deck Amazon sells for $6.97.',
+              'First product published, with the Wayback Machine’s first capture three days later. The deck lists at $12.99 there — the price it usually carries on Amazon as well.',
           },
           {
             when: '25 Jun 2025',
@@ -429,7 +451,7 @@ export const PROFILES = {
             when: '6 Aug 2025',
             tag: 'Amazon',
             what: 'Boomers and Jesus Christ',
-            detail: 'The first re-cuts of the same joke for a different target, at $12.99 against the original’s $6.97.',
+            detail: 'The first re-cuts of the same joke for a different target, at the same $12.99 the original usually sells for.',
           },
           {
             when: '30 Sep 2025',
@@ -461,7 +483,7 @@ export const PROFILES = {
             when: '14 Apr 2026',
             tag: 'Amazon',
             what: 'Mom, Dad, and Mom & Dad',
-            detail: 'Three more targets in a day, and the first at $19.99 — nearly three times the original’s price for the same object.',
+            detail: 'Three more targets in a day, and the first at $19.99 — $7 above the original’s usual $12.99 for the same object.',
           },
           {
             when: '30 Apr 2026',
@@ -507,7 +529,7 @@ export const PROFILES = {
            trust. */
         type: 'breakdown',
         intro:
-          'One SKU is the business. The re-cuts at $12.99 and $19.99 are the attempt to sell the same object for more, and two of them have yet to sell at all.',
+          'One SKU is the business, and its $6.97 here is a discount — it sells for $12.99 most of the time. The re-cuts at $19.99 are the attempt to sell the same object for more, and two of the $12.99 ones have yet to sell at all.',
         items: [
           { name: 'Go F Yourself! — the original Grown Up Go Fish', asin: 'B0FMGJSSXT', image: deckPhoto('B0FMGJSSXT'), listed: '2025-01-20', sold: 8000, price: 6.97, revenue: 55760 },
           { name: 'Go F Yourself Boomers!', asin: 'B0FLCJSFJP', image: deckPhoto('B0FLCJSFJP'), listed: '2025-08-06', sold: 900, price: 12.99, revenue: 11691 },
@@ -520,7 +542,7 @@ export const PROFILES = {
           { name: 'Go F Yourself Dad!', asin: 'B0GT69P836', image: deckPhoto('B0GT69P836'), listed: '2026-04-14', sold: 0, price: 12.99, revenue: 0 },
         ],
         note:
-          '“Sold / mo” is Amazon’s own badge, which is why every row reads n+. Revenue is that band times the buy-box price, so each row is a floor rather than a measurement.',
+          '“Sold / mo” is Amazon’s own badge, which is why every row reads n+. Revenue is that band times the buy-box price on the day it was read, so each row is a floor rather than a measurement — and the original deck was on a $6.97 discount from its usual $12.99 that day.',
       },
       {
         type: 'callout',
@@ -544,7 +566,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The striking thing is that the two channels selling the same object do not agree on what it is worth. The core deck is $6.97 on Amazon and $12.99 on their own store — the channel doing the volume is the one taking 46% less for the product. Whatever the reason, a buyer inherits both prices and the question of which one is wrong.',
+          'Most of the time the two channels agree on what the core deck is worth: $12.99 on their own store and $12.99 on Amazon. When this profile was read, Amazon had it at $6.97 — 46% less — and every revenue figure here is priced at that $6.97, so the numbers describe a month at the discount rather than at the usual price.',
       },
       {
         type: 'prose',
@@ -607,7 +629,7 @@ export const PROFILES = {
             pct: -31,
             emphasis: true,
             detail:
-              '$2.56 for a small-standard unit under $10 on 8,000 units of a $6.97 deck, and $3.45 in the $10–50 band on the rest. Amazon charges more to move this product than the printer charges to make it.',
+              '$2.56 for a small-standard unit under $10 on 8,000 units of the deck at its discounted $6.97, and $3.45 in the $10–50 band on the rest — the band it sits in at its usual $12.99. Amazon charges more to move this product than the printer charges to make it.',
           },
           {
             label: 'Advertising',
@@ -627,7 +649,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Which is the argument for the $12.99 and $19.99 re-cuts. The same object, the same fulfilment fee, at nearly three times the price — every dollar of that increase lands almost entirely in margin.',
+          'Which is the argument for the usual $12.99 and the $19.99 re-cuts. The same object, a fulfilment fee 89 cents higher, at up to nearly three times the discounted price — every dollar of that increase lands almost entirely in margin.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -704,7 +726,7 @@ export const PROFILES = {
           },
         ],
         note:
-          'The Meta entry is the one worth opening. The creative is public even though the budget is not, and it is the only place the two prices for the same deck sit side by side.',
+          'The Meta entry is the one worth opening. The creative is public even though the budget is not, and it quotes the deck at its usual $12.99.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
@@ -767,7 +789,7 @@ export const PROFILES = {
             href: 'https://spitehousestudios.com/',
             value: '~12.9K visits / mo',
             note:
-              'Shopify, 37 products from $5.99 to $39.99, live since 4 April 2025. The core deck sells here for $12.99 — the same deck is $6.97 on Amazon, 46% less. Whatever the reason, the cheaper channel is the one doing the volume.',
+              'Shopify, 37 products from $5.99 to $39.99, live since 4 April 2025. The core deck sells here for $12.99, the price it usually carries on Amazon too — though Amazon had it at $6.97 when this was read.',
           },
           {
             label: 'Organic search — 220 keywords, one page',
@@ -878,6 +900,499 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Four of these are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers in the model, taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple — the widest step it has. Brand Registry is firmer: Amazon gates the brand store and the A+ content on the listing behind enrolment. All four are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  'white-mountain-puzzles': {
+    /* Case-study copy, verbatim from waithowmuch-research
+       research/white-mountain-puzzles/headline.json (writtenAt 2026-09-14).
+       🚨 A DRAFT until a human has reviewed it. The backend headline seed
+       carries the same two strings and they must stay character-identical.
+
+       🚨 PROFIT, by reviewer decision (2026-09-15). $126.2K is how money()
+       renders the 2026-09 profit, $126,189.20 — 33% of revenue, after a cost of
+       goods that is still a placeholder and says so on the Margin breakdown.
+       Replace that line and this figure moves: re-title then, from the new
+       profit row, not from memory. headline.json's profitBasis has the detail.
+
+       🚨 "$6.42 of every $19.46" is what is left after ALL four cost lines;
+       "46%" is only Amazon's two. The sentence keeps them apart on purpose.
+
+       🚨 $19.99 is the price these puzzles usually carry, on Amazon and on
+       their own store alike — not a discount read on one day. */
+    headline: {
+      title: 'How $19.99 Puzzles From New Hampshire Clear $126.2K/Month In Profit',
+      subtitle:
+        'No single puzzle carries them — the ten best sellers are 18% of Amazon revenue — and they buy no ads on generic searches. About $6.42 of every $19.46 sale is left, even with Amazon taking 46% of it.',
+      snapshotMonth: '2026-09',
+      /* The best seller, but only by a hair: it is 2.6% of the month, which is
+         the whole point of this profile. */
+      image: {
+        src: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/9a9f54e3fe2b3a497d2aa1b81f09e912f094a3c44f4cbf3132dfc67ca52cfc6c.jpg',
+        alt: 'The “Did You Know” 1,000-piece jigsaw puzzle box by Steve Cameron — a collage of retro trivia signs, marked Made in USA. White Mountain’s best-selling Amazon listing',
+      },
+      /* Rendered by scripts/build-og.mjs, then uploaded. Re-render and re-upload
+         whenever the title, subtitle or image above changes. */
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/9d59db20812cebb26f5ded6896fc27ed815f88a2d6525b641678a39452f3de5d.png',
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record, like Spite House's. Their own
+             brand, their own commissioned artwork, their own listings — and,
+             by their own account, made in America. The model has no "own
+             manufacturing" answer; private label is the nearest one that
+             describes what transfers in a sale. */
+          primaryMethod: 'private_label',
+          /* Broad, and not close. 480 priced listings, the top ten 18% of
+             revenue and the top fifty 49%; the best seller is 2.6%. */
+          catalogStructure: 'broad',
+          /* Level 3. Commissioned art and an oversized 24 × 30 inch
+             1,000-piece format are real, visible changes; there is no tooling
+             nobody else has — a random-cut die on blue chipboard. The case for
+             level 2 is that a jigsaw is a commodity object with a picture on
+             it, and the step is worth 0.55 of the multiple. */
+          diffTooling: 'no',
+          diffCustom: 'yes',
+          /* A READ, not an inference: the Brand Store at /stores/WhiteMountain
+             is gated behind enrolment. */
+          brandRegistry: 'yes',
+        },
+        derived: {
+          /* RULE 1: the oldest listing still in the catalogue, not 1978. */
+          sellingSince: '2011-08-18',
+          /* 🚨 The top 20 listings by revenue, not one hero. On Spite House one
+             listing was 62% of revenue and could stand for the catalogue; here
+             the best seller is 2.6%, and its 308 reviews would score this
+             business as having almost no review moat. 3,492 is still a floor —
+             481 listings are not in it. */
+          reviewTotal: 3492,
+          ratingWeighted: 4.64,
+          sellerFeedbackPct: 99,
+          /* RULE 2. The seller exists on Amazon Canada, but not one CA listing
+             carries a sold badge, so Amazon US is all of the measurable Amazon
+             revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* December against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 22.31,
+          /* RULE 3: offAmazonSharePct unset. Wholesale, the store in Jackson and
+             the Shopify site are real and unsized. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. The Amazon business only — wholesale, the Jackson store and their own site are excluded.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '501', note: '480 priced, 199 carrying a sold badge', info: 'skus' },
+      {
+        label: 'Category',
+        value: 'Toys & Games › Puzzles › Jigsaw Puzzles',
+        note: 'Best seller #12,601 in Toys & Games',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Top-20 figures, not the hero listing's, and so NO `info` key: the
+         shared ⓘ copy for reviews and rating describes one best-selling
+         listing, and on a catalogue where that listing is 2.6% of revenue it
+         would describe a number this page deliberately does not show. */
+      { label: 'Product reviews', value: '3,492', note: 'Across the top 20 listings — a floor' },
+      { label: 'Product rating', value: '4.6★', note: 'Review-weighted, top 20 listings' },
+      { label: 'Seller feedback', value: '99%', note: 'Over 10,668 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Made in America, by their own account', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Broad catalogue, low volume each', note: 'Top ten listings are 18% of revenue', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Differentiation', value: 'Level 3', note: 'Functional customisation', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, wholesale', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a public number behind it. Every figure on this profile — the chart, the margin, the valuation — is Amazon US and nothing else.',
+      },
+      'amazon-international': {
+        status: 'yes',
+        note:
+          'The seller account exists on Amazon Canada with 86 ratings, but no Canadian listing sells enough to carry a badge. No account on Amazon UK or Germany.',
+      },
+      'own-store': {
+        status: 'yes',
+        note:
+          'whitemountainpuzzles.com, on Shopify: 601 products at a median of $19.99 — the same price the best sellers carry on Amazon. Shopify publishes no sales.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        flag: true,
+        note:
+          'Probably the oldest channel and possibly the largest. A retailer programme with a one-case minimum of twelve puzzles, a spinner-rack scheme, a wholesale portal and trade shows, and “thousands of accounts” by their own account. Nothing public sizes it.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note:
+          'Amazon itself offers none of the 255 listings carrying their manufacturer name outside the storefront, and three of 482 inside it.',
+      },
+      // tiktok-shop, other-marketplace and licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'From the seller record. At about $6.02 a unit it is the largest line in the cost stack.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the 501 listings between FBA and FBM.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand and commissioned artwork, on listings no other seller carries a badge on.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note:
+          'Every puzzle is “manufactured in America”, by their own pages — which does not say whose factory. Left open rather than read as yes.',
+      },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+      pod: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/WhiteMountain, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'White Mountain Puzzles has made jigsaw puzzles in Jackson, New Hampshire, since 1978, and the founders’ families still own it. Amazon is one of three ways it sells them, and the only one with a public number behind it.',
+
+    blocks: [
+      { type: 'heading', text: 'A long tail, not a hit' },
+      /* Four paragraphs, one job each: the range, what it is organised by,
+         what buyers think of it, and how fast it moves. Every count here is a
+         reading dated by the page's snapshot — the catalogue mix from the Keepa
+         pull, the collections from the store's public collections.json on
+         2026-09-15. No live headline figure is typed in. */
+      {
+        type: 'prose',
+        text:
+          'About five hundred puzzles are listed on Amazon. Most are 1,000 pieces at $19.99, but the range runs down through 500- and 300-piece puzzles to a set of six 100-piece minis — and by revenue the 1,000-piece puzzles are about 83% of the month and the 500-piece ones 14%. None of them is the business on its own, and that shape is the most unusual thing about it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Themes organise the catalogue: nostalgia and vintage signs, trivia collages, state and regional puzzles, food, animals, beach scenes and famous places, much of it painted by a stable of named artists such as Charlie Girard, Lois Sutton and Steve Cameron. A calendar sits on top of the themes — Christmas, Halloween, autumn, winter, Easter, Valentine’s Day, Mother’s Day and the Fourth of July each have their own collection on the company’s site — and puzzles are graded from beginner to advanced.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Buyers rate them highly. Eighteen of the twenty best-selling Amazon listings sit at 4.7 stars or above, the twenty together carry 3,492 reviews at a review-weighted 4.6, and the seller account holds 99% positive feedback over more than ten thousand ratings.',
+      },
+      {
+        type: 'prose',
+        text:
+          'And the catalogue keeps moving. Their own site runs a New Puzzles section — 87 titles, 62 of them added in 2026 so far, the latest on 24 August — and a Coming Soon shelf already stocked with this year’s Christmas puzzles. Amazon shows the same cadence: 68 new listings in 2026.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'Forty-eight years as a company and fifteen on Amazon — where every year is shaped by one December.',
+      },
+      {
+        /* Oldest first. Year-only entries are the company’s own claims with no
+           day attached; they stay on this list and off the overview chart. */
+        type: 'timeline',
+        items: [
+          {
+            when: '1978',
+            tag: 'Brand',
+            what: 'A poster company starts in New Hampshire',
+            detail:
+              'Founded by Cronan Minton and Ted Wroblewski, by the company’s own account, and later handed to their sons Sean and Colin. It became White Mountain Puzzles, and the families still own it.',
+          },
+          {
+            when: '12 Aug 1999',
+            tag: 'Web',
+            what: 'whitemountainpuzzles.com registered',
+            detail: 'From the domain record. The first archived capture of the site follows eight months later.',
+          },
+          {
+            when: '7 Apr 2000',
+            tag: 'Web',
+            what: 'The Wayback Machine’s first capture of the site',
+          },
+          {
+            when: '18 Aug 2011',
+            tag: 'Amazon',
+            what: 'The oldest listing still live: Nostalgic Labels',
+            detail:
+              'A 1,000-piece candy-wrapper collage. Fifteen years later it still sells enough to carry a badge.',
+          },
+          {
+            when: '16 Feb 2018',
+            tag: 'Web',
+            what: 'The oldest product record in their Shopify store',
+            detail:
+              'The store now carries 601 products at a median of $19.99 — the same price the best sellers carry on Amazon.',
+          },
+          {
+            when: '2018',
+            tag: 'Brand',
+            what: 'Invited to the White House Made in America Showcase',
+            detail: 'One company from each state; this one represented New Hampshire, by its own About page.',
+          },
+          {
+            when: '29 Aug 2018',
+            tag: 'Amazon',
+            what: 'Mini Cereal Boxes goes up',
+            detail: 'Six 100-piece puzzles at $17.99, and eight years later the second-best seller in the catalogue.',
+          },
+          {
+            when: '2021',
+            tag: 'Brand',
+            what: 'Among the five fastest-growing private companies in New Hampshire',
+            detail: 'By the company’s own About page.',
+          },
+          {
+            when: '11 Oct 2024',
+            tag: 'Amazon',
+            what: 'Did You Know and Crazy State Laws, on the same day',
+            detail:
+              'Now the first and third best sellers. Ten of the fifteen best-selling listings today went up on or after this date.',
+          },
+          {
+            when: '30 Nov 2025',
+            tag: 'Amazon',
+            what: 'November: $948,912',
+            detail: 'Twice October, on the way to December.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$1,526,950 — December',
+            detail: '76,800 puzzles, three times June, and 22% of the whole year in one month.',
+          },
+          {
+            when: '31 Jan 2026',
+            tag: 'Amazon',
+            what: 'January falls 65%',
+            detail: '$526,215 — and still above six of the eight months that follow it.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: 'The low: $246,072',
+            detail:
+              'Only 150 listings carried a badge that month, against 224 in June. A listing that dips under Amazon’s threshold of roughly 50 a month counts as zero, so part of this trough is the floor rather than the business.',
+          },
+          {
+            when: '2026',
+            tag: 'Brand',
+            what: 'On USA Today’s reader-voted lists for customer service and online stores',
+            detail: 'By the company’s own About page.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The badge history makes the year visible. November doubles October, December passes $1.5M, January falls 65% — and for the rest of the year the catalogue moves between roughly $250,000 and $570,000 a month. Of each month about a third is kept, before returns and overhead — and on a cost of goods nobody has quoted.',
+      },
+      { type: 'chart' },
+      {
+        /* Generated from the Keepa catalogue — see the module's header. The
+           rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'No listing is more than 3% of the month. The ten best sellers are 18% of revenue and the top fifty 49%; the rest is a tail of puzzles each selling a few hundred a month or fewer.',
+        items: WHITE_MOUNTAIN_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, which is a band — hence n+. Revenue is that band times today’s buy box, so every row is a floor. 281 more priced listings carry no badge, each under roughly 50 a month, and count as zero.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling — and the cost of goods under that profit is a placeholder, not a quote. Margin breakdown says which line.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Three channels are visible — Amazon, their own store and wholesale — and only Amazon publishes anything that can be counted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Unusually, the channels agree on price. The best sellers are $19.99 on Amazon and $19.99 on whitemountainpuzzles.com, and their retailer page carries an internet sales policy adopted “to preserve the recognized value of our products”. No reseller undercuts them on Amazon either: 255 listings outside their storefront carry the manufacturer’s name, and not one sells enough to show a badge.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What follows is presence rather than share. Nobody publishes what a Shopify store or a wholesale book takes, so this says which methods are in use and not what each is worth. A method nobody has looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $19.46 average sale, down to the third of it that is left — after Amazon’s two cuts, which together take more than twice what the puzzle costs to make and move.',
+      },
+      {
+        type: 'prose',
+        text:
+          'A 1,000-piece puzzle is a big box for a $20 product, and Amazon prices fulfilment by size and weight rather than by price: about $6.02 to pick, pack and ship each one. Add the 15% referral fee and Amazon takes 46% of every sale before the puzzle itself is paid for.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 33% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           four numbers (COST_LINES). Change one, change both. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 19.46 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -19,
+            detail:
+              '$3.70 a unit — $2.70 to make and $1.00 to move — against a $19.46 average sale. A placeholder carried over from an earlier pass and never quoted.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -31,
+            emphasis: true,
+            detail:
+              'About $6.02 a unit, from the per-listing fees Amazon charges. The largest line here, and the one a bulky, low-priced product cannot negotiate.',
+          },
+          {
+            label: 'Advertising',
+            pct: -2,
+            detail:
+              'Modelled, not observed. They buy sponsored placement on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
+          },
+        ],
+        note:
+          'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The cost-of-goods line is the weakest figure on this profile. The $2.70-plus-$1.00 split came from an earlier estimate, and their own pages say every puzzle is manufactured in America, which that split was not built around. It moves the margin more than any other line, and it is the first thing to replace with a real number.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'Almost nothing here is bought. They defend their own name on Amazon and advertise nothing else, and the catalogue grows by adding puzzles rather than by promoting them.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On two generic searches — “1000 piece jigsaw puzzle” and “jigsaw puzzles for adults” — none of the 24 sponsored slots was theirs. On their own brand name, three of twelve were. That is brand defence without acquisition: the demand arrives already looking for White Mountain.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What they do instead is list. 184 of the 501 listings went up in 2025 or 2026, and ten of today’s fifteen best sellers were listed in October 2024 or later. A catalogue on Amazon since 2011 is being carried by its newest titles.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon the engine is older than the internet: a wholesale book with a one-case minimum of twelve puzzles mixed across more than 350 titles, a spinner-rack programme for shops, and trade shows from Atlanta to Dallas. None of it is public as a number.',
+      },
+      {
+        type: 'callout',
+        text:
+          'What the public record cannot say is how big the other two channels are. A company with thousands of retail accounts and its own store may sell more off Amazon than on it — or far less.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One channel was measured, and the finding is an absence. The figure is arithmetic; the counted line under it is what somebody actually saw.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: '≈ 2% of revenue',
+            counted: '0 of 24 sponsored slots on two generic searches; 3 of 12 on their brand name — read 4 Sep 2026',
+            flag: true,
+            note:
+              'Modelled, not observed. Brand-term clicks are cheap and low-volume, so a footprint that is brand defence and nothing else puts spend in the low single digits of revenue; 2% is the figure the margin uses. Nobody publishes the bill.',
+          },
+          {
+            label: 'Meta and Google',
+            value: 'Not checked',
+            note:
+              'The Meta Ad Library and a paid-search history were not read for this profile. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'White Mountain Puzzles Inc' },
+          { label: 'Seller', value: 'White Mountain Puzzles', note: 'Merchant A3SL1S5CJP6OII' },
+          { label: 'Founded', value: '1978', note: 'By the company’s own account' },
+          { label: 'Registered address', value: 'Jackson, NH, US', note: '18 Black Mt Rd, 03846' },
+          { label: 'Seller feedback', value: '99%', note: 'Over 10,668 ratings', info: 'sellerFeedback' },
+          { label: 'Oldest live listing', value: '18 Aug 2011' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Family-owned and, by its own account, run by the founders’ sons, with named staff answering phones for retail, wholesale and a shop in Jackson. The seller account is the brand’s own: it holds the buy box on each of its twenty best sellers between 59% and 100% of the time, and no other seller carries a sold badge on a White Mountain listing.',
+      },
+      {
+        type: 'prose',
+        text: 'These details are resolved from the seller record behind the brand’s Amazon storefront.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model — a 2.6 base multiple moved by what the public record supports — applied to trailing-twelve net profit, and it prices the Amazon business alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Wholesale, the Jackson shop and whitemountainpuzzles.com are excluded: real channels that cannot be sized from outside. And the net profit being multiplied rests on a placeholder cost of goods, so this figure is only as good as that line.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are durability: fifteen years of listings, a 99% seller record over more than ten thousand ratings, and a catalogue no single listing can take down. The negative is concentration of another kind — every measured dollar comes from Amazon US.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers in the model, taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All four are the first things to put to the owner.',
       },
     ],
   },

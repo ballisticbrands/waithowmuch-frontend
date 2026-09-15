@@ -14,7 +14,6 @@
  * Copy that lives only inside JSX is invisible to this script.
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
-import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
@@ -113,10 +112,17 @@ function render({ path, title, description, body, bootstrap, share }) {
     ...(image
       ? [
           `<meta property="og:image" content="${esc(image.url)}" />`,
-          `<meta property="og:image:width" content="${image.width}" />`,
-          `<meta property="og:image:height" content="${image.height}" />`,
+          ...(image.width && image.height
+            ? [
+                `<meta property="og:image:width" content="${image.width}" />`,
+                `<meta property="og:image:height" content="${image.height}" />`,
+              ]
+            : []),
           `<meta property="og:image:alt" content="${esc(image.alt)}" />`,
-          `<meta name="twitter:card" content="summary_large_image" />`,
+          /* The large card crops to roughly 2:1. A product photo is usually
+             square or portrait, and cropped that wide it loses the top and
+             bottom of the box, so only a landscape image gets the large card. */
+          `<meta name="twitter:card" content="${image.width / image.height >= 1.5 ? 'summary_large_image' : 'summary'}" />`,
         ]
       : [`<meta name="twitter:card" content="summary" />`]),
   ].join('\n    ');
@@ -136,21 +142,38 @@ function render({ path, title, description, body, bootstrap, share }) {
   return html.replace('<div id="root"></div>', `<div id="root" data-prerender>${body}</div>`);
 }
 
+/** Pixel size of a PNG or JPEG, read from its header. Null for anything else. */
+function imageSize(buf) {
+  if (buf.readUInt32BE(0) === 0x89504e47) return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+  if (buf.readUInt16BE(0) !== 0xffd8) return null;
+  for (let i = 2; i + 9 < buf.length; ) {
+    const marker = buf.readUInt16BE(i);
+    /* SOF0–SOF15 carry the frame size; C4, C8 and CC share the range and don't. */
+    if (marker >= 0xffc0 && marker <= 0xffcf && ![0xffc4, 0xffc8, 0xffcc].includes(marker)) {
+      return { width: buf.readUInt16BE(i + 7), height: buf.readUInt16BE(i + 5) };
+    }
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  return null;
+}
+
 /**
- * The link-preview card for a business, if one has been generated and
- * committed (scripts/build-og.mjs writes public/og/<slug>.png). Null when
- * there is none, so the page keeps the site-wide preview rather than a broken
- * image.
+ * The link preview for a business: the headline's leading image, the same
+ * photo the overview shows beside the title. The preview already prints the
+ * headline title and subtitle as text, so the image does not repeat them.
+ * Null when there is none, so the page keeps the site-wide preview rather than
+ * a broken image.
  *
- * The URL carries a hash of the file: apps cache a preview image by URL, often
- * for days, and a card regenerated under the same URL would keep showing the
- * old one.
+ * The size is read off the built file when the image is ours, so an app can lay
+ * out the preview before downloading it; a bucket URL goes without.
  */
 function ogCard(slug) {
-  const file = join(dist, 'og', `${slug}.png`);
-  if (!existsSync(file)) return null;
-  const v = createHash('sha256').update(readFileSync(file)).digest('hex').slice(0, 10);
-  return { url: `${SITE}/og/${encodeURIComponent(slug)}.png?v=${v}`, width: 1200, height: 630 };
+  const image = profileFor(slug)?.headline?.image;
+  if (!image) return null;
+  if (/^https?:\/\//.test(image.src)) return { url: image.src, alt: image.alt };
+  const file = join(dist, image.src.replace(/^\//, ''));
+  const size = existsSync(file) ? imageSize(readFileSync(file)) : null;
+  return { url: `${SITE}${image.src}`, alt: image.alt, ...size };
 }
 
 function write(path, html) {
@@ -539,14 +562,9 @@ for (const b of all) {
     <p><a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
 
   /* Every page of the profile shares the same preview — the headline and its
-     card — whichever section the link points at. */
-  const card = headline ? ogCard(b.slug) : null;
+     leading image — whichever section the link points at. */
   const share = headline
-    ? {
-        title: headline.title,
-        description: headline.subtitle,
-        image: card ? { ...card, alt: `${b.name}: ${headline.title}` } : null,
-      }
+    ? { title: headline.title, description: headline.subtitle, image: ogCard(b.slug) }
     : undefined;
 
   const html = render({

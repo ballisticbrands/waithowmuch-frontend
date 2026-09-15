@@ -9,3 +9,6 @@ tsconfig.tsbuildinfo
 # Screenshot output — for looking at, not for committing.
 screenshots/
 public/logos/*
+
+# Share cards from scripts/build-og.mjs — uploaded to the bucket, never committed.
+og-out/
