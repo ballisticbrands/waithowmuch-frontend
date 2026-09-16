@@ -49,9 +49,8 @@ Events currently fired:
 |---|---|---|
 | `page_view` | `PageView` | hard load, and every client-side route change |
 | `view_business` | `ViewContent` | a business profile resolves, once per slug |
-| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API. Params: `method`, `signup_source`, `business_slug`, `section` |
+| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API. Params: `method`, `signup_source` |
 | `login` | — | a returning sign-in |
-| `signup_prompt` | — | the unlock prompt opened on a profile section. Params: `business_slug`, `section` |
 
 🚨 `sign_up` is gated on the API's `isNew` flag, not on "we received a
 session". Every returning sign-in produces a session too, and counting those is
@@ -60,19 +59,16 @@ that knows.
 
 ### Signup source
 
-Every profile section past the overview is locked for signed-out readers
-(`components/SignupGate.tsx`). Where a signup started is recorded in two
-places, from one value (`lib/signup-intent.ts`):
+Where a signup started — the `/signup` page ("Join") or the `/login` page — is
+recorded in two places, from one value (`lib/signup-intent.ts`):
 
-- **The `User` row** — `signupSource` (`signup_page`, `login_page`,
-  `profile_gate`) and `signupBusinessSlug`, written once on account creation
-  alongside the first-touch UTMs. This is the durable record: it survives ad
-  blockers and consent, and joins to anything else about the user.
-- **GA4** — the same values as `sign_up` params. This is the funnel view,
-  next to `signup_prompt` and `view_business`. `signup_source`,
-  `business_slug` and `section` are registered as event-scoped custom
-  dimensions (2026-09-16, via the Admin API), and `sign_up` is a key event.
-  A new event param needs the same registration before GA4 reports on it.
+- **The `User` row** — `signupSource` (`signup_page` or `login_page`), written
+  once on account creation alongside the first-touch UTMs. This is the durable
+  record: it survives ad blockers and consent.
+- **GA4** — the same value as the `sign_up` param `signup_source`, registered
+  as an event-scoped custom dimension (2026-09-16, via the Admin API); `sign_up`
+  is a key event. A new event param needs the same registration before GA4
+  reports on it.
 
 Verify it for real, in a browser, against the built site:
 

@@ -1,23 +1,20 @@
 /**
  * Where a sign-up started, and where to send the reader afterwards.
  *
- * Built from the /signup and /login URL (`?from=<slug>&section=<id>&next=<path>`,
- * which the unlock prompt on a profile writes) and kept in localStorage,
- * because a magic link finishes in a different page load, often a different
- * tab, from the one that asked for it. The callback reads it back to label the
- * `sign_up` event and to return the reader to the section they tried to open.
+ * Built from the /signup or /login URL (plus an optional same-origin
+ * `?next=<path>`) and kept in localStorage, because a magic link finishes in a
+ * different page load, often a different tab, from the one that asked for it.
+ * The callback reads it back to label the `sign_up` event and to redirect.
  *
  * The same source goes to the API with the attribution blob, so the User row
  * records it too. See README → "Signup source".
  */
 const KEY = "whm_signup_intent_v1";
 
-export type SignupSource = "signup_page" | "login_page" | "profile_gate";
+export type SignupSource = "signup_page" | "login_page";
 
 export type SignupIntent = {
   source: SignupSource;
-  businessSlug?: string;
-  section?: string;
   next?: string;
 };
 
@@ -27,11 +24,8 @@ function safeNext(v: string | null): string | undefined {
 }
 
 export function intentFromUrl(mode: "signup" | "login", params: URLSearchParams): SignupIntent {
-  const from = params.get("from")?.slice(0, 255) || undefined;
   return {
-    source: from ? "profile_gate" : mode === "signup" ? "signup_page" : "login_page",
-    businessSlug: from,
-    section: params.get("section")?.slice(0, 64) || undefined,
+    source: mode === "signup" ? "signup_page" : "login_page",
     next: safeNext(params.get("next")),
   };
 }
@@ -56,13 +50,5 @@ export function takeIntent(): SignupIntent | null {
   }
 }
 
-/** The fields the API stores on a NEW User row. */
-export const intentFields = (i: SignupIntent) => ({
-  signupSource: i.source,
-  ...(i.businessSlug ? { signupBusinessSlug: i.businessSlug } : {}),
-});
-
-/** The query string that carries an intent from a profile to /signup or /login. */
-export function gateQuery(slug: string, section: string, next: string): string {
-  return new URLSearchParams({ from: slug, section, next }).toString();
-}
+/** The field the API stores on a NEW User row. */
+export const intentFields = (i: SignupIntent) => ({ signupSource: i.source });
