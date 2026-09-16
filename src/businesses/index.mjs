@@ -53,6 +53,7 @@ import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
+import { LIGHTEN_LIFE_BREAKDOWN, lightenLifePhoto } from './lighten-life.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -4359,6 +4360,727 @@ export const PROFILES = {
       {
         type: 'prose',
         text: 'These details are resolved from the seller record behind the brand’s Amazon storefront, and from the deal announcements.',
+      },
+    ],
+  },
+
+  'lighten-life': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-lighten-life-headline.ts, from
+       waithowmuch-research research/lighten-life/headline.json (reviewed
+       2026-09-16) — and the page reads them from the row alone. */
+    headline: {
+      /* Not the revenue leader, deliberately. That is the mixing-glass bar kit,
+         whose buy box Mili World happened to hold at the moment of the read.
+         This one sold the most units in the month, and it is the object the
+         title names: a drinking glass. */
+      image: {
+        src: lightenLifePhoto('B09XHSVV7T'),
+        alt: 'A whiskey glass printed “Daddy’s Sippy Cup” in white script, filled with whiskey, beside an open pale wooden gift box lined in black with the lighten life wreath logo inside the lid — a best-selling LIGHTEN LIFE listing',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand on the glass,
+             the box and the listings, and no other brand's goods in the
+             catalogue. 🚨 The trademark is registered to a third company,
+             Shenzhen Tangson Houseware, not to either seller account, so
+             whether the seller owns the brand is unestablished — the first
+             question for the owner. */
+          primaryMethod: 'private_label',
+          /* Broad. No listing is over a fifth of September 2026 and 21 of 122
+             listings carry a badge, spread over whiskey glasses, beer glasses,
+             decanters and a bar kit. Not "dominance": the year-dated gift
+             glass is a crowded search, where they rank mid-page (46–57) on
+             generic gift terms. */
+          catalogStructure: 'broad',
+          /* Level 2. A printed design — a year, a joke — on a stock glass in a
+             stock wooden or barrel box. Visible, and a rival orders the same
+             print from the same kind of factory. No tooling, and nothing
+             custom-made to form or function. */
+          diffTooling: 'no',
+          diffCustom: 'no',
+          diffVisible: 'yes',
+          /* A READ: the Brand Store at /stores/LIGHTENLIFE is gated behind
+             enrolment. */
+          brandRegistry: 'yes',
+          /* 🚨 `trademark` left out on purpose. The mark is registered and
+             live, but its owner is neither seller, so whether it would convey
+             in a sale is unknown. Scoring "registered" would pay +0.2 for an
+             asset nobody has shown the business holds. */
+        },
+        derived: {
+          /* RULE 1: B07YJLZTNB, a decanter and glass set, 2019-12-05 — the
+             catalogue's first listing. Not EVERHOME's account (Keepa first saw
+             it 2025-12-26). */
+          sellingSince: '2019-12-05',
+          /* Top 20 listings, each variation family counted ONCE (the
+             birthday-glass family shares 3,688 across its ages; the beer glasses
+             2,171). A floor. */
+          reviewTotal: 11568,
+          /* Revenue-weighted over September's badged listings: 4.79. */
+          ratingWeighted: 4.8,
+          /* 🚨 A blend of the two accounts by rating count — EVERHOME 100% over
+             32, Mili World 99% over 881 → 99%. Both sit in the model's 98%+
+             band, so the blend does not move the multiple. */
+          sellerFeedbackPct: 99,
+          /* channels left unset: EVERHOME's record shows FBA, and nobody
+             checked for FBM. The model scores only "both". */
+          /* RULE 2. EVERHOME has an Amazon Canada account with 0 ratings; Amazon
+             US is all of the measured revenue. Mili World's footprint outside
+             the US was not checked. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* December 2025 against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 26.14,
+          /* RULE 3: offAmazonSharePct unset. Walmart and Bed Bath & Beyond
+             listings exist and their sellers were never read. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. The LIGHTEN LIFE brand on Amazon US only, counted across both seller accounts that have held its buy box — Walmart, Bed Bath & Beyond and any other retail are excluded.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '122', note: '72 in the current storefront; 21 carrying a sold badge', info: 'skus' },
+      /* The whiskey glasses' own breadcrumb — most of the badged listings sit
+         under it. */
+      {
+        label: 'Category',
+        value: 'Home & Kitchen › Kitchen & Dining › Dining & Entertaining › Glassware & Drinkware › Cocktail Drinkware › Old Fashioned Glasses',
+        note: 'The whiskey-glass listings',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Top-listing figures, so NO `info` key — the shared ⓘ copy describes
+         one hero listing. */
+      { label: 'Product reviews', value: '11,568', note: 'Top 20 listings, each variation family counted once' },
+      { label: 'Product rating', value: '4.8★', note: 'Revenue-weighted, September’s badged listings' },
+      { label: 'Seller feedback', value: '99–100%', note: 'Mili World and EVERHOME · read 15 Sep 2026', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their brand on the box; the maker is unnamed', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Broad catalogue, long tail', note: 'No listing is a fifth of Sep 2026', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Differentiation', value: 'Level 2', note: 'Printed designs on stock glass', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US', note: 'Listings seen on other retailers, sellers unread', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a number behind it. Every figure on this profile is the LIGHTEN LIFE brand on Amazon US, across both seller accounts that have held its buy box.',
+      },
+      /* Unchecked rather than no: an account exists in Canada, and Mili
+         World's non-US accounts were never looked up. */
+      'amazon-international': {
+        status: 'unchecked',
+        note:
+          'EVERHOME has an Amazon Canada account with 0 ratings and none on Amazon UK or Germany. Mili World was not looked up outside the US.',
+      },
+      'own-store': {
+        status: 'no',
+        note:
+          'No brand site was found. lifelightenup.com uses the name, but it is a template store that also sells Vitra, Alessi and Hay, and nothing ties it to the brand.',
+      },
+      /* Unchecked, not yes: the listings exist, but whether this business is
+         the one selling them is exactly what was not read. */
+      'other-marketplace': {
+        status: 'unchecked',
+        flag: true,
+        note:
+          'LIGHTEN LIFE items show up on walmart.com, bedbathandbeyond.com and advancedmixology.com in search results. The sellers were not read — Walmart returned a CAPTCHA.',
+      },
+      // tiktok-shop, wholesale-out and licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note:
+          'Both seller records show FBA, and every badged listing carries an Amazon pick-and-pack fee: $5.61 on a boxed whiskey glass, $6.90 on the bar kit.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the listings between FBA and FBM.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the brand’s listings, on either seller record.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note:
+          'Their own brand on the glass, the box and the listings. The trademark is registered to a third company in Shenzhen, so who owns the brand is a separate question.',
+      },
+      /* Unchecked: Wenxi County is a glassware county, and that is context,
+         not evidence that either Shanxi account makes the glass. */
+      manufacturer: {
+        status: 'unchecked',
+        note:
+          'Mili World is registered in Wenxi County, Shanxi, which is known for glassware. Nothing read shows who makes these glasses.',
+      },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/LIGHTENLIFE, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'LIGHTEN LIFE sells gift glassware on Amazon: birthday and retirement whiskey glasses in wooden boxes, beer glasses in barrel boxes, and whiskey decanter sets. The brand has been listed since December 2019, and in 2026 its buy box moved from a company in Shanxi, China, to one in California.',
+
+    blocks: [
+      { type: 'heading', text: 'A year on a glass, in a wooden box' },
+      {
+        type: 'prose',
+        text:
+          'Most of what sells is one idea, reprinted for each age. A 12oz rocks glass reads “1946 Vintage — Aged to Perfection” for an 80th birthday, or “1976” for a 50th, and ships in a pale wooden box with the brand’s wreath inside the lid. A 16oz pint glass does the same in a barrel-shaped box. Around them sit joke glasses — “Daddy’s Sippy Cup”, “Grandpa Juice”, a coworker leaving gift — decanter sets, a 29oz decanter and a cocktail mixing glass kit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Three companies appear in the public record, and none is shown to be connected to the others. The trademark belongs to Shenzhen Tangson Houseware. Until 2026 the buy box was held by Mili World, a home-products company in Wenxi County, Shanxi. Since June it has been held by EVERHOME CRAFT INC, at an address in Ontario, California. Everything on this page counts the brand across both seller accounts, and that choice rests on an inference.',
+      },
+      /* No figures in the caption. The two year-dated glasses are the
+         catalogue's idea; bucket copies of the brand's own listing images. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: lightenLifePhoto('B0CPWGZK21'),
+            alt: 'A whiskey glass printed “Limited Edition 1946 Vintage — Aged to Perfection” under a crown and laurel, with ice and whiskey, beside an open wooden gift box holding the same glass',
+          },
+          {
+            src: lightenLifePhoto('B0CPPXBZQG'),
+            alt: 'A pint of beer in a glass printed “1966 Vintage — Aged to Perfection”, beside a dark wooden barrel-shaped gift box with iron hoops and a brass clasp',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images: the year-dated whiskey glass in its wooden box, and the beer glass in its barrel box.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A trademark filed from Shenzhen in 2019, six years of listings, and in 2026 a buy box that moved from Shanxi to California in five months.',
+      },
+      {
+        /* Oldest first. Month-end revenue events sit on the last day of the
+           month so the dot lands on the chart's point. The 2018 first-use date
+           is the registrant's own claim on the trademark record. */
+        type: 'timeline',
+        items: [
+          {
+            when: '27 Sep 2018',
+            tag: 'Brand',
+            what: 'First use of the LIGHTEN LIFE mark, by the registrant’s claim',
+            detail: 'The date Shenzhen Tangson Houseware gave the USPTO for first use in commerce. A claim on the filing, not something checked.',
+          },
+          {
+            when: '14 Jan 2019',
+            tag: 'Brand',
+            what: 'Shenzhen Tangson Houseware files the trademark',
+            detail: 'Class 21: beer glasses, drinking glasses, glass carafes, wine pourers and more. Registered on 23 July 2019.',
+          },
+          {
+            when: '5 Dec 2019',
+            tag: 'Amazon',
+            what: 'The first LIGHTEN LIFE listing: a whiskey decanter and glass set',
+            detail: 'A second decanter set, the one still selling with four glasses, went up the next day.',
+          },
+          {
+            when: '14 Jul 2020',
+            tag: 'Amazon',
+            what: 'The cocktail mixing glass set is listed',
+            detail: 'A 20oz glass with a spoon, jigger, strainer and muddler. Six years on it is still one of the brand’s top listings.',
+          },
+          {
+            when: '23 Nov 2021',
+            tag: 'Amazon',
+            what: 'Keepa first tracks Mili World',
+            detail: 'The Shanxi account that held the brand’s buy box through January 2026. A first-tracked date trails an account’s real opening.',
+          },
+          {
+            when: '8 Apr 2022',
+            tag: 'Amazon',
+            what: '“Daddy’s Sippy Cup” goes up',
+            detail: 'A joke whiskey glass, listed the same day as a coworker leaving gift. In September 2026 it sold more units than any other listing.',
+          },
+          {
+            when: '7 Dec 2023',
+            tag: 'Amazon',
+            what: 'The year-dated birthday glasses arrive',
+            detail:
+              'Beer glasses in barrel boxes on 7 December, one listing per age, and most of the whiskey-glass ages on 10 December (a 50th had gone up in June). The whiskey-glass family now carries about 3,680 reviews, shared across its ages.',
+          },
+          {
+            when: '31 Dec 2023',
+            tag: 'Amazon',
+            what: '$249,792 — the biggest month on the chart',
+            detail: 'The first December in the badge history. Each December since has been smaller.',
+          },
+          {
+            when: '30 Apr 2024',
+            tag: 'Amazon',
+            what: 'A second Wenxi account stops appearing',
+            detail:
+              'Perfect Drinkware, in the same Shanxi town as Mili World, held the buy box on one LIGHTEN LIFE listing at every month end from September 2023 to April 2024.',
+          },
+          {
+            when: '30 Sep 2024',
+            tag: 'Amazon',
+            what: 'The retired listings have made their last sales',
+            detail:
+              'A 34oz decanter, a cold brew coffee maker, 51st, 61st and 81st birthday glasses, and boss and husband gift sets: 21 listings that brought in $351K from September 2023, none of it after this month.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '$197,630 — December',
+            detail: 'Down a fifth on December 2023.',
+          },
+          {
+            when: '23 Sep 2025',
+            tag: 'Brand',
+            what: 'The trademark owner files its six-year declaration of use',
+            detail: 'Shenzhen Tangson Houseware had filed a change of address eleven days earlier. The USPTO accepted the declaration on 10 February 2026.',
+          },
+          {
+            when: '26 Dec 2025',
+            tag: 'Amazon',
+            what: 'Keepa first tracks EVERHOME CRAFT INC',
+            detail: 'Trading as Home Gift Ever, at 2131 South Grove Avenue, Ontario, California.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$188,139 — the last December under Mili World',
+            detail: 'The smallest of the three Decembers on the chart.',
+          },
+          {
+            when: '28 Feb 2026',
+            tag: 'Amazon',
+            what: 'EVERHOME holds its first buy box at a month end',
+            detail: 'On $849.50 of the month’s $42,079. Mili World held the rest.',
+          },
+          {
+            when: '30 Apr 2026',
+            tag: 'Amazon',
+            what: 'EVERHOME holds most of the month',
+            detail: '$27,537 of $37,242, listing by listing, with Mili World stepping back rather than competing.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: '$23,339 — the lowest month in the series',
+            detail: 'Both accounts still held buy boxes. This read cannot say whether the handoff, tariffs or demand made it low.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: 'Every buy box at the month end is EVERHOME’s',
+            detail: 'And again at the end of July and August.',
+          },
+          {
+            when: '15 Sep 2026',
+            tag: 'Amazon',
+            what: 'EVERHOME holds the buy box on 70 of 72 priced listings',
+            detail:
+              'Mili World held the other two when read, one of them the cocktail mixing glass kit, although EVERHOME had held that listing 97.2% of the previous 90 days.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'This is a December business. The three Decembers on the chart did $249,792, $197,630 and $188,139, three to five times an ordinary month, and each was smaller than the one before. A little over a quarter of each month is kept after the glass, duty, freight, Amazon’s two fees and advertising. That share uses September 2026’s cost rates for every month, and a glass cost nobody has quoted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts all 122 listings carrying the brand, each once, whichever account held the buy box. The count matters here: 21 listings no longer in the current storefront sold in 2023 and 2024. Measured off today’s storefront alone, September 2023 reads $35K. Brand-wide it was $80K.',
+      },
+      { type: 'chart' },
+      {
+        /* From EVERHOME's Keepa seller record on UK, DE and CA (2026-09-15).
+           Mili World's was not looked up outside the US, and the note says so.
+           🚨 The largest share is valuation derived.topMarketplaceSharePct —
+           check-profile.mjs holds the two together. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of it is Amazon US. The current seller has a Canadian account with no ratings.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'EVERHOME’s account exists with 0 ratings; no Canadian listing was checked for a badge' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No EVERHOME account. Mili World was not looked up outside the US' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Only the current seller’s id was looked up on each marketplace.',
+      },
+      {
+        /* Generated from the brand series — see the module's header. The rows
+           sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'No listing carries the month. The mixing glass kit and the joke whiskey glasses lead, and behind them are the year-dated glasses, one listing per age, each selling 50 or 100 a month.',
+        items: LIGHTEN_LIFE_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band — hence n+. Revenue is that band times the buy box on 15 September 2026, so every row is a floor. The other 101 brand listings carry no badge and count as zero. One row’s buy box was Mili World’s at the moment of the read, and the row says so.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. This chart also joins two seller accounts into one business: Mili World in Shanxi through January 2026, and EVERHOME CRAFT INC in California from June. That is an inference. Nothing read ties the two companies together, or ties either one to the trademark’s owner.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One marketplace, one fulfilment method, one account at a time. The account changed in 2026, and the way a sale reaches the customer did not.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Every badged listing is fulfilled by Amazon, and both seller records show FBA. When the buy box moved in spring 2026, the listings, prices and reviews stayed. The best-selling whiskey glasses have been $16.99 since December 2024, with a few short discounts. Off Amazon, the brand’s items appear on Walmart, Bed Bath & Beyond and a bar-supply site. Nobody read who sells them there, so those channels are unchecked, not counted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What follows shows which methods are present, not what share each one has. A method nobody has looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon’s fulfilment fee is the biggest cost on a $20 gift. After it, the glass, duty, freight, the referral fee and advertising, a little over a quarter of each sale is left. That figure is a ceiling.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two lines are measured: Amazon’s 15% referral fee and its pick-and-pack fee, read per listing. On a $16.99 boxed whiskey glass that fee is $5.61, a third of the price, because Amazon charges for the box’s size and weight, not its value. The goods are the weak part. No supplier quoted. Glass and wooden-box prices come from Made-in-China list prices, and no barrel box was priced at all. Every dollar of unit cost moves a 2,500-unit month by about $3,000 once duty is added.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what a glass and a box cost to make and land',
+        columns: ['Line', 'What was read', 'Tier', 'Unit cost'],
+        rows: [
+          ['Whiskey glass in wooden box', 'Printed rocks glass $0.35–0.69 and wooden box $0.50–3.70 (Made-in-China list prices); ~$0.10 of printing assumed', 'Derived, weak', '$2.60'],
+          ['16oz beer glass in barrel box', 'Glass at the top of the rocks-glass range; wooden box $2.50. No barrel box priced', 'Derived, weak', '$3.20'],
+          ['Glass pair in barrel box', 'Two printed glasses and a wooden box; barrel shape and printing premium assumed', 'Derived, weak', '$4.50'],
+          ['Decanter with four glasses', '7-piece decanter set $7.50–8.50, MOQ 250', 'Derived, weak', '$8.00'],
+          ['Mixing glass kit', '20oz mixing glass $1.50–2.37; spoon, jigger, strainer, muddler and box assumed at $1.75', 'Derived, weak', '$4.00'],
+          ['29oz decanter, shot glasses — a placeholder, not a quote', 'No price read for either', 'ASSUMED', '$4.00 / $2.20'],
+          ['Tariff', 'HTSUS 7013.37 at 22.5%, Section 301 at 7.5%, plus the China duty in force two months before sale. Both the lag and China origin are assumed', 'Derived', '$0.99 a unit in Sep 2026'],
+          ['Freight and inbound', 'Package volume at the FBX01 container rate (Freightos), plus $0.35 a unit for drayage and placement — a placeholder, not a quote', 'Derived + ASSUMED', '$0.91 a unit in Sep 2026'],
+        ],
+        note:
+          'List prices describe the category, not this brand’s supplier. The glass and box costs carry most of the units, so they are the first thing to replace with a real quote. Freight uses today’s container rate for every month, which overstates 2024–25.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 27.63% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           six numbers (COST_LINES in seed-lighten-life.ts). Change one, change
+           both.
+           🚨 Two decimals on purpose: September 2026's pnl.json rates. Whole
+           percents sum to 72 and move the headline's $14.1k to $14.3k. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 20.39 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -15.19,
+            detail:
+              'About $3.10 of a $20.39 sale: glass and box by product, on September’s mix. Derived from supplier list prices and weak. The 29oz decanter, the shot glasses and part of the bar kit are placeholders, not quotes.',
+          },
+          {
+            label: 'Tariff',
+            pct: -4.84,
+            detail:
+              'About $0.99. The 22.5% MFN rate on glasses under $3, Section 301’s 7.5% and the 10% China duty in force at an assumed import two months earlier. Derived from published rates. China origin is assumed from the sellers, and any IEEPA refund is left out.',
+          },
+          {
+            label: 'Freight and inbound',
+            pct: -4.47,
+            detail:
+              'About $0.91. Ocean freight from package volume at the FBX01 rate, plus $0.35 a unit for drayage, brokerage and placement — a placeholder, not a quote.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s Kitchen rate, and 15% on every LIGHTEN LIFE listing in Keepa. Measured.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -28.87,
+            /* The largest line — the component labels the emphasised line
+               "Biggest line". */
+            emphasis: true,
+            detail:
+              'About $5.89. Amazon’s pick-and-pack fee, read per listing on 15 September 2026: $5.61 on a boxed whiskey glass, $6.90 on the bar kit, $8.56 on the decanter set. Measured.',
+          },
+          {
+            label: 'Advertising',
+            pct: -4,
+            detail:
+              'ASSUMED: a 4% placeholder. What was measured is the footprint: sponsored slots on the brand’s own name and none on four generic searches. That suggests a small budget, and it cannot show the bill.',
+          },
+        ],
+        note:
+          'September 2026’s rates, and every month on the chart carries them, although tariffs, freight and the product mix all differed in earlier months. Storage, returns, glass breakage, coupons and overhead are not modelled, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Tariffs move the rate more than the business does. The additional China duty was nothing before 2025, reached 30% during 2025, and is 10% on September 2026’s goods. The same glass kept a different share in each month. The dossier’s month-by-month model uses each month’s own duty and freight. In that model September 2026 keeps more than September 2025, although it sold less, and September 2025 to August 2026 keeps about $181,500 — less than this chart’s single set of rates gives.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The glass and box costs move this profile most. They stand in for a quote nobody has read, with advertising and part of freight as placeholders beside them. Those are the first three numbers to replace.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'There is no growth to report. The brand is shrinking, and this read cannot say why.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Every month of 2026 so far sold less than the same month of 2025. January to August came to $331,800, against $485,914 a year earlier, down 32%. The twelve months to August 2026 were down 20% on the twelve before. The decline is not only this year: each December was smaller than the last.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Part of the older decline is a pruned catalogue. By October 2024, 21 listings had stopped selling for good: a 34oz decanter, a cold brew coffee maker, 51st, 61st and 81st birthday glasses, and boss and husband gift sets. What is left is the year-dated glasses, the joke glasses, the decanters and the bar kit. New listings are the same idea at new ages: a 21st-birthday pint glass in September 2025, and 21st-birthday shot glasses in April 2026.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The 2026 drop lines up with the seller handoff. May 2026, the lowest month in the series, came when both accounts held buy boxes. It also lines up with changing China tariffs, and with whatever gift demand did. A handoff can cost sales through lost buy boxes, stock stranded in one account, or a new account’s limits. None of that is visible from outside.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Whether 2026 is a transition or a trend is the open question. June 2026, the first month fully under the new account, was the best month of 2026. July and August fell back.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Brand defence and nothing else. They buy the sponsored slots on their own name, and none on the generic gift and bar searches where their listings rank mid-page.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On “lighten life”, 8 of 12 sponsored slots were theirs, including the top four. The other four were red-light therapy products bidding on the word “light”. On four generic searches — decanter sets, whiskey-glass gifts, 50th-birthday gifts and mixing glasses — they held none of 48 sponsored slots. Their organic positions there ranged from #9 to #57. The #9 was “cocktail mixing glass”, the one generic search where a listing of theirs sits on the first rows.',
+      },
+      {
+        type: 'prose',
+        text:
+          'A first read defaulted to Israel delivery. Amazon serves sponsored results by delivery address, so it was discarded and repeated for New York. A logged-out read cannot see Sponsored Brands or Display elsewhere on the page, and it cannot see spend off Amazon.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=lighten+life',
+            value: '≈ 4% of revenue — assumed',
+            counted: '8 of 12 sponsored slots on “lighten life” · 0 of 48 on four generic searches — New York delivery, 15 Sep 2026',
+            flag: true,
+            note:
+              'The figure is a placeholder, the same 4% the margin deducts. The count is the measured part. Defence alone usually costs low single digits, and one read cannot rule out other ad types.',
+          },
+          {
+            label: 'Others on their name',
+            value: '4 of 12',
+            counted: 'Sponsored slots on “lighten life” held by red-light therapy products',
+            note: 'Bidding on the word “light”, not on the brand. No glassware competitor was buying the name.',
+          },
+          {
+            label: 'Meta, TikTok and Google',
+            value: 'Not checked',
+            note: 'No ad library or paid-search history was read. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Five Amazon searches, 15 September 2026',
+        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
+        rows: [
+          ['whiskey decanter set', '12', '0', '#16, #27, #57'],
+          ['whiskey glasses gifts for men', '12', '0', '#47'],
+          ['50th birthday gifts for men', '12', '0', '#46'],
+          ['cocktail mixing glass', '12', '0', '#9, #55'],
+          ['lighten life', '12', '8 — positions 1–4, 11, 13, 19, 20', '—'],
+        ],
+        note:
+          'Headless Chrome, logged out, delivery set to New York 10001 and checked on the page, one read per term, matched against every brand listing. Amazon localises and rotates results, so this is a reading on a day, not a rank that holds.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'There is no brand site, no social account tied to the brand, and no traffic reading. Demand here is Amazon search.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'The one chip is the Amazon brand store. A search for the brand turned up a template web store using the name, a Facebook page called “Lighten Life” and listings on other retailers. None of them was tied to the brand, and none was measured. The Amazon ranks below are the demand the record shows: the year-dated glasses sit near the top of their narrow categories.',
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Walmart',
+            href: 'https://www.walmart.com/c/brand/lighten-life',
+            value: 'Seller not read',
+            flag: true,
+            note: 'Search results show a LIGHTEN LIFE item on walmart.com. The page returned a CAPTCHA, so who sells it is unknown.',
+          },
+          {
+            label: 'Bed Bath & Beyond and advancedmixology.com',
+            value: 'Seller not read',
+            note: 'Both appear in search results carrying LIGHTEN LIFE items. Neither was opened.',
+          },
+          {
+            label: 'lifelightenup.com',
+            href: 'https://lifelightenup.com/',
+            value: 'Not the brand’s, as far as read',
+            note: 'A WooCommerce template store using the name, which also sells Vitra, Alessi and Hay. Nothing ties it to this brand.',
+          },
+          {
+            label: 'Facebook — “Lighten Life” (@ltuplife)',
+            value: 'Unread',
+            note: 'Found in search. Its content was not read, and it is not confirmed as the brand’s page.',
+          },
+        ],
+      },
+      {
+        /* Keepa's rank on the listing, read 15 Sep 2026: the root category and
+           the listing's narrowest category. Keyword positions are under
+           Advertising, dated to one search. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Home & Kitchen', 'Narrowest category', 'Rating'],
+        rows: [
+          ['60th birthday beer glass', '#11,176', '#9 · Beer Glasses', '4.8★ over 2,168 reviews'],
+          ['80th birthday whiskey glass', '#12,155', '#18 · Old Fashioned Glasses', '4.8★ over 3,679 reviews'],
+          ['Cocktail mixing glass kit', '#22,607', '#35 · Bar Sets', '4.7★ over 234 reviews'],
+          ['“Daddy’s Sippy Cup” whiskey glass', '#23,760', '#53 · Old Fashioned Glasses', '4.9★ over 799 reviews'],
+          ['29oz whiskey decanter', '#38,573', '#20 · Liquor Decanters', '4.7★ over 511 reviews'],
+          ['Decanter with four glasses', '#70,476', '#63 · Liquor Decanters', '4.7★ over 1,255 reviews'],
+        ],
+        note:
+          'Read through Keepa on 15 September 2026. Rank moves daily. Variations share a parent listing, so each age of a birthday glass carries its family’s reviews and a near-identical rank.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        /* 🚨 Three companies, and NO row says or implies they are one. The
+           trademark owner was read directly on TSDR at publish (2026-09-16);
+           the seller rows are Keepa's records (2026-09-15). */
+        type: 'facts',
+        items: [
+          { label: 'Trademark owner', value: 'Shenzhen Tangson Houseware Co., Ltd', note: 'Shenzhen, China · USPTO reg. 5813494, read 16 Sep 2026' },
+          { label: 'Trademark', value: 'LIGHTEN LIFE', note: 'Registered 23 Jul 2019 · class 21 · live' },
+          { label: 'Storefront seller', value: 'EVERHOME CRAFT INC', note: 'Home Gift Ever · Ontario, CA · merchant AGUGC2ZZUQ1D0' },
+          { label: 'Seller before 2026', value: 'Mili World', note: 'Shanxi Mili Home Products Co., Ltd · Wenxi County, Shanxi' },
+          { label: 'Seller feedback', value: '99–100%', note: 'Mili World 99% over 881 · EVERHOME 100% over 32', info: 'sellerFeedback' },
+          { label: 'First listing', value: '5 Dec 2019' },
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'The seller accounts that have held the buy box',
+        columns: ['Account', 'Legal name and address', 'Seller feedback', 'First tracked', 'Buy box'],
+        rows: [
+          [
+            'Mili World · AO5CCMZMFKMI4',
+            'ShanXi MiLi JiaJuYongPin YouXianZeRenGongSi, Tongcheng Town, Wenxi County, Shanxi, China',
+            '99% over 881 ratings',
+            '23 Nov 2021',
+            'Every attributed month end from September 2023 to January 2026, handing over February to May 2026. Two listings when read',
+          ],
+          [
+            'Home Gift Ever · AGUGC2ZZUQ1D0',
+            'EVERHOME CRAFT INC, 2131 South Grove Avenue, Unit E, Ontario, California',
+            '100% over 32 ratings',
+            '26 Dec 2025',
+            'From February 2026; every month end of June to August 2026; 70 of 72 priced listings when read',
+          ],
+          [
+            'Perfect Drinkware · A1RI9VLL1PE5MB',
+            'Shanxi Jingming Home Products Co., Ltd, Tongcheng Town, Wenxi County, Shanxi, China',
+            '98% over 130 ratings',
+            '—',
+            'One listing, at month ends September 2023 to April 2024. Its own brand is “comome”',
+          ],
+        ],
+        note:
+          'Keepa’s seller records, read 15 September 2026. First-tracked dates are Keepa’s and trail an account’s real opening. The Chinese legal names are run-together pinyin on the records.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The brand has three companies around it, and nothing read connects them. The trademark, filed in January 2019 and still live, belongs to Shenzhen Tangson Houseware. The six years of listings sold through Mili World, a home-products company in a Shanxi county known for glassware. From February to June 2026, the buy box moved listing by listing to EVERHOME CRAFT INC in California, and Mili stepped back rather than competing. A job posting describes EVERHOME as a growing brand in Ontario, California, expanding into retail and wholesale. It does not name the brand.',
+      },
+      {
+        /* 🚨 The relationship is an INFERENCE and must stay worded as one.
+           Never tighten this into a sale, a licence or common ownership. The
+           California filing was seen only through a search index and is kept
+           out of the copy until read directly. */
+        type: 'prose',
+        text:
+          'A clean handoff like this reads as one operation changing its US selling entity, but that is an inference, not a finding. Nothing read says whether the three companies share owners, or whether the change was a transfer, a licence, a new distributor or something else. Counting both seller accounts’ revenue as one brand’s rests on that inference, and so does everything priced on this page.',
+      },
+      {
+        type: 'prose',
+        text:
+          'These details are resolved from the seller records behind the brand’s Amazon listings, their buy-box history, and the USPTO trademark record.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model, a 2.6 base multiple moved by what the public record supports, applied to trailing-twelve profit. It prices the LIGHTEN LIFE brand on Amazon US as if one operation ran it throughout.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Walmart, Bed Bath & Beyond and any other retail are excluded because nobody read who sells there. The profit being multiplied carries September 2026’s cost rates into every month, on glass costs nobody has quoted, before storage, returns and breakage. On that basis it is an upper bound, and the decline since 2025 is in the trailing twelve but not in the multiple.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are age and reputation: six years of listings, reviews in the thousands on the year-dated glasses, near-perfect seller feedback on both accounts, and an enrolled brand store. The negatives are the shape of the year and the reach of the business. December is over a quarter of the trailing twelve, every measured dollar is on Amazon US, and the product is a printed design on a stock glass that a rival can order.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The whole figure rests on one inference: that Mili World and EVERHOME CRAFT INC are one operation, so the months before the handoff are this business’s record. Nothing read establishes it. The trademark belongs to a third company, so the model does not score it. Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and the feedback figure blends the two accounts. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
     ],
   },
