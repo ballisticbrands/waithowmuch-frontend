@@ -29,7 +29,7 @@ export function TopBar() {
         ) : (
           <>
             <Link data-btn data-variant="quiet" to="/login">Sign in</Link>
-            <Link data-btn to="/login">Join</Link>
+            <Link data-btn to="/signup">Join</Link>
           </>
         )}
       </div>

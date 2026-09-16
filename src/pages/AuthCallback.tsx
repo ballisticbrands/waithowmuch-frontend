@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { apiFetch } from "@/lib/api";
 import { setSession, type SessionUser } from "@/lib/session";
 import { trackSignUp, trackLogin } from "@/lib/track";
+import { takeIntent } from "@/lib/signup-intent";
 
 export default function AuthCallback() {
   const [params] = useSearchParams();
@@ -25,11 +26,15 @@ export default function AuthCallback() {
     })
       .then((r) => {
         setSession(r.token, r.user);
+        // Saved by the form that requested the link. Absent when the link is
+        // opened in another browser — the event goes unlabelled, and the User
+        // row still has the source the API stored at request time.
+        const intent = takeIntent();
         // Fired here rather than on the login form: requesting a link is not
         // signing up, and a good share of requested links are never opened.
-        if (r.isNew) trackSignUp("magic_link");
+        if (r.isNew) trackSignUp("magic_link", intent);
         else trackLogin("magic_link");
-        navigate("/", { replace: true });
+        navigate(intent?.next ?? "/", { replace: true });
       })
       .catch(() => setFailed(true));
   }, [params, navigate]);

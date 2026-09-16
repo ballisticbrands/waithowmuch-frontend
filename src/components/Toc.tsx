@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { LockIcon } from "./SignupGate";
 
-export type TocItem = { id: string; title: string; to: string; group?: string };
+export type TocItem = { id: string; title: string; to: string; group?: string; locked?: boolean };
+
+/** A click on a locked item opens the signup prompt instead of navigating.
+ *  The link keeps its href, so it still reads (and middle-clicks) as a link. */
+function lockedClick(item: TocItem, onLocked?: (item: TocItem) => void) {
+  return item.locked && onLocked
+    ? (e: React.MouseEvent) => { e.preventDefault(); onLocked(item); }
+    : undefined;
+}
 
 /**
  * The section list down the left of a profile.
@@ -19,7 +28,9 @@ export type TocItem = { id: string; title: string; to: string; group?: string };
  * hand-kept copy is a promise to update two files on every edit, and the
  * failure is silent: a link to a section that renders nothing.
  */
-export function Toc({ items, active }: { items: TocItem[]; active: string }) {
+export function Toc({
+  items, active, onLocked,
+}: { items: TocItem[]; active: string; onLocked?: (item: TocItem) => void }) {
   return (
     <nav data-toc="" aria-label="Sections">
       <span data-toc-label="">Sections</span>
@@ -36,8 +47,11 @@ export function Toc({ items, active }: { items: TocItem[]; active: string }) {
               to={s.to}
               data-on={active === s.id ? "" : undefined}
               aria-current={active === s.id ? "page" : undefined}
+              data-locked={s.locked ? "" : undefined}
+              onClick={lockedClick(s, onLocked)}
             >
               {s.title}
+              {s.locked && <LockIcon />}
             </Link>
           </li>
         ))}
@@ -48,11 +62,12 @@ export function Toc({ items, active }: { items: TocItem[]; active: string }) {
 
 /** "Next: Growth →" at the foot of a section, so the profile can still be
  *  read straight through without going back to the nav every time. */
-export function NextSection({ item }: { item: TocItem }) {
+export function NextSection({ item, onLocked }: { item: TocItem; onLocked?: (item: TocItem) => void }) {
   return (
-    <Link data-next-section="" to={item.to}>
+    <Link data-next-section="" to={item.to} onClick={lockedClick(item, onLocked)}>
       <span>Next</span>
       {item.title}
+      {item.locked && <LockIcon />}
       <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
         <path
           d="M3 8h10M9.5 4L13.5 8L9.5 12"

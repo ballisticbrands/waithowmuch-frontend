@@ -4,7 +4,7 @@ import { RouteAnalytics } from "@/components/RouteAnalytics";
 import Home from "@/pages/Home";
 import Ideas, { MoreIdeas } from "@/pages/Ideas";
 import Business from "@/pages/Business";
-import Login from "@/pages/Login";
+import Login, { Signup } from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import { About, Privacy, Terms, HowWeResearch, NotFound } from "@/pages/Static";
 import BusinessAttributes from "@/pages/BusinessAttributes";
@@ -47,6 +47,7 @@ export default function App() {
         <Route path="/business/:slug/:section" element={<Business />} />
         <Route path="/business/:slug/:section/" element={<Business />} />
         {Both({ path: "/login", element: <Login /> })}
+        {Both({ path: "/signup", element: <Signup /> })}
         <Route path="/auth/callback" element={<AuthCallback />} />
         {Both({ path: "/how-we-research", element: <HowWeResearch /> })}
         {/* The reference behind the Sourcing / Catalogue / Differentiation ⓘ on
