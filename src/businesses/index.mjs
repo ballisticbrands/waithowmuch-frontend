@@ -53,6 +53,7 @@ import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
+import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -4360,6 +4361,552 @@ export const PROFILES = {
         type: 'prose',
         text: 'These details are resolved from the seller record behind the brand’s Amazon storefront, and from the deal announcements.',
       },
+    ],
+  },
+
+  'restoration-games': {
+    /* 🚨 No headline copy here. Title, subtitle and snapshot month live on the
+       Business row — backend prisma/seed-restoration-games-headline.ts, from
+       waithowmuch-research research/restoration-games/headline.json (reviewed
+       2026-09-16). This entry carries only the image beside them. */
+    headline: {
+      /* The best seller by revenue: 46% of the own account's September on 100
+         units. */
+      image: {
+        src: restorationPhoto('B0C6NR9ZC4'),
+        alt: 'The Thunder Road: Vendetta Maximum Chrome box — a deluxe edition of the car-combat board game, with armoured cars racing through a burning city on the lid',
+      },
+    },
+
+    /* 🚨 NO `valuation`, and no valuation section. The series is eleven months
+       — it starts at November 2025, the first month Restoration's own account
+       held a buy box (see Revenue and the backend seed) — and the model will
+       not price a trailing twelve it does not have. The months before it are
+       resellers' sales, so borrowing them to reach twelve would value the
+       wrong thing. Add it back after 2026-10 is in the series. */
+
+    /* 🚨 This profile is the AMAZON CHANNEL of a crowdfunding-led publisher.
+       Every figure is Amazon US; Kickstarter, the own shop, hobby distribution
+       and Target are real and unsized. And every profit figure is BEFORE
+       LICENCE ROYALTIES — say so wherever profit is discussed.
+
+       🚨 No brand listing count in copy. The dossier README and payload say 110
+       brand ASINs; keepa/brand-series.json, the file the series comes from,
+       lists 108. Where a count is needed, it is the storefront's 22. */
+    facts: [
+      { label: 'SKUs', value: '22', note: 'In the storefront, 12 carrying a sold badge. More listings sit under the brand outside it', info: 'skus' },
+      {
+        label: 'Category',
+        value: 'Toys & Games › Games & Accessories › Board Games',
+        note: 'Best seller #14,308 in Toys & Games, #591 in Board Games',
+        info: 'category',
+        wide: true,
+      },
+      /* The best seller's own listing, as on Wet Noses. Amazon shares reviews
+         across a parent — the Thunder Road boxes are one parent, the Unmatched
+         sets another — so a summed total would count reviews twice. */
+      { label: 'Product reviews', value: '12', note: 'On the best-selling listing, a deluxe box. The base game has 176', info: 'reviews' },
+      { label: 'Product rating', value: '4.5★', note: 'Best-selling listing', info: 'rating' },
+      /* 46 ratings is a young ACCOUNT, not a young business — Keepa first saw
+         it on 28 September 2025. */
+      { label: 'Seller feedback', value: '100%', note: 'Over 46 ratings', info: 'sellerFeedback' },
+      /* A publisher of its own designs and licensed sets, made by a contract
+         manufacturer in China (its own tariff post). Spite House, also a game
+         publisher, took the same answer. */
+      { label: 'Sourcing', value: 'Private label', note: 'Own designs, made in China', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      /* The $160 box is 46% of September's own-account revenue, with the base
+         game and two expansions for it beside it. Placed by us; not scored,
+         since there is no valuation. */
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'One deluxe box is 46% of September; its base game and expansions sell alongside', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      // Differentiation left out: not placed, and nothing here scores it.
+      { label: 'Channels', value: 'Amazon US, own shop, Kickstarter, hobby distribution, Target', info: 'channels', wide: true },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'Every figure on this profile. Their own account has sold their listings since November 2025; before that, multi-brand resellers did, and still hold about a fifth of the brand’s September sales.',
+      },
+      /* Unchecked rather than no: an account exists in Canada. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'The seller id exists on Amazon Canada with no ratings, and does not exist on the UK or German marketplaces. Canadian sales were not read.',
+      },
+      'own-store': {
+        status: 'yes',
+        note: 'A shop at restorationgames.com/shop. It publishes no sales.',
+      },
+      'other-marketplace': {
+        status: 'yes',
+        flag: true,
+        note:
+          'Kickstarter: eleven campaigns from 2017 to 2025 by Tabletop Analytics’ count, and a Lord of the Rings game in 2026. Crowdfunding is how the biggest titles were launched.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        note:
+          'Hobby distribution (ACD Distribution lists the line), a registration form for retailers on their own site, and Restoration titles on Target’s site. The distributor and Target pages were found by search and not opened. None of it is sized.',
+      },
+      /* Unchecked: three IELLO-branded Unmatched editions are on Amazon, which
+         looks like a co-publishing deal, but no terms were read. Their
+         licences run INTO the company (Marvel, TMNT and others), which is not
+         what this row asks. */
+      licensing: {
+        status: 'unchecked',
+        note: 'Three Unmatched editions on Amazon carry IELLO’s brand, which suggests a co-publishing or licensing arrangement. Its terms were not read.',
+      },
+      // tiktok-shop left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'From the seller record and each listing’s fee: $6.31 to fulfil an Unmatched set, $7.98 for Thunder Road: Vendetta, $9.88 for the Maximum Chrome box.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'They run their own warehouse, but nothing read splits the listings between FBA and FBM.',
+      },
+      /* Unchecked rather than no: Amazon held a month-end buy box on a brand
+         listing in six months, which is an Amazon offer but does not say how
+         Amazon bought the stock. */
+      'vendor-1p': {
+        status: 'unchecked',
+        note: 'Amazon itself held a month-end buy box on a brand listing in six months since 2023, never more than 16% of a month. Whether it buys from Restoration or through distribution is not visible from outside.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own designs and revivals, and licensed sets, under their own brand, made for them in China by their own account of the costs.',
+      },
+      manufacturer: {
+        status: 'no',
+        note: 'They publish and warehouse the games; the manufacturing unit cost they quote is a factory’s, landed with tariff from China.',
+      },
+      'wholesale-in': { status: 'no' },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+      pod: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/RestorationGames, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'Restoration Games is a Florida board-game publisher, founded in 2016, that revives out-of-print games and publishes the Unmatched line and Thunder Road: Vendetta. This profile is the part of it that sells on Amazon — a channel it only began selling in itself in late 2025.',
+
+    blocks: [
+      { type: 'heading', text: 'A publisher that came to Amazon late' },
+      {
+        type: 'prose',
+        text:
+          'The company was founded by Justin D. Jacobson, an attorney who runs it, and the designer Rob Daviau, and it made its name bringing back games like Fireball Island, Stop Thief! and Dark Tower. Its catalogue on Amazon is two families: Unmatched, head-to-head games sold in sets of characters, several of them licensed; and Thunder Road: Vendetta, a car-combat racing game, with a deluxe edition and expansions.',
+      },
+      {
+        type: 'prose',
+        text:
+          'For years its games were on Amazon without it: multi-brand resellers held the buy box on every listing that sold. The seller account that now sells them appeared in September 2025. This page describes that account. The company also runs Kickstarter campaigns, its own shop, hobby distribution and a Target listing, and none of those publishes a figure.',
+      },
+      /* 🚨 No figures in the caption. The two families, one box each; the
+         deluxe box is already the headline image. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: restorationPhoto('B0BZ62KRGF'),
+            alt: 'The Thunder Road: Vendetta box lid: an orange muscle car with a mounted gun racing towards the viewer through a desert road battle',
+          },
+          {
+            src: restorationPhoto('B0F79P73F1'),
+            alt: 'The Unmatched Battle of Legends Volume Three box: Blackbeard, the Chupacabra, Pandora and Loki in four illustrated panels',
+          },
+        ],
+        caption: 'The two families the Amazon account sells, from their listing images: Thunder Road: Vendetta and an Unmatched set.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A 2016 publisher whose games were sold on Amazon by resellers for at least two years, until its own seller account began taking the listings in November 2025.',
+      },
+      {
+        /* Oldest first. Year-only entries have no day attached in the sources;
+           they stay on this list and off the chart. Only events from November
+           2025 fall inside the chart's series. */
+        type: 'timeline',
+        items: [
+          {
+            when: '2016',
+            tag: 'Brand',
+            what: 'Restoration Games is founded',
+            detail: 'By Justin D. Jacobson and Rob Daviau, announced at Gen Con that year, by the company’s account and Wikipedia’s summary.',
+          },
+          {
+            when: '2017',
+            tag: 'Brand',
+            what: 'The first Kickstarter campaign, Stop Thief!',
+            detail: 'The first of eleven campaigns to 2025 in Tabletop Analytics’ count.',
+          },
+          {
+            when: '10 Jul 2017',
+            tag: 'Amazon',
+            what: 'The oldest listing under the brand: Downforce',
+            detail: 'Under the Restoration Games brand and manufacturer fields. It carries no sold badge today.',
+          },
+          {
+            when: '2018',
+            tag: 'Brand',
+            what: 'Fireball Island on Kickstarter: $2.81M pledged',
+            detail: 'From Tabletop Analytics’ campaign list.',
+          },
+          {
+            when: '19 Aug 2018',
+            tag: 'Amazon',
+            what: 'Fireball Island: The Curse of Vul-Kar listed',
+            detail: 'It carries no sold badge today.',
+          },
+          {
+            when: '9 Mar 2020',
+            tag: 'Amazon',
+            what: 'Unmatched: Cobble & Fog listed',
+            detail: 'The oldest Unmatched listing still carrying a sold badge, and with 706 reviews the most reviewed of the listings that do.',
+          },
+          {
+            when: '2020',
+            tag: 'Brand',
+            what: 'Return to Dark Tower on Kickstarter: $4.05M pledged by 23,661 backers',
+            detail: 'Their largest campaign. The game carries no sold badge on Amazon today.',
+          },
+          {
+            when: '26 Oct 2020',
+            tag: 'Amazon',
+            what: 'Unmatched: Battle of Legends Vol 1 listed',
+            detail: 'The set whose buy box, $39.99, the cost model divides the publisher’s own $5 unit cost by.',
+          },
+          {
+            when: '21 Mar 2023',
+            tag: 'Amazon',
+            what: 'Thunder Road: Vendetta listed',
+            detail: 'The deluxe Maximum Chrome edition follows on 30 May 2023.',
+          },
+          {
+            when: '30 Sep 2023',
+            tag: 'Amazon',
+            what: 'Amazon’s badge history begins — with resellers in the buy box',
+            detail:
+              'Board Game Retail, Kings Games, Blazing Dealz!, Angel Seller, Redwood Entertainment and others hold it on the listings that sell. Sales from here to October 2025 are the brand’s, not Restoration’s own revenue, which is why the chart does not start here.',
+          },
+          {
+            when: '21 Apr 2025',
+            tag: 'Brand',
+            what: '“Tackling Tariffs”: the publisher prices an Unmatched set',
+            detail:
+              'Jacobson writes that a standard Unmatched 4-pack costs about $5 to make, and that the 145% tariff then in force on board games from China would add about $7.50. The only unit cost this business has published.',
+          },
+          {
+            when: '19 Jun 2025',
+            tag: 'Brand',
+            what: 'A 16-person team, and more money for marketing and sales',
+            detail: 'Reported by BoardGameWire, with new marketing, warehouse and design hires and price rises on some products because of tariffs.',
+          },
+          {
+            when: '28 Sep 2025',
+            tag: 'Amazon',
+            what: 'Restoration’s own seller account appears',
+            detail: 'Keepa first tracks it that day. Nothing public announced it or says why.',
+          },
+          {
+            when: '30 Nov 2025',
+            tag: 'Amazon',
+            what: 'The first month its own account holds a buy box at month end',
+            detail: 'On listings worth 9% of the brand’s Amazon sales that month. Resellers still hold the rest through the holidays.',
+          },
+          {
+            when: '20 Feb 2026',
+            tag: 'Brand',
+            what: 'The Supreme Court ends the IEEPA tariff surcharges',
+            detail: 'The surcharges behind the 145% rate of April 2025. The cost model uses the rate in force at the September 2026 read, 20%. From a Congressional Research Service summary, found by search.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: 'Every listing that sells is in its own buy box',
+            detail: 'The only month so far with no reseller holding a badged listing at month end. From March to August its share runs between 57% and 100% of the brand’s sales.',
+          },
+          {
+            when: '4 Jun 2026',
+            tag: 'Brand',
+            what: 'The King’s Gambit, a Lord of the Rings game, on Kickstarter',
+            detail: 'Featured by Kickstarter, which quotes Jacobson saying the platform matters less for funding than it did. Its total is not in the count above.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: '$56,240 — the own account’s best month',
+            detail: 'Counting resellers, the brand sold $97,960 that month, mostly Thunder Road: Vendetta by the dossier’s reading.',
+          },
+          {
+            when: '15 Sep 2026',
+            tag: 'Amazon',
+            what: 'Its own account holds 79% of the brand’s Amazon sales',
+            detail: 'On the live badge. The rest sits with resellers or with no one in the buy box.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The chart starts in November 2025 on purpose. Amazon’s badge history on the brand’s listings reaches back to September 2023, but until October 2025 resellers held every buy box that sold, so the retail revenue in those months was theirs; Restoration was paid a wholesale price that nobody publishes. November 2025 is the first month its own account held one. The series counts only listings with its own account in the buy box at month end, so it is smaller than the brand’s Amazon sales, and it grew as the account took more listings over. Of each month a little over half is left after Amazon’s fees, making the games, tariff, freight and advertising — but that is before licence royalties, and two of those cost lines are our placeholders.',
+      },
+      { type: 'chart' },
+      {
+        /* From the Keepa seller record looked up on each marketplace
+           (2026-09-15). No valuation, so no RULE 2 figure to agree with. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Amazon US is all of the measured revenue. A Canadian account exists with no ratings; there is none in the UK or Germany.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Account found with no ratings; sales not read' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'Seller id looked up on each; no account' },
+        ],
+        note: 'Shares of the latest month’s own-account Amazon revenue. Kickstarter, the own shop, distribution and Target are not in it.',
+      },
+      {
+        /* Generated from the Keepa brand pull — see the module's header. The
+           rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'Four Thunder Road listings are 73% of the own account’s September, and the $160 Maximum Chrome box alone is 46%. Three Unmatched sets make most of the rest.',
+        items: RESTORATION_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s badge, a bracket (50+, 100+), so each row is a floor. Revenue is that band times the price. Only listings with Restoration’s own account in the buy box at month end are here; four more badged brand listings — Unmatched Adventures: TMNT, Robin Hood vs Bigfoot, Slings and Arrows and Battle of Legends Vol 2 — were with resellers or had no one in the buy box, and are left out.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The badges are brackets, one month-end buy-box holder stands in for a whole month, and the profit leaves out licence royalties, the team, the warehouse, design and art.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'On Amazon the question is who does the selling, and for most of the badge history it was not the publisher. Off Amazon, Kickstarter comes first.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Keepa records who held the buy box on every brand listing. Until October 2025 it was multi-brand hobby and arbitrage sellers — Board Game Retail, Kings Games, Blazing Dealz! and a dozen more — presumably stocked through hobby distribution, with Amazon itself on a few listings in a handful of months. Restoration’s own account first held a month-end buy box in November 2025, on 9% of that month’s brand sales; it held 79% on the September 2026 badge. That the company chose to take its listings over is an inference from that record; nothing public announces it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon, the games are launched on Kickstarter, sold in the company’s own shop, stocked by hobby distributors and listed at Target. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Every cent of a $57.72 average sale, down to the little over half that is left before licence royalties — and the line that decides it is the one priced from a single Unmatched set.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The publisher gave the one cost that matters. In April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, and that is 12.5% of that set’s $39.99 buy box. The model carries that ratio to every listing. That holds for Unmatched sets. It is weak for Thunder Road: Vendetta, about 73% of September’s own-account revenue, including a $160 deluxe box nobody priced. Tariff is today’s rate on board games from China, 20% of the manufacturing cost; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what it costs to make',
+        columns: ['Line', 'Unmatched 4-pack', 'Thunder Road: Vendetta', 'Maximum Chrome'],
+        rows: [
+          ['Manufacturing — the publisher’s $5 for the 4-pack, carried pro rata to the others', '$5.00', '$7.49', '$20.00'],
+          ['Tariff, 20% of manufacturing', '$1.00', '$1.50', '$4.00'],
+          ['Freight and inbound — a placeholder, not a quote', '$1.50', '$1.50', '$1.50'],
+          ['For comparison: tariff on the 4-pack at April 2025’s 145%, the publisher’s own figure', '$7.50', '—', '—'],
+          ['Buy box on Amazon', '$39.99', '$59.95', '$160.00'],
+        ],
+        note:
+          'Only the first column’s manufacturing figure comes from the publisher; the other two are the same 12.5% of price. The tariff rate is a secondary summary (tariffstool.com), not a customs ruling.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 53.22% — and
+           the backend seed builds the profit and ad-spend series from the SAME
+           six numbers (COST_LINES). Change one, change both. Two decimals, at
+           September's rates: whole percents give $18,009 for September, which
+           renders $18k and no longer matches the approved title's $18.4K. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 57.72 },
+        lines: [
+          {
+            label: 'Manufacturing',
+            key: 'cogs',
+            pct: -12.5,
+            /* 🚨 No `emphasis`: the page labels that line "Biggest line", and
+               the referral fee (15%) is bigger. This one is the most
+               uncertain, which the detail and the callout say instead. */
+            detail:
+              'Derived from the publisher’s own figure: about $5 to make an Unmatched 4-pack, over its $39.99 buy box, applied to every listing. Weak for Thunder Road, which is most of the month. The most uncertain line here, and the one where a better figure would move the profit most.',
+          },
+          {
+            label: 'Tariff',
+            pct: -2.5,
+            detail: 'Derived: 20% of manufacturing, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat.',
+          },
+          {
+            label: 'Freight and inbound',
+            pct: -2.6,
+            detail: '$1.50 a unit from China to their warehouse and on to Amazon’s. A placeholder, not a quote — the publisher names freight as a cost but gives no figure.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Measured per listing: 15%, the Toys & Games rate.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -12.18,
+            detail: 'Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
+          },
+          {
+            label: 'Advertising',
+            pct: -2,
+            detail:
+              'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own name and none of 48 on generic searches, which puts spend in the low single digits of revenue.',
+          },
+        ],
+        note:
+          'Before licence royalties, which this model does not include: Marvel, The Witcher, TMNT, Buffy and Jurassic Park Unmatched sets are licensed, no rate is published, and whether Thunder Road: Vendetta or the designers carry a royalty is not known. Also before the team, warehouse, design, art, storage and returns, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Royalties are the cost this profile cannot price, and it is not a small one for a publisher. Several Unmatched sets are licensed from Marvel, The Witcher, TMNT, Buffy and Jurassic Park, and nobody publishes the rate. In September the only named licensed listing with a badge, the TMNT set, was in a reseller’s buy box, so none of the own account’s month sits on a named licence. But whether Thunder Road: Vendetta, about 73% of that revenue, pays a royalty to its designers or anyone else is unknown either way. The profit here is before that.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Three of these six lines are Amazon’s or the publisher’s; two are placeholders and one is stretched past what its source covers. Manufacturing on Thunder Road is the first number to replace — and royalties are the first number to add.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'The brand’s Amazon sales grew, and on the day search was read it held no generic sponsored slots. The demand appears to come from somewhere else, and Kickstarter is where the company built its audience.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Counting every seller, the brand’s Amazon sales were $577,577 over October 2025 to September 2026, against $412,504 the year before — 40% more. That is the brand, not this account: until November 2025 almost all of it went through resellers, and the own account has no year-ago figure to compare. On the one day Amazon search was read, Restoration held none of the sponsored slots on four generic board-game searches.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What it did have was a crowd. Tabletop Analytics counts eleven Kickstarter campaigns from 2017 to 2025 and about $14.4M pledged. That total needs two warnings: it includes a cancelled 2021 Thunder Road: Vendetta campaign whose $278,732 was never collected, and its backer count adds up backings, so a person who backed several campaigns is counted several times. The largest were Return to Dark Tower in 2020 and Fireball Island in 2018. That this audience drives Amazon demand is the dossier’s reading; nothing measures it.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Neither of the two biggest Kickstarter titles, Return to Dark Tower and Fireball Island, carries a sold badge on Amazon now. The Amazon money comes from Thunder Road and Unmatched.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One channel was read, and it shows defence: they buy their own name and their own game’s name on Amazon, and nothing generic. The figure is arithmetic; the counted line under it is what was seen.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=restoration+games',
+            value: '≈ 2% of revenue',
+            counted: '0 of 48 sponsored slots on four generic searches; 4 of 12 on “restoration games”; 3 of 11 on “unmatched board game” — read 15 Sep 2026',
+            flag: true,
+            note:
+              'Modelled, not observed. On “board games for adults”, “strategy board games”, “family board games” and “2 player board games” none of the twelve sponsored slots was theirs. On their own name they held positions 1 to 4; on “unmatched board game”, positions 1, 52 and 55. Brand-term clicks are cheap and few, so spend sits in the low single digits of revenue; 2% is the figure the margin uses. Sponsored Brands and video units were not counted. Read with a New York delivery address; an earlier read from another country was discarded.',
+          },
+          {
+            label: 'Meta and Google',
+            value: 'Not checked',
+            note: 'The Meta Ad Library and a paid-search history were not read for this profile. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Their site links four community channels, and on Amazon the demand arrives already typing the brand’s or the game’s name.',
+      },
+      /* The same chips the overview opens with. 🚨 None carries a follower
+         count: nobody read them. */
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Follower counts and site traffic were not read for this profile, so the chips above carry no audience figure. What was read is Amazon search. On “restoration games”, 24 of the first page’s organic results are the brand’s; on “unmatched board game”, eight, the best at position 3. On four generic board-game searches, none of the 60 results a page is theirs.',
+      },
+      {
+        type: 'table',
+        caption: 'Where they show up in Amazon search',
+        columns: ['Search', 'Sponsored slots theirs', 'Organic results theirs', 'Best organic position'],
+        rows: [
+          ['restoration games', '4 of 12', '24', '#5'],
+          ['unmatched board game', '3 of 11', '8', '#3'],
+          ['board games for adults', '0 of 12', '0', '—'],
+          ['strategy board games', '0 of 12', '0', '—'],
+          ['family board games', '0 of 12', '0', '—'],
+          ['2 player board games', '0 of 12', '0', '—'],
+        ],
+        note:
+          'Read 15 September 2026 in Chrome with delivery set to New York 10001, 60 results a page. Amazon localises search to whoever is looking, so these positions describe that reader on that day. A first “strategy board games” read showed no ads at all and was read again.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Nothing public says how much of that branded demand comes from Kickstarter backers, game stores or their socials, because none of them publishes a number.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'RESTORATION GAMES, LLC' },
+          { label: 'Seller', value: 'Restoration Games', note: 'Merchant A31FN2NBWF0WX7' },
+          { label: 'Founded', value: '2016', note: 'By the company’s account' },
+          { label: 'Founders', value: 'Justin D. Jacobson and Rob Daviau', note: 'Jacobson runs it; Daviau is Chief Restoration Officer' },
+          { label: 'Seller account first seen', value: '28 Sep 2025', note: 'By Keepa — the account, not the brand' },
+          { label: 'Registered address', value: 'Sunrise, FL, US', note: '12717 W Sunrise Blvd, Ste 244, 33323' },
+          { label: 'Seller feedback', value: '100%', note: 'Over 46 ratings', info: 'sellerFeedback' },
+          { label: 'Team', value: '16', note: 'June 2025, trade press' },
+          { label: 'Oldest listing under the brand', value: '10 Jul 2017' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'An established publisher on a new seller account. Jacobson, an attorney, owns and runs the Florida company; Daviau designs. By their own announcements they hired a lead marketer and a warehouse manager in September 2024, when a move to a new warehouse of their own was under way, and by June 2025 the team was sixteen, with more hires in marketing, warehouse and design. None of that is checked here.',
+      },
+      {
+        type: 'prose',
+        text: 'These details are resolved from the seller record behind the brand’s Amazon storefront, and from the company’s own and trade-press announcements.',
+      },
+      /* Valuation omitted: eleven profit months, and the model needs twelve. */
     ],
   },
 };
