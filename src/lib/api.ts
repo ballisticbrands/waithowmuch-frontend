@@ -72,6 +72,8 @@ export type BusinessCard = {
    *  the detail's `snapshotMonth`. Optional until every API the frontend can
    *  meet serves it on the list. */
   title?: string | null;
+  /** The headline's second half, shown under the title on a /data/ row. */
+  subtitle?: string | null;
   categories: CategoryRef[];
 };
 
@@ -123,8 +125,6 @@ export type BusinessDetail = BusinessCard & {
    *  the page carries (lib/reading.ts). Null for a business with no researched
    *  headline. Optional only until every API the frontend can meet serves it. */
   snapshotMonth?: string | null;
-  /** The headline's second half — see `title` on BusinessCard. */
-  subtitle?: string | null;
   /** 🚨 `retrievedAt` is first-class, not a footnote. Half of what a researched
    *  profile rests on is a READING taken at a moment — a visit count, a
    *  follower number, a best-seller rank — and one published without the day
