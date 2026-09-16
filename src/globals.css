@@ -894,6 +894,52 @@ img[data-row-logo] {
 [data-next-section]:hover { border-color: var(--border-strong); }
 [data-next-section] svg { color: var(--accent); }
 
+/* ─── Locked sections + the signup prompt ─────────────────────────────
+ *
+ * components/SignupGate.tsx. Signed out, every profile section past the
+ * overview carries a lock; opening one raises the dialog below. Modelled on
+ * the unlock dialog in verifiedmargins-frontend.
+ */
+[data-lock-icon] { width: 0.8em; height: 0.8em; flex: none; }
+[data-toc] a[data-locked] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+[data-toc] a[data-locked] [data-lock-icon] { opacity: 0.6; }
+[data-next-section] [data-lock-icon] { color: var(--muted-foreground); }
+
+dialog[data-gate] {
+  width: min(24rem, calc(100vw - 1.5rem));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  color: var(--foreground);
+}
+dialog[data-gate]::backdrop { background: rgb(0 0 0 / 45%); }
+[data-gate-dismiss] {
+  position: absolute; top: 0.5rem; right: 0.5rem;
+  padding: 0.25rem 0.45rem; border: 0; border-radius: var(--radius);
+  background: transparent; color: var(--muted-foreground);
+  font: inherit; font-size: 0.9rem; line-height: 1; cursor: pointer;
+}
+[data-gate-dismiss]:hover { background: var(--muted); color: var(--foreground); }
+[data-gate-body] { padding: 1.6rem 1.35rem 1.35rem; }
+[data-gate-body] h2 {
+  margin: 0 0 0.4rem; padding-right: 1.25rem; /* clears the ✕ */
+  font-size: 1.05rem; font-weight: 650; line-height: 1.35;
+}
+[data-gate-body] > p { margin: 0 0 1.1rem; font-size: 0.875rem; color: var(--muted-foreground); }
+[data-gate-cta] { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; }
+[data-gate-body] > p[data-gate-switch] { margin: 0.9rem 0 0; text-align: center; }
+
+[data-locked-section] {
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  padding: 2.5rem 1.5rem; text-align: center;
+  border: 1px dashed var(--border-strong); border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+[data-locked-section] > [data-lock-icon] { width: 1.5rem; height: 1.5rem; color: var(--accent); }
+[data-locked-section] h2 { margin: 0.25rem 0 0; font-size: 1.125rem; font-weight: 650; }
+[data-locked-section] p { margin: 0 0 0.75rem; max-width: 28rem; color: var(--muted-foreground); font-size: 0.9375rem; }
+
 /* Sections start a new beat, but the first one follows the cards directly. */
 [data-profile-section] + [data-profile-section] { margin-top: 2rem; }
 [data-facts-block] { margin: 1rem 0 1.25rem; }

@@ -144,9 +144,31 @@ export function trackBusinessView(slug: string, name?: string): void {
  * session". Every returning sign-in issues a session too, and counting those
  * as registrations is the single most common way this metric gets inflated.
  */
-export function trackSignUp(method: "google" | "magic_link"): void {
-  gaEvent("sign_up", { method });
-  metaStandard("CompleteRegistration", { registration_method: method });
+export function trackSignUp(
+  method: "google" | "magic_link",
+  intent?: { source: string; businessSlug?: string; section?: string } | null,
+): void {
+  // Where the signup started — the /signup page, the sign-in page, or the
+  // unlock prompt on a profile (with the business and section it guarded).
+  // Register these as custom dimensions in GA4 to report on them.
+  gaEvent("sign_up", {
+    method,
+    signup_source: intent?.source,
+    business_slug: intent?.businessSlug,
+    section: intent?.section,
+  });
+  metaStandard("CompleteRegistration", {
+    registration_method: method,
+    content_name: intent?.businessSlug,
+  });
+}
+
+/**
+ * The unlock prompt opened on a profile. Paired with `sign_up`'s
+ * `signup_source: "profile_gate"`, it gives the prompt's conversion rate.
+ */
+export function trackSignupPrompt(businessSlug: string, section: string): void {
+  gaEvent("signup_prompt", { business_slug: businessSlug, section });
 }
 
 /** A returning sign-in. Deliberately NOT a Meta event — it optimises nothing. */

@@ -49,13 +49,29 @@ Events currently fired:
 |---|---|---|
 | `page_view` | `PageView` | hard load, and every client-side route change |
 | `view_business` | `ViewContent` | a business profile resolves, once per slug |
-| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API |
+| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API. Params: `method`, `signup_source`, `business_slug`, `section` |
 | `login` | — | a returning sign-in |
+| `signup_prompt` | — | the unlock prompt opened on a profile section. Params: `business_slug`, `section` |
 
 🚨 `sign_up` is gated on the API's `isNew` flag, not on "we received a
 session". Every returning sign-in produces a session too, and counting those is
 the standard way this number ends up inflated. The server is the only party
 that knows.
+
+### Signup source
+
+Every profile section past the overview is locked for signed-out readers
+(`components/SignupGate.tsx`). Where a signup started is recorded in two
+places, from one value (`lib/signup-intent.ts`):
+
+- **The `User` row** — `signupSource` (`signup_page`, `login_page`,
+  `profile_gate`) and `signupBusinessSlug`, written once on account creation
+  alongside the first-touch UTMs. This is the durable record: it survives ad
+  blockers and consent, and joins to anything else about the user.
+- **GA4** — the same values as `sign_up` params. This is the funnel view,
+  next to `signup_prompt` and `view_business`. Register `signup_source`,
+  `business_slug` and `section` as event-scoped custom dimensions, or GA4
+  will not report on them.
 
 Verify it for real, in a browser, against the built site:
 

@@ -102,7 +102,7 @@ const readingStamp = (month) => (month ? `Read ${monthLabel(month)}. ${READING_N
  * 🚨 These have to be in the static HTML: no link-preview crawler runs
  * JavaScript, so a tag React sets is never seen.
  */
-function render({ path, title, description, body, bootstrap, share }) {
+function render({ path, title, description, body, bootstrap, share, jsonLd }) {
   let html = shell
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(description)}" />`);
@@ -145,6 +145,11 @@ function render({ path, title, description, body, bootstrap, share }) {
   //
   // `<` is escaped: a business name or source note containing "</script>"
   // would otherwise close the tag early and inject the rest as markup.
+  if (jsonLd) {
+    const ld = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+    html = insertIntoHead(html, `  <script type="application/ld+json">${ld}</script>\n  `);
+  }
+
   if (bootstrap) {
     const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
     html = insertIntoHead(html, `  <script>window.__WHM_BOOTSTRAP__=${json}</script>\n  `);
@@ -608,11 +613,19 @@ for (const b of all) {
 
   // One file per section, matching the app's routes.
   for (const part of paginated ? parts.slice(1) : []) {
+    /* 🔒 In the app this section is for signed-in readers only. The crawler
+       still gets the full text, inside .whm-locked and declared paywalled in
+       the JSON-LD below: that is Google's documented markup for gated
+       content, and without it serving a crawler text a reader cannot see
+       reads as cloaking. */
     const sectionBody = `
     <h1>${esc(b.name)} — ${esc(part.title)}</h1>
     <p><strong>Researched profile.</strong> The figures here are ${method}, published with the
        sources they were drawn from. <a href="/how-we-research/">How we research</a>.</p>
+    <div class="whm-locked">
     ${flatten(part.blocks)}
+    </div>
+    <p><a href="/signup/">Create a free account</a> to read every section.</p>
     <p><a href="${businessPath(b.slug)}">${esc(b.name)} overview</a> ·
        <a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
 
@@ -623,6 +636,14 @@ for (const b of all) {
       body: sectionBody,
       bootstrap: detail ? { route: 'business', slug: b.slug, business: detail, metrics } : undefined,
       share,
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: `${b.name}: ${part.title}`,
+        url: `${SITE}${businessPath(b.slug)}${part.id}/`,
+        isAccessibleForFree: false,
+        hasPart: { '@type': 'WebPageElement', isAccessibleForFree: false, cssSelector: '.whm-locked' },
+      },
     });
     /* ⚠️ WARN, not fail. A section is deliberately short — that is the whole
        point of splitting the profile — so the 120-word floor written for a
@@ -754,8 +775,14 @@ const STATIC = [
   { path: '/login/', title: `Sign in — ${BRAND_NAME}`,
     description: `Sign in to ${BRAND_NAME} with a one-time email link or with Google.`,
     body: `<h1>Sign in</h1>
-    <p>Everything here is free to read — an account just remembers you. No password: enter your
-       email and we send a one-time link.</p>` },
+    <p>Welcome back. No password: enter your email and we send a one-time link.</p>
+    <p>New here? <a href="/signup/">Create a free account</a>.</p>` },
+  { path: '/signup/', title: `Create your free account — ${BRAND_NAME}`,
+    description: `Sign up free to ${BRAND_NAME} and unlock every section of every business profile.`,
+    body: `<h1>Create your free account</h1>
+    <p>Unlock every section of every business profile. No password: enter your email and we send
+       a one-time link, or continue with Google.</p>
+    <p>Already have an account? <a href="/login/">Sign in</a>.</p>` },
 ];
 
 for (const r of STATIC) {

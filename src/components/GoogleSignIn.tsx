@@ -42,7 +42,13 @@ function loadGsi(): Promise<void> {
  * would put it on the critical path of the profile pages that actually get the
  * traffic.
  */
-export function GoogleSignIn({ onCredential }: { onCredential: (credential: string) => void }) {
+export function GoogleSignIn({
+  onCredential, text = "continue_with",
+}: {
+  onCredential: (credential: string) => void;
+  /** Google's own button wording: "signup_with" reads "Sign up with Google". */
+  text?: "continue_with" | "signup_with" | "signin_with";
+}) {
   const ref = useRef<HTMLDivElement>(null);
   // Kept in a ref so re-renders don't re-initialise GSI with a stale closure.
   const cb = useRef(onCredential);
@@ -59,7 +65,7 @@ export function GoogleSignIn({ onCredential }: { onCredential: (credential: stri
           callback: (r) => cb.current(r.credential),
         });
         window.google.accounts.id.renderButton(ref.current, {
-          theme: "outline", size: "large", width: 320, text: "continue_with",
+          theme: "outline", size: "large", width: 320, text,
         });
       })
       .catch(() => {
@@ -67,7 +73,7 @@ export function GoogleSignIn({ onCredential }: { onCredential: (credential: stri
            sign-in, which is right below it on the page. */
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [text]);
 
   if (!config.googleClientId) return null;
   return <div ref={ref} style={{ minHeight: 44 }} />;

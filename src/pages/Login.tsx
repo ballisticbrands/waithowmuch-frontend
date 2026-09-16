@@ -1,28 +1,78 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
 import { trackSignUp, trackLogin } from "@/lib/track";
+import { intentFromUrl, intentFields, saveIntent, takeIntent } from "@/lib/signup-intent";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
+import { BRAND_NAME } from "@/data/site";
 
-export default function Login() {
+type Mode = "signup" | "login";
+
+/* The two pages are one form — both routes create an account for a new
+   address and sign in an existing one, because a magic link cannot tell the
+   difference until it is opened. Only the words change, so the reader who
+   pressed "Join" is not greeted with "Sign in". */
+const COPY: Record<Mode, {
+  title: string; lede: string; button: string; sent: string; google: "signup_with" | "signin_with";
+  switchText: string; switchLink: string; switchTo: string;
+}> = {
+  signup: {
+    title: "Create your free account",
+    lede: "Unlock every section of every business profile. No password — we email you a one-time link.",
+    button: "Email me a sign-up link",
+    sent: "If that address can receive mail, a link to finish signing up is on its way.",
+    google: "signup_with",
+    switchText: "Already have an account?",
+    switchLink: "Sign in",
+    switchTo: "/login",
+  },
+  login: {
+    title: "Sign in",
+    lede: "Welcome back. No password — we email you a one-time link.",
+    button: "Email me a sign-in link",
+    sent: "If that address can receive mail, a sign-in link is on its way.",
+    google: "signin_with",
+    switchText: "New here?",
+    switchLink: "Create a free account",
+    switchTo: "/signup",
+  },
+};
+
+function AuthPage({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const copy = COPY[mode];
+  const intent = useMemo(() => intentFromUrl(mode, params), [mode, params]);
+  // Carried across the switch link, so a reader who came from a profile and
+  // turns out to have an account still lands back on that section.
+  const qs = params.toString();
+
+  useEffect(() => {
+    document.title = `${copy.title} — ${BRAND_NAME}`;
+  }, [copy.title]);
 
   async function requestLink(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError(null);
     try {
+      // Saved before the request: the link is opened in another page load,
+      // and the callback reads this back to label the event and redirect.
+      saveIntent(intent);
       await apiFetch("/v1/auth/magic-link", {
         method: "POST",
-        body: JSON.stringify({ email, turnstileToken, attribution: readAttribution() }),
+        body: JSON.stringify({
+          email, turnstileToken,
+          attribution: { ...readAttribution(), ...intentFields(intent) },
+        }),
       });
       // The API answers 202 whether or not the address has an account, so this
       // screen must too — anything conditional here would leak exactly what
@@ -40,14 +90,17 @@ export default function Login() {
     try {
       const r = await apiFetch<{ token: string; user: SessionUser; isNew?: boolean }>("/v1/auth/google", {
         method: "POST",
-        body: JSON.stringify({ credential, attribution: readAttribution() }),
+        body: JSON.stringify({ credential, attribution: { ...readAttribution(), ...intentFields(intent) } }),
       });
       setSession(r.token, r.user);
+      // Google finishes on this page, so a link-request intent saved earlier
+      // in the session is stale — clear it.
+      takeIntent();
       // `isNew` is the server's answer, not a guess from "we just got a
       // session" — every returning sign-in produces one of those too.
-      if (r.isNew) trackSignUp("google");
+      if (r.isNew) trackSignUp("google", intent);
       else trackLogin("google");
-      navigate("/");
+      navigate(intent.next ?? "/");
     } catch (err) {
       setError(
         err instanceof ApiError && err.code === "google_signin_unconfigured"
@@ -60,14 +113,14 @@ export default function Login() {
   return (
     <main data-main>
     <div style={{ maxWidth: "22rem", margin: "2rem auto" }}>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Sign in</h1>
+      <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>{copy.title}</h1>
       <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
-        Everything here is free to read — an account just remembers you.
+        {copy.lede}
       </p>
 
       {sent ? (
         <div data-empty style={{ marginTop: "1.5rem" }}>
-          <p>If that address can receive mail, a sign-in link is on its way.</p>
+          <p>{copy.sent}</p>
           <p style={{ marginTop: "0.75rem", fontSize: "0.875rem" }}>It expires in 20 minutes and works once.</p>
         </div>
       ) : (
@@ -86,7 +139,7 @@ export default function Login() {
               reads as the site being broken. */}
           <button data-btn type="submit" disabled={busy || !email || turnstileToken === null}
                   style={{ width: "100%", marginTop: "0.75rem" }}>
-            {busy ? "Sending…" : "Email me a link"}
+            {busy ? "Sending…" : copy.button}
           </button>
         </form>
       )}
@@ -94,9 +147,22 @@ export default function Login() {
       {error && <p style={{ color: "var(--destructive, #b42318)", fontSize: "0.875rem", marginTop: "0.75rem" }}>{error}</p>}
 
       <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "center" }}>
-        <GoogleSignIn onCredential={onGoogle} />
+        <GoogleSignIn onCredential={onGoogle} text={copy.google} />
       </div>
+
+      <p style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+        {copy.switchText}{" "}
+        <Link to={`${copy.switchTo}${qs ? `?${qs}` : ""}`}>{copy.switchLink}</Link>
+      </p>
     </div>
     </main>
   );
+}
+
+export default function Login() {
+  return <AuthPage mode="login" />;
+}
+
+export function Signup() {
+  return <AuthPage mode="signup" />;
 }
