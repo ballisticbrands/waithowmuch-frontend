@@ -388,7 +388,7 @@ h1, h2, h3, h4 {
 
 [data-row] {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 6rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 6.5rem 7rem 5.5rem 6rem;
   align-items: center; gap: 1rem;
   padding: 0.875rem 1.125rem;
   border-bottom: 1px solid var(--border);
@@ -418,9 +418,11 @@ img[data-row-logo] {
 }
 
 [data-row-name] { font-weight: 600; font-size: 0.9688rem; letter-spacing: -0.01em; }
-[data-row-tagline] {
-  color: var(--muted-foreground); font-size: 0.8125rem; margin-top: 0.1rem;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+/* The headline subtitle runs 25-45 words; two lines is enough for the point,
+   which the copy rules put in its first 25. */
+[data-row-subtitle] {
+  color: var(--muted-foreground); font-size: 0.8125rem; line-height: 1.45; margin-top: 0.15rem;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
 [data-row-tags] { display: flex; gap: 0.3rem; margin-top: 0.35rem; flex-wrap: wrap; }
 
@@ -466,10 +468,14 @@ img[data-row-logo] {
   clip: rect(0 0 0 0); white-space: nowrap;
 }
 [data-row-stat] dd { margin: 0; font-size: 1rem; font-weight: 650; }
+/* Revenue under the margin: context for the percentage, not a column of its own. */
+[data-row-stat] [data-row-sub] {
+  font-size: 0.75rem; font-weight: 500; color: var(--muted-foreground); white-space: nowrap;
+}
 
 [data-row-head] {
   display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) 7.5rem 5.5rem 6rem;
+  grid-template-columns: 2.75rem minmax(0, 1fr) 6.5rem 7rem 5.5rem 6rem;
   gap: 1rem; padding: 0.5rem 1.125rem;
   font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.055em;
   color: var(--muted-foreground); font-weight: 600;
@@ -478,7 +484,7 @@ img[data-row-logo] {
 [data-row-head] span:nth-child(n+3) { text-align: right; }
 
 @media (max-width: 760px) {
-  /* Below this the five columns cannot hold their widths without the figures
+  /* Below this the six columns cannot hold their widths without the figures
      colliding, so the row folds: mark + name on one line, figures beneath.
      The figures wrap, so a longer figure never pushes the row past the edge. */
   [data-row] { grid-template-columns: 2.75rem minmax(0, 1fr); row-gap: 0.6rem; }

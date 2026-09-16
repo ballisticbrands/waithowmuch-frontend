@@ -271,11 +271,16 @@ for (const c of [...COLLECTIONS]) {
   const list = businesses.slice(0, 40).map((b) => {
     const profit = money(b.latestMonthlyProfit, b.currency);
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
+    const revenue = b.latestMonthlyRevenue != null ? `${money(b.latestMonthlyRevenue, b.currency)} revenue/mo` : null;
+    const start = b.startingCost != null ? `${money(b.startingCost, b.currency)} to start` : null;
     const est = b.establishedAt ? `est. ${monthLabel(b.establishedAt)}` : null;
-    // Same as the live row: the headline is the link text, the name follows.
-    const about = b.title ? [b.name, b.tagline].filter(Boolean).join(' · ') : b.tagline;
+    // Same as the live row: the headline is the link text, the name and
+    // subtitle (or tagline) follow.
+    const blurb = b.subtitle || b.tagline;
+    const about = b.title ? [b.name, blurb].filter(Boolean).join(' · ') : blurb;
+    const figures = [profit && `${profit} profit/mo`, margin, revenue, start, est].filter(Boolean);
     return `<li><a href="${businessPath(b.slug)}">${esc(b.title || b.name)}</a>${about ? ` — ${esc(about)}` : ''}${
-      profit ? ` · ${profit} profit/mo` : ''}${margin ? ` · ${margin}` : ''}${est ? ` · ${est}` : ''}</li>`;
+      figures.map((f) => ` · ${f}`).join('')}</li>`;
   }).join('\n      ');
 
   const body = `

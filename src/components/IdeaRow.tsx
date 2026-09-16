@@ -13,6 +13,7 @@ export function IdeaRowHead() {
       <span>Business</span>
       <span>Profit / mo</span>
       <span>Margin</span>
+      <span>To start</span>
       <span>Established</span>
     </div>
   );
@@ -31,13 +32,16 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
 
       <div style={{ minWidth: 0 }}>
         {/* The researched headline is the row's title; the business name
-            drops to the line beneath it. A business without a headline yet
-            keeps its name as the title. */}
+            leads the line beneath it, followed by the headline's subtitle
+            (or the tagline, for a business without researched copy yet). A
+            business without a headline keeps its name as the title. */}
         <div data-row-name>{b.title || b.name}</div>
         {b.title ? (
-          <div data-row-tagline>{b.tagline ? `${b.name} · ${b.tagline}` : b.name}</div>
+          <div data-row-subtitle>
+            {[b.name, b.subtitle || b.tagline].filter(Boolean).join(" · ")}
+          </div>
         ) : (
-          b.tagline && <div data-row-tagline>{b.tagline}</div>
+          (b.subtitle || b.tagline) && <div data-row-subtitle>{b.subtitle || b.tagline}</div>
         )}
 
         {/* Where the figures came from, and what month they were true of.
@@ -68,6 +72,13 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
         <dl data-row-stat>
           <dt>Margin</dt>
           <dd data-figure>{percent(b.latestMarginPct)}</dd>
+          {b.latestMonthlyRevenue != null && (
+            <dd data-row-sub data-figure>{money(b.latestMonthlyRevenue, b.currency)} revenue</dd>
+          )}
+        </dl>
+        <dl data-row-stat>
+          <dt>To start</dt>
+          <dd data-figure>{money(b.startingCost, b.currency)}</dd>
         </dl>
         <dl data-row-stat>
           <dt>Established</dt>
