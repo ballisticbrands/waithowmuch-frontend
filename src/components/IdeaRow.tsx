@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { BusinessCard } from "@/lib/api";
 import { businessPath } from "@/data/site";
-import { money, percent, monthLabel } from "@/lib/format";
+import { money, percent, monthLabel, ageLabel } from "@/lib/format";
 import { Provenance } from "./Provenance";
 
 /** Column headings for the rows below. Hidden on narrow screens, where the
@@ -14,7 +14,7 @@ export function IdeaRowHead() {
       <span>Profit / mo</span>
       <span>Margin</span>
       <span>To start</span>
-      <span>Established</span>
+      <span>Age</span>
     </div>
   );
 }
@@ -81,8 +81,8 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
           <dd data-figure>{money(b.startingCost, b.currency)}</dd>
         </dl>
         <dl data-row-stat>
-          <dt>Established</dt>
-          <dd data-figure>{monthLabel(b.establishedAt)}</dd>
+          <dt>Age</dt>
+          <dd data-figure>{ageLabel(b.establishedAt)}</dd>
         </dl>
       </div>
     </Link>
