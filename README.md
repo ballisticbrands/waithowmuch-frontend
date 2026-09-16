@@ -69,9 +69,10 @@ places, from one value (`lib/signup-intent.ts`):
   alongside the first-touch UTMs. This is the durable record: it survives ad
   blockers and consent, and joins to anything else about the user.
 - **GA4** — the same values as `sign_up` params. This is the funnel view,
-  next to `signup_prompt` and `view_business`. Register `signup_source`,
-  `business_slug` and `section` as event-scoped custom dimensions, or GA4
-  will not report on them.
+  next to `signup_prompt` and `view_business`. `signup_source`,
+  `business_slug` and `section` are registered as event-scoped custom
+  dimensions (2026-09-16, via the Admin API), and `sign_up` is a key event.
+  A new event param needs the same registration before GA4 reports on it.
 
 Verify it for real, in a browser, against the built site:
 
