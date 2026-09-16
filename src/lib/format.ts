@@ -71,11 +71,17 @@ export function dayLabel(iso: string | null | undefined): string {
   });
 }
 
-export function yearsSince(iso: string | null | undefined): string | null {
-  if (!iso) return null;
-  const years = (Date.now() - new Date(iso).getTime()) / (365.25 * 24 * 3600 * 1000);
-  if (years < 1) return "under a year";
-  return `${Math.floor(years)} yr${Math.floor(years) === 1 ? "" : "s"}`;
+/** A business's age: "7 months" under a year, then half-year steps —
+ *  "1 year", "3.5 years". Counted in calendar months, since establishedAt is
+ *  only ever month-accurate. Mirrored in postbuild-spa-routes.mjs. */
+export function ageLabel(iso: string | null | undefined, now = new Date()): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  const months = (now.getUTCFullYear() - d.getUTCFullYear()) * 12 + (now.getUTCMonth() - d.getUTCMonth());
+  if (months < 1) return "< 1 month";
+  if (months < 12) return `${months} month${months === 1 ? "" : "s"}`;
+  const years = Math.round((months / 12) * 2) / 2;
+  return `${years} year${years === 1 ? "" : "s"}`;
 }
 
 export const METHOD_LABEL: Record<string, string> = {

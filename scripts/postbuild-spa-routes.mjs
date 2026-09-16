@@ -76,6 +76,17 @@ const money = (v, c = 'USD') => {
 const monthLabel = (iso) =>
   new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 
+/* Mirrors ageLabel in lib/format.ts: "7 months", then half-year steps. */
+const ageLabel = (iso) => {
+  const d = new Date(iso);
+  const now = new Date();
+  const months = (now.getUTCFullYear() - d.getUTCFullYear()) * 12 + (now.getUTCMonth() - d.getUTCMonth());
+  if (months < 1) return '< 1 month';
+  if (months < 12) return `${months} month${months === 1 ? '' : 's'}`;
+  const years = Math.round((months / 12) * 2) / 2;
+  return `${years} year${years === 1 ? '' : 's'}`;
+};
+
 /* Mirrors lib/reading.ts: the ONE sentence every date stamp on a profile uses,
    under the headline and under each dated section, dated by the business's
    snapshotMonth from the database. No month on the row, no stamp. */
@@ -273,7 +284,7 @@ for (const c of [...COLLECTIONS]) {
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
     const revenue = b.latestMonthlyRevenue != null ? `${money(b.latestMonthlyRevenue, b.currency)} revenue/mo` : null;
     const start = b.startingCost != null ? `${money(b.startingCost, b.currency)} to start` : null;
-    const est = b.establishedAt ? `est. ${monthLabel(b.establishedAt)}` : null;
+    const est = b.establishedAt ? `${ageLabel(b.establishedAt)} old` : null;
     // Same as the live row: the headline is the link text, the name and
     // subtitle (or tagline) follow.
     const blurb = b.subtitle || b.tagline;
