@@ -30,8 +30,15 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
       )}
 
       <div style={{ minWidth: 0 }}>
-        <div data-row-name>{b.name}</div>
-        {b.tagline && <div data-row-tagline>{b.tagline}</div>}
+        {/* The researched headline is the row's title; the business name
+            drops to the line beneath it. A business without a headline yet
+            keeps its name as the title. */}
+        <div data-row-name>{b.title || b.name}</div>
+        {b.title ? (
+          <div data-row-tagline>{b.tagline ? `${b.name} · ${b.tagline}` : b.name}</div>
+        ) : (
+          b.tagline && <div data-row-tagline>{b.tagline}</div>
+        )}
 
         {/* Where the figures came from, and what month they were true of.
             A business row is DYNAMIC — `latestMonthlyRevenue` is rewritten on

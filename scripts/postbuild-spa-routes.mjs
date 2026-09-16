@@ -272,7 +272,9 @@ for (const c of [...COLLECTIONS]) {
     const profit = money(b.latestMonthlyProfit, b.currency);
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
     const est = b.establishedAt ? `est. ${monthLabel(b.establishedAt)}` : null;
-    return `<li><a href="${businessPath(b.slug)}">${esc(b.name)}</a>${b.tagline ? ` — ${esc(b.tagline)}` : ''}${
+    // Same as the live row: the headline is the link text, the name follows.
+    const about = b.title ? [b.name, b.tagline].filter(Boolean).join(' · ') : b.tagline;
+    return `<li><a href="${businessPath(b.slug)}">${esc(b.title || b.name)}</a>${about ? ` — ${esc(about)}` : ''}${
       profit ? ` · ${profit} profit/mo` : ''}${margin ? ` · ${margin}` : ''}${est ? ` · ${est}` : ''}</li>`;
   }).join('\n      ');
 

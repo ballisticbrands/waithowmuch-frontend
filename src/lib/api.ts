@@ -65,6 +65,13 @@ export type BusinessCard = {
   startingCost: string | null;
   logoUrl: string | null;
   publishedAt: string | null;
+  /** The case-study headline, seeded from research/<slug>/headline.json after
+   *  review. 🚨 The ONLY copy of it: the page, the prerender, the share
+   *  preview and the /data/ rows read this and nothing else, and null renders
+   *  no headline (a row falls back to `name`). The figure in it is frozen at
+   *  the detail's `snapshotMonth`. Optional until every API the frontend can
+   *  meet serves it on the list. */
+  title?: string | null;
   categories: CategoryRef[];
 };
 
@@ -116,11 +123,7 @@ export type BusinessDetail = BusinessCard & {
    *  the page carries (lib/reading.ts). Null for a business with no researched
    *  headline. Optional only until every API the frontend can meet serves it. */
   snapshotMonth?: string | null;
-  /** The case-study headline, seeded from research/<slug>/headline.json after
-   *  review. 🚨 The ONLY copy of it: the page, the prerender and the share
-   *  preview read these and nothing else, and null renders no headline. The
-   *  figure in `title` is frozen at `snapshotMonth`. */
-  title?: string | null;
+  /** The headline's second half — see `title` on BusinessCard. */
   subtitle?: string | null;
   /** 🚨 `retrievedAt` is first-class, not a footnote. Half of what a researched
    *  profile rests on is a READING taken at a moment — a visit count, a
