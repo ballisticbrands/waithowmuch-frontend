@@ -21,7 +21,7 @@ const COPY: Record<Mode, {
 }> = {
   signup: {
     title: "Create your free account",
-    lede: "Unlock every section of every business profile. No password — we email you a one-time link.",
+    lede: "Free, and no password — we email you a one-time link.",
     button: "Email me a sign-up link",
     sent: "If that address can receive mail, a link to finish signing up is on its way.",
     google: "signup_with",
@@ -51,8 +51,7 @@ function AuthPage({ mode }: { mode: Mode }) {
   const [params] = useSearchParams();
   const copy = COPY[mode];
   const intent = useMemo(() => intentFromUrl(mode, params), [mode, params]);
-  // Carried across the switch link, so a reader who came from a profile and
-  // turns out to have an account still lands back on that section.
+  // Carried across the switch link, so `next` survives a change of mind.
   const qs = params.toString();
 
   useEffect(() => {

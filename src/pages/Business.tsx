@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import {
   getBusiness, getMetrics, linkFollowers, toChartPoints,
@@ -7,9 +7,7 @@ import {
 import { profileFor } from "@/businesses/index.mjs";
 import { localBusiness } from "@/businesses/local.mjs";
 import { ProfileBlocks, profileSections, chartSectionId } from "@/components/ProfileBlocks";
-import { Toc, NextSection, type TocItem } from "@/components/Toc";
-import { SignupGate, LockedSection } from "@/components/SignupGate";
-import { useSession } from "@/lib/session";
+import { Toc, NextSection } from "@/components/Toc";
 import { TopMetrics } from "@/components/MetricCards";
 import { ProfileLinks } from "@/components/ProfileLinks";
 import { ResearchedNotice } from "@/components/ResearchedNotice";
@@ -18,7 +16,7 @@ import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { EarningsCard } from "@/components/Earnings";
 import { businessBootstrap } from "@/lib/bootstrap";
 import { collectionPath, BRAND_NAME_SAFE } from "@/lib/nav-helpers";
-import { trackBusinessView, trackSignupPrompt } from "@/lib/track";
+import { trackBusinessView } from "@/lib/track";
 
 /**
  * The title of the section this URL names, or null on the overview.
@@ -48,14 +46,6 @@ export default function Business() {
     local?.metrics ?? boot?.metrics ?? null,
   );
   const [missing, setMissing] = useState(false);
-  const { signedIn } = useSession();
-  // The locked section the signup prompt is open for, if any.
-  const [gate, setGate] = useState<TocItem | null>(null);
-  const closeGate = useCallback(() => setGate(null), []);
-  const openGate = useCallback((item: TocItem) => {
-    setGate(item);
-    trackSignupPrompt(slug, item.id);
-  }, [slug]);
 
   useEffect(() => {
     const draft = localBusiness(slug);
@@ -168,11 +158,7 @@ export default function Business() {
      short document, and splitting it would produce a two-page book whose
      first page is the whole thing. */
   const paginated = declared.length > 0;
-  /* 🔒 Everything past the overview is for signed-in readers. Signed out, the
-     nav still lists every section (with a lock), and opening one prompts a
-     signup. The crawler HTML keeps the full text, marked as paywalled — see
-     the section pages in scripts/postbuild-spa-routes.mjs. */
-  const sections: TocItem[] = paginated
+  const sections = paginated
     ? [
         // Overview and Links & sources are rendered by this page rather than
         // declared in the .mjs, so they are added around the profile's own.
@@ -181,7 +167,7 @@ export default function Business() {
         ...(b.links.length > 0 || b.sources.length > 0
           ? [{ id: "sources", title: "Links & sources", group: "Provenance", to: `${base}/sources/` }]
           : []),
-      ].map((item) => ({ ...item, locked: !signedIn && item.id !== "overview" }))
+      ]
     : [];
 
   const current = paginated ? (section ?? "overview") : "overview";
@@ -195,9 +181,6 @@ export default function Business() {
   }
 
   const showOverview = current === "overview";
-  /* Landed on a locked section's URL directly: the hero still says whose page
-     this is, and the content is replaced by the unlock panel. */
-  const lockedHere = index >= 0 && sections[index]!.locked ? sections[index]! : null;
   /* Two different questions. `onSourcesPage` is "is the sources page the whole
      of this page", which only exists once a profile is split; `showSources` is
      "should links and sources render at all", which on an unsplit profile is
@@ -216,7 +199,7 @@ export default function Business() {
   return (
     <main data-main>
       <div data-with-toc={sections.length > 0 ? "" : undefined}>
-        {sections.length > 0 && <Toc items={sections} active={current} onLocked={openGate} />}
+        {sections.length > 0 && <Toc items={sections} active={current} />}
         <div data-toc-body="">
         {/* 🚨 Outside the `showOverview` guard, for the same reason as the
             ResearchedNotice at the foot of the page: a reader who lands on /margin/ from a
@@ -284,13 +267,7 @@ export default function Business() {
           </section>
         )}
 
-        {lockedHere && (
-          <div style={{ marginTop: "1.5rem" }}>
-            <LockedSection title={lockedHere.title} onUnlock={() => openGate(lockedHere)} />
-          </div>
-        )}
-
-        {!lockedHere && profile && !onSourcesPage && (
+        {profile && !onSourcesPage && (
           <div style={{ marginTop: "1.5rem" }}>
             <ProfileBlocks
               profile={profile}
@@ -321,7 +298,7 @@ export default function Business() {
             period was rolled up from a coarser one. If that distinction is
             worth drawing again it belongs on the metric row, not inferred. */}
 
-        {!lockedHere && showSources && b.links.length > 0 && (
+        {showSources && b.links.length > 0 && (
           <section id="sources" style={{ marginTop: "2.5rem" }}>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 650, marginBottom: "0.75rem" }}>Links</h2>
             <ul data-prose style={{ listStyle: "none", padding: 0 }}>
@@ -341,7 +318,7 @@ export default function Business() {
           </section>
         )}
 
-        {!lockedHere && showSources && b.sources.length > 0 && (
+        {showSources && b.sources.length > 0 && (
           <section id={b.links.length === 0 ? "sources" : undefined} style={{ marginTop: "2.5rem" }}>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 650, marginBottom: "0.75rem" }}>Sources</h2>
             <ol data-prose style={{ fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
@@ -355,17 +332,7 @@ export default function Business() {
         </section>
       )}
 
-        {next && <NextSection item={next} onLocked={openGate} />}
-
-        {gate && (
-          <SignupGate
-            slug={slug}
-            section={gate.id}
-            sectionTitle={gate.title}
-            next={gate.to}
-            onClose={closeGate}
-          />
-        )}
+        {next && <NextSection item={next} />}
 
         {/* 🚨 On every section, not only the overview. A reader who arrives on
             the Growth page from a search result has to be told these figures
