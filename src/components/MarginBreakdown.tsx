@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { Block } from "@/businesses/types";
 import { percent, price } from "@/lib/format";
 
@@ -199,6 +200,18 @@ function MarginDonut({
  * what makes a $2.75 fulfilment fee on an $8.87 order legible as the problem
  * it is. A reader gets both on the same row rather than doing it in their head.
  */
+/** A path stays in the app, a #anchor stays on the page, and anything else is
+ *  Amazon's own help, opened beside the profile rather than instead of it. */
+function MarginLink({ label, href }: { label: string; href: string }) {
+  if (href.startsWith("/")) return <Link to={href}>{label}</Link>;
+  if (href.startsWith("#")) return <a href={href}>{label}</a>;
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer">
+      {label}
+    </a>
+  );
+}
+
 export function MarginBreakdown({ block, currency }: { block: Margin; currency: string }) {
   const { basis, lines } = block;
   const marginPct = 100 + lines.reduce((a, l) => a + l.pct, 0);
@@ -248,6 +261,13 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
               −{perUnit((l.pct / 100) * basis.value, currency)}
             </span>
             {l.detail && <p data-margin-detail="">{l.detail}</p>}
+            {l.links && (
+              <p data-margin-detail="" data-margin-links="">
+                {l.links.map((k) => (
+                  <MarginLink key={k.href} {...k} />
+                ))}
+              </p>
+            )}
           </li>
         ))}
 
@@ -268,12 +288,29 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
 
 type Table = Extract<Block, { type: "table" }>;
 
+/* ── Where a table's rows were read ────────────────────────────────────
+   The source's own mark, in its own colours — the one foreign hue on a profile
+   (BRAND.md), because a reader has to recognise it at a glance for the line to
+   do its job. Site chrome in /public, not a per-profile bucket image. */
+const SOURCES = {
+  alibaba: { name: "alibaba.com", href: "https://www.alibaba.com/", logo: "/logos/alibaba.png", width: 461, height: 56 },
+} as const;
+
 /** A plain table. Its own component only so it can sit outside the reading
  *  measure and scroll horizontally on a phone rather than squeezing. */
 export function BlockTable({ block }: { block: Table }) {
+  const source = block.attribution ? SOURCES[block.attribution] : null;
   return (
-    <section data-block-table="">
+    <section data-block-table="" id={block.id}>
       {block.caption && <h3>{block.caption}</h3>}
+      {source && (
+        <p data-table-source="">
+          Powered by
+          <a href={source.href} target="_blank" rel="noopener noreferrer nofollow">
+            <img src={source.logo} alt={source.name} width={source.width} height={source.height} />
+          </a>
+        </p>
+      )}
       <div data-table-wrap="">
         <table data-earnings-table="">
           <thead>

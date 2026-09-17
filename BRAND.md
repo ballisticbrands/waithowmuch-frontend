@@ -43,6 +43,11 @@ A violet accent on near-white. **The accent is the only chroma in the UI**, and
 that is what lets it mean something: it marks the brand mark, the primary
 action and an active filter — nothing else. Don't use it for decoration.
 
+One exception, and it is not ours: a table read from an outside source shows
+that source's logo in its own colours under the caption ("Powered by" +
+`public/logos/alibaba.png`, taken from Alibaba's site header). It has to be
+recognised at a glance to vouch for the rows, which a gray mark would not.
+
 ### Brand
 
 | Token | Hex | Use |

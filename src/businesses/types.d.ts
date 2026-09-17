@@ -93,12 +93,29 @@ export type Block =
         detail?: string;
         /** Marks the line that decides the answer. */
         emphasis?: boolean;
+        /** Where to read more under the line — Amazon's own fee pages, or
+         *  another part of this profile. A path or `#id` stays in the tab;
+         *  anything else opens a new one. */
+        links?: Array<{ label: string; href: string }>;
       }>;
       /** The margin row's own note. */
       note?: string;
     }
   /** A plain table — supplier quotes, and anything else with columns. */
-  | { type: "table"; caption?: string; columns: string[]; rows: string[][]; note?: string }
+  | {
+      type: "table";
+      /** An anchor on the table, so a margin line can point back at it. */
+      id?: string;
+      caption?: string;
+      /** Where every row was read, shown under the caption with that source's
+       *  logo — "Powered by alibaba.com". A key into SOURCES in
+       *  MarginBreakdown.tsx, not a URL, so the mark stays site chrome in
+       *  /public rather than an image each profile carries. */
+      attribution?: "alibaba";
+      columns: string[];
+      rows: string[][];
+      note?: string;
+    }
   /**
    * A list of channels: a name, the one figure that describes it, and the
    * paragraph saying what that figure is. Advertising spend by channel, the

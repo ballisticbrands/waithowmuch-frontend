@@ -1197,7 +1197,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The badge history reaches back to September 2023, where Amazon’s record of the badge begins, and it holds three Christmases: December came to $893,712 in 2023, $1.31M in 2024 and $1.53M in 2025, and each January gave back between 43% and 67% of it. Outside November to January the catalogue moves between roughly $226,000 and $571,000 a month. The older months are the softer floor — a puzzle discontinued since is not in today’s catalogue and counts as zero — so some of the climb between those Decembers is the method rather than the business. Of each month about a third is kept, before returns and overhead — and on a cost of goods nobody has quoted.',
+          'The badge history reaches back to September 2023, where Amazon’s record of the badge begins, and it holds three Christmases: December came to $893,712 in 2023, $1.31M in 2024 and $1.53M in 2025, and each January gave back between 43% and 67% of it. Outside November to January the catalogue moves between roughly $226,000 and $571,000 a month. The older months are the softer floor — a puzzle discontinued since is not in today’s catalogue and counts as zero — so some of the climb between those Decembers is the method rather than the business. Of each month almost two-fifths is kept, before returns and overhead — on a cost of goods priced from Alibaba quotes and a freight figure nobody has quoted.',
       },
       { type: 'chart' },
       {
@@ -1230,7 +1230,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Revenue is a floor and profit is a ceiling — and the cost of goods under that profit is a placeholder, not a quote. Margin breakdown says which line.',
+          'Revenue is a floor and profit is a ceiling — and the freight half of the cost of goods under that profit is a placeholder rather than a quote. Margin breakdown has the rest.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
@@ -1255,7 +1255,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Every cent of a $19.46 average sale, down to the third of it that is left — after Amazon’s two cuts, which together take more than twice what the puzzle costs to make and move.',
+          'Every cent of a $19.46 average sale, down to the almost two-fifths of it that is left — after Amazon’s two cuts, which together take more than three times what the puzzle costs to make and move.',
       },
       {
         type: 'prose',
@@ -1263,7 +1263,39 @@ export const PROFILES = {
           'A 1,000-piece puzzle is a big box for a $20 product, and Amazon prices fulfilment by size and weight rather than by price: about $6.02 to pick, pack and ship each one. Add the 15% referral fee and Amazon takes 46% of every sale before the puzzle itself is paid for.',
       },
       {
-        /* 🚨 The margin row is computed as 100% less these lines — 33% — and
+        type: 'prose',
+        text:
+          'Making the puzzle is the cheap part. Three verified factories in China list a custom-printed 1,000-piece puzzle on Alibaba at $0.50–3.69 a unit, from minimums of 200 or 500 — a first order a new seller can actually place — and the longest-standing has been on Alibaba for 18 years and sold more than 70,000. Averaged, they come to $1.78 a puzzle, and that is the cost to make one below.',
+      },
+      {
+        /* 🚨 Ordered by track record, not by price: the table's job is to show
+           that this product is routinely made to order by established
+           factories, so the supplier a buyer would trust first leads. Dongguan
+           Senfutong stays in with its one sale, because a thin record is part
+           of what was found. Read from a screenshot of an Alibaba search on
+           2026-09-15 — waithowmuch-research
+           research/white-mountain-puzzles/suppliers.json keeps every listing. */
+        type: 'table',
+        id: 'cogs-breakdown',
+        caption: 'COGS — what a 1,000-piece puzzle costs to make',
+        attribution: 'alibaba',
+        /* No Lead time column: the screenshot does not show one, and Alibaba
+           serves a captcha to anything but a person's browser. It joins the
+           end of the columns if a listing's lead time is ever read. */
+        columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+        rows: [
+          ['Shenzhen Senfutong Paper Co., Ltd', 'Verified · 18 yrs', 'No rating · 200+ store reviews', '70,837', '500 sets', '$1.59–3.69'],
+          ['Dongguan Tongheng Printing Co., Ltd', 'Verified · 12 yrs', '5.0★ from 8 · 300+ store reviews', '11,889', '200 pieces', '$0.50–1.79'],
+          ['Dongguan Senfutong Paper Co., Ltd', 'Verified · 10 yrs', '4.8★ from 12 · 50+ store reviews', '1', '500 sets', '$1.69–2.30'],
+          /* The figure the margin's cost-of-goods line uses. Worked in
+             suppliers.json → cogsAverage: $2.19, $1.14 and $2.00 per supplier. */
+          ['Average — the cost to make used below', '', '', '', '', '$1.78'],
+        ],
+        note:
+          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The average takes the middle of each listing’s price range, averages those per supplier and then across the three, so a supplier with several listings counts once. The two Senfutongs share a name and may be related.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 38% — and
            the backend seed builds the profit and ad-spend series from the SAME
            four numbers (COST_LINES). Change one, change both. */
         type: 'margin',
@@ -1272,27 +1304,45 @@ export const PROFILES = {
           {
             label: 'Cost of goods',
             key: 'cogs',
-            pct: -19,
+            /* $2.78 ÷ $19.46 = 14.3%. */
+            pct: -14,
             detail:
-              '$3.70 a unit — $2.70 to make and $1.00 to move — against a $19.46 average sale. A placeholder carried over from an earlier pass and never quoted.',
+              '$1.78 to make — the average of the three Alibaba suppliers above — and $1.00 to move, a placeholder nobody quoted. Together $2.78, or 14.3% of a $19.46 sale, rounded here to 14%.',
+            links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
           },
           {
             label: 'Amazon referral fee',
             pct: -15,
-            detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+            detail: 'Amazon’s published Toys & Games rate, a flat 15% with a $0.30 minimum.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
             pct: -31,
             emphasis: true,
+            /* Size tier from the best seller's package on Keepa (B0DJWLQR6W,
+               310 × 257 × 54 mm, 812 g) against Amazon's tier table — too tall
+               and heavy for small standard. sources.json has the reading. */
             detail:
-              'About $6.02 a unit, from the per-listing fees Amazon charges. The largest line here, and the one a bulky, low-priced product cannot negotiate.',
+              'Size tier: Large Standard. The best seller ships in a 12.2 × 10.1 × 2.1 inch box weighing 1.8 lb — too tall and too heavy for Small Standard. About $6.02 a unit, from the per-listing fees Amazon charges: the largest line here, and the one a bulky, low-priced product cannot negotiate.',
+            links: [
+              {
+                label: 'All of Amazon’s size tiers, explained',
+                href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US',
+              },
+            ],
           },
           {
             label: 'Advertising',
             pct: -2,
             detail:
               'Modelled, not observed. They buy sponsored placement on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
+            links: [
+              {
+                label: 'If you want to go in depth, go to the Advertising section',
+                href: '/business/white-mountain-puzzles/advertising/',
+              },
+            ],
           },
         ],
         note:
@@ -1301,7 +1351,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The cost-of-goods line is the weakest figure on this profile. The $2.70-plus-$1.00 split came from an earlier estimate, and their own pages say every puzzle is manufactured in America, which that split was not built around. It moves the margin more than any other line, and it is the first thing to replace with a real number.',
+          'Two parts of the cost-of-goods line are softer than the rest. The $1.00 freight is a placeholder, not a quote. And the $1.78 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -1389,7 +1439,7 @@ export const PROFILES = {
       {
         type: 'valuation-board',
         note:
-          'Wholesale, the Jackson shop and whitemountainpuzzles.com are excluded: real channels that cannot be sized from outside. And the net profit being multiplied rests on a placeholder cost of goods, so this figure is only as good as that line.',
+          'Wholesale, the Jackson shop and whitemountainpuzzles.com are excluded: real channels that cannot be sized from outside. And the net profit being multiplied prices each puzzle at Alibaba factory quotes plus a placeholder freight cost, not at White Mountain’s own American-made cost, so this figure is only as good as that line.',
       },
       {
         type: 'prose',

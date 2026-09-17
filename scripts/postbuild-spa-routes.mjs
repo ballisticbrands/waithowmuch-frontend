@@ -427,11 +427,14 @@ for (const b of all) {
             case 'margin': {
               const total = 100 + blk.lines.reduce((a, l) => a + l.pct, 0);
               return `<ul>${blk.lines.map((l) =>
-                `<li>${esc(l.label)}: ${l.pct}% of revenue${l.detail ? ` — ${esc(l.detail)}` : ''}</li>`).join('')}` +
+                `<li>${esc(l.label)}: ${l.pct}% of revenue${l.detail ? ` — ${esc(l.detail)}` : ''}${
+                  (l.links ?? []).map((k) => ` <a href="${esc(k.href)}">${esc(k.label)}</a>`).join('')}</li>`).join('')}` +
                 `<li><strong>Margin: ${total}%</strong>${blk.note ? ` — ${esc(blk.note)}` : ''}</li></ul>`;
             }
             case 'table': return [
-              blk.caption ? `<h3>${esc(blk.caption)}</h3>` : '',
+              blk.caption ? `<h3${blk.id ? ` id="${esc(blk.id)}"` : ''}>${esc(blk.caption)}</h3>` : '',
+              /* Mirrors BlockTable: the source line in words, since a crawler gets no logo. */
+              blk.attribution === 'alibaba' ? '<p>Powered by <a href="https://www.alibaba.com/">alibaba.com</a></p>' : '',
               `<table><thead><tr>${blk.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead>`,
               `<tbody>${blk.rows.map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>`,
               blk.note ? `<p>${esc(blk.note)}</p>` : '',
