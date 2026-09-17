@@ -41,8 +41,8 @@ export default function AuthCallback() {
 
   return failed ? (
     <main data-main><div data-empty>
-      <p>That sign-in link is expired or already used.</p>
-      <p style={{ marginTop: "1rem" }}><Link data-btn to="/login">Get a new one</Link></p>
+      <p>That link is expired or already used.</p>
+      <p style={{ marginTop: "1rem" }}><Link data-btn to="/signup">Get a new one</Link></p>
     </div></main>
   ) : (
     <main data-main><div data-empty>Signing you in…</div></main>

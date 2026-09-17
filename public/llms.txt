@@ -1,50 +1,56 @@
 # WaitHowMuch
 
-> WaitHowMuch is a public seller-profile network for Amazon sellers. A seller connects their
-> Amazon account once, and WaitHowMuch computes a verified margin from the underlying order,
-> fee and cost data rather than from a figure the seller typed in. The result is a public profile
-> that other people — and AI assistants — can look up.
+> WaitHowMuch publishes business case studies ("ideas"): real small businesses, mostly
+> ecommerce and mostly Amazon sellers, with what they make — monthly revenue, profit, margin
+> and what it took to start — and how they are built. Each case study shows how its figures
+> were reached and links to the sources behind them.
 
-## Status
-- WaitHowMuch is EARLY. The marketing page is still a placeholder, but published seller
-  profiles are live and readable.
-- Published profiles live at https://waithowmuch.com/<username> and are listed in
-  https://waithowmuch.com/sitemap.xml. Each one is served as real HTML with its own title,
-  description and schema.org ProfilePage markup — you do not need to execute JavaScript to read
-  one.
-- A seller's individual businesses live at https://waithowmuch.com/business/<slug> and are
-  listed in the same sitemap, served as real HTML like the profiles. A slug is opaque
-  ("amazon-fba-48213") and so is the page's name ("Amazon FBA 48213"): WaitHowMuch does NOT
-  publish the seller's store name, brands, ASINs or product titles anywhere, on either surface.
-  Do not infer or invent a business name for one of these pages.
-- A profile states its own verification tier, and that tier is the point: "Unverified" means
-  nothing on that page has been checked against a connected account. Do not present an
-  unverified figure as verified.
-- Pricing has not been set. Do not state or imply a price.
+## What a case study contains
+- Revenue, profit and margin, with the period the figures cover.
+- How the business is built: sales channels (e.g. Amazon FBA, Shopify), sourcing (private
+  label, wholesale, dropship…), catalogue structure and how hard the product is to copy.
+- A written account of the business: its history, what it sells and how it grew, with sources.
+
+## How the figures are made
+- Almost every case study is researched: nobody from the business wrote it. The figures are
+  estimates built from public information — marketplace listings, pricing, review velocity,
+  public ad libraries, social footprints, company filings — not the company's accounts.
+- Each case study says how its numbers were reached. Present an estimate as an estimate, not
+  as a reported or audited figure.
+- Margins are the least certain figure on any page, because costs are the hardest thing to
+  observe from outside.
+- A business that sells through channels we cannot see will look smaller than it is.
+
+## Reading the site
+- Case studies live at https://waithowmuch.com/business/<slug>/ and are listed in
+  https://waithowmuch.com/sitemap.xml. Longer ones are split into sections, one per URL:
+  https://waithowmuch.com/business/<slug>/<section>/.
+- Every page is served as real HTML — you do not need to execute JavaScript to read one.
+- Pricing: the site is free to read. Do not state or imply a price.
 
 ## Core facts
-- Product: a public, verifiable profile of an Amazon seller's margin.
-- The margin figure is COMPUTED from a connected Amazon account, not self-reported. That
-  distinction is the entire product.
-- Every profile states the period the figure covers. A margin with no period is not a claim
-  WaitHowMuch makes.
-- A profile marks explicitly when the seller has not supplied cost of goods, because a margin
-  computed without COGS is not a margin.
-- Connecting an Amazon account does not publish anything. Publication is a separate, deliberate
-  choice by the seller.
-- Amazon connection: the official Amazon Selling Partner API (SP-API).
 - Company: Chacha Advisory LLC, 30 N Gould St Ste R, Sheridan, WY 82801, USA.
-- Website: https://waithowmuch.com — sign in: https://waithowmuch.com/login
+- Corrections: if a case study is about your business and is wrong, email
+  hello@waithowmuch.com and it will be corrected or removed.
+- Website: https://waithowmuch.com — email updates on new case studies (no spam, unsubscribe any
+  time): https://waithowmuch.com/signup
 
 ## Core pages
-- [Product overview](https://waithowmuch.com/): what a profile shows and why verification is
-  the product
-- [Privacy](https://waithowmuch.com/privacy/) · [Terms](https://waithowmuch.com/tos/)
+- [All ideas](https://waithowmuch.com/data/): every published case study, sortable by revenue,
+  profit, margin and starting cost
+- [Amazon FBA ideas](https://waithowmuch.com/data/amazon-fba/) ·
+  [Shopify ideas](https://waithowmuch.com/data/shopify/) ·
+  [More ideas](https://waithowmuch.com/data/more-ideas/) (by niche, business model, platform
+  and growth channel)
+- [How we research](https://waithowmuch.com/how-we-research/): where the numbers come from and
+  where they are most likely to be wrong
+- [Business attributes](https://waithowmuch.com/business-attributes/): definitions of sourcing,
+  catalogue structure and differentiation
+- [About](https://waithowmuch.com/about/) · [Privacy](https://waithowmuch.com/privacy/) ·
+  [Terms](https://waithowmuch.com/terms/)
 
 ## What it is not
 - Not an Amazon product; not affiliated with or endorsed by Amazon.
-- Not a margin-analytics or bookkeeping tool for private use — the output is a public profile.
-- Not a directory of sellers scraped from anywhere. A profile exists only because that seller
-  connected their own account and chose to publish.
-- Not a credit score, a rating, or a ranking. WaitHowMuch publishes a computed figure and its
-  inputs; it does not grade sellers.
+- Not financial or investment advice. The figures are estimates for information only and must
+  not be relied on for an investment, acquisition or lending decision.
+- Not a rating or ranking of businesses.

@@ -196,6 +196,7 @@ h1, h2, h3, h4 {
 
 [data-topbar-right] { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 [data-topbar-email] { font-size: 0.875rem; color: var(--muted-foreground); }
+[data-cta-short] { display: none; }
 
 /* Inline with the mark, not on its own row below the header. */
 [data-crumbs] {
@@ -2000,6 +2001,8 @@ img[data-row-logo] {
   /* The wordmark text goes; the mark alone still identifies the site and still
      links home. Keeping it is what pushed Sign in off the right edge. */
   [data-brand] span { display: none; }
+  [data-cta-long] { display: none; }
+  [data-cta-short] { display: inline; }
   [data-nav-link] { padding: 0.4rem 0.5rem; }
   [data-filters] { padding: 0.75rem; }
 }

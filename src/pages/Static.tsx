@@ -15,18 +15,14 @@ function Page({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-/** Placeholder — the real methodology write-up comes later, but the link from
- *  every profile's researched-profile notice has to land somewhere real. */
+/** Linked from the researched notice on every case study. */
 export function HowWeResearch() {
   return (
     <Page title="How we research">
-      <div data-notice style={{ marginBottom: "1.5rem" }}>
-        <div><strong>Placeholder.</strong> A full methodology write-up is still to come.</div>
-      </div>
       <p>
-        Almost every profile on {BRAND_NAME} is a <strong>researched profile</strong>. Nobody
-        from the business wrote it. We gather what is publicly visible, work the
-        economics out ourselves, and publish the result with the sources attached.
+        Almost every case study on {BRAND_NAME} is researched. Nobody from the
+        business wrote it. We gather what is publicly visible, work the economics
+        out ourselves, and publish the result with the sources attached.
       </p>
       <h2>Where the numbers come from</h2>
       <ul>
@@ -35,13 +31,12 @@ export function HowWeResearch() {
         <li>Social footprints — follower counts, posting history, engagement</li>
         <li>Company filings and registrations where they exist</li>
       </ul>
-      <h2>What the labels mean</h2>
-      <ul>
-        <li><strong>Researched</strong> — modelled by us from public information. Treat as an estimate.</li>
-        <li><strong>Owner-reported</strong> — the owner gave us the figures. We have not checked them.</li>
-        <li><strong>Interview</strong> — the owner gave the figures on the record.</li>
-        <li><strong>Verified</strong> — read from a connected account rather than estimated.</li>
-      </ul>
+      <h2>How to read the figures</h2>
+      <p>
+        The figures are estimates, not the company's accounts. Every case study
+        says how its numbers were reached and links to the sources behind them,
+        so you can judge them for yourself.
+      </p>
       <h2>Where we are likely to be wrong</h2>
       <p>
         Estimates go wrong in predictable ways: a business selling through
@@ -50,8 +45,8 @@ export function HowWeResearch() {
         figure on any page — costs are the hardest thing to observe from outside.
       </p>
       <p>
-        If a profile is wrong and it is yours, email hello@waithowmuch.com and we
-        will correct or remove it.
+        If a case study is about your business and it is wrong, email
+        hello@waithowmuch.com and we will correct or remove it.
       </p>
       <p><Link to={collectionPath("all-ideas")}>Browse all ideas →</Link></p>
     </Page>

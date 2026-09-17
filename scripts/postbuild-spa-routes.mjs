@@ -643,26 +643,27 @@ for (const b of all) {
 // ── Static routes ─────────────────────────────────────────────────────
 const STATIC = [
   { path: '/how-we-research/', guard: true, title: `How we research — ${BRAND_NAME}`,
-    description: `How ${BRAND_NAME} builds its figures, what each profile label means, and where the estimates are most likely to be wrong.`,
+    description: `How ${BRAND_NAME} builds the figures in its case studies, and where the estimates are most likely to be wrong.`,
     body: `<h1>How we research</h1>
-    <p>Almost every profile here is a researched profile. Nobody from the business wrote it.
-       We gather what is publicly visible, work the economics out ourselves, and publish the
+    <p>Almost every case study here is researched. Nobody from the business wrote it. We
+       gather what is publicly visible, work the economics out ourselves, and publish the
        result with the sources attached.</p>
     <h2>Where the numbers come from</h2>
     <ul><li>Marketplace listings, pricing, review velocity and catalogue size</li>
         <li>Public advertising libraries</li>
         <li>Social footprints — follower counts, posting history, engagement</li>
         <li>Company filings and registrations where they exist</li></ul>
-    <h2>What the labels mean</h2>
-    <ul><li>Researched — modelled by us from public information. Treat as an estimate.</li>
-        <li>Owner-reported — the owner gave us the figures. We have not checked them.</li>
-        <li>Interview — the owner gave the figures on the record.</li>
-        <li>Verified — read from a connected account rather than estimated.</li></ul>
+    <h2>How to read the figures</h2>
+    <p>The figures are estimates, not the company's accounts. Every case study says how its
+       numbers were reached and links to the sources behind them, so you can judge them for
+       yourself.</p>
     <h2>Where we are likely to be wrong</h2>
     <p>Estimates go wrong in predictable ways: a business selling through channels we cannot
        see looks smaller than it is, and one running heavy discounts looks more profitable.
        Margins are the softest figure on any page, because costs are the hardest thing to
-       observe from outside.</p>` },
+       observe from outside.</p>
+    <p>If a case study is about your business and it is wrong, email hello@waithowmuch.com and
+       we will correct or remove it.</p>` },
   /* The reference behind the Sourcing / Catalogue / Differentiation ⓘ on every
      profile. Guarded like the other content routes: it is linked from every
      profile and is a page a crawler will follow, so it has to be worth landing
@@ -762,13 +763,12 @@ const STATIC = [
     description: `Sign in to ${BRAND_NAME} with a one-time email link or with Google.`,
     body: `<h1>Sign in</h1>
     <p>Welcome back. No password: enter your email and we send a one-time link.</p>
-    <p>New here? <a href="/signup/">Create a free account</a>.</p>` },
-  { path: '/signup/', title: `Create your free account — ${BRAND_NAME}`,
-    description: `Create a free ${BRAND_NAME} account with a one-time email link or with Google.`,
-    body: `<h1>Create your free account</h1>
-    <p>Free, and no password: enter your email and we send a one-time link, or continue with
-       Google.</p>
-    <p>Already have an account? <a href="/login/">Sign in</a>.</p>` },
+    <p>New here? <a href="/signup/">Get emails on new case studies</a>.</p>` },
+  { path: '/signup/', title: `Get emails on new case studies — ${BRAND_NAME}`,
+    description: `Get an email whenever ${BRAND_NAME} publishes a new case study. No spam.`,
+    body: `<h1>Get emails on new case studies</h1>
+    <p>One email when a new case study is published. No spam, and you can unsubscribe any time. Enter
+       your email and we send a link to confirm it, or continue with Google.</p>` },
 ];
 
 for (const r of STATIC) {

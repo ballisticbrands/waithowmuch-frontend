@@ -1,7 +1,9 @@
 # waithowmuch-frontend
 
-The whole of **WaitHowMuch** on `waithowmuch.com` — the app *and* the public
-business profiles. **One origin**: no `app.*` host, no separate landing page.
+The whole of **WaitHowMuch** on `waithowmuch.com`: a site of business case
+studies ("ideas"), mostly ecommerce and mostly Amazon sellers, each with its
+revenue, profit, margin and sources. **One origin**: no `app.*` host, no
+separate landing page.
 
 Vite · React 18 · TypeScript · React Router · Tailwind. **No shared package** —
 this repo has no dependency on `@ballisticbrands/frontend-shared` and installs
@@ -16,6 +18,7 @@ entirely from the public npm registry.
 | GA4 | `G-0K360RYPPB` (property `553461549`) |
 | Clarity | `yfrezqqmrh` |
 | Google sign-in | shared OAuth Web client; `https://waithowmuch.com` is on its Authorized JS origins |
+| Turnstile | site key in `deploy.yml` (`VITE_TURNSTILE_SITE_KEY`); the secret is on the backend box, shared with SellerConnect |
 | Meta pixel | `1079875758342522` — dataset "WaitHowMuch website" in the Dragon Suite portfolio. **Organic only: there is no ad spend and no CAPI.** It is installed so the audience and the event history exist if that changes, which is not something you can backfill |
 | Meta Ads | **none, by decision** |
 
@@ -24,8 +27,10 @@ entirely from the public npm registry.
 - `src/lib/api.ts` — the one way this app talks to the backend
 - `src/lib/session.ts` — token store, `useSession` over `useSyncExternalStore`
 - `src/lib/attribution.ts` — first-touch capture, localStorage
-- `src/components/Chart.tsx` — hand-rolled SVG bars (a chart library would cost
-  more than the whole performance budget)
+- `src/data/collections.mjs` — the "Data" listings (`/data/…`) and their URLs
+- `src/businesses/` — the hand-written case-study prose; figures come from the API
+- `src/components/PerformanceChart.tsx` — hand-rolled SVG charts (a chart
+  library would cost more than the whole performance budget)
 - `scripts/postbuild-spa-routes.mjs` — the prerender
 - `BRAND.md` — logo, colour, type and shape: the brand guide
 
@@ -59,8 +64,8 @@ that knows.
 
 ### Signup source
 
-Where a signup started — the `/signup` page ("Join") or the `/login` page — is
-recorded in two places, from one value (`lib/signup-intent.ts`):
+Where a signup started — the `/signup` page (the "Get emails on new case
+studies" button in the top bar) or the `/login` page — is recorded in two places, from one value (`lib/signup-intent.ts`):
 
 - **The `User` row** — `signupSource` (`signup_page` or `login_page`), written
   once on account creation alongside the first-touch UTMs. This is the durable
@@ -91,8 +96,10 @@ Score at 1–3/10 for four days of paid traffic. **Speed tests do not catch it**
 Lighthouse runs JavaScript and sees a fine page.
 
 `postbuild-spa-routes.mjs` writes real static HTML per route, built from the
-**live API**, and **fails the build** if `/`, `/about/` or any business page
-falls under 120 crawler-visible words. Raise that threshold; never lower it to
+**live API** and `src/businesses/`, and **fails the build** if `/about/`,
+`/how-we-research/`, `/business-attributes/`, `/data/more-ideas/` or any
+business page falls under 120 crawler-visible words. Business sections and the
+other `/data/` listings only warn; `/`, auth and legal pages are exempt. Raise that threshold; never lower it to
 make a build pass.
 
 Because the copy comes from the API, published content only reaches the static
@@ -107,6 +114,5 @@ curl -s https://waithowmuch.com/business/<slug>/ | grep -ci "<slug>"   # > 0
 
 ## Known placeholders
 
-- **No Turnstile.** The backend has no `TURNSTILE_SECRET_KEY`, so the widget
-  would be theatre. Magic-link abuse is currently held off by a 60s per-user
-  cooldown and a constant 202 response.
+- **The home page (`/`) is a placeholder.** Its static HTML is two lines and a
+  link, which is why it is exempt from the word-count guard.

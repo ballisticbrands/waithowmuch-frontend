@@ -28,10 +28,12 @@ export function TopBar() {
             <button data-btn data-variant="quiet" onClick={signOut}>Sign out</button>
           </>
         ) : (
-          <>
-            <Link data-btn data-variant="quiet" to="/login">Sign in</Link>
-            <Link data-btn to="/signup">Join</Link>
-          </>
+          /* The short label is for phone widths, where the full one would
+             crowd the breadcrumbs out of the bar. */
+          <Link data-btn to="/signup">
+            <span data-cta-long>Get emails on new case studies (no spam!)</span>
+            <span data-cta-short>Get emails (no spam!)</span>
+          </Link>
         )}
       </div>
     </header>

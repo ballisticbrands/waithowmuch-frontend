@@ -14,20 +14,17 @@ type Mode = "signup" | "login";
 /* The two pages are one form — both routes create an account for a new
    address and sign in an existing one, because a magic link cannot tell the
    difference until it is opened. Only the words change, so the reader who
-   pressed "Join" is not greeted with "Sign in". */
+   asked for case-study emails is not greeted with "Sign in". */
 const COPY: Record<Mode, {
   title: string; lede: string; button: string; sent: string; google: "signup_with" | "signin_with";
-  switchText: string; switchLink: string; switchTo: string;
+  switch?: { text: string; link: string; to: string };
 }> = {
   signup: {
-    title: "Create your free account",
-    lede: "Free, and no password — we email you a one-time link.",
-    button: "Email me a sign-up link",
-    sent: "If that address can receive mail, a link to finish signing up is on its way.",
+    title: "Get emails on new case studies",
+    lede: "One email when a new case study is published. No spam, and you can unsubscribe any time.",
+    button: "Confirm my email",
+    sent: "If that address can receive mail, a confirmation link is on its way. Open it to start getting case studies.",
     google: "signup_with",
-    switchText: "Already have an account?",
-    switchLink: "Sign in",
-    switchTo: "/login",
   },
   login: {
     title: "Sign in",
@@ -35,9 +32,7 @@ const COPY: Record<Mode, {
     button: "Email me a sign-in link",
     sent: "If that address can receive mail, a sign-in link is on its way.",
     google: "signin_with",
-    switchText: "New here?",
-    switchLink: "Create a free account",
-    switchTo: "/signup",
+    switch: { text: "New here?", link: "Get emails on new case studies", to: "/signup" },
   },
 };
 
@@ -149,10 +144,12 @@ function AuthPage({ mode }: { mode: Mode }) {
         <GoogleSignIn onCredential={onGoogle} text={copy.google} />
       </div>
 
-      <p style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-        {copy.switchText}{" "}
-        <Link to={`${copy.switchTo}${qs ? `?${qs}` : ""}`}>{copy.switchLink}</Link>
-      </p>
+      {copy.switch && (
+        <p style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+          {copy.switch.text}{" "}
+          <Link to={`${copy.switch.to}${qs ? `?${qs}` : ""}`}>{copy.switch.link}</Link>
+        </p>
+      )}
     </div>
     </main>
   );
