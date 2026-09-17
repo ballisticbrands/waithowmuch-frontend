@@ -9,18 +9,15 @@ import type { ResearchMethod } from "@/lib/api";
  * data" and "we read it off a connected account" is the difference between an
  * estimate and a fact. Hiding that distinction is how a research site loses
  * the only thing it has.
+ *
+ * The row's `confidence` is deliberately NOT shown: "low confidence" beside a
+ * figure reads as a warning about that business rather than as the ordinary
+ * state of a researched estimate, which every figure here already is.
  */
-export function Provenance({
-  method,
-  confidence,
-}: {
-  method: ResearchMethod;
-  confidence?: "LOW" | "MEDIUM" | "HIGH" | null;
-}) {
+export function Provenance({ method }: { method: ResearchMethod }) {
   return (
     <span data-provenance data-method={method}>
       {METHOD_LABEL[method] ?? method}
-      {confidence ? ` · ${confidence.toLowerCase()} confidence` : ""}
     </span>
   );
 }
