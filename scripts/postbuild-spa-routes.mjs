@@ -791,7 +791,9 @@ try {
 const homeList = homeRows.map((b) => {
   const month = b.snapshotMonth ?? b.latestPeriod;
   const blurb = b.subtitle || b.tagline;
+  const profit = money(b.latestMonthlyProfit, b.currency);
   return `<li><a href="${businessPath(b.slug)}">${esc(b.title || b.name)}</a> — ${esc(b.name)}${
+    profit ? ` · ${profit} profit/mo` : ''}${
     month ? ` · ${esc(monthLabel(month))}` : ''}${blurb ? ` · ${esc(blurb)}` : ''}</li>`;
 }).join('\n      ');
 
