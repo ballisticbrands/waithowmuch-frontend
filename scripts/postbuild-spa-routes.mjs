@@ -247,7 +247,7 @@ function softGuard(path, html, itemCount) {
   if (n < MIN_WORDS) {
     console.warn(
       `postbuild: ⚠️ ${path} is ${n} crawler-visible words (target ${MIN_WORDS}) — ` +
-      `only ${itemCount} idea(s) to list. This resolves as the catalogue grows; ` +
+      `only ${itemCount} case study(s) to list. This resolves as the catalogue grows; ` +
       `do NOT pad it with copy the page does not show.`,
     );
   }
@@ -301,7 +301,7 @@ for (const c of [...COLLECTIONS]) {
   const body = `
     <h1>${esc(c.title)}</h1>
     <ul>
-      ${list || '<li>No ideas published yet.</li>'}
+      ${list || '<li>No case studies published yet.</li>'}
     </ul>
     ${FOOTER}
     <p><a href="/how-we-research/">How we research these figures</a></p>`.trim();
@@ -332,13 +332,13 @@ for (const c of [...COLLECTIONS]) {
 // page instead of following the move. A canonical plus a meta refresh gets
 // both a 200 and an unambiguous signal about where the page went.
 write('/data/all-ideas/', insertIntoHead(
-  shell.replace(/<title>[^<]*<\/title>/, `<title>The Idea Database — ${BRAND_NAME}</title>`),
+  shell.replace(/<title>[^<]*<\/title>/, `<title>The Case Study Database — ${BRAND_NAME}</title>`),
     `  <link rel="canonical" href="${SITE}/data/" />\n` +
     `  <meta http-equiv="refresh" content="0; url=/data/" />\n  `)
   .replace('<div id="root"></div>',
-    `<div id="root" data-prerender><p>This page moved to <a href="/data/">The Idea Database</a>.</p></div>`));
+    `<div id="root" data-prerender><p>This page moved to <a href="/data/">The Case Study Database</a>.</p></div>`));
 
-// ── More ideas ────────────────────────────────────────────────────────
+// ── More case studies ────────────────────────────────────────────────────────
 const facetList = categories.map((f) => `<li>${esc(f.name)} (${f.businessCount})</li>`).join('\n      ');
 const moreHtml = render({
   path: collectionPath(MORE.slug),
@@ -592,7 +592,7 @@ for (const b of all) {
        cost ? ` It is estimated to have cost around ${cost} to start.` : ''}
        ${cats ? `It operates in ${esc(cats)}.` : ''}</p>
     ${authored}
-    <p><a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
+    <p><a href="${collectionPath('all-ideas')}">All case studies</a></p>`.trim();
 
   /* Every page of the profile shares the same preview — the headline and its
      leading image — whichever section the link points at. */
@@ -621,7 +621,7 @@ for (const b of all) {
        sources they were drawn from. <a href="/how-we-research/">How we research</a>.</p>
     ${flatten(part.blocks)}
     <p><a href="${businessPath(b.slug)}">${esc(b.name)} overview</a> ·
-       <a href="${collectionPath('all-ideas')}">All ideas</a></p>`.trim();
+       <a href="${collectionPath('all-ideas')}">All case studies</a></p>`.trim();
 
     const sectionHtml = render({
       path: `${businessPath(b.slug)}${part.id}/`,
@@ -784,14 +784,14 @@ write('', render({
   description: 'Revenue, profit and margin for businesses you have never heard of. Researched from public data, with sources on every profile.',
   body: `<h1>${BRAND_NAME}</h1>
     <p>Revenue, profit and margin for businesses most people have never heard of.</p>
-    <p><a href="${collectionPath('all-ideas')}">Browse all ideas</a> · <a href="/how-we-research/">How we research</a></p>`,
+    <p><a href="${collectionPath('all-ideas')}">Browse all case studies</a> · <a href="/how-we-research/">How we research</a></p>`,
 }));
 
 // SPA fallback.
 writeFileSync(join(dist, '404.html'), render({
   path: '/', title: BRAND_NAME,
   description: 'Revenue and profit for businesses you have never heard of.',
-  body: `<h1>${BRAND_NAME}</h1><p><a href="${collectionPath('all-ideas')}">Browse all ideas</a></p>`,
+  body: `<h1>${BRAND_NAME}</h1><p><a href="${collectionPath('all-ideas')}">Browse all case studies</a></p>`,
 }));
 
 console.log(`postbuild: ${COLLECTIONS.length} collections, ${all.length} businesses, ${STATIC.length} static routes`);

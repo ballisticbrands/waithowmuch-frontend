@@ -30,7 +30,7 @@ export default function Ideas() {
   }, [meta]);
 
   useSetCrumbs(
-    () => (meta ? [{ label: "Ideas", to: collectionPath("all-ideas") }, { label: meta.title }] : []),
+    () => (meta ? [{ label: "Case studies", to: collectionPath("all-ideas") }, { label: meta.title }] : []),
     [meta?.slug],
   );
 
@@ -66,7 +66,7 @@ export default function Ideas() {
       <main data-main>
         <div data-empty>
           <p>No such collection.</p>
-          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
+          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All case studies →</Link></p>
         </div>
       </main>
     );
@@ -78,7 +78,7 @@ export default function Ideas() {
 
         <Filters state={filters} onChange={setFilters} facets={facets} total={total} />
 
-        {error && <div data-empty>Could not load ideas. Refresh to try again.</div>}
+        {error && <div data-empty>Could not load case studies. Refresh to try again.</div>}
         {!error && rows === null && <div data-empty>Loading…</div>}
         {!error && rows?.length === 0 && (
           <div data-empty>
@@ -98,7 +98,7 @@ export default function Ideas() {
   );
 }
 
-/** The "More ideas" nav entry: an index of every way to slice the data. */
+/** The "More case studies" nav entry: an index of every way to slice the data. */
 export function MoreIdeas() {
   const [facets, setFacets] = useState<FacetCategory[]>([]);
   useEffect(() => {
@@ -115,7 +115,7 @@ export function MoreIdeas() {
     ["AUDIENCE", "By who it sells to"],
   ];
 
-  useSetCrumbs(() => [{ label: "Ideas", to: collectionPath("all-ideas") }, { label: MORE.title }], []);
+  useSetCrumbs(() => [{ label: "Case studies", to: collectionPath("all-ideas") }, { label: MORE.title }], []);
 
   return (
     <main data-main>

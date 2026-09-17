@@ -48,7 +48,7 @@ export function HowWeResearch() {
         If a case study is about your business and it is wrong, email
         hello@waithowmuch.com and we will correct or remove it.
       </p>
-      <p><Link to={collectionPath("all-ideas")}>Browse all ideas →</Link></p>
+      <p><Link to={collectionPath("all-ideas")}>Browse all case studies →</Link></p>
     </Page>
   );
 }
@@ -110,7 +110,7 @@ export function NotFound() {
   return (
     <Page title="Not found">
       <p>Nothing here.</p>
-      <p><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
+      <p><Link to={collectionPath("all-ideas")}>All case studies →</Link></p>
     </Page>
   );
 }

@@ -106,7 +106,7 @@ export default function Business() {
   const crumbSection = sectionTitleFor(slug, section);
   useSetCrumbs(
     () => [
-      { label: "Ideas", to: collectionPath("all-ideas") },
+      { label: "Case studies", to: collectionPath("all-ideas") },
       ...(crumbSection
         ? [
             { label: b?.name ?? "…", to: `/business/${encodeURIComponent(slug)}/` },
@@ -121,8 +121,8 @@ export default function Business() {
     return (
       <main data-main>
         <div data-empty>
-          <p>No published idea at <code>{slug}</code>.</p>
-          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All ideas →</Link></p>
+          <p>No published case study at <code>{slug}</code>.</p>
+          <p style={{ marginTop: "1rem" }}><Link to={collectionPath("all-ideas")}>All case studies →</Link></p>
         </div>
       </main>
     );

@@ -18,16 +18,16 @@ export const DEFAULT_SORT = 'profit';
 export const COLLECTIONS = [
   {
     slug: 'all-ideas',
-    title: 'The Idea Database',
-    /** Shown in the nav, where "The Idea Database" would be too long. */
-    navLabel: 'All ideas',
+    title: 'The Case Study Database',
+    /** Shown in the nav, where "The Case Study Database" would be too long. */
+    navLabel: 'All case studies',
     icon: 'database',
     query: '',
     inNav: true,
   },
   {
     slug: 'amazon-fba',
-    title: 'Amazon FBA ideas',
+    title: 'Amazon FBA case studies',
     navLabel: 'Amazon FBA',
     icon: 'parcel',
     query: 'channel=amazon-fba',
@@ -35,7 +35,7 @@ export const COLLECTIONS = [
   },
   {
     slug: 'shopify',
-    title: 'Shopify ideas',
+    title: 'Shopify case studies',
     navLabel: 'Shopify',
     icon: 'bag',
     query: 'platform=shopify',
@@ -46,7 +46,7 @@ export const COLLECTIONS = [
 /** The navbar's last "Data" entry — an index of every collection, not a filter. */
 export const MORE = {
   slug: 'more-ideas',
-  title: 'More ideas',
+  title: 'More case studies',
   icon: 'grid',
   blurb: 'Every way to slice the data — by niche, business model, platform and growth channel.',
   inNav: true,

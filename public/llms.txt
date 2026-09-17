@@ -1,6 +1,6 @@
 # WaitHowMuch
 
-> WaitHowMuch publishes business case studies ("ideas"): real small businesses, mostly
+> WaitHowMuch publishes business case studies: real small businesses, mostly
 > ecommerce and mostly Amazon sellers, with what they make — monthly revenue, profit, margin
 > and what it took to start — and how they are built. Each case study shows how its figures
 > were reached and links to the sources behind them.
@@ -36,11 +36,11 @@
   time): https://waithowmuch.com/signup
 
 ## Core pages
-- [All ideas](https://waithowmuch.com/data/): every published case study, sortable by revenue,
+- [All case studies](https://waithowmuch.com/data/): every published case study, sortable by revenue,
   profit, margin and starting cost
-- [Amazon FBA ideas](https://waithowmuch.com/data/amazon-fba/) ·
-  [Shopify ideas](https://waithowmuch.com/data/shopify/) ·
-  [More ideas](https://waithowmuch.com/data/more-ideas/) (by niche, business model, platform
+- [Amazon FBA case studies](https://waithowmuch.com/data/amazon-fba/) ·
+  [Shopify case studies](https://waithowmuch.com/data/shopify/) ·
+  [More case studies](https://waithowmuch.com/data/more-ideas/) (by niche, business model, platform
   and growth channel)
 - [How we research](https://waithowmuch.com/how-we-research/): where the numbers come from and
   where they are most likely to be wrong

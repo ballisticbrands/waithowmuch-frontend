@@ -23,7 +23,7 @@ export const METRIC_INFO: Record<string, string[]> = {
   ],
   toStart: [
     "What it cost to get the business to its first sale — tooling, inventory, branding and the rest of the money spent before any came back.",
-    "It is the figure that decides whether an idea is repeatable by a reader rather than merely interesting, which is why an unknown is shown as unknown rather than estimated.",
+    "It is the figure that decides whether a business is repeatable by a reader rather than merely interesting, which is why an unknown is shown as unknown rather than estimated.",
   ],
   listedSince: [
     "The year the business's earliest products first appeared, read from the public catalogue.",

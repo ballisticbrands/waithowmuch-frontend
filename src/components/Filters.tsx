@@ -126,11 +126,11 @@ export function Filters({
 
       {total !== null && (
         <p data-result-count>
-          {total === 0 ? "No ideas match these filters" : `${total} idea${total === 1 ? "" : "s"}`}
+          {total === 0 ? "No case studies match these filters" : `${total} case stud${total === 1 ? "y" : "ies"}`}
           {(state.costMin !== undefined || state.costMax !== undefined) && (
             // Worth saying out loud: the cost filter drops rows with an unknown
             // starting cost, so the count falls further than people expect.
-            <span> · ideas with no starting-cost figure are hidden</span>
+            <span> · case studies with no starting-cost figure are hidden</span>
           )}
         </p>
       )}

@@ -1,7 +1,7 @@
 # waithowmuch-frontend
 
 The whole of **WaitHowMuch** on `waithowmuch.com`: a site of business case
-studies ("ideas"), mostly ecommerce and mostly Amazon sellers, each with its
+studies (URLs and code still say "ideas"), mostly ecommerce and mostly Amazon sellers, each with its
 revenue, profit, margin and sources. **One origin**: no `app.*` host, no
 separate landing page.
 

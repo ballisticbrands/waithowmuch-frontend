@@ -8,7 +8,7 @@ export default function Home() {
       <div data-empty>
         <p style={{ margin: 0 }}>Nothing here yet.</p>
         <p style={{ marginTop: "0.75rem", marginBottom: 0, fontSize: "0.875rem" }}>
-          The ideas live under <strong>Data</strong> in the sidebar.
+          The case studies live under <strong>Data</strong> in the sidebar.
         </p>
       </div>
     </main>
