@@ -437,11 +437,12 @@ h1, h2, h3, h4 {
 }
 
 /* The home page's one call to action: into the database, where the filters
-   are. Sized well above a nav link — it is the only button on the page. */
+   are. Bigger than a nav button in its padding, and deliberately the SAME
+   type size as the email CTA in the top bar — two buttons a screen apart in
+   different sizes read as two different kinds of thing. */
 [data-filter-cta] {
   margin-bottom: 1.75rem;
   padding: 0.7rem 1.6rem;
-  font-size: 1.0625rem; font-weight: 600;
   border-radius: var(--radius-lg);
 }
 
