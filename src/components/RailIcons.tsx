@@ -25,12 +25,18 @@ const PATHS: Record<string, React.ReactNode> = {
   bag: <><path d="M5 7h14l-1 13H6z" /><path d="M9 7V5.5a3 3 0 0 1 6 0V7" /></>,
   grid: <><rect x="3.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="3.5" width="7" height="7" rx="1.5" /><rect x="3.5" y="13.5" width="7" height="7" rx="1.5" /><rect x="13.5" y="13.5" width="7" height="7" rx="1.5" /></>,
   book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5A2.5 2.5 0 0 1 4 20.5z" /></>,
+  // Funnel — the filters on the listing.
+  filter: <><path d="M3.5 5h17l-6.5 7.5V20l-4-2.5v-5z" /></>,
 };
 
 export type RailIconName = keyof typeof PATHS;
 
-export function RailIcon({ name, src }: { name?: RailIconName; src?: string }) {
-  if (src) return <img src={src} alt="" width={18} height={18} aria-hidden style={{ display: "block" }} />;
-  if (!name || !PATHS[name]) return <span style={{ width: 18, display: "block" }} aria-hidden />;
-  return <svg {...S}>{PATHS[name]}</svg>;
+export function RailIcon({
+  name, src, size = 18,
+}: { name?: RailIconName; src?: string; size?: number }) {
+  if (src) return <img src={src} alt="" width={size} height={size} aria-hidden style={{ display: "block" }} />;
+  if (!name || !PATHS[name]) return <span style={{ width: size, display: "block" }} aria-hidden />;
+  // Bigger than the rail's 18px on the home CTA, where the icon carries the
+  // button rather than labelling a nav row.
+  return <svg {...S} width={size} height={size}>{PATHS[name]}</svg>;
 }

@@ -119,7 +119,7 @@ export function SideRail() {
       <nav id="rail-nav" aria-label="Sections">
         <RailLink to="/" label="Home" active={here === "/"} icon="home" collapsed={collapsed} />
 
-        <div data-rail-group>Data</div>
+        <div data-rail-group>Database</div>
         {COLLECTIONS.map((c) => (
           <RailLink
             key={c.slug}
