@@ -204,6 +204,11 @@ h1, h2, h3, h4 {
   font-size: 0.875rem; color: var(--muted-foreground);
 }
 [data-crumbs] a:hover { color: var(--foreground); }
+/* One line, never under the CTA: a crumb that does not fit is cut with an
+   ellipsis — the last one first, since it is the one that can shrink. */
+[data-crumbs] { white-space: nowrap; overflow: hidden; }
+[data-crumbs] > span > :not([data-crumb-sep]) { overflow: hidden; text-overflow: ellipsis; }
+[data-crumbs] > span > a { flex-shrink: 0; }
 [data-crumb-sep] { opacity: 0.4; }
 [data-crumbs] [aria-current="page"] { color: var(--accent); font-weight: 550; }
 
