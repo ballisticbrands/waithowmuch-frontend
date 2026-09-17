@@ -55,6 +55,7 @@ import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
 import { LIGHTEN_LIFE_BREAKDOWN, lightenLifePhoto } from './lighten-life.breakdown.mjs';
+import { OTOTO_BREAKDOWN, ototoPhoto } from './ototo.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -5678,6 +5679,728 @@ export const PROFILES = {
         type: 'prose',
         text:
           'The whole figure rests on one inference: that Mili World and EVERHOME CRAFT INC are one operation, so the months before the handoff are this business’s record. Nothing read establishes it. The trademark belongs to a third company, so the model does not score it. Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and the feedback figure blends the two accounts. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
+      },
+    ],
+  },
+
+  'ototo': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-ototo-headline.ts, from
+       waithowmuch-research research/ototo/headline.json (reviewed 2026-09-17)
+       — and the page reads them from the row alone.
+       🚨 The snapshot is AUGUST 2026, the last whole month, not the live
+       September read. Every "Read" stamp below is August's. */
+    headline: {
+      /* August's revenue leader, and it is 5.5% of the month. Not the Nessie
+         ladle: that is the brand's best-known shape and its biggest review
+         count, but Nessie listings were under 5% of August. */
+      image: {
+        src: ototoPhoto('B07VLBVQBP'),
+        alt: 'A red silicone crab clipped to the rim of a steaming white stockpot, holding a steel ladle up in its claws — OTOTO’s Red the Crab spoon rest and steam releaser, its best-selling Amazon listing in August 2026',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand, their own
+             designs, and the one origin statement read (a Gracula listing on
+             Pinkoi) says designed in Israel and made in China. Nothing says
+             they own a factory. */
+          primaryMethod: 'private_label',
+          /* Broad, and not close: 83 listings carried a badge in August 2026
+             and the best seller was 5.5% of the month. */
+          catalogStructure: 'broad',
+          /* Level 3, conservatively. Each product is a character shape of
+             their own — a Loch Ness ladle, a vampire garlic crusher — which is
+             a real change of form, not a colourway. 🚨 The case for level 4
+             (+0.25) is custom moulds and the "150 in-house design patents" the
+             site claims, and the 2017–19 counterfeit suit shows the shapes get
+             copied. Neither the moulds nor the patents were read, so tooling
+             stays "no" until the owner shows them. */
+          diffTooling: 'no',
+          diffCustom: 'yes',
+          /* A READ: the Brand Store at /stores/OTOTO is gated behind
+             enrolment. */
+          brandRegistry: 'yes',
+          /* `trademark` left out: no USPTO record was read. */
+        },
+        derived: {
+          /* RULE 1: the catalogue's first listing. Keepa dates two OTOTO
+             listings 2011-01-01, its earliest date, so this is "on or before".
+             Every reading is past the model's top age band either way. */
+          sellingSince: '2011-01-01',
+          /* Top 20 listings (keepa/listings.json), with the Nessie family's
+             shared 16,107 counted ONCE, not three times. A floor. */
+          reviewTotal: 75252,
+          /* Weighted by August 2026 revenue over the top 20: 4.64. */
+          ratingWeighted: 4.64,
+          sellerFeedbackPct: 100,
+          /* channels left unset: the seller record shows FBA and nobody
+             checked for FBM. The model scores only "both". */
+          /* RULE 2. The Ototo account exists on Amazon Canada (366 ratings)
+             but its Canadian listings were not read, so Amazon US is all of
+             the MEASURED Amazon revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* December 2025 against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 39.97,
+          /* RULE 3: offAmazonSharePct unset. The own site, Target, Walmart,
+             CVS, The Container Store, Faire and distributors abroad are real
+             and unsized. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. OTOTO on Amazon US only — its own site, Target, Walmart, CVS, The Container Store, wholesale and distributors abroad are excluded.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '1,214', note: '175 in the storefront; 83 carried a sold badge in Aug 2026', info: 'skus' },
+      /* August's best seller's breadcrumb. The catalogue spreads across
+         Kitchen & Dining — garlic presses, shears, tea strainers, cutting
+         boards. */
+      {
+        label: 'Category',
+        value: 'Home & Kitchen › Kitchen & Dining › Dining & Entertaining › Flatware › Chopstick & Cutlery Rests › Spoon Rests',
+        note: 'The best seller in Aug 2026, the crab spoon rest',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Top-listing figures, so NO `info` key — the shared ⓘ copy describes
+         one hero listing. */
+      { label: 'Product reviews', value: '75,252', note: 'Top 20 listings, the Nessie family’s shared count taken once' },
+      { label: 'Product rating', value: '4.6★', note: 'Revenue-weighted, top 20 listings, Aug 2026' },
+      { label: 'Seller feedback', value: '100%', note: 'Over 7,476 ratings · read 16 Sep 2026', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own designs; made in China, by one listing', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Broad catalogue, long tail', note: 'The best seller was 5.5% of Aug 2026', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      { label: 'Differentiation', value: 'Level 3', note: 'Character shapes of their own design', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, retail and wholesale', note: 'Only Amazon US is sized', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a number behind it. Every figure on this profile is the OTOTO brand on Amazon US, across all 1,214 listings and every account that held a buy box.',
+      },
+      /* Yes on the ratings, but unsized: the Canadian listings were never
+         read for a badge. */
+      'amazon-international': {
+        status: 'yes',
+        note:
+          'The Ototo account is on Amazon Canada with 366 ratings, so it sells there. How much was not read. It has no account on Amazon UK or Germany. Someone else lists Gracula on amazon.co.uk, and that seller was not read.',
+      },
+      'own-store': {
+        status: 'yes',
+        note: 'ototodesign.com, on Shopify. It publishes no sales.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        flag: true,
+        note:
+          'Target has carried 16 OTOTO products in 1,600+ stores since December 2024, by the company’s release, which also names Walmart and CVS. The site adds The Container Store, wholesale through Faire and distributors in 30+ countries. None of it is sized, and together it may be larger than Amazon.',
+      },
+      // tiktok-shop, other-marketplace and licensing left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note:
+          'The seller record shows FBA, and every badged listing carries an Amazon pick-and-pack fee: $4.35 on the crab spoon rest, $4.09 on Gracula, $5.22 on the Nessie ladle.',
+      },
+      fbm: {
+        status: 'unchecked',
+        note: 'Nothing read splits the listings between FBA and FBM.',
+      },
+      /* Unchecked, not yes: Amazon does sell a few OTOTO items, but whether it
+         buys them from OTOTO or from a distributor was not read. */
+      'vendor-1p': {
+        status: 'unchecked',
+        note:
+          'Amazon itself offers 3 of the 227 OTOTO products on the seller record, and held $14,713 of the last twelve months’ buy boxes. Who supplies Amazon was not read.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note:
+          'Their own brand and their own designs, on listings the Ototo account holds almost alone. The one origin statement read, for Gracula, says designed in Israel and made in China.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note: 'A design studio by its own account. Nothing read says who makes the products or whether OTOTO owns a factory.',
+      },
+      'wholesale-in': { status: 'no' },
+      dropship: { status: 'no' },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/OTOTO, which Amazon gates behind enrolment.',
+      },
+    },
+
+    intro:
+      'OTOTO makes kitchen gadgets shaped like characters: a Loch Ness monster ladle, a vampire garlic crusher, bat-winged scissors. A Tel Aviv design studio started it in 2004. It now sits in the portfolio of Essor, and Amazon US is one of several places it sells.',
+
+    blocks: [
+      { type: 'heading', text: 'A monster in the soup pot' },
+      /* Three paragraphs: the product, where it sells, and who is behind the
+         account. No live headline figure is typed in. */
+      {
+        type: 'prose',
+        text:
+          'Every product is a joke you can cook with. Nessie the ladle stands up in the pot. Gracula crushes garlic when you twist his head. Red the Crab clips to the rim and holds the spoon. Around them are bat scissors and a bat wine opener, gnome dish brushes, cat tea infusers, a knight vegetable peeler and a vampire umbrella. Most sell for $10–35, and the range leans hard on Halloween and gifts. Ori Saidi and Daniel Gassner started OTOTO as a design studio in Tel Aviv in 2004. The name is Hebrew for “any minute now”.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon US is one channel among several, and it is the only one measured here. OTOTO also sells on its own site, in Target stores, at Walmart, CVS and The Container Store, through Faire, and through distributors in more than 30 countries. None of those is sized. The figures on this page count all 1,214 Amazon listings carrying the brand, each once, and the brand’s own account held 96.6% of that revenue over the last twelve months.',
+      },
+      {
+        type: 'prose',
+        text:
+          'That account is registered to Branded Acquico No 4, LLC, in New York, and OTOTO sits in the portfolio of Essor, the company formed when the Amazon aggregator BRANDED bought Heyday. When OTOTO joined the group, and on what terms, is not in anything read.',
+      },
+      /* No figures in the caption. The two best-known shapes, from the brand's
+         own Amazon listings; bucket copies. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: ototoPhoto('B00SRGPELO'),
+            alt: 'A turquoise ladle shaped like the Loch Ness monster, its long neck the handle and four little feet under the bowl, hanging from a yellow OTOTO “Nessie Ladle” card with a red gift bow',
+          },
+          {
+            src: ototoPhoto('B076CTTZKX'),
+            alt: 'A black and white vampire-shaped garlic crusher with fang-like teeth over a bowl of minced garlic, in front of its purple OTOTO “Gracula Garlic Crusher” box',
+          },
+        ],
+        caption: 'Two of the brand’s own Amazon listing images: the Nessie ladle and the Gracula garlic crusher.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A Tel Aviv studio from 2004, a Loch Ness ladle on Amazon from 2015, a place in an aggregator’s portfolio by 2024, and a 2026 that sold far less than 2025.',
+      },
+      {
+        /* Oldest first. The founding year is the company's own claim with no
+           day attached; it stays on this list and off the chart. Month-end
+           revenue events sit on the last day of the month so the dot lands on
+           the chart's point. 🚨 No entry dates the move into BRANDED/Essor:
+           that date was never found. */
+        type: 'timeline',
+        items: [
+          {
+            when: '2004',
+            tag: 'Brand',
+            what: 'Ori Saidi and Daniel Gassner start OTOTO in Tel Aviv',
+            detail: 'A design studio, by the company’s own account. The two met in 1999 at the Ascola School of Art and Design.',
+          },
+          {
+            when: '1 Jan 2011',
+            tag: 'Amazon',
+            what: 'The oldest OTOTO listings Keepa knows of',
+            detail: 'A spice infuser shaped like a drumstick and a daisy steam releaser. The date is the earliest Keepa records, so the listings may be older.',
+          },
+          {
+            when: '28 Apr 2015',
+            tag: 'Amazon',
+            what: 'The Original Nessie Ladle is listed',
+            detail: 'The Nessie family now carries 16,107 reviews, shared across its listings, the most among the brand’s top listings.',
+          },
+          {
+            when: '19 Feb 2016',
+            tag: 'Amazon',
+            what: 'The Nessie Family pack follows',
+            detail: 'A tea infuser, a ladle and a colander in one box. It still sold in August 2026.',
+          },
+          {
+            when: '14 Sep 2017',
+            tag: 'Amazon',
+            what: 'Keepa first tracks the Ototo seller account',
+            detail: 'The account that holds almost all of the brand’s buy boxes today. A first-tracked date trails an account’s real opening.',
+          },
+          {
+            when: '11 Oct 2017',
+            tag: 'Amazon',
+            what: 'Gracula, the vampire garlic crusher, is listed',
+            detail: 'Now at 10,018 reviews.',
+          },
+          {
+            when: '10 Sep 2018',
+            tag: 'Amazon',
+            what: 'Splatypus, the platypus jar spatula, is listed',
+            detail: 'In September 2026 it was the one OTOTO listing with a sponsored slot on a generic search.',
+          },
+          {
+            when: '14 Apr 2019',
+            tag: 'Brand',
+            what: 'An Israeli appeal court keeps OTOTO’s counterfeit suit against Amazon in Israel',
+            detail: 'OTOTO Design Ltd and affiliated companies alleged that Amazon sold, and let third parties sell, fake OTOTO products.',
+          },
+          {
+            when: '24 Jul 2019',
+            tag: 'Amazon',
+            what: 'Red the Crab, the spoon rest and steam releaser, is listed',
+            detail: 'The best seller in August 2026. Its badge read 20,000 in December 2025.',
+          },
+          {
+            when: '9 Feb 2021',
+            tag: 'Brand',
+            what: 'Target Global leads a $150M round for BRANDED',
+            detail: 'TechCrunch called BRANDED an Amazon marketplace consolidator. It was founded in September 2020. Nothing read says when OTOTO joined it.',
+          },
+          {
+            when: '31 Oct 2023',
+            tag: 'Amazon',
+            what: 'Three Chinese storefronts start taking the Splatypus buy box at month end',
+            detail:
+              'At $7.99–13.99, at the ends of October, November and December 2023. Month-end attribution gives them $192K, which almost certainly overstates what they sold. Nothing like it since 2024.',
+          },
+          {
+            when: '31 Dec 2023',
+            tag: 'Amazon',
+            what: '$1,953,886 — the first December in the badge history',
+            detail: 'Nearly twice November, and three and a half times October.',
+          },
+          {
+            when: '5 Sep 2024',
+            tag: 'Brand',
+            what: 'BRANDED buys Heyday, and the combined company becomes Essor',
+            detail: 'The announcement names OTOTO Design in Essor’s portfolio. CNBC had reported the planned merger on 26 August.',
+          },
+          {
+            when: '19 Nov 2024',
+            tag: 'Brand',
+            what: 'OTOTO announces a nationwide Target launch',
+            detail: '16 products at $10–15 in 1,600+ stores and on target.com from 1 December. The release names OTOTO as part of Essor’s portfolio.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '$2,222,990 — December',
+            detail: 'Up 14% on December 2023.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '$2,377,294 — the best month in the series',
+            detail: 'Two-fifths of the twelve months to August 2026 came in this one month.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: '$118,685 — the lowest month in the series',
+            detail: 'January to August 2026 ran 45% below the same months of 2025.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: 'August ends with Gracula, Splatypus and Elizabat under $10',
+            detail: 'All three were back at $14.95 when read on 16 September.',
+          },
+          {
+            when: '16 Sep 2026',
+            tag: 'Amazon',
+            what: '175 listings in the storefront, 87 with a sold badge',
+            detail: 'And the top four sponsored slots on a search for “ototo”.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The fourth quarter carries the year. October to December was 62% of the twelve months to August 2026, and December alone was 40%. The three Decembers on the chart were each bigger than the last, while the months between have shrunk. Roughly three dollars in ten of each month are kept after the goods, duty, freight, Amazon’s two fees and advertising. That share uses August 2026’s cost rates for every month, and unit costs nobody has quoted.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts every Amazon listing carrying the brand, each once, at the price in effect at each month end, whichever account held the buy box. That makes August read low. Gracula, Splatypus and Elizabat all ended the month on sale at under $10. At the buy boxes of 16 September, August’s units come to $241,298.',
+      },
+      { type: 'chart' },
+      {
+        /* From the Ototo seller record on UK, DE and CA (2026-09-16). 🚨 The
+           largest share is valuation derived.topMarketplaceSharePct —
+           check-profile.mjs holds the two together. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of the measured revenue is Amazon US. The same account sells in Canada, where nothing was measured.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'The Ototo account has 366 ratings there. Its Canadian listings were not read, so this is unsized, not zero' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No Ototo account. Someone else lists Gracula on amazon.co.uk, not read' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Only the Ototo seller id was looked up on each marketplace.',
+      },
+      {
+        /* Generated from the brand series — see the module's header. The rows
+           sum to the 2026-08 revenue row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'No listing carries the month. The crab spoon rest, the bat scissors, Gracula and Splatypus lead, each around a twentieth, and 79 more listings sell 50 to 600 a month each. The Nessie listings, the brand’s best-known shape, were under 5%.',
+        items: OTOTO_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge at the end of August 2026, a band — hence n+. Revenue is that band times the buy box then, so every row is a floor, and several rows were on sale. The other 1,131 brand listings carried no badge and count as zero. One row’s buy box was a reseller’s at the month end, and the row says so.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The badge is a bucket (“1K+” counts as 1,000), and 37 listings sat at 1,000 or more in December 2025. And this is Amazon US alone. Target, Walmart, the brand’s own site and its distributors are not on the chart.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon is one channel of several, and the only one with a number. On Amazon, one account sells almost everything.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon, the Ototo account held the buy box on 96.6% of the last twelve months’ revenue. Most of the rest was listings with a suppressed buy box. Amazon itself held $14,713 and two New Hampshire resellers under $8,000. Every badged listing is fulfilled by Amazon. Off Amazon, the company’s November 2024 release put 16 products in 1,600+ Target stores and named Walmart and CVS, and its site adds The Container Store, Faire and distributors in 30+ countries. The page knows those channels exist, but not what they sell.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What follows shows which methods are present, not what share each one has. A method nobody has looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'On a $15 gadget, Amazon’s fulfilment fee costs twice as much as making it. After that fee, the goods, duty, freight, the referral fee and advertising, about three dollars in ten are left, and that is a ceiling.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two lines are measured: Amazon’s 15% referral fee and its pick-and-pack fee, read per listing. The crab spoon rest pays $4.35 to Amazon’s warehouses on a $12.95 August price, because the fee follows size and weight, not value. The goods are the weak part. Nobody quoted a cost. The table prices OTOTO’s custom shapes from commodity list prices on Made-in-China.com, plus an assumed premium for moulds and boxes, and several product types are placeholders. Each dollar of unit cost moves the twelve months’ profit by about $454,000 once duty is added.',
+      },
+      {
+        type: 'table',
+        caption: 'COGS — what a gadget costs to make and land',
+        /* 🚨 Only the first column wraps (globals.css keeps block-table cells
+           on one line), so what was read lives in the row name and the other
+           columns stay short. */
+        columns: ['Product type — what was read', 'Tier', 'Unit cost'],
+        rows: [
+          ['Small silicone or plastic gadget, 105 of the 185 listings that ever sold. Made-in-China list prices: jar spatulas $0.30–1.10, nylon ladles $0.48–1.69, character tea infusers $1.35–2.00, spoon rests $0.19–2.94. Taken at $1.20 for a custom-moulded piece, plus a ~$0.40 printed box — the box a placeholder, not a quote', 'Derived, weak', '$1.60'],
+          ['Garlic press. Plastic $0.55, aluminium $1.33–1.75. Gracula is glass-fibre polypropylene, made in China by one listing; the ~$0.40 box is assumed', 'Derived, weak', '$1.80'],
+          ['Metal gadget — scissors, openers, peelers. Kitchen scissors $0.22–0.95, corkscrews $0.16–1.03, steel gadgets $0.40–2.00, plus ~$1 for the character handle, tooling and box — a placeholder, not a quote', 'Derived, weak', '$2.20'],
+          ['Three-piece bundle. Three small gadgets and a ~$0.20 shared box (assumed)', 'Derived, weak', '$5.00'],
+          ['Cutting board / oven mitts. Bamboo boards $1.80–4.85; custom-print cotton mitts $1.67–2.00 a piece, double mitts $7.22–8.66', 'Derived, weak', '$3.50 each'],
+          ['Tongs / larger moulded items / umbrella / bookmarks / unclassified — a placeholder, not a quote. No price read for any of them', 'ASSUMED', '$1.50 / $2.50 / $4.00 / $0.60 / $2.00'],
+          ['Tariff. Plastic kitchenware 3924.10.40 at 3.4% (CBP N331924); metal implements 8205.51.30 at 3.7% plus 25% Section 301 (CBP N309532); textile, wood and umbrella rates assumed. Plus the 10% China duty in force at an assumed import two months before sale. China origin is read for Gracula only and assumed for the rest', 'Derived + ASSUMED', '$0.42 a unit, Aug 2026'],
+          ['Freight and inbound. Package volume at the FBX01 container rate ($7,765 a box, Freightos, read 16 Sep 2026), with container fill and 15% carton overhead assumed, plus $0.35 a unit for drayage and placement — a placeholder, not a quote', 'Derived + ASSUMED', '$0.52 a unit, Aug 2026'],
+        ],
+        note:
+          'List prices describe the category, not OTOTO’s supplier, and these are the company’s own shapes. August’s mix averages $1.99 a unit; the twelve months average $1.93. Doubling the unit cost takes the dossier’s twelve-month profit from $2.20M to $1.33M. Freight uses today’s container rate for every month, which overstates 2024–25.',
+      },
+      {
+        /* 🚨 The margin row is computed as 100% less these lines — 31.294% —
+           and the backend seed builds the profit and ad-spend series from the
+           SAME six numbers (COST_LINES in seed-ototo.ts). Change one, change
+           both.
+           🚨 THREE decimals on purpose: August 2026's pnl.json rates. Two
+           decimals sum to 68.70 and move the headline's $66.1k to $66.2k; one
+           decimal gives $65.9k. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: 14.94 },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -13.351,
+            detail:
+              'About $1.99 of a $14.94 sale, by product type on August’s mix. Derived from commodity list prices and weak. The moulds-and-box premiums and several whole product types are placeholders, not quotes.',
+          },
+          {
+            label: 'Tariff',
+            pct: -2.8,
+            detail:
+              'About $0.42. Published duty rates for plastic and metal kitchenware, plus the 10% China duty in force two months before sale. The import lag, China origin for all but Gracula, and the textile, wood and umbrella rates are assumed. Any IEEPA refund is left out.',
+          },
+          {
+            label: 'Freight and inbound',
+            pct: -3.462,
+            detail:
+              'About $0.52. Ocean freight from package volume at the FBX01 rate, with container fill, carton overhead and $0.35 a unit for drayage, brokerage and placement assumed — a placeholder, not a quote.',
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            detail: 'Amazon’s Kitchen rate, and 15% on every OTOTO listing that sold. Measured.',
+          },
+          {
+            label: 'FBA fulfilment',
+            pct: -28.093,
+            /* The largest line — the component labels the emphasised line
+               "Biggest line". */
+            emphasis: true,
+            detail:
+              'About $4.20. Amazon’s pick-and-pack fee, read per listing on 16 September 2026 and applied to every month: $3.01–6.31 across the listings that sold. August’s sale prices make it a bigger share than usual. Measured.',
+          },
+          {
+            label: 'Advertising',
+            pct: -6,
+            detail:
+              'ASSUMED: a 6% placeholder. What was measured is the footprint: the top sponsored slots on the brand’s own name and one slot on eight generic searches. One logged-out read cannot see Sponsored Brands, Display, DSP or social spend, so it cannot show the bill.',
+          },
+        ],
+        note:
+          'August 2026’s rates, and every month on the chart carries them, although prices, tariffs, freight and the product mix all differed in earlier months. Storage, returns, coupons, social and influencer spend, any founder earn-out and Essor’s overhead are not modelled, so this is a ceiling on profit rather than profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'One set of rates understates the rest of the year. August ended on sale prices, so Amazon’s fixed fee took a bigger share of each dollar than usual. The dossier’s month-by-month model uses each month’s own prices, duty and freight. It keeps 37% over the twelve months to August 2026, about $2.20M, where this chart’s August rates give about $1.86M.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Unit cost moves this profile most, and it is commodity list prices standing in for a quote on custom shapes. Advertising, part of freight and several duty classes are placeholders beside it. Those are the numbers to replace first.',
+      },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'There is no growth to report. After its best December, the brand sold 45% less on Amazon in January to August 2026 than a year earlier, and this read cannot say why.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The twelve months to August 2026 came to $5.95M, down 30.5% on the twelve before. January to August 2026 came to $1.89M, against $3.45M in 2025. August alone was down 55% on August 2025, and May 2026 was the lowest month in the series. The drop came straight after December 2025, the best month in three years of data.',
+      },
+      {
+        type: 'prose',
+        text:
+          'It is spread across the line, not one product failing. From January to August, Gracula sold 59% less than a year earlier, Elizabat 57% less and the original Nessie ladle 63% less. The catalogue did not shrink: 69 to 95 listings carried a badge in each month of 2026, against 68 to 107 in 2025. New shapes keep arriving, such as a gnome whisk, chip clips and a skull oil cruet, but none has filled the gap.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Several explanations fit, and none is measured. Target has stocked the range since December 2024. Advertising may have been cut. Stock may have run short. China tariffs changed repeatedly through 2025 and 2026. Demand may simply have fallen. Part of July and August is price, since the biggest listings ended both months on sale.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The same seller account holds the listings from the first month of the series to the last, and nothing read dates OTOTO’s move into Essor’s portfolio. The decline cannot be set against the ownership, and this page does not.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Brand defence, plus one generic placement. They hold the top sponsored slots on their own name, and gift searches find them organically.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On “ototo”, 5 of 12 sponsored slots were theirs, including the top four. Other kitchen and Halloween brands bought the rest. On eight generic searches they held 1 of 96 sponsored slots: Splatypus at #4 on “jar spatula”. Organic rank does the work on gift searches: #5 on “halloween kitchen accessories”, #8 on both “cute kitchen gadgets” and “funny kitchen gifts”. On “garlic press” and “tea infuser”, the searches for what their two famous products actually do, they are not on the first page at all.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Each search was read once, logged out, with delivery set to New York and checked on the page. That read cannot see Sponsored Brands or Display elsewhere on the page, Amazon’s DSP, or anything off Amazon. The brand’s site claims 500M+ social views, and that claim was not checked.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=ototo',
+            value: '≈ 6% of revenue — assumed',
+            counted: '5 of 12 sponsored slots on “ototo”, positions 1–4 and 11 · 1 of 96 on eight generic searches — New York delivery, 16 Sep 2026',
+            flag: true,
+            note:
+              'The figure is a placeholder, the same 6% the margin deducts. The counts are the measured part.',
+          },
+          {
+            label: 'Others on their name',
+            value: '7 of 12',
+            counted: 'Sponsored slots on “ototo” held by other kitchen and Halloween brands',
+            note: 'Competitors buy the brand’s name, which is why defending it is worth paying for.',
+          },
+          {
+            label: 'TikTok, Instagram and influencers',
+            value: 'Not measured',
+            note: 'The company claims 500M+ social views. No ad library or creator spend was read. Absent here means unexamined, not zero.',
+          },
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Nine Amazon searches, 16 September 2026',
+        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
+        rows: [
+          ['ototo', '12', '5 — positions 1–4, 11', '—'],
+          ['halloween kitchen accessories', '12', '0', '#5, #40, #44, #49'],
+          ['cute kitchen gadgets', '12', '0', '#8, #9, #25, #36, #37, #44, #58'],
+          ['funny kitchen gifts', '12', '0', '#8, #10, #17, #18, #25, #44, #54'],
+          ['soup ladle', '12', '0', '#30'],
+          ['jar spatula', '12', '1 — Splatypus at #4', '#38'],
+          ['spoon rest', '12', '0', '#54'],
+          ['garlic press', '12', '0', 'Not on page 1'],
+          ['tea infuser', '12', '0', 'Not on page 1'],
+        ],
+        note:
+          'Headless Chrome, logged out, delivery set to New York 10001 and checked on the page, one read per term, matched against every brand listing. Amazon localises and rotates results, so this is a reading on a day, not a rank that holds.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'A brand site, four social accounts and a national retailer, and no reading on how much traffic any of them brings.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'The chips are the Amazon brand store, ototodesign.com and the four social accounts the site links to. No follower count or visit figure was read, so the chips carry none. Off Amazon, the brand shows up in retail more than online: Target shelves since December 2024, and wholesale through Faire. On Amazon, several listings rank in the top few thousand of Kitchen & Dining.',
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Target',
+            href: 'https://www.prnewswire.com/news-releases/ototo-announces-nationwide-launch-in-target-stores-302310010.html',
+            value: '1,600+ stores',
+            counted: '16 products at $10–15, in stores and on target.com from 1 Dec 2024 — the company’s release',
+            flag: true,
+            note: 'The largest channel that is not Amazon, as far as anything read shows. No sales figure was published.',
+          },
+          {
+            label: 'ototodesign.com',
+            href: 'https://ototodesign.com/',
+            value: 'Shopify',
+            note: 'The brand’s own store. Its contact address is the same New York suite as the Amazon seller’s. It claims 150 in-house design patents, which were not checked.',
+          },
+          {
+            label: 'Walmart, CVS, The Container Store',
+            value: 'Named, not sized',
+            note: 'Named in the Target release and on the site. Nothing read shows how much sells there.',
+          },
+          {
+            label: 'Faire and distributors abroad',
+            value: '30+ countries',
+            note: 'Wholesale through Faire, and distribution in more than 30 countries, by the company’s own account.',
+          },
+          {
+            label: 'Instagram, TikTok, Facebook, Pinterest',
+            value: 'Counts not read',
+            note: 'Linked from ototodesign.com. The accounts were not opened.',
+          },
+        ],
+      },
+      {
+        /* Keepa's main rank on the listing, read 16 Sep 2026 — Kitchen &
+           Dining for most, Home & Kitchen for the tea infuser. Keyword
+           positions are under Advertising, dated to one search. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Main sales rank', 'Rating'],
+        rows: [
+          ['Splatypus jar spatula', '#3,379 · Kitchen & Dining', '4.7★ over 5,142 reviews'],
+          ['Elizabat bat scissors', '#4,805 · Kitchen & Dining', '4.9★ over 3,789 reviews'],
+          ['Red the Crab spoon rest', '#6,356 · Kitchen & Dining', '4.5★ over 13,785 reviews'],
+          ['The Original Nessie Ladle', '#8,528 · Kitchen & Dining', '4.6★ over 16,107 reviews'],
+          ['Gracula garlic crusher', '#9,410 · Kitchen & Dining', '4.4★ over 10,018 reviews'],
+          ['Gnome dish brush', '#14,637 · Kitchen & Dining', '4.8★ over 1,757 reviews'],
+          ['Vino bat wine opener', '#16,289 · Kitchen & Dining', '4.6★ over 7,564 reviews'],
+          ['Louie cat tea infuser', '#30,046 · Home & Kitchen', '4.6★ over 11,113 reviews'],
+        ],
+        note:
+          'Read through Keepa on 16 September 2026. Rank moves daily. Variations share a parent listing, so some carry their family’s reviews.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        /* 🚨 "Sits in the portfolio of", never "was bought in <year>" or "was
+           sold to": the acquisition date and terms were NOT found. The seller
+           rows are Keepa's record (2026-09-16); the portfolio is Essor's
+           2024 announcement. */
+        type: 'facts',
+        items: [
+          { label: 'Brand', value: 'OTOTO', note: 'OTOTO Design, Tel Aviv · founded 2004, by its own account' },
+          { label: 'Founders', value: 'Ori Saidi and Daniel Gassner', note: 'Gassner is quoted as co-founder in the Nov 2024 Target release' },
+          { label: 'Storefront seller', value: 'Ototo', note: 'Merchant A1FWIW6RVM5XDB' },
+          { label: 'Legal name', value: 'Branded Acquico No 4, LLC', note: '228 Park Ave S, STE 78816, New York, NY 10003' },
+          { label: 'Portfolio', value: 'Essor', note: 'Formed when BRANDED bought Heyday · announced 5 Sep 2024' },
+          { label: 'Joined the group', value: 'Not found', note: 'After BRANDED was founded in Sep 2020, and by Sep 2024' },
+          { label: 'Seller feedback', value: '100%', note: 'Over 7,476 ratings', info: 'sellerFeedback' },
+          { label: 'Seller account first seen', value: '14 Sep 2017', note: 'By Keepa — the account, not the brand' },
+          { label: 'Oldest listing under the brand', value: '1 Jan 2011', note: 'Keepa’s earliest date, so possibly older' },
+        ],
+      },
+      {
+        /* The twelve months to the snapshot, by month-end buy-box holder,
+           from brand-series.json byHolder. Sums to the TTM exactly. */
+        type: 'table',
+        caption: 'Who held the buy box, Sep 2025 – Aug 2026',
+        columns: ['Holder at month end', 'Revenue', 'Share'],
+        rows: [
+          ['Ototo (Branded Acquico No 4, LLC)', '$5,746,830', '96.6%'],
+          ['No buy box — suppressed or out of stock', '$177,870', '3.0%'],
+          ['Amazon', '$14,713', '0.2%'],
+          ['Penguin Gallery, a North Conway, NH gift shop', '$4,838', '0.1%'],
+          ['Merchandise Squared, Hampton, NH', '$2,998', '0.1%'],
+        ],
+        note:
+          'Attributed at each month end, so a reseller holding the buy box on that day takes the whole month’s badge for that listing. Keepa’s seller records, read 16 September 2026.',
+      },
+      {
+        type: 'prose',
+        text:
+          'OTOTO began as a studio. Ori Saidi and Daniel Gassner met at the Ascola School of Art and Design in Tel Aviv in 1999, and founded the company in 2004. In 2017–19 the company took Amazon to court in Israel over counterfeit OTOTO products. Gassner was still quoted as co-founder in the November 2024 Target announcement. Whether either founder runs the business now was not read.',
+      },
+      {
+        /* 🚨 Keep this as worded. "Registered to a BRANDED company" rests on
+           the LLC's name and the shared address; no filing was read. Never
+           add a date, a price, or a link between the ownership and the
+           decline. */
+        type: 'prose',
+        text:
+          'The Amazon account is registered to Branded Acquico No 4, LLC, at a New York suite that ototodesign.com now gives as its own address. By its name and address it is a BRANDED company, though no company filing was read. BRANDED, which TechCrunch called an Amazon marketplace consolidator, bought Heyday in 2024, and the combined company became Essor. Its announcement names OTOTO Design in the portfolio, beside brands such as Boka, ZitSticka and Puracy. When OTOTO joined, and on what terms, was not found. Keepa keeps no history of the account’s name, so the series cannot show a before and after.',
+      },
+      {
+        type: 'prose',
+        text:
+          'These details are resolved from the seller record behind the brand’s Amazon storefront, its buy-box history, the company’s own site and releases, and press coverage of BRANDED and Essor.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model: a 2.6 base multiple moved by what the public record supports, applied to trailing-twelve profit. It prices OTOTO’s Amazon US business alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'The own site, Target, Walmart, CVS, wholesale and distributors abroad are excluded, because none of them is sized. The profit being multiplied carries August 2026’s cost rates into every month, on unit costs nobody has quoted, before storage, returns and overhead. The 30.5% fall in the trailing twelve is in the profit, but not in the multiple.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are age and reputation: listings going back to at least 2011, tens of thousands of reviews, perfect seller feedback and an enrolled brand store. The negatives are the shape of the year and the reach of what is measured. December 2025 was two-fifths of the trailing twelve, and every measured dollar is on Amazon US. Neither multiple adjustment captures the 2026 decline, and a buyer would price that first.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and they are inferences. Differentiation is scored at level 3, character shapes of their own design. The moulds and the 150 design patents the site claims would make it level 4, and nobody has seen them. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. The trademark was not read, so the model does not score it. All of these are the first things to put to the owner, along with what the Amazon business is worth inside Essor.',
       },
     ],
   },
