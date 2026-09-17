@@ -221,7 +221,9 @@ export function TopMetrics({
 
   const n = recent.length;
   const avgRevenue = n ? sum(revenues) / n : num(b.latestMonthlyRevenue);
-  const avgProfit = n ? sum(profits) / n : num(b.latestMonthlyProfit);
+  /* Profit is NOT averaged: it is the Business row's own latestMonthlyProfit,
+     the one month the case study states, dated on its basis line. */
+  const monthlyProfit = num(b.latestMonthlyProfit);
 
   // From the totals, not the mean of the monthly rates: a mean of percentages
   // weights a $14k month the same as a $349k one.
@@ -338,9 +340,9 @@ export function TopMetrics({
           basis={basis}
         />
         <AverageCard
-          label="Avg. monthly profit"
-          value={avgProfit === null ? "—" : exactMoney(Math.round(avgProfit), b.currency)}
-          basis={basis}
+          label="Monthly profit"
+          value={monthlyProfit === null ? "—" : exactMoney(Math.round(monthlyProfit), b.currency)}
+          basis={b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month"}
         />
         <AverageCard
           label="Profit margin"
