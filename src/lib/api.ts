@@ -64,6 +64,10 @@ export type BusinessCard = {
   latestMarginPct: string | null;
   startingCost: string | null;
   logoUrl: string | null;
+  /** The UGC shot — the product in someone's hand, uploaded to our bucket by
+   *  whoever published the profile. Null for profiles published before it was
+   *  asked for; the home page falls back to the profile's own product image. */
+  ugcImageUrl: string | null;
   publishedAt: string | null;
   /** The case-study headline, seeded from research/<slug>/headline.json after
    *  review. 🚨 The ONLY copy of it: the page, the prerender, the share
@@ -74,6 +78,8 @@ export type BusinessCard = {
   title?: string | null;
   /** The headline's second half, shown under the title on a /data/ row. */
   subtitle?: string | null;
+  /** The month the headline's figures are true of. Dates a home-page card. */
+  snapshotMonth?: string | null;
   categories: CategoryRef[];
 };
 

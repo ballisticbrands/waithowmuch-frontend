@@ -8,6 +8,7 @@ import type { BusinessCard, BusinessDetail, FacetCategory, MetricsResponse } fro
  * business must not be served the payload baked in for the landed-on page.
  */
 type Bootstrap =
+  | { route: "home"; businesses: BusinessCard[] }
   | { route: "ideas"; collection: string; businesses: BusinessCard[]; total: number; categories: FacetCategory[] }
   | {
       route: "business";
@@ -33,6 +34,8 @@ function take(): Bootstrap | undefined {
 // double-invokes effects, and a getter that self-destructs on second read
 // would hand the second pass `undefined` and flash a spinner.
 const initial = take();
+
+export const homeBootstrap = () => (initial?.route === "home" ? initial : undefined);
 
 export const ideasBootstrap = (collection: string) =>
   initial?.route === "ideas" && initial.collection === collection ? initial : undefined;

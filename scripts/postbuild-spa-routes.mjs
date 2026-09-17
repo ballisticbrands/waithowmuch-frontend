@@ -777,14 +777,38 @@ for (const r of STATIC) {
   write(r.path, html);
 }
 
-// ── Home (deliberately a placeholder) ─────────────────────────────────
+// ── Home — the case-study cards ───────────────────────────────────────
+/* The cards are images, and an image is nothing to a crawler, so the static
+   copy is the same list in words: headline, business, month. The app renders
+   the identical rows from the SAME payload, inlined below, so the two cannot
+   disagree and the first paint does not wait for a fetch. */
+let homeRows = [];
+try {
+  homeRows = (await get('/v1/businesses?limit=40&sort=newest')).businesses ?? [];
+} catch (err) {
+  console.warn(`postbuild: home — API unreachable (${err.message})`);
+}
+const homeList = homeRows.map((b) => {
+  const month = b.snapshotMonth ?? b.latestPeriod;
+  const blurb = b.subtitle || b.tagline;
+  return `<li><a href="${businessPath(b.slug)}">${esc(b.title || b.name)}</a> — ${esc(b.name)}${
+    month ? ` · ${esc(monthLabel(month))}` : ''}${blurb ? ` · ${esc(blurb)}` : ''}</li>`;
+}).join('\n      ');
+
 write('', render({
   path: '/',
   title: `${BRAND_NAME} — what businesses actually make`,
-  description: 'Revenue, profit and margin for businesses you have never heard of. Researched from public data, with sources on every profile.',
-  body: `<h1>${BRAND_NAME}</h1>
-    <p>Revenue, profit and margin for businesses most people have never heard of.</p>
-    <p><a href="${collectionPath('all-ideas')}">Browse all case studies</a> · <a href="/how-we-research/">How we research</a></p>`,
+  description: 'Researched case studies of small businesses: what they sell, what they earn, and how every figure was reached.',
+  body: `<h1>What these businesses actually make</h1>
+    <p>Researched case studies of small businesses — what they sell, what they earn, and how the
+       figures were reached.</p>
+    <ul>
+      ${homeList || '<li>No case studies published yet.</li>'}
+    </ul>
+    ${FOOTER}
+    <p><a href="${collectionPath('all-ideas')}">Browse every case study, with the figures</a> ·
+       <a href="/how-we-research/">How we research</a></p>`,
+  bootstrap: { route: 'home', businesses: homeRows },
 }));
 
 // SPA fallback.
