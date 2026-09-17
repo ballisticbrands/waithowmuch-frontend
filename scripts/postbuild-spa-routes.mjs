@@ -178,8 +178,12 @@ function imageSize(buf) {
  * The size is read off the built file when the image is ours, so an app can lay
  * out the preview before downloading it; a bucket URL goes without.
  */
-function ogCard(slug) {
-  const image = profileFor(slug)?.headline?.image;
+function ogCard(slug, title) {
+  const headline = profileFor(slug)?.headline;
+  /* The rendered card first: its size is known, so the preview gets the
+     large layout without the image having to be fetched here. */
+  if (headline?.ogImage) return { url: headline.ogImage, alt: title, width: 1200, height: 630 };
+  const image = headline?.image;
   if (!image) return null;
   if (/^https?:\/\//.test(image.src)) return { url: image.src, alt: image.alt };
   const file = join(dist, image.src.replace(/^\//, ''));
@@ -593,7 +597,7 @@ for (const b of all) {
   /* Every page of the profile shares the same preview — the headline and its
      leading image — whichever section the link points at. */
   const share = headline
-    ? { title: headline.title, description: headline.subtitle, image: ogCard(b.slug) }
+    ? { title: headline.title, description: headline.subtitle, image: ogCard(b.slug, headline.title) }
     : undefined;
 
   const html = render({
