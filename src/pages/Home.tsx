@@ -36,7 +36,7 @@ export default function Home() {
           and the filters are how a reader finds the one they came for. */}
       <Link data-btn data-filter-cta to={collectionPath("all-ideas")}>
         <RailIcon name="filter" size={22} />
-        Filter
+        Filter by profit, category, age
       </Link>
 
       {error && <div data-empty>Could not load case studies. Refresh to try again.</div>}
