@@ -106,7 +106,7 @@ export const PROFILES = {
        row alone. This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/fb55ddaa6e2538b76236782a366a7857a68e411a9d92f1957b4f1bf6b96efb61.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/4fcc02273d1ea6cbe3886db587e22c867a2417e0cd91fc64029f36b091143d6f.png',
       /* The best seller: the original deck is 62% of the revenue, so it is
          the object this whole page is about. The overview's image further
          down shows the second-best seller instead of repeating it. */
@@ -899,7 +899,7 @@ export const PROFILES = {
        image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/3aea460bfe241a894491368259f313ec20dfa83da3c003e12bb589337adb7d80.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/white-mountain-puzzles/09c010332c37bfeaaa1bc751577f2d296a90954494532d675d3c5147657e5565.png',
       /* The best seller, but only by a hair: it is 2.6% of the month, which is
          the whole point of this profile. */
       image: {
@@ -1466,7 +1466,7 @@ export const PROFILES = {
        2026-09-15) — and the page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kalotoys/b367a51d3636d5b483223d0e44e4fc2594c03c6f4d46e321c6bd3f3797b07bfa.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kalotoys/24a06ae94933c26f4939ac4a593a9076df3e3db2645dc69522fea584f097ea91.png',
       /* The best seller, and the object the headline is about: one of the four
          $34.96 name puzzles that are half of September 2026. */
       image: {
@@ -2144,7 +2144,7 @@ export const PROFILES = {
        2026-09-15). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/maryruth/96a8d7c85a3eb5005ff29b6883be7c4432506eb0f092329ba134cbaddd76c030.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/maryruth/2eabf68a2ca351cb8a4be1842f39e2ad05e6a51df1bbd577fb957ff41b65decd.png',
       image: {
         src: MARYRUTH_PHOTOS.hero,
         alt: 'MaryRuth’s Liquid Morning Multivitamin + Hair Growth in Peach Mango — an amber 15.22 fl oz bottle standing beside its orange-and-white box. The best-selling listing in the catalogue',
@@ -2824,7 +2824,7 @@ export const PROFILES = {
        page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/virora-mahjong/3073cc7cd8e1c52f6bce1c30edf0daeb6a81dd0e14f9dd846e2fc0e31e67c28f.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/virora-mahjong/1a8e0c0a2b199d14d3f3ccc8bf10101bf860b05c8da9ad99be95c3cc866c42e2.png',
       /* The best seller, and more than half of the snapshot month by itself. */
       image: {
         src: viroraPhoto('B0H793VVWP'),
@@ -3411,7 +3411,7 @@ export const PROFILES = {
        2026-09-15) — and the page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/7420e5a2f38389a1a533640de310eef162258fcb72468ba597cdc22b3bcdb683.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/130dcb1d5126676ed1b7580dc4f96e6fd37103391b02ce143d5b17d46c746e12.png',
       /* The best seller, the Louisiana Legends 10-pack — though at 6.8% of the
          month it leads by very little, which is the point of the subtitle. */
       image: {
@@ -3967,7 +3967,7 @@ export const PROFILES = {
        2026-09-15). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/wet-noses/34b1bedda6d82aa5a346744e8aac30673f7b033ad96f39debc1c14a9b2bbf93a.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/wet-noses/028369a24d66cf44f8e92897cd548999714ab7ea42bc99c4b949222d88dead91.png',
       /* The best seller by revenue, and only just: the 5 lb box and its
          two-bag sibling are within a dollar of each other. */
       image: {
@@ -4437,7 +4437,7 @@ export const PROFILES = {
        2026-09-16). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/86219bad9c135922e0bbe2a7e51d1f22fe98fad1d200379e77e2c655696d15d5.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/4699814e0ff5d6a1b39149353deafa0f435cfb23367268066d17924b25fe5ef7.png',
       /* The best seller by revenue: 46% of the own account's September on 100
          units. */
       image: {
@@ -4985,7 +4985,7 @@ export const PROFILES = {
        2026-09-16) — and the page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/lighten-life/594d7ff7be6ae9f7c6f9352c68a054c24d82bfd6eb3bf5c03af0c7e175828b20.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/lighten-life/0e2a393abc754deb19c1d36629635d9fd3450fca1e4c63262d205e34173f1a05.png',
       /* Not the revenue leader, deliberately. That is the mixing-glass bar kit,
          whose buy box Mili World happened to hold at the moment of the read.
          This one sold the most units in the month, and it is the object the
@@ -5710,7 +5710,7 @@ export const PROFILES = {
        September read. Every "Read" stamp below is August's. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/3e2633d373d5c75f6557e88cddd3d7497be3396db887b8c57d7b93a4260cdbf1.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/b0da45608912347a232bb806b126a8f1ce05bbc0786fe5e87ca2ba4e8ebaad24.png',
       /* August's revenue leader, and it is 5.5% of the month. Not the Nessie
          ladle: that is the brand's best-known shape and its biggest review
          count, but Nessie listings were under 5% of August. */

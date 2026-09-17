@@ -4,10 +4,23 @@
  *     node scripts/build-og.mjs <slug>     # just one
  *
  * ── What it shows ────────────────────────────────────────────────────────
- * Two things only: the brand's leading product image at full height, and the
- * headline title laid over its lower part. A link to a profile is shared in a
- * DM or a post, where the preview IS the page for most of the people who see
- * it, so it should make the page's point before anybody clicks.
+ * Top to bottom: the brand's leading product image, large, on white; a
+ * violet rule; the headline title; then the logo beside the monthly profit
+ * and the profit margin, with the source and date stamp on the right. A link
+ * to a profile is shared in a DM or a post, where the preview IS the page for
+ * most of the people who see it, so it should make the page's point before
+ * anybody clicks.
+ *
+ * The two figures are the Business row's `snapshotFigures` — the same frozen
+ * month the title quotes — not the overview cards' trailing-twelve averages.
+ * Next to the title, a second profit figure for a different window reads as
+ * a contradiction. They are formatted the way titles write them ($25.2K).
+ *
+ * 🚨 The title quotes a profit figure, and a number in a preview travels
+ * further than the page it came from. So the caveat travels with it, in the
+ * image itself: "Researched estimate · Read Sep 2026". A screenshot of this
+ * card must not be able to imply that a real business asserted these figures,
+ * or that they are live.
  *
  * ── Why this is not part of `npm run build` ──────────────────────────────
  * It needs Chrome, and the GitHub Pages workflow has no browser to drive. So
@@ -17,9 +30,9 @@
  * the upload's new URL is the cache-bust. A profile with no ogImage falls back
  * to its plain product image, then to the site-wide preview.
  *
- * The title comes from the Business row via the live API, exactly as the page
- * renders it — never from the authored profile, which holds no headline copy.
- * Only the image comes from the profile.
+ * Title, figures, snapshotMonth, name and logo come from the Business row via
+ * the live API, exactly as the page renders them — never from the authored
+ * profile, which holds no headline copy. Only the image comes from the profile.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -61,31 +74,69 @@ async function remoteUri(url) {
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+/* "Sep 2026" — the stamp's wording, from lib/reading.ts. */
+const monthLabel = (iso) =>
+  new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+
+/* "$25.2K", "$7.07M" — how the headline titles write a figure. */
+function compactMoney(v, currency) {
+  const sym = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : '';
+  const abs = Math.abs(v);
+  if (abs >= 1e6) return `${sym}${(v / 1e6).toFixed(2).replace(/\.?0+$/, '')}M`;
+  if (abs >= 1e3) return `${sym}${(v / 1e3).toFixed(1).replace(/\.0$/, '')}K`;
+  return `${sym}${Math.round(v).toLocaleString('en-US')}`;
+}
+
+/* The site's own tokens (globals.css): ink on near-white, the violet accent
+ * used once, hairline borders. */
 const CSS = (fontUri) => `
   @font-face { font-family: Inter; src: url(${fontUri}) format('woff2'); font-weight: 100 900; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  /* White ground: listing photos are shot on white, so any other colour turns
-     the photo's own background into a visible rectangle around the product. */
   body {
-    position: relative; width: 1200px; height: 630px; overflow: hidden;
-    background: #fff; color: #000;
+    width: 1200px; height: 630px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background: #fbfbfd; color: #14141b;
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
-  .hero { position: absolute; inset: 0; display: block; height: 100%; max-width: 100%; margin: 0 auto; object-fit: contain; }
-  /* Over the photo, so it has to read on anything: black fill with a thick
-     white outline. paint-order puts the stroke BEHIND the fill, so the
-     outline thickens the letters instead of eating into them. */
-  h1 {
-    position: absolute; left: 48px; right: 48px; bottom: 40px;
-    font-size: 62px; line-height: 1.12; font-weight: 800; letter-spacing: 0.01em; word-spacing: 0.08em; text-align: center;
-    -webkit-text-stroke: 12px #fff; paint-order: stroke fill;
-    padding-top: 8px;
+  /* The product, big, shown whole on white. Listing photos are shot on
+     white, so any other ground turns the photo's own background into a
+     visible rectangle around the product. */
+  .hero { height: 372px; flex: none; background: #fff; }
+  .hero img { display: block; height: 100%; max-width: 100%; margin: 0 auto; padding: 18px 0; object-fit: contain; }
+  .body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 22px 56px 26px; border-top: 6px solid #5b3df5; }
+  h1 { font-size: 40px; line-height: 1.14; font-weight: 750; letter-spacing: -0.028em; }
+  .row { margin-top: auto; padding-top: 14px; display: flex; align-items: center; gap: 36px; }
+  .logo {
+    height: 64px; min-width: 64px; max-width: 190px; padding: 8px 12px;
+    background: #fff; border: 2px solid #e4e4ec; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
   }
+  .logo img { max-height: 100%; max-width: 100%; object-fit: contain; }
+  .logo span { font-size: 24px; font-weight: 700; }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat b { font-size: 38px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .stat small { font-size: 15px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #5f6072; }
+  .sep { width: 2px; align-self: stretch; background: #e4e4ec; }
+  .src { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 17px; color: #5f6072; text-align: right; }
+  .src .site { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 650; color: #14141b; }
+  .src .site img { width: 30px; height: 30px; border-radius: 7px; }
 `;
 
 const card = (c) => `<!doctype html><html><head><meta charset="utf-8"><style>${CSS(c.font)}</style></head><body>
-  ${c.image ? `<img class="hero" src="${c.image}" alt="" />` : ''}
-  <h1>${esc(c.title)}</h1>
+  <div class="hero">${c.image ? `<img src="${c.image}" alt="" />` : ''}</div>
+  <div class="body">
+    <h1>${esc(c.title)}</h1>
+    <div class="row">
+      <div class="logo">${c.logo ? `<img src="${c.logo}" alt="" />` : `<span>${esc(c.name)}</span>`}</div>
+      <div class="stat"><b>${esc(c.profit)}</b><small>Monthly profit</small></div>
+      <div class="sep"></div>
+      <div class="stat"><b>${esc(c.margin)}</b><small>Profit margin</small></div>
+      <div class="src">
+        <span class="site"><img src="${c.mark}" alt="" />waithowmuch.com</span>
+        <span>Researched estimate · Read ${esc(c.month)}</span>
+      </div>
+    </div>
+  </div>
 </body></html>`;
 
 const only = process.argv[2];
@@ -98,6 +149,7 @@ if (slugs.length === 0) {
 }
 
 const font = fileUri(join(root, 'public', 'fonts', 'inter-latin.woff2'));
+const mark = fileUri(join(root, 'public', 'logo.svg'));
 
 mkdirSync(outDir, { recursive: true });
 const browser = await puppeteer.launch({ executablePath: chromePath(), headless: true, args: ['--no-sandbox'] });
@@ -110,15 +162,26 @@ for (const slug of slugs) {
     continue;
   }
   const { business: b } = await res.json();
-  if (!b.title) {
-    console.warn(`build-og: ${slug}: the Business row has no title, skipped`);
+  if (!b.title || !b.snapshotMonth) {
+    console.warn(`build-og: ${slug}: the Business row has no title or snapshotMonth, skipped`);
+    continue;
+  }
+  const f = b.snapshotFigures;
+  if (f?.monthlyProfit == null || f?.marginPct == null) {
+    console.warn(`build-og: ${slug}: the Business row has no snapshotFigures profit or margin, skipped`);
     continue;
   }
 
   const c = {
+    name: b.name,
     title: b.title,
+    profit: compactMoney(Number(f.monthlyProfit), f.currency ?? b.currency),
+    margin: `${Math.round(Number(f.marginPct))}%`,
+    month: monthLabel(b.snapshotMonth),
+    logo: b.logoUrl ? await remoteUri(b.logoUrl) : null,
     image: headline.image ? await remoteUri(headline.image.src) : null,
     font,
+    mark,
   };
 
   const page = await browser.newPage();
@@ -128,20 +191,21 @@ for (const slug of slugs) {
 
   /* Fit the title: shrink it until it takes two lines, down to a floor that
      still reads at thumbnail size. A title that needs a third line even then
-     gets it, with a warning — the fix for that is shorter copy. */
+     is a failure — the row below has no room for it, and the fix is shorter
+     copy. */
   const lines = await page.evaluate((min) => {
     const el = document.querySelector('h1');
-    const count = () => Math.round((el.getBoundingClientRect().height - 8) / parseFloat(getComputedStyle(el).lineHeight));
+    const count = () => Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight));
     let size = parseFloat(getComputedStyle(el).fontSize);
     while (count() > 2 && size > min) {
-      size -= 2;
+      size -= 1;
       el.style.fontSize = `${size}px`;
     }
     return count();
-  }, 46);
+  }, 32);
   if (lines > 2) {
     console.warn(`build-og: ${slug}: the title needs ${lines} lines on the card`);
-    failed = lines > 3 || failed;
+    failed = true;
   }
 
   const out = join(outDir, `${slug}.png`);

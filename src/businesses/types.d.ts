@@ -286,10 +286,10 @@ export type Profile = {
      *
      *  Also the link preview when there is no `ogImage`. */
     image?: { src: string; alt: string };
-    /** The link preview card: this image with the title over it, rendered by
-     *  scripts/build-og.mjs (1200×630) and uploaded to the bucket. Re-render
-     *  and re-upload it when the title or the image changes — the card has
-     *  the title baked in. */
+    /** The link preview card — this image, the title and the snapshot
+     *  profit and margin — rendered by scripts/build-og.mjs (1200×630) and
+     *  uploaded to the bucket. Re-render and re-upload it when the title, the
+     *  snapshot figures or the image change: the card has them baked in. */
     ogImage?: string;
   };
   /** Business.snapshotMonth, set by the page from the row — NEVER authored.
