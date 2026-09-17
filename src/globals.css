@@ -436,6 +436,15 @@ h1, h2, h3, h4 {
   color: var(--muted-foreground);
 }
 
+/* The home page's one call to action: into the database, where the filters
+   are. Sized well above a nav link — it is the only button on the page. */
+[data-filter-cta] {
+  margin-bottom: 1.75rem;
+  padding: 0.7rem 1.6rem;
+  font-size: 1.0625rem; font-weight: 600;
+  border-radius: var(--radius-lg);
+}
+
 [data-case-cards] {
   display: grid; gap: 1.25rem;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));

@@ -806,7 +806,7 @@ write('', render({
       ${homeList || '<li>No case studies published yet.</li>'}
     </ul>
     ${FOOTER}
-    <p><a href="${collectionPath('all-ideas')}">Browse every case study, with the figures</a> ·
+    <p><a href="${collectionPath('all-ideas')}">Filter every case study, with the figures</a> ·
        <a href="/how-we-research/">How we research</a></p>`,
   bootstrap: { route: 'home', businesses: homeRows },
 }));

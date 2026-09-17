@@ -5,6 +5,7 @@ import { listBusinesses, type BusinessCard } from "@/lib/api";
 import { homeBootstrap } from "@/lib/bootstrap";
 import { collectionPath } from "@/data/collections.mjs";
 import { CaseStudyCard } from "@/components/CaseStudyCard";
+import { RailIcon } from "@/components/RailIcons";
 
 /** The front door: the case studies as cards, newest first. */
 export default function Home() {
@@ -31,6 +32,13 @@ export default function Home() {
         earn, and how the figures were reached.
       </p>
 
+      {/* The way into the database: the home page is the newest case studies,
+          and the filters are how a reader finds the one they came for. */}
+      <Link data-btn data-filter-cta to={collectionPath("all-ideas")}>
+        <RailIcon name="filter" size={22} />
+        Filter
+      </Link>
+
       {error && <div data-empty>Could not load case studies. Refresh to try again.</div>}
       {!error && rows === null && <div data-empty>Loading…</div>}
       {rows && rows.length > 0 && (
@@ -39,9 +47,6 @@ export default function Home() {
         </div>
       )}
 
-      <p style={{ marginTop: "1.5rem" }}>
-        <Link to={collectionPath("all-ideas")}>Browse every case study, with the figures →</Link>
-      </p>
     </main>
   );
 }
