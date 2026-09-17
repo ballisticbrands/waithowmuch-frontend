@@ -144,16 +144,6 @@ const num = (v: number | string | null | undefined): number | null =>
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
-/** "TTM · trailing 12 months, Oct 2025 – Sep 2026" — or "Averaged over 7 months, …"
- *  for a series too short to have a TTM. The divisor no average on this page
- *  is printed without. `periods` must be oldest first. */
-function averagedOver(periods: string[]): string {
-  const n = periods.length;
-  if (n === 1) return `${monthLabel(periods[0]!)} only`;
-  const span = `${monthLabel(periods[0]!)} – ${monthLabel(periods[n - 1]!)}`;
-  return n === 12 ? `TTM · trailing 12 months, ${span}` : `Averaged over ${n} months, ${span}`;
-}
-
 /** Per-order money at the grain an order is actually priced in — $1.24, not
  *  $1. exactMoney rounds to whole units, which on an $8.87 order collapses
  *  every cost line onto the same figure. */
@@ -194,20 +184,20 @@ export function TopMetrics({
   /** Where "View the figures" jumps to. */
   chartHref?: string;
 }) {
-  /* 🚨 The cards read the TRAILING TWELVE MONTHS, not the whole series — the
-     way a broker such as Empire Flippers prices a listing. A whole-history
-     average folds in every December and the thinnest early months: White
-     Mountain's 37 months read $184,173 of profit a month against a TTM of
-     $216,716. The chart below still draws every month; only these figures
-     window. Under twelve months there is no TTM to state, so they average
-     what there is and the basis line says how many. */
+  /* 🚨 The four headline cards state ONE MONTH — the latest published one,
+     off the Business row — not an average. They used to read a trailing
+     twelve months, which is how a broker prices a listing, but a TTM revenue
+     beside a single-month profit invites the reader to divide one by the
+     other and get a margin the page does not show. One month across all four
+     is the only version that survives that arithmetic. The chart below still
+     draws every month, and TACoS in Additional metrics is still a TTM ratio
+     — it says so on its own note.
+
+     The month is on each basis line rather than in the label: "Monthly
+     revenue · Sep 2026" wraps to two lines in a card. */
   const ttm = metrics.length >= 12;
-  /* The TTM says so on the basis line, not in the label: "Avg. monthly
-     revenue · TTM" wraps to two lines in a card and drops its figure below the
-     margin card's. */
   const recent = ttm ? metrics.slice(-12) : metrics;
   const revenues = recent.map((p) => num(p.revenue) ?? 0);
-  const profits = recent.map((p) => num(p.profit) ?? 0);
   /* Ad spend is a metric TYPE now, not a field on a charted point — the chart
      pivot carries revenue and profit only.
 
@@ -217,21 +207,26 @@ export function TopMetrics({
   const allAdRows = rowsOfType(series ?? null, "ad_spend");
   const adRows = allAdRows.length >= 12 ? allAdRows.slice(-12) : allAdRows;
   const adSpends = adRows.map((r) => Number(r.value));
-  const avgAdSpend = adSpends.length ? sum(adSpends) / adSpends.length : null;
 
   const n = recent.length;
-  const avgRevenue = n ? sum(revenues) / n : num(b.latestMonthlyRevenue);
-  /* Profit is NOT averaged: it is the Business row's own latestMonthlyProfit,
-     the one month the case study states, dated on its basis line. */
+
+  /* The three figures the Business row carries for its latest period. The row
+     is the same source the /data/ listing, the share card and the crawler HTML
+     read, so a card cannot disagree with the row that links to it. */
+  const monthlyRevenue = num(b.latestMonthlyRevenue);
   const monthlyProfit = num(b.latestMonthlyProfit);
+  /* Stored, not derived — but a row with the two figures and no percentage
+     still has a margin, and it is the one the reader would work out. */
+  const margin =
+    num(b.latestMarginPct) ??
+    (monthlyRevenue && monthlyProfit !== null ? (monthlyProfit / monthlyRevenue) * 100 : null);
+  const monthBasis = b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month";
 
-  // From the totals, not the mean of the monthly rates: a mean of percentages
-  // weights a $14k month the same as a $349k one.
-  const margin = n && sum(revenues) ? (sum(profits) / sum(revenues)) * 100 : num(b.latestMarginPct);
-
-  const basis = n ? averagedOver(recent.map((p) => p.periodStart)) : "Latest published month";
-  // Its own basis: ad spend is not guaranteed to cover the same months.
-  const adBasis = averagedOver(adRows.map((r) => r.periodStart));
+  /* Ad spend has no column on the Business row, so the latest month comes off
+     the series — and carries its OWN month, because ad spend is not guaranteed
+     to be published for the same months as revenue. */
+  const lastAdRow = allAdRows.length ? allAdRows[allAdRows.length - 1]! : null;
+  const latestAdSpend = lastAdRow ? Number(lastAdRow.value) : null;
 
   // Ad spend has its own card in the headline row; what the grid keeps is
   // TACoS. A ratio, so it takes the totals rather than the mean of the monthly
@@ -335,34 +330,28 @@ export function TopMetrics({
     <section data-glance="" aria-label="Key figures">
       <div data-cards="">
         <AverageCard
-          label="Avg. monthly revenue"
-          value={avgRevenue === null ? "—" : exactMoney(Math.round(avgRevenue), b.currency)}
-          basis={basis}
+          label="Monthly revenue"
+          value={monthlyRevenue === null ? "—" : exactMoney(Math.round(monthlyRevenue), b.currency)}
+          basis={monthBasis}
         />
         <AverageCard
           label="Monthly profit"
           value={monthlyProfit === null ? "—" : exactMoney(Math.round(monthlyProfit), b.currency)}
-          basis={b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month"}
+          basis={monthBasis}
         />
         <AverageCard
           label="Profit margin"
           value={percent(margin)}
-          basis={
-            !n
-              ? "Latest published month"
-              : ttm
-                ? "TTM · total profit against total revenue, trailing 12 months"
-                : "Total profit against total revenue over the same months"
-          }
+          basis={monthBasis}
           link={n ? { href: chartHref, label: "View the figures" } : undefined}
         />
         {/* Only where the series carries it. A "—" card on every business that
             publishes no ad spend would read as "spends nothing". */}
-        {avgAdSpend !== null && (
+        {latestAdSpend !== null && (
           <AverageCard
-            label="Avg. monthly ad spend"
-            value={exactMoney(Math.round(avgAdSpend), b.currency)}
-            basis={adBasis}
+            label="Monthly ad spend"
+            value={exactMoney(Math.round(latestAdSpend), b.currency)}
+            basis={monthLabel(lastAdRow!.periodStart)}
           />
         )}
       </div>
