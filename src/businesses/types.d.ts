@@ -284,10 +284,13 @@ export type Profile = {
      *  figures are about. A bucket URL, like the image block. Optional:
      *  without one the words keep their half and the other half stays empty.
      *
-     *  Also the link preview: a shared link to the profile shows this photo
-     *  under the headline title and subtitle. Without one it shows the
-     *  site-wide preview. */
+     *  Also the link preview when there is no `ogImage`. */
     image?: { src: string; alt: string };
+    /** The link preview card: this image with the title over it, rendered by
+     *  scripts/build-og.mjs (1200×630) and uploaded to the bucket. Re-render
+     *  and re-upload it when the title or the image changes — the card has
+     *  the title baked in. */
+    ogImage?: string;
   };
   /** Business.snapshotMonth, set by the page from the row — NEVER authored.
    *  The frozen date the valuation is scored at (valuation/inputs.mjs RULE 4). */

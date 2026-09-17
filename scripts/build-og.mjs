@@ -4,28 +4,22 @@
  *     node scripts/build-og.mjs <slug>     # just one
  *
  * ── What it shows ────────────────────────────────────────────────────────
- * The profile's headline title and subtitle, the brand's leading image, and
- * the same date stamp the page carries. A link to a profile is shared in a DM
- * or a post, where the preview IS the page for most of the people who see it,
- * so it should make the page's point before anybody clicks.
- *
- * 🚨 The title quotes a profit figure, and a number in a preview travels
- * further than the page it came from. So the caveat travels with it, in the
- * image itself: "Researched estimate · Read Sep 2026". A screenshot of this
- * card must not be able to imply that a real business asserted these figures,
- * or that they are live.
+ * Two things only: the brand's leading product image at full height, and the
+ * headline title laid over its lower part. A link to a profile is shared in a
+ * DM or a post, where the preview IS the page for most of the people who see
+ * it, so it should make the page's point before anybody clicks.
  *
  * ── Why this is not part of `npm run build` ──────────────────────────────
  * It needs Chrome, and the GitHub Pages workflow has no browser to drive. So
  * the card is rendered here, uploaded to the bucket (backend: `npm run
  * product-image`) and linked from the profile as `headline.ogImage` — never
  * committed. Run it whenever a profile's headline or leading image changes;
- * the upload's new URL is the cache-bust. A profile with no ogImage keeps the
- * site-wide preview rather than a broken image.
+ * the upload's new URL is the cache-bust. A profile with no ogImage falls back
+ * to its plain product image, then to the site-wide preview.
  *
- * Title, subtitle, snapshotMonth, name and logo come from the Business row via
- * the live API, exactly as the page renders them — never from the authored
- * profile, which holds no headline copy. Only the image comes from the profile.
+ * The title comes from the Business row via the live API, exactly as the page
+ * renders it — never from the authored profile, which holds no headline copy.
+ * Only the image comes from the profile.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -67,64 +61,31 @@ async function remoteUri(url) {
 const esc = (s) =>
   String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-/* "Sep 2026" — the stamp's wording, from lib/reading.ts. */
-const monthLabel = (iso) =>
-  new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
-
-/* The site's own tokens (globals.css): ink on near-white, the violet accent
- * used once, hairline borders. */
 const CSS = (fontUri) => `
   @font-face { font-family: Inter; src: url(${fontUri}) format('woff2'); font-weight: 100 900; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* White ground: listing photos are shot on white, so any other colour turns
+     the photo's own background into a visible rectangle around the product. */
   body {
-    width: 1200px; height: 630px; overflow: hidden;
-    display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px;
-    padding: 56px 64px 48px;
-    background: #fbfbfd; color: #14141b;
+    position: relative; width: 1200px; height: 630px; overflow: hidden;
+    background: #fff; color: #000;
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    border-top: 10px solid #5b3df5;
   }
-  .text { display: flex; flex-direction: column; min-width: 0; }
-  .brand { display: flex; align-items: center; gap: 16px; }
-  .brand img { height: 52px; max-width: 150px; object-fit: contain; }
-  .brand span { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .hero { position: absolute; inset: 0; display: block; height: 100%; max-width: 100%; margin: 0 auto; object-fit: contain; }
+  /* Over the photo, so it has to read on anything: black fill with a thick
+     white outline. paint-order puts the stroke BEHIND the fill, so the
+     outline thickens the letters instead of eating into them. */
   h1 {
-    margin-top: 28px; font-size: 48px; line-height: 1.12; font-weight: 750;
-    letter-spacing: -0.028em;
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    position: absolute; left: 48px; right: 48px; bottom: 40px;
+    font-size: 62px; line-height: 1.12; font-weight: 800; letter-spacing: 0.01em; word-spacing: 0.08em; text-align: center;
+    -webkit-text-stroke: 12px #fff; paint-order: stroke fill;
+    padding-top: 8px;
   }
-  p.sub {
-    margin-top: 18px; font-size: 23px; line-height: 1.45; color: #5f6072;
-    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
-  }
-  .foot {
-    margin-top: auto; padding-top: 22px; border-top: 2px solid #e4e4ec;
-    display: flex; align-items: center; gap: 14px; font-size: 21px; color: #5f6072;
-  }
-  .foot img { width: 34px; height: 34px; border-radius: 8px; }
-  .foot strong { color: #14141b; font-weight: 650; }
-  .image {
-    align-self: center; height: 460px;
-    border: 2px solid #e4e4ec; border-radius: 22px; background: #fff;
-    display: flex; align-items: center; justify-content: center; padding: 22px;
-  }
-  .image img { max-width: 100%; max-height: 100%; object-fit: contain; }
 `;
 
 const card = (c) => `<!doctype html><html><head><meta charset="utf-8"><style>${CSS(c.font)}</style></head><body>
-  <div class="text">
-    <div class="brand">
-      ${c.logo ? `<img src="${c.logo}" alt="" />` : ''}
-      <span>${esc(c.name)}</span>
-    </div>
-    <h1>${esc(c.title)}</h1>
-    <p class="sub">${esc(c.subtitle)}</p>
-    <div class="foot">
-      <img src="${c.mark}" alt="" />
-      <span><strong>waithowmuch.com</strong> · Researched estimate · Read ${esc(c.month)}</span>
-    </div>
-  </div>
-  ${c.image ? `<div class="image"><img src="${c.image}" alt="" /></div>` : '<div></div>'}
+  ${c.image ? `<img class="hero" src="${c.image}" alt="" />` : ''}
+  <h1>${esc(c.title)}</h1>
 </body></html>`;
 
 const only = process.argv[2];
@@ -137,7 +98,6 @@ if (slugs.length === 0) {
 }
 
 const font = fileUri(join(root, 'public', 'fonts', 'inter-latin.woff2'));
-const mark = fileUri(join(root, 'public', 'logo.svg'));
 
 mkdirSync(outDir, { recursive: true });
 const browser = await puppeteer.launch({ executablePath: chromePath(), headless: true, args: ['--no-sandbox'] });
@@ -150,20 +110,15 @@ for (const slug of slugs) {
     continue;
   }
   const { business: b } = await res.json();
-  if (!b.title || !b.subtitle || !b.snapshotMonth) {
-    console.warn(`build-og: ${slug}: the Business row has no title, subtitle or snapshotMonth, skipped`);
+  if (!b.title) {
+    console.warn(`build-og: ${slug}: the Business row has no title, skipped`);
     continue;
   }
 
   const c = {
-    name: b.name,
     title: b.title,
-    subtitle: b.subtitle,
-    month: monthLabel(b.snapshotMonth),
-    logo: b.logoUrl ? await remoteUri(b.logoUrl) : null,
     image: headline.image ? await remoteUri(headline.image.src) : null,
     font,
-    mark,
   };
 
   const page = await browser.newPage();
@@ -171,20 +126,22 @@ for (const slug of slugs) {
   await page.setContent(card(c), { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);
 
-  /* A clamped line is a silently truncated sentence. Warn loudly: the copy is
-     too long for the card, and the fix is shorter copy, not a smaller font. */
-  const clipped = await page.evaluate(() =>
-    ['h1', 'p.sub'].filter((s) => {
-      const el = document.querySelector(s);
-      /* More than half a line hidden, not any overflow at all: at a tight
-         line-height a descender alone makes scrollHeight a few pixels taller
-         than the box, with nothing cut off. */
-      return el.scrollHeight - el.clientHeight > parseFloat(getComputedStyle(el).lineHeight) / 2;
-    }),
-  );
-  if (clipped.length) {
-    console.warn(`build-og: ${slug}: ${clipped.join(' and ')} truncated on the card`);
-    failed = true;
+  /* Fit the title: shrink it until it takes two lines, down to a floor that
+     still reads at thumbnail size. A title that needs a third line even then
+     gets it, with a warning — the fix for that is shorter copy. */
+  const lines = await page.evaluate((min) => {
+    const el = document.querySelector('h1');
+    const count = () => Math.round((el.getBoundingClientRect().height - 8) / parseFloat(getComputedStyle(el).lineHeight));
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    while (count() > 2 && size > min) {
+      size -= 2;
+      el.style.fontSize = `${size}px`;
+    }
+    return count();
+  }, 46);
+  if (lines > 2) {
+    console.warn(`build-og: ${slug}: the title needs ${lines} lines on the card`);
+    failed = lines > 3 || failed;
   }
 
   const out = join(outDir, `${slug}.png`);
