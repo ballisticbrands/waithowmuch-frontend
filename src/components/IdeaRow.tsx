@@ -51,7 +51,7 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
             honest one, and it is the half of `researchMethod` a reader can
             actually act on. */}
         <div data-row-provenance>
-          <Provenance method={b.researchMethod} confidence={b.confidence} />
+          <Provenance method={b.researchMethod} />
           {b.latestPeriod && <span data-row-asof>as of {monthLabel(b.latestPeriod)}</span>}
         </div>
 
