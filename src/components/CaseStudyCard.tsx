@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { BusinessCard } from "@/lib/api";
 import { businessPath } from "@/data/site";
-import { monthLabel } from "@/lib/format";
+import { money, monthLabel } from "@/lib/format";
 import { profileFor } from "@/businesses/index.mjs";
 
 /**
@@ -40,6 +40,12 @@ export function CaseStudyCard({ business: b }: { business: BusinessCard }) {
         )}
       </div>
       <div data-case-card-body>
+        {/* The live figure from the Business row, not the headline's frozen
+            one: the card is a listing, and this is the number a reader scans
+            the grid for. */}
+        {b.latestMonthlyProfit != null && (
+          <div data-case-card-profit>{money(b.latestMonthlyProfit, b.currency)} profit/mo</div>
+        )}
         <div data-case-card-title>{b.title || b.name}</div>
         <div data-case-card-meta>
           <span>{b.name}</span>
