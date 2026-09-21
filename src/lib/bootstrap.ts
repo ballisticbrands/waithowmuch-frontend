@@ -35,10 +35,20 @@ function take(): Bootstrap | undefined {
 // would hand the second pass `undefined` and flash a spinner.
 const initial = take();
 
-export const homeBootstrap = () => (initial?.route === "home" ? initial : undefined);
+/* 🚨 An EMPTY list counts as no bootstrap at all.
+ *
+ * A build that could not reach the API used to inline `businesses: []`, and
+ * the pages below skip their fetch when they have a payload — so the site
+ * rendered nothing, fetched nothing, and said nothing. The build now refuses
+ * to publish that (postbuild-spa-routes.mjs), and this is the second belt:
+ * an empty payload falls through to the API like a cold load. */
+export const homeBootstrap = () =>
+  initial?.route === "home" && initial.businesses.length > 0 ? initial : undefined;
 
 export const ideasBootstrap = (collection: string) =>
-  initial?.route === "ideas" && initial.collection === collection ? initial : undefined;
+  initial?.route === "ideas" && initial.collection === collection && initial.businesses.length > 0
+    ? initial
+    : undefined;
 
 export const businessBootstrap = (slug: string) =>
   initial?.route === "business" && initial.slug === slug ? initial : undefined;

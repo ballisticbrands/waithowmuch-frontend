@@ -266,6 +266,38 @@ const get = async (path) => {
   return res.json();
 };
 
+/**
+ * 🚨 The gate: the catalogue is fetched ONCE, up front, and a failure here
+ * fails the BUILD.
+ *
+ * On 2026-09-20 and 2026-09-21 the API was unreachable from the runner (the
+ * box's DNS and networking were degraded). Every fetch below was caught and
+ * warned about, the build "succeeded", and the nightly deploy replaced a full
+ * site with one that listed no case studies at all — home, collections,
+ * profiles and sitemap. A site with nothing on it is worse than a site a day
+ * out of date, and Pages keeps serving the previous deploy when a build
+ * fails. So: refuse to publish an empty catalogue.
+ *
+ * WHM_ALLOW_EMPTY=1 is the escape hatch for a genuinely empty database — a
+ * fresh environment, not a broken API.
+ */
+const ALLOW_EMPTY = process.env.WHM_ALLOW_EMPTY === '1';
+
+/** Fail the build rather than publish a site without its content. */
+function refuse(reason) {
+  console.error(`postbuild: ${reason}`);
+  console.error('postbuild: refusing to publish a site with no case studies. The previous deploy stays up; re-run this build once the API is reachable, or set WHM_ALLOW_EMPTY=1 if the database really is empty.');
+  process.exit(1);
+}
+
+let all = [];
+try {
+  all = (await get('/v1/businesses?limit=100')).businesses ?? [];
+} catch (err) {
+  refuse(`the API at ${API} is unreachable (${err.message})`);
+}
+if (all.length === 0 && !ALLOW_EMPTY) refuse(`the API at ${API} returned no published businesses`);
+
 let categories = [];
 try {
   categories = (await get('/v1/categories')).categories ?? [];
@@ -280,7 +312,10 @@ for (const c of [...COLLECTIONS]) {
     businesses = data.businesses ?? [];
     total = data.total ?? businesses.length;
   } catch (err) {
-    console.warn(`postbuild: ${c.slug} — API unreachable (${err.message})`);
+    // The catalogue fetch above already succeeded, so this is a real fault
+    // rather than a cold API — and a collection page with nothing on it is
+    // the failure this build exists to prevent.
+    refuse(`${c.slug} — API unreachable (${err.message})`);
   }
 
   const list = businesses.slice(0, 40).map((b) => {
@@ -369,10 +404,7 @@ guard(collectionPath(MORE.slug), moreHtml);
 write(collectionPath(MORE.slug), moreHtml);
 
 // ── Business pages ────────────────────────────────────────────────────
-let all = [];
-try {
-  all = (await get('/v1/businesses?limit=100')).businesses ?? [];
-} catch { /* handled below */ }
+// `all` is the catalogue fetched at the top, where a failure fails the build.
 
 const METHOD_PHRASE = {
   RESEARCHED: 'modelled by us from public information',
@@ -786,7 +818,7 @@ let homeRows = [];
 try {
   homeRows = (await get('/v1/businesses?limit=40&sort=newest')).businesses ?? [];
 } catch (err) {
-  console.warn(`postbuild: home — API unreachable (${err.message})`);
+  refuse(`home — API unreachable (${err.message})`);
 }
 const homeList = homeRows.map((b) => {
   const month = b.snapshotMonth ?? b.latestPeriod;

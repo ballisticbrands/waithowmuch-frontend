@@ -46,6 +46,11 @@ export default function Home() {
           {rows.map((b) => <CaseStudyCard key={b.id} business={b} />)}
         </div>
       )}
+      {/* A page that renders nothing, silently, is how an empty catalogue went
+          unnoticed for two days. Say so instead. */}
+      {!error && rows?.length === 0 && (
+        <div data-empty>No case studies published yet.</div>
+      )}
 
     </main>
   );
