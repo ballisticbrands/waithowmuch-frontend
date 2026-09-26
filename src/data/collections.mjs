@@ -58,8 +58,8 @@ export const MORE = {
  *  crawlers that no visitor ever sees. */
 export const DESCRIPTIONS = {
   'all-ideas': 'Revenue, profit, margin and starting cost for businesses you have never heard of. Researched from public data, with sources on every profile.',
-  'amazon-fba': 'Amazon FBA businesses with their monthly revenue, margin and what it cost to start. Researched from public data.',
-  shopify: 'Shopify businesses with their monthly revenue, margin and what it cost to start. Researched from public data.',
+  'amazon-fba': 'Amazon FBA businesses with their monthly revenue, margin and an estimate of what it costs to start. Researched from public data.',
+  shopify: 'Shopify businesses with their monthly revenue, margin and an estimate of what it costs to start. Researched from public data.',
   'more-ideas': 'Browse researched businesses by niche, business model, platform and growth channel.',
 };
 

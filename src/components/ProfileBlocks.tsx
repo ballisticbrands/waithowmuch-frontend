@@ -11,6 +11,7 @@ import { MarketplaceSplit } from "./MarketplaceSplit";
 import { SellingMethods } from "./SellingMethods";
 import { ProfileLinks } from "./ProfileLinks";
 import { businessReadingStamp } from "@/lib/reading";
+import { startingCostFigure } from "@/lib/starting-cost";
 
 /** Resolve a stat reference against the live DB record. Never a literal. */
 function statValue(metric: MetricKey, b: BusinessDetail): string {
@@ -22,7 +23,7 @@ function statValue(metric: MetricKey, b: BusinessDetail): string {
     case "latestMonthlyProfit":
       return exactMoney(b.latestMonthlyProfit, b.currency);
     case "startingCost":
-      return exactMoney(b.startingCost, b.currency);
+      return exactMoney(startingCostFigure(b), b.currency);
   }
 }
 
