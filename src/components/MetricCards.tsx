@@ -1,7 +1,10 @@
 import type { BusinessDetail, ChartPoint, MetricsResponse } from "@/lib/api";
+
+type Dec = string | number;
 import { rowsOfType } from "@/lib/api";
 import type { Block, Fact, Profile } from "@/businesses/types";
 import { exactMoney, money, percent, price, monthLabel } from "@/lib/format";
+import { startingCostFigure, startingCostRange } from "@/lib/starting-cost";
 import { METRIC_INFO } from "@/data/metric-info";
 import { scoreProfile, ttmWindow, valuationAsOf } from "@/valuation/inputs.mjs";
 import { InfoTip } from "./InfoTip";
@@ -108,6 +111,7 @@ export function MetricCell({
   value,
   note,
   info,
+  infoExtra,
   learnMore,
   wide,
   text,
@@ -116,6 +120,8 @@ export function MetricCell({
   value: string;
   note?: string;
   info?: string;
+  /** This business's own paragraphs, after the shared ones. */
+  infoExtra?: string[];
   /** Path to the reference page for this attribute — see InfoTip. */
   learnMore?: string;
   wide?: boolean;
@@ -124,7 +130,8 @@ export function MetricCell({
    *  "Broad catalogue, low volume each" — set in it, a phrase reads as a code. */
   text?: boolean;
 }) {
-  const paragraphs = info ? METRIC_INFO[info] : undefined;
+  const shared = info ? METRIC_INFO[info] : undefined;
+  const paragraphs = shared || infoExtra?.length ? [...(shared ?? []), ...(infoExtra ?? [])] : undefined;
   return (
     <div data-metric="" data-wide={wide ? "" : undefined}>
       <dt>
@@ -135,6 +142,37 @@ export function MetricCell({
       {note && <span data-metric-note="">{note}</span>}
     </div>
   );
+}
+
+/** Where a keyword reading came from, as a reader should see it. */
+const READING_SOURCE: Record<string, string> = {
+  asinsight: "ASINsight's report of Amazon Brand Analytics",
+  junglescout: "Jungle Scout",
+  amazon_sqp: "Amazon Brand Analytics",
+};
+
+/** This business's "to start" working, in the order the formula adds it up. */
+function startingCostWorking(b: BusinessDetail): string[] | undefined {
+  const e = b.startingCostEstimate;
+  if (!e) return undefined;
+  const { inputs, breakdown, keywordReading: r } = e;
+  const span = (x: { low: Dec; high: Dec }, f = exactMoney) =>
+    Number(x.low) === Number(x.high) ? f(x.low, b.currency) : `${f(x.low, b.currency)}–${f(x.high, b.currency)}`;
+  const skus = inputs.launchSkus === 1 ? "one product" : `${inputs.launchSkus} products`;
+  const week = monthLabel(r.periodStart);
+  const read =
+    r.calibrationFactor !== null
+      ? `${r.rawVolume.toLocaleString("en-US")} searches in a week of ${week}, from ${READING_SOURCE[r.source] ?? r.source}, adjusted ×${Number(r.calibrationFactor)} to Amazon's own counts`
+      : `from ${READING_SOURCE[r.source] ?? r.source}, as of ${week}`;
+  const lines = [
+    `For this business: ${span(e)}, shown at its midpoint.`,
+    `First order ${span(breakdown.parts.inventory)} — ${skus} at a ${inputs.moq.toLocaleString("en-US")}-unit minimum, ${span(inputs.landedUnitCost, price)} a unit landed.`,
+    `Launch ads ${span(breakdown.parts.ads)} — ranking for “${r.keyword}”, about ${Math.round(r.monthlySearches / 1000).toLocaleString(
+      "en-US",
+    )}k Amazon searches a month (${read}; ${e.competition.toLowerCase()} competition), at ${span({ low: e.cpcLow, high: e.cpcHigh }, price)} a click.`,
+    `Setup ${span(breakdown.parts.setup)}${breakdown.parts.tooling ? `, tooling ${span(breakdown.parts.tooling)}` : ""}.`,
+  ];
+  return e.note ? [...lines, e.note] : lines;
 }
 
 /* ─── The composed section ────────────────────────────────────────────── */
@@ -278,11 +316,17 @@ export function TopMetrics({
     });
   }
 
-  if (num(b.startingCost) !== null) {
+  const startingCost = startingCostFigure(b);
+  if (startingCost !== null) {
+    const range = startingCostRange(b);
     derivedFacts.push({
       label: "To start",
-      value: exactMoney(b.startingCost, b.currency),
+      value: exactMoney(startingCost, b.currency),
+      note: range
+        ? `Estimated, ${exactMoney(range.low, b.currency)}–${exactMoney(range.high, b.currency)}`
+        : undefined,
       info: "toStart",
+      infoExtra: startingCostWorking(b),
     });
   }
   /* Both prices come off the sales-breakdown block rather than being typed

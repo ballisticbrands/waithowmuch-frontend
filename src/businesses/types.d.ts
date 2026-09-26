@@ -12,6 +12,9 @@ export type Fact = {
   value: string;
   note?: string;
   info?: string;
+  /** Paragraphs added under the shared `info` copy — this business's own
+   *  working for the figure. */
+  infoExtra?: string[];
   /** Path to a page explaining this attribute in full, linked from the ⓘ.
    *  For the attributes whose value is one phrase from a fixed list — the
    *  list itself is the definition, and it does not fit in a tooltip. */

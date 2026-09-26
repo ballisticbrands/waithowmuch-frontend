@@ -62,7 +62,13 @@ export type BusinessCard = {
   latestMonthlyRevenue: string | null;
   latestMonthlyProfit: string | null;
   latestMarginPct: string | null;
+  /** The midpoint of the range below, kept for sorting. Read the figure
+   *  through `startingCostFigure` (lib/starting-cost.ts), not directly. */
   startingCost: string | null;
+  /** "To start" as an estimated range. Optional until every API the
+   *  frontend can meet serves it. */
+  startingCostLow?: string | null;
+  startingCostHigh?: string | null;
   logoUrl: string | null;
   /** The UGC shot — the product in someone's hand, uploaded to our bucket by
    *  whoever published the profile. Null for profiles published before it was
@@ -81,6 +87,52 @@ export type BusinessCard = {
   /** The month the headline's figures are true of. Dates a home-page card. */
   snapshotMonth?: string | null;
   categories: CategoryRef[];
+};
+
+type Range = { low: number; high: number };
+
+/** Prisma Decimal columns arrive as strings. */
+type Dec = string | number;
+
+/** The published "to start" estimate — backend StartingCostEstimate, with the
+ *  keyword reading that sized it. */
+export type StartingCostEstimate = {
+  low: Dec;
+  high: Dec;
+  midpoint: Dec;
+  competition: "LOW" | "MEDIUM" | "HIGH";
+  cpcLow: Dec;
+  cpcHigh: Dec;
+  cpcSource: string;
+  inputs: {
+    channel: "amazon" | "shopify";
+    sellingPrice: number;
+    launchSkus: number;
+    moq: number;
+    landedUnitCost: Range;
+    tooling?: Range;
+    niche: { keyword: string; monthlySearches: number; source: string; readAt: string; cpc: Range };
+    note?: string;
+  };
+  breakdown: {
+    parts: { inventory: Range; ads: Range; setup: Range; tooling: Range | null };
+    working: { monthlySearches: number };
+  };
+  modelVersion: string;
+  note: string | null;
+  publishedAt: string | null;
+  keywordReading: {
+    keyword: string;
+    source: string;
+    marketplace: string;
+    periodStart: string;
+    periodEnd: string;
+    rawVolume: number;
+    calibrationFactor: Dec | null;
+    monthlySearches: number;
+    url: string | null;
+    readAt: string;
+  };
 };
 
 export type BusinessLink = {
@@ -127,6 +179,9 @@ export function linkFollowers(link: BusinessLink): number | null {
 
 export type BusinessDetail = BusinessCard & {
   startingCostNote: string | null;
+  /** The published estimate behind the range, and its keyword reading.
+   *  Optional until every API the frontend can meet serves it. */
+  startingCostEstimate?: StartingCostEstimate | null;
   /** The month this profile's story is told as of — the date every stamp on
    *  the page carries (lib/reading.ts). Null for a business with no researched
    *  headline. Optional only until every API the frontend can meet serves it. */
