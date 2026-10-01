@@ -1707,7 +1707,7 @@ export const PROFILES = {
         status: 'yes',
         flag: true,
         note:
-          'The name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. That is the half of the month the four name puzzles make up. KALOTOYS GROUP has no FBA at all.',
+          'The name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. All four name puzzles, the half of the month they make up, are merchant-fulfilled on the Giftora account with no Prime badge, read 1 October 2026 — which is what a US finishing workshop would look like from outside. KALOTOYS GROUP has no FBA at all.',
       },
       'vendor-1p': {
         status: 'no',
@@ -1722,7 +1722,7 @@ export const PROFILES = {
       manufacturer: {
         status: 'yes',
         note:
-          'Two workshops in Hanoi, 2,300 m², by the founders’ own account — self-reported. The customs trail agrees with the shape: the shipper to the US sits at Kalo JSC’s own Hanoi street address.',
+          'Two workshops in Hanoi, 2,300 m², by the founders’ own account — self-reported. They put about 95% of a product in that factory and the last 5%, the personalised name, in a US workshop. The customs trail agrees with the shape: the shipper to the US sits at Kalo JSC’s own Hanoi street address.',
       },
       arbitrage: { status: 'no' },
 
@@ -1747,7 +1747,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Three product families carry the Amazon catalogue: personalised wooden name puzzles, made to order with a child’s name cut from plywood; Montessori busy boards of latches, zips and gears; and, since June 2026, personalised first-day-of-school signs. Around them sit nursery name signs, Halloween sign kits, ornaments and baby baskets — 370 listings in all, 176 of them added between June and August 2026.',
+          'Three product families carry the Amazon catalogue: personalised wooden name puzzles, made to order with a child’s name cut from plywood; Montessori busy boards of latches, zips and gears; and, since June 2026, personalised first-day-of-school signs. Around them sit nursery name signs, Halloween sign kits, ornaments and baby baskets — 370 listings in all, 176 of them added between June and August 2026. They make the toys themselves in their own Hanoi factory and, by their own account, finish the personalised pieces in a US workshop.',
       },
       {
         type: 'prose',
@@ -1779,8 +1779,9 @@ export const PROFILES = {
           'A workshop business founded in 2020, on national television in 2024, and on Amazon US through three seller accounts that appeared one after another.',
       },
       {
-        /* Oldest first. "2020" is the founders' own claim with no day on it;
-           it stays on this list and off the overview chart. */
+        /* Oldest first. "2020", "2021" and "April 2024" are the founders' own
+           claims with no day on them; they stay on this list and off the
+           overview chart, which only plots "D Mon YYYY". */
         type: 'timeline',
         items: [
           {
@@ -1789,6 +1790,15 @@ export const PROFILES = {
             what: 'Founded in Hanoi by Đồng Đức Thành and Lê Trung Anh',
             detail:
               'By their own account, when both were expecting their first children. Two workshops of 2,300 m² today, self-reported, and 100–199 staff on an employer listing.',
+          },
+          /* Year only: the founders name 2021 but no month, so it renders on
+             this list and is not a dot. Do not invent a day to make one. */
+          {
+            when: '2021',
+            tag: 'Brand',
+            what: 'First sales, by the founders’ own account',
+            detail:
+              'They put the first year at 25 billion VND and say it was profitable from it. Self-reported on video in September 2024, unaudited, and with no month behind it.',
           },
           {
             when: '7 Nov 2023',
@@ -1802,7 +1812,15 @@ export const PROFILES = {
             tag: 'Brand',
             what: 'A top-10 Etsy seller by orders, by their own account',
             detail:
-              'Not checked: the Etsy shop refused a direct fetch. The founders call Etsy their primary channel and put 2023 at 40% website, 60% marketplaces.',
+              'Not checked: the Etsy shop refused a direct fetch. The founders call Etsy their primary channel and put 2023 at 40% website, 60% marketplaces, and repeat the end-2023 top-ten claim on video a year later. Amazon, which they say is about seventy times the size of Etsy for them, only started the year after.',
+          },
+          /* Month only, as given on video: rendered here, not a chart dot. */
+          {
+            when: 'April 2024',
+            tag: 'Brand',
+            what: 'The Vietnamese domestic line launches',
+            detail:
+              'kalotoys.vn, by the founders’ own account on video. Self-reported, with no day behind it, and nothing about it is measured on this page.',
           },
           {
             when: '6 Aug 2024',
@@ -1836,6 +1854,13 @@ export const PROFILES = {
             what: 'The Giftora account, trading as “Kalotoys”, is first tracked',
             detail:
               'A Worcester, Massachusetts entity, by Keepa’s first-tracked date, which trails an account’s real opening. Tied to KaloToys by its seller name and listings — an inference, not a document.',
+          },
+          {
+            when: '19 Jan 2025',
+            tag: 'Brand',
+            what: 'The 2025 plan, on video: manufacture in the US, widen the range, push Amazon',
+            detail:
+              'Lê Trung Anh names the three priorities for the year, and says nearly 1,000 orders came in the day after the Shark Tank broadcast with the flow elevated about two weeks. Self-reported and unaudited.',
           },
           {
             when: '4 Mar 2025',
@@ -1938,7 +1963,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The founders put 2023 at 40% through their own website and 60% through marketplaces, with Etsy the one they called primary. On Amazon, fulfilment is split by product rather than by account: the busy boards and Halloween kits carry Amazon FBA fees, while the name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller.',
+          'The founders put 2023 at 40% through their own website and 60% through marketplaces, with Etsy the one they called primary. On Amazon, fulfilment is split by product rather than by account: the busy boards and Halloween kits carry Amazon FBA fees, while the name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. That split is also where a US workshop would show, and it does: all four name puzzles are merchant-fulfilled on the Giftora account and carry no Prime badge, read 1 October 2026. Brand owner sets out what the founders say is made where.',
       },
       {
         type: 'prose',
@@ -1960,6 +1985,11 @@ export const PROFILES = {
       },
       {
         type: 'table',
+        /* The id the margin lines link back to (SKILL §2). There is no
+           supplier-quote COGS table here — nobody quotes a price for a toy
+           this company makes itself — so this is what the lines explain
+           themselves against. */
+        id: 'cogs-breakdown',
         caption: 'The cost shares — what the founders said, and what is used here',
         columns: ['Line', 'Stated by the founders (2023, company-wide)', 'Used here', 'Basis'],
         rows: [
@@ -1986,12 +2016,14 @@ export const PROFILES = {
             key: 'cogs',
             pct: -16,
             detail:
-              'About $4.01 of a $25.07 sale. Derived from the founders’ self-reported ~16% for the whole company in 2023, not quoted for any product. Plywood imported from Russia and cut in their own Hanoi workshops, by their own account.',
+              'About $4.01 of a $25.07 sale. Derived from the founders’ self-reported ~16% for the whole company in 2023, not quoted for any product. It has to cover imported inputs: wood they say cannot be bought in Vietnam and comes from cold-climate sources, Russia named; screws from China cut to a US standard; child-safe paint from a Japanese supplier; and testing to ASTM F963. Cut in their own Hanoi workshops, all by their own account.',
+            links: [{ label: 'See the cost shares above', href: '#cogs-breakdown' }],
           },
           {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s published rate for Toys & Games and for Handmade — 15% either way, and 15.01% per listing in Keepa. The one measured line.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'Shipping and fulfilment',
@@ -1999,18 +2031,24 @@ export const PROFILES = {
             /* The largest line — the component labels the emphasised line
                "Biggest line", so it belongs here, not on advertising. */
             emphasis: true,
+            /* Keepa product record for B0GSZSCM69, read 2026-09-17:
+               356 × 229 × 38 mm, weight not published, no fbaFees entry —
+               it is made to order and merchant-fulfilled. The tier is read
+               off the dimensions alone. sources.json carries the same. */
             detail:
-              'Freight from Vietnam and delivery to the customer, at the founders’ self-reported 20–22% midpoint. Derived. Consistent with the $5.52–6.13 FBA fee on the busy boards; the made-to-order listings ship themselves.',
+              'Size tier: Large Standard. The best seller, the personalised name puzzle B0GSZSCM69, packs to 14.0 × 9.0 × 1.5 in — the 1.5 in is over Small Standard’s 0.75 in limit — and Amazon charges it nothing, because it is made to order and ships from the seller. Freight from Vietnam and delivery to the customer, at the founders’ self-reported 20–22% midpoint. Derived. A second founder statement, on video in September 2024, puts freight alone at about 20% of revenue on the all-Vietnam route — the route the planned US finishing workshop is meant to end, since a finished personalised board has to fly and a blank base can go by sea. Consistent too with the $5.52–6.13 FBA fee on the busy boards; the made-to-order listings ship themselves.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -16.5,
             detail:
               'Derived, on a self-reported basis: the founders’ 30–33% marketing share, which they said included platform commissions, less the 15% referral fee. The weakest line — the sponsored footprint on Amazon neither confirms nor contradicts it.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/kalotoys/advertising/' }],
           },
         ],
         note:
-          'Derived, self-reported basis: three of the four lines are the founders’ own 2023 company-wide shares. Returns, payroll, overhead and the US entities’ own costs are all at zero here, so this is a ceiling on profit rather than profit.',
+          'Derived, self-reported basis: three of the four lines are the founders’ own 2023 company-wide shares. They also predate the product this page now runs on — the four name puzzles only listed in March 2026, and are about half of the month. Returns, payroll, overhead and the US entities’ own costs are all at zero here, so this is a ceiling on profit rather than profit.',
       },
       {
         type: 'prose',
@@ -2040,9 +2078,17 @@ export const PROFILES = {
           'On a made-to-order catalogue that is the model rather than an accident. A personalised product is cheap to design and list, and whichever account lists the one that catches becomes, for a season, most of the business. The other side of it is a wide tail that sells little: of 234 priced listings, 29 carry a sold badge.',
       },
       {
+        /* The cause the series cannot show. Every figure in this paragraph is
+           the founders' own, from the two 2024–25 video interviews — none of
+           it is measured here, and the labelling must stay. */
         type: 'prose',
         text:
-          'Television did not visibly move Amazon. The Shark Tank episode aired in August 2024, months before the first KALOTOYS listing with a believable date, and nothing in the catalogue carried a sold badge until March 2025.',
+          'By the founders’ own account the shift onto Amazon was deliberate, and self-reported throughout. Etsy was the main channel in 2023 — a top-ten store there by orders at the end of that year — Amazon started in 2024, and they describe it as roughly seventy times the size of Etsy for them. In January 2025 they named three priorities for the year: begin manufacturing in the United States, widen the range, and, with US production behind it, push Amazon hard. They also said they were raising about $2M to expand Vietnam capacity and about $8M of working capital, because the Amazon push eats cash faster than the other channels do.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Television moved orders, but not ones this page can see. They say nearly a thousand came in the day after the Shark Tank broadcast, with the flow elevated about two weeks — self-reported, and on channels nobody publishes. On Amazon there is no trace: the episode aired in August 2024, months before the first KALOTOYS listing with a believable date, and nothing in the catalogue carried a sold badge until March 2025.',
       },
       {
         type: 'callout',
@@ -2209,6 +2255,20 @@ export const PROFILES = {
         ],
         note:
           'Feedback and addresses from Keepa’s seller records, read 15 September 2026; first-tracked dates are Keepa’s and trail an account’s real opening. Of September 2026’s brand revenue, 58.6% came through listings in Giftora’s storefront, 13.1% in KALO KIDS CORPORATION’s, 5.1% in both, and 23.2% outside both, where KALOTOYS GROUP holds the buy box.',
+      },
+      {
+        type: 'prose',
+        text:
+          'How the goods are made is the one thing the founders have described in detail, and all of it is self-reported and unaudited. About 95% of a product is made in their own Hanoi factory, they said in September 2024, and the last 5% — cutting the child’s name into it — is to be finished in a US workshop; in January 2025 starting US manufacturing was named as one of three priorities for the year. The reason they give is freight. A finished personalised board has to fly, a blank base can go by sea, shipping was running at about 20% of revenue on the all-Vietnam route, and delivery took about 14 days from order against the three to five days Amazon shoppers expect.',
+      },
+      {
+        /* 🚨 An INFERENCE, and labelled as one. The plan is dated and the
+           fulfilment agrees with it; nothing documents where the engraving
+           actually happens. Keepa, 2026-10-01: all four name puzzles ship
+           from seller A2PA1HBQL5NIQH (Giftora), merchant-fulfilled, no Prime. */
+        type: 'prose',
+        text:
+          'What the catalogue shows is consistent with that plan rather than proof of it. The busy boards carry Amazon’s own pick-and-pack fees, while all four name puzzles — half of September’s revenue — are merchant-fulfilled from the Giftora account with no Prime badge, read on 1 October 2026. The plan, the date they set for it and the way those listings ship all point the same way; no document says the engraving happens in the United States, so US finishing is an inference here and not a reading.',
       },
       {
         type: 'prose',
