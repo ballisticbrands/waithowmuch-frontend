@@ -284,14 +284,19 @@ export function TopMetrics({
      same line the Margin breakdown page draws, so a corrected cost moves both
      at once — two copies of the figure is how the overview comes to disagree
      with the breakdown it links to. Matched on `key`, not on the label. */
-  const marginBlock = profile?.blocks.find(
+  /* A brand split into product tabs keeps its whole-brand margin in the
+     `blended` tab — that is the one the profit series is built from. */
+  const blended = profile?.blocks
+    .flatMap((blk) => (blk.type === "product-margins" ? blk.products.filter((p) => p.blended) : []))
+    .flatMap((p) => p.blocks);
+  const marginBlock = [...(blended ?? []), ...(profile?.blocks ?? [])].find(
     (blk): blk is Extract<Block, { type: "margin" }> => blk.type === "margin",
   );
   const cogsLine = marginBlock?.lines.find((l) => l.key === "cogs");
   const timeline =
     profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
   if (marginBlock && cogsLine) {
-    const marginHref = profile ? sectionOf(profile, (blk) => blk.type === "margin") : null;
+    const marginHref = profile ? sectionOf(profile, (blk) => blk.type === "margin" || blk.type === "product-margins") : null;
     derivedFacts.push({
       label: "COGS",
       value: percent(Math.abs(cogsLine.pct)),

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Block, MetricKey, Profile } from "@/businesses/types";
 import { type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
@@ -5,6 +6,7 @@ import { exactMoney, percent } from "@/lib/format";
 import { MetricCell, ValuationCards } from "./MetricCards";
 import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
+import { StartingCost } from "./StartingCost";
 import { MarginBreakdown, BlockTable } from "./MarginBreakdown";
 import { Channels } from "./Channels";
 import { MarketplaceSplit } from "./MarketplaceSplit";
@@ -130,6 +132,8 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
     case "channels":
     case "marketplaces":
     case "selling":
+    case "starting-cost":
+    case "product-margins":
       /* Hoisted out of the prose run by ProfileBlocks below, so these are
          unreachable — kept only because the switch is exhaustive over Block. */
       return null;
@@ -184,7 +188,9 @@ type Wide = Extract<
       | "table"
       | "channels"
       | "marketplaces"
-      | "selling";
+      | "selling"
+      | "starting-cost"
+      | "product-margins";
   }
 >;
 type Run = { kind: "prose"; blocks: Block[] } | { kind: "wide"; block: Wide; first: boolean };
@@ -221,7 +227,9 @@ function groupSections(blocks: Block[]): Section[] {
       block.type === "table" ||
       block.type === "channels" ||
       block.type === "marketplaces" ||
-      block.type === "selling"
+      block.type === "selling" ||
+      block.type === "starting-cost" ||
+      block.type === "product-margins"
     ) {
       section.runs.push({ kind: "wide", block, first: block.type === "chart" && !seenChart });
       if (block.type === "chart") seenChart = true;
@@ -334,8 +342,14 @@ function Exhibit({
       );
     case "breakdown":
       return <SalesBreakdown block={block} currency={business.currency} />;
+    case "starting-cost":
+      /* Reads the published estimate off the business — the block itself
+         carries no data, so the page cannot disagree with the figure. */
+      return <StartingCost business={business} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
+    case "product-margins":
+      return <ProductMargins block={block} business={business} metrics={metrics} series={series} profile={profile} />;
     case "table":
       return <BlockTable block={block} />;
     case "channels":
@@ -345,4 +359,64 @@ function Exhibit({
     case "selling":
       return <SellingMethods profile={profile} />;
   }
+}
+
+/**
+ * One margin breakdown per main product, behind a tab bar. Only the chosen
+ * product's blocks render, so the anchors inside it (#cogs-set) stay unique.
+ * The children are ordinary blocks, laid out the way a section lays them out:
+ * prose in the reading measure, tables and the margin at full width.
+ */
+function ProductMargins({
+  block,
+  business,
+  metrics,
+  series,
+  profile,
+}: {
+  block: Extract<Block, { type: "product-margins" }>;
+  business: BusinessDetail;
+  metrics: ChartPoint[];
+  series: MetricsResponse | null;
+  profile: Profile;
+}) {
+  const [active, setActive] = useState(block.products[0]?.id);
+  const product = block.products.find((p) => p.id === active) ?? block.products[0];
+  if (!product) return null;
+  const runs = groupSections(product.blocks).flatMap((s) => s.runs);
+
+  return (
+    <div data-product-margins="">
+      <div role="tablist" aria-label="Product" data-product-tabs="">
+        {block.products.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            role="tab"
+            id={`tab-${p.id}`}
+            aria-selected={p.id === product.id}
+            aria-controls={`panel-${p.id}`}
+            data-product-tab=""
+            onClick={() => setActive(p.id)}
+          >
+            <span>{p.label}</span>
+            {p.sharePct !== undefined && <span data-product-share="">{percent(p.sharePct)} of sales</span>}
+          </button>
+        ))}
+      </div>
+      <div role="tabpanel" id={`panel-${product.id}`} aria-labelledby={`tab-${product.id}`}>
+        {runs.map((run, j) =>
+          run.kind === "wide" ? (
+            <Exhibit key={`${product.id}-${j}`} block={run.block} business={business} metrics={metrics} series={series} profile={profile} anchor={false} />
+          ) : (
+            <div data-prose key={`${product.id}-${j}`}>
+              {run.blocks.map((b, k) => (
+                <BlockView key={k} block={b} business={business} />
+              ))}
+            </div>
+          ),
+        )}
+      </div>
+    </div>
+  );
 }
