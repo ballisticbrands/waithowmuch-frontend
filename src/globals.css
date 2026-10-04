@@ -2084,3 +2084,98 @@ img[data-row-logo] {
   [data-nav-link] { padding: 0.4rem 0.5rem; }
   [data-filters] { padding: 0.75rem; }
 }
+
+/* ── "What it costs to start" ──────────────────────────────────────────
+   The launch-cost estimate opened up. Tables reuse [data-earnings-table]
+   inside [data-table-wrap], so only the prose around them needs rules. */
+[data-starting-cost] { margin: 0; }
+[data-starting-cost] h3 {
+  margin: 2rem 0 0.5rem; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em;
+}
+[data-starting-cost] caption {
+  caption-side: top; text-align: left; padding: 0 0 0.5rem;
+  font-size: 0.95rem; font-weight: 650; letter-spacing: -0.01em; color: var(--foreground);
+}
+/* The headline figure reads as the answer; the range beside it is the honest part. */
+[data-starting-cost-lede] { font-size: 1.05rem; line-height: 1.55; margin: 0 0 1.25rem; }
+[data-starting-cost-lede] [data-figure] { font-size: 1.15em; }
+/* Provenance lines: quieter than the prose, because they answer "says who?"
+   rather than carrying the argument. */
+[data-starting-cost-source] {
+  margin: 0.75rem 0 0; font-size: 0.82rem; line-height: 1.5; color: var(--muted-foreground);
+}
+[data-starting-cost-meta] {
+  margin: 1.5rem 0 0; padding-top: 0.75rem; border-top: 1px solid var(--border);
+  font-size: 0.78rem; color: var(--muted-foreground);
+}
+/* 🚨 REQUIRED ATTRIBUTION, not decoration: the Freightos licence asks for
+   "clear acknowledgement of Freightos with a link". Quiet, but never hidden —
+   do not display:none this to tidy a layout. */
+[data-starting-cost-credit] {
+  margin: 1rem 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--muted-foreground);
+}
+[data-starting-cost-credit] a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+[data-starting-cost-credit] a:hover { color: var(--foreground); }
+
+/* The running total beside each part's heading — the figure a reader is
+   scanning for, kept quieter than the heading it sits in. */
+[data-starting-cost-amount] {
+  float: right; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground); font-size: 0.9em;
+}
+/* The "To start" row closes the sum, so it reads as an answer, not another line. */
+[data-starting-cost] tr[data-total] th, [data-starting-cost] tr[data-total] td {
+  border-top: 2px solid var(--border); font-weight: 700; color: var(--foreground);
+}
+
+/* [data-earnings-table] aligns every cell right, which is right for figures and
+   wrong for a sentence. The explanatory column in the starting-cost tables is
+   marked, not selected by position: the totals table's last column IS a figure
+   and has to stay right. */
+[data-earnings-table] th[data-note], [data-earnings-table] td[data-note] {
+  text-align: left; font-variant-numeric: normal;
+}
+
+/* The same underlined ink link the margin lines use, inside a table cell: it
+   sits on its own line under the note so it reads as a way out, not as a phrase
+   in the sentence above it. */
+[data-starting-cost] [data-margin-links] { display: block; margin-top: 0.3rem; }
+
+/* The waterfall at the foot of "What it costs to start" —
+   components/StartingCostWaterfall.tsx. Marks carry no identity by colour:
+   every row is named and figured, so it survives greyscale and a screen reader. */
+[data-sc-waterfall] { margin-top: 1.75rem; }
+[data-sc-chart] { display: block; overflow: visible; }
+/* Recessive axis — hairline grid, muted type. It orients, it does not compete. */
+[data-sc-grid] { stroke: var(--border); stroke-width: 1; }
+[data-sc-rule] { stroke: var(--border-strong, var(--border)); stroke-width: 1; }
+[data-sc-tick] { fill: var(--muted-foreground); font-size: 11px; font-variant-numeric: tabular-nums; }
+[data-sc-rowlabel] { fill: var(--foreground); font-size: 13px; font-weight: 550; }
+[data-sc-rowlabel][data-strong] { font-weight: 700; }
+/* Parts are neutral; only the sum takes the accent, because a total is a
+   different kind of thing from a part. The low-end lane is the same ink, lighter. */
+[data-sc-bar] { fill: #78798d; }
+[data-sc-bar][data-total] { fill: var(--accent); }
+[data-sc-bar][data-shade="light"] { fill-opacity: 0.6; }
+[data-sc-value] { fill: var(--foreground); font-size: 12px; font-variant-numeric: tabular-nums; }
+[data-sc-value][data-strong] { font-weight: 700; }
+[data-sc-viz-note] { margin: 0.75rem 0 0; font-size: 0.85rem; line-height: 1.55; color: var(--muted-foreground); }
+
+/* ── Margin breakdown per product — ProductMargins in ProfileBlocks.tsx ──
+   A segmented control: one button per main product, its share of sales under
+   the name, the chosen one in the accent. */
+[data-product-tabs] {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin: 0 0 1.5rem; padding: 0.25rem;
+  border: 1px solid var(--border); border-radius: 0.75rem; background: var(--surface);
+  width: fit-content; max-width: 100%;
+}
+[data-product-tab] {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem;
+  padding: 0.5rem 0.9rem; border: 0; border-radius: 0.55rem;
+  background: transparent; color: var(--foreground); font: inherit; font-weight: 600; cursor: pointer;
+}
+[data-product-tab]:hover { background: var(--background); }
+[data-product-tab][aria-selected="true"] { background: var(--accent); color: var(--accent-foreground, #fff); }
+[data-product-tab]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[data-product-share] { font-size: 0.75rem; font-weight: 500; opacity: 0.8; font-variant-numeric: tabular-nums; }

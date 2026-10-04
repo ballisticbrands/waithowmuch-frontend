@@ -113,10 +113,49 @@ export type StartingCostEstimate = {
     tooling?: Range;
     niche: { keyword: string; monthlySearches: number; source: string; readAt: string; cpc: Range };
     note?: string;
+    /** Per input, where the figure came from — keyed by input name. */
+    workings?: Record<string, string>;
+    /** The case study's frozen date: the one moment the profile describes.
+     *  Absent on estimates priced before it was recorded. */
+    asOf?: string;
+    /** How the freight half of landedUnitCost was arrived at. `asin` names WHICH
+     *  product was measured — a brand may carry several, shipping at different
+     *  sizes. `placeholder` means no dimensions were available and a flat figure
+     *  stood in. */
+    freight?: {
+      perUnit: number;
+      cbmPerUnit: number;
+      usdPerCbm: number;
+      lane?: string;
+      asin?: string;
+      packageMm?: { length: number; width: number; height: number };
+      weightG?: number;
+      placeholder?: boolean;
+    };
+    /** When each input was observed. They do not all equal `asOf` — a source
+     *  publishes when it publishes — but each is within 90 days of it. */
+    readings?: {
+      volumeReadAt?: string;
+      volumeObserved?: string;
+      bidsReadAt?: string;
+      freightReadAt?: string;
+      dimensionsReadAt?: string;
+    };
   };
   breakdown: {
     parts: { inventory: Range; ads: Range; setup: Range; tooling: Range | null };
-    working: { monthlySearches: number };
+    working: {
+      monthlySearches: number;
+      /** Clicks the launch has to buy, and the share of the keyword they are. */
+      clicks?: Range;
+      clickShare?: Range;
+      launchDays?: Range;
+      launchUnits?: Range;
+      /** Units ordered per SKU — the MOQ, or more when demand needs it. */
+      unitsPerSku?: Range;
+    };
+    /** The fixed costs before a first sale, each with what prices it. */
+    setupItems?: Array<{ label: string; cost: Range; basis: string }>;
   };
   modelVersion: string;
   note: string | null;

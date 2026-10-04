@@ -10,6 +10,11 @@ type Margin = Extract<Block, { type: "margin" }>;
  *  same figure as the referral fee. */
 const perUnit = (v: number, currency: string) => price(Math.abs(v), currency);
 
+/** What one line costs per unit: the exact figure when the research computed one
+ *  in dollars, else its share of the sale. See `amount` in businesses/types.d.ts. */
+const lineMoney = (l: { pct: number; amount?: number }, basisValue: number, currency: string) =>
+  perUnit(l.amount ?? (l.pct / 100) * basisValue, currency);
+
 /* ── The donut ─────────────────────────────────────────────────────────
    The same five numbers as the list below, as one circle.
 
@@ -224,7 +229,7 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
       label: l.label,
       pct: Math.abs(l.pct),
       fill: COST_STEPS[Math.min(bySize.indexOf(l), COST_STEPS.length - 1)]!,
-      money: perUnit((l.pct / 100) * basis.value, currency),
+      money: lineMoney(l, basis.value, currency),
     })),
     {
       label: "Margin",
@@ -258,7 +263,7 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
               −{percent(Math.abs(l.pct))}
             </span>
             <span data-margin-unit="" data-figure="">
-              −{perUnit((l.pct / 100) * basis.value, currency)}
+              −{lineMoney(l, basis.value, currency)}
             </span>
             {l.detail && <p data-margin-detail="">{l.detail}</p>}
             {l.links && (
@@ -294,12 +299,19 @@ type Table = Extract<Block, { type: "table" }>;
    do its job. Site chrome in /public, not a per-profile bucket image. */
 const SOURCES = {
   alibaba: { name: "alibaba.com", href: "https://www.alibaba.com/", logo: "/logos/alibaba.png", width: 461, height: 56 },
+  /* 🚨 Freightos' licence REQUIRES this credit — "clear acknowledgement of
+     Freightos with a link to www.freightos.com" — wherever one of their rates
+     is shown. It is not decoration and must not be dropped to tidy a layout.
+     The wordmark ships white-on-transparent for a dark header; /logos is the
+     light-background variant, recoloured to their own navy. */
+  freightos: { name: "Freightos", href: "https://www.freightos.com", logo: "/logos/freightos.svg", width: 213, height: 23 },
 } as const;
 
 /** A plain table. Its own component only so it can sit outside the reading
  *  measure and scroll horizontally on a phone rather than squeezing. */
 export function BlockTable({ block }: { block: Table }) {
   const source = block.attribution ? SOURCES[block.attribution] : null;
+  const notes = new Set(block.noteColumns ?? []);
   return (
     <section data-block-table="" id={block.id}>
       {block.caption && <h3>{block.caption}</h3>}
@@ -315,8 +327,8 @@ export function BlockTable({ block }: { block: Table }) {
         <table data-earnings-table="">
           <thead>
             <tr>
-              {block.columns.map((c) => (
-                <th key={c} scope="col">
+              {block.columns.map((c, j) => (
+                <th key={c} scope="col" data-note={notes.has(j) ? "" : undefined}>
                   {c}
                 </th>
               ))}
@@ -331,7 +343,7 @@ export function BlockTable({ block }: { block: Table }) {
                       {cell}
                     </th>
                   ) : (
-                    <td key={j} data-figure="">
+                    <td key={j} data-figure={notes.has(j) ? undefined : ""} data-note={notes.has(j) ? "" : undefined}>
                       {cell}
                     </td>
                   ),

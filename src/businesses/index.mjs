@@ -29,7 +29,7 @@
  *
  * 🚨 Bucket copies, not Amazon's CDN and not /public. Hotlinking would let a
  * listing edit silently blank a column here, and the repo carries no images
- * (research: publish-business-profile §4). When a listing changes, re-upload
+ * (research: build-ecom-biz-page §4). When a listing changes, re-upload
  * and paste the new hash.
  */
 const SPITE_HOUSE_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/spite-house-games/';
@@ -1274,7 +1274,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'One channel counted and two modelled: the counted part is a floor, the profit over all three is a ceiling, and the freight half of the cost of goods under that profit is a placeholder rather than a quote. Margin breakdown has the rest.',
+          'One channel counted and two modelled: the counted part is a floor, and the profit over all three is a ceiling. Margin breakdown has the rest.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
@@ -1299,7 +1299,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Every cent of an average sale across the three channels, down to the two-fifths of it that is left — after Amazon’s two cuts, which on an Amazon order take more than three times what the puzzle costs to make and move.',
+          'Every cent of an average sale across the three channels, down to the three-eighths of it that is left — after Amazon’s two cuts, which on an Amazon order take more than two and a half times what the puzzle costs to make and move.',
       },
       {
         type: 'prose',
@@ -1309,7 +1309,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Making the puzzle is the cheap part. Three verified factories in China list a custom-printed 1,000-piece puzzle on Alibaba at $0.50–3.69 a unit, from minimums of 200 or 500 — a first order a new seller can actually place — and the longest-standing has been on Alibaba for 18 years and sold more than 70,000. Averaged, they come to $1.78 a puzzle, and that is the cost to make one below.',
+          'Making the puzzle is the cheap part. Three verified factories in China list a custom-printed 1,000-piece puzzle on Alibaba at $0.50–3.69 a unit, from minimums of 200 or 500 — a first order a new seller can actually place — and the longest-standing has been on Alibaba for 18 years and sold more than 70,000. Their lowest prices average $1.26 a puzzle, and that is the cost to make one below.',
       },
       {
         /* 🚨 Ordered by track record, not by price: the table's job is to show
@@ -1331,22 +1331,64 @@ export const PROFILES = {
           ['Shenzhen Senfutong Paper Co., Ltd', 'Verified · 18 yrs', 'No rating · 200+ store reviews', '70,837', '500 sets', '$1.59–3.69'],
           ['Dongguan Tongheng Printing Co., Ltd', 'Verified · 12 yrs', '5.0★ from 8 · 300+ store reviews', '11,889', '200 pieces', '$0.50–1.79'],
           ['Dongguan Senfutong Paper Co., Ltd', 'Verified · 10 yrs', '4.8★ from 12 · 50+ store reviews', '1', '500 sets', '$1.69–2.30'],
-          /* The figure the margin's cost-of-goods line uses. Worked in
-             suppliers.json → cogsAverage: $2.19, $1.14 and $2.00 per supplier. */
-          ['Average — the cost to make used below', '', '', '', '', '$1.78'],
+          /* The make half of the margin's cost of goods. Worked in
+             suppliers.json → cogsAverage: lowest prices $1.59, $0.50, $1.69. */
+          ['Average lowest price — the cost to make used below', '', '', '', '', '$1.26'],
         ],
         note:
-          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The average takes the middle of each listing’s price range, averages those per supplier and then across the three, so a supplier with several listings counts once. The two Senfutongs share a name and may be related.',
+          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The cost to make takes each supplier’s lowest listed price — $1.59, $0.50 and $1.69 — and averages them: the low end, because it is what a production order moves toward. The two Senfutongs share a name and may be related.',
+      },
+      {
+        /* The other half of cost of goods. It used to be a flat $1.00 nobody
+           quoted; this prices the actual carton against a dated sea-freight
+           rate, and the "to start" section reads these same numbers rather
+           than restating them. */
+        type: 'table',
+        id: 'shipping-breakdown',
+        caption: 'Shipping — what it costs to move one puzzle from China',
+        attribution: 'freightos',
+        /* "Where it comes from" is a sentence, so it reads left; the rest of
+           the table is figures and stays right. */
+        noteColumns: [2],
+        columns: ['Input', 'Figure', 'Where it comes from'],
+        rows: [
+          ['Carton', '31.0 × 25.7 × 5.4 cm, 0.81 kg', 'The listing’s own package size (B0DJWLQR6W)'],
+          ['Volume', '0.00430 cbm', 'The carton, in cubic metres'],
+          ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+          ['Shipping, per puzzle', '$2.14', '0.00430 cbm × $497'],
+        ],
+        note:
+          'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included, which is why it runs several times the port-to-port rates freight guides quote — and excludes duty and tariffs. A different product in this catalogue ships in a different box, so it would carry a different figure.',
+      },
+      {
+        /* Neither a supplier quote nor a freight quote: the sum of both, and the
+           figure the cost-of-goods line below actually uses. Its own small table
+           because burying it in the shipping one implied it was a shipping
+           number. Three rows, no source logo — it is derived from the two tables
+           above, not read from anywhere. */
+        type: 'table',
+        id: 'landed-cost',
+        caption: 'Landed cost — production plus shipping, per puzzle',
+        noteColumns: [2],
+        columns: ['Line', 'Per puzzle', 'From'],
+        rows: [
+          ['Production', '$1.26', 'The three Alibaba suppliers’ lowest prices, averaged — COGS table above'],
+          ['Shipping', '$2.14', 'This puzzle’s carton at $497/cbm — shipping table above'],
+          ['Landed cost', '$3.40', 'What one puzzle costs in Amazon’s warehouse, before it sells'],
+        ],
+        note:
+          'This is the figure the cost-of-goods line below uses: $3.40 is 17.418% of the $19.52 average sale across the three channels. It covers making the puzzle and getting it to the warehouse — not the Amazon fees on the sale itself, which are their own lines.',
       },
       {
         /* 🚨 These five lines ARE the model. The margin row is 100% less them
-           — 40.879% — and the backend seed builds the profit and ad-spend
+           — 37.461% — and the backend seed builds the profit and ad-spend
            series from the same five numbers (COST_LINES). Change one, change
            both, and keep three decimals: check-profile compares the block
            against every month of the series.
 
            Each is a per-channel rate times that channel's share of TOTAL
-           revenue (Amazon 87.800%, their own store 12.200%):
+           revenue (Amazon 87.800%, their own store 12.200%), except cost
+           of goods, which is $3.40 a puzzle on every channel ÷ $19.52:
              referral    15% of Amazon revenue        → 13.170
              FBA         31% of Amazon revenue        → 27.218
              card fees   4.4% of store revenue        →  0.537
@@ -1363,10 +1405,22 @@ export const PROFILES = {
           {
             label: 'Cost of goods',
             key: 'cogs',
-            pct: -14,
+            /* $3.40 landed ÷ the $19.52 blended sale = 17.418%. $1.26 to make
+               (each Alibaba supplier's lowest price, averaged) + $2.14 to ship,
+               priced from the puzzle's own carton at a dated LCL rate.
+               🚨 Was 14.000% on a $1.00 freight PLACEHOLDER and range-midpoint
+               make cost until 2026-10-04. Three decimals, like every line here:
+               check-profile compares them against the series. */
+            pct: -17.418,
+            /* Rendered directly so the row cannot drift from the landed-cost
+               table by a rounding step; `pct` must equal 3.40 / 19.52. */
+            amount: 3.4,
             detail:
-              '$1.78 to make — the average of the three Alibaba suppliers above — and $1.00 to move, a placeholder nobody quoted. Together $2.78 a puzzle, near enough 14% of revenue whichever channel sells it.',
-            links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+              '$1.26 to make — the three Alibaba suppliers’ lowest prices above, averaged — and $2.14 to ship, priced from this puzzle’s own carton at a read LCL rate. Together $3.40 a puzzle, whichever channel sells it.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+            ],
           },
           {
             label: 'Amazon referral fee',
@@ -1420,8 +1474,22 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Two parts of the cost-of-goods line are softer than the rest. The $1.00 freight is a placeholder, not a quote. And the $1.78 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
+          'One part of the cost-of-goods line is softer than the rest: the $1.26 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
       },
+
+      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The margin above is what this business keeps. This is the other half of the question: what a copy of it ' +
+          'would cost to put on the same shelf today.',
+      },
+      /* 🚨 No authored figures in this section. The block reads the published
+         estimate off the API, so a re-priced estimate moves the page and no
+         prose here can contradict the number beside it. Everything the reader
+         needs — the three parts, the ad arithmetic, the setup lines and the date
+         each input was read — comes out of the estimate itself. */
+      { type: 'starting-cost' },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
@@ -1553,7 +1621,7 @@ export const PROFILES = {
       {
         type: 'valuation-board',
         note:
-          'Wholesale and the Jackson shop are excluded: real channels that cannot be sized from outside. Two of the three that ARE in the profit being multiplied — Amazon Europe and their own store — are estimates, so this figure inherits both. The single-marketplace penalty is scored the other way, on what was measured: one Amazon marketplace, not the modelled European line. And the profit prices each puzzle at Alibaba factory quotes plus a placeholder freight cost, not at White Mountain’s own American-made cost.',
+          'Wholesale and the Jackson shop are excluded: real channels that cannot be sized from outside. Two of the three that ARE in the profit being multiplied — Amazon Europe and their own store — are estimates, so this figure inherits both. The single-marketplace penalty is scored the other way, on what was measured: one Amazon marketplace, not the modelled European line. And the profit prices each puzzle at Alibaba factory quotes plus shipping from China, not at White Mountain’s own American-made cost.',
       },
       {
         type: 'prose',
@@ -3310,77 +3378,222 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'A little under half of a $110 average sale is left — and the line that decides it, what a set costs to make, is the one nobody has quoted.',
+          'About half of a $110 average sale is left — and the line that decides it, what a set costs to make, is the one nobody has quoted.',
       },
       {
         type: 'prose',
         text:
-          'Two products carry the costs. A set sells for $229 and a mat for $45, and in September the brand sold 550 sets and 1,000 mats. The set cost comes from Alibaba search results for the same 4-layer, 160-tile acrylic set; the product pages returned a CAPTCHA, so no price tier was ever read. The mat cost comes from a search result in the same way. Every $10 on the set cost moves September’s profit by about $6,600.',
+          'Two products carry the brand. In September 550 sets at $229 made 74% of revenue and 1,000 mats at $45 the other 26%, and they cost very differently to make and to ship — so each has its own breakdown below, with the whole brand at September’s mix last. Every $10 on the set cost moves September’s profit by about $6,600.',
       },
       {
-        type: 'table',
-        caption: 'COGS — what a set and a mat cost to make and land',
-        columns: ['Line', 'What was read', 'MOQ', 'Tier', 'Unit cost'],
-        rows: [
-          ['160-tile 4-layer acrylic set', 'An Alibaba listing, from its search snippet — the page is behind a CAPTCHA', '1 set', 'Search snippet', '$69–129'],
-          ['Custom acrylic mahjong sets', 'Alibaba search results', '50 sets', 'Search snippet', '$18–70'],
-          ['Set cost used below', 'Inside the volume range — not a quote', '—', 'Derived, weak', '$45 / set'],
-          ['3mm rubber mahjong mat', 'An Alibaba listing, from its search snippet — the page is behind a CAPTCHA', '1 mat', 'Derived, weak', '$8.18 / mat'],
-          ['Tariff', '7.5% Section 301 List 4A plus a 12.5% China tier, from a secondary summary; China origin assumed', '—', 'Derived', '20% of unit cost'],
-          ['Freight and inbound — a placeholder, not a quote', 'Ocean freight alone is about $0.30 a set on the FBX01 index', '—', 'ASSUMED', '$1.50 / unit'],
-          ['Mini sets and sound books', 'No basis at all; neither sold in September', '—', 'ASSUMED', '$30 / $4'],
+        /* 🚨 One breakdown per main product. Sets and mats are 74% and 26% of
+           September's revenue — the two together are the first to reach 80%
+           (SKILL §2, "Products"). Per-unit figures are pnl.json's lines; the
+           `all` tab is the whole brand at September's mix, the margin the
+           backend's profit series is built from (seed-virora-mahjong.ts
+           COST_LINES). Only the chosen tab renders, so each can carry its own
+           #cogs-breakdown. */
+        type: 'product-margins',
+        period: '2026-09',
+        products: [
+          {
+            id: 'set',
+            label: '160-tile set',
+            sharePct: 73.8,
+            blocks: [
+              {
+                /* Same columns as every profile's COGS table (white-mountain-
+                   puzzles is the reference). Read from a screenshot of an
+                   Alibaba search on 2026-10-02 — waithowmuch-research
+                   research/virora-mahjong/suppliers.json keeps every listing. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a 160-tile set costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Ningbo Leti Trading Co., Ltd.', 'Not verified · 1 yr', '4.6★ from 3,066', '169', '1 set', '$18–130'],
+                  ['Shenzhen Lvimi Technology Co., Ltd.', 'Not verified · 1 yr', '4.5★ from 154', '34', '1 piece', '$49–99'],
+                  ['Shenzhen Finomai Technology Co., Ltd.', 'Not verified · 1 yr', '4.5★ from 119', '22', '1 set', '$49–99'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', '$38.67'],
+                ],
+                note:
+                  'Six acrylic American-mahjong listings from three companies in China, all rated 4.5 or better, none Verified, each selling single sets — the price a buyer of one set pays, which a production order would likely beat. Four of the six are US local stock, which carries domestic shipping in the price. The cost to make takes each supplier’s lowest listed price — $18, $49 and $49 — and averages them: the low end, because it is what an order bigger than one set moves toward. Sold counts are Alibaba’s own per-listing counters added up per supplier. Searched “american mahjong set” with the 4.5+ supplier-rating filter, read 2 October 2026.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: 229 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -16.89,
+                    amount: 38.67,
+                    emphasis: true,
+                    detail: 'The average of the three Alibaba sellers’ lowest prices above — the low end, which is what an order bigger than one set moves toward.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -3.38,
+                    amount: 7.73,
+                    detail: '20% of the cost to make: Section 301 List 4A 7.5% plus a 12.5% China tier, from a secondary summary, assuming China origin.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Freight and inbound',
+                    pct: -0.66,
+                    amount: 1.5,
+                    detail: 'ASSUMED: $1.50 a set. Ocean freight alone is about $0.30 on the FBX01 index; the rest is a placeholder for drayage, prep and inbound placement.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 34.35,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -3.92,
+                    amount: 8.97,
+                    detail: 'Size tier: Large Standard. Measured on the best-selling set (B0H793VVWP), a 43.6 × 25 × 7.4 cm, 3.25 kg box.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -5,
+                    amount: 11.45,
+                    detail: 'ASSUMED: a 5% placeholder. No sponsored placement of theirs was seen on four searches, which argues for less.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                  },
+                ],
+                note: 'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'mat',
+            label: 'Mahjong mat',
+            sharePct: 26.2,
+            blocks: [
+              {
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a 3mm rubber mat costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Guangdong Yousheng Sports Goods Co.', 'Verified · 9 yrs', '4.8★ from 39', '1,427', '500 pieces', '$5.20–6.20'],
+                  ['Shenzhen Sammyhung Electronic Co., Ltd.', 'Not verified · 17 yrs', '4.8★ from 10', '1', '50–300 units', '$3.60–7'],
+                  ['Yiwu Ruijie E-Commerce Co., Ltd.', 'Not verified · 1 yr', '4.1★ from 2', '1', '1 bag', '$25–28'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', '$4.40'],
+                ],
+                note:
+                  'The cost to make averages the lowest listed price of the two suppliers quoting production orders, $5.20 and $3.60 — the low end, because it is what a production order moves toward. Yiwu Ruijie sells single mats at a retail price, not a factory one, and is left out; with it the average would be $11.27. Guangdong Yousheng’s mat is described as neoprene; Virora’s is sold as rubber. Read 17 September 2026.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: 44.7 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -9.84,
+                    amount: 4.4,
+                    detail: 'The average of the two production suppliers’ lowest prices above.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -1.97,
+                    amount: 0.88,
+                    detail: '20% of the cost to make, on the same basis as the set.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Freight and inbound',
+                    pct: -3.36,
+                    amount: 1.5,
+                    detail: 'ASSUMED: $1.50 a mat, the same placeholder as the set. Nobody quoted it.',
+                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 6.71,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -25.26,
+                    amount: 11.29,
+                    emphasis: true,
+                    detail: 'Size tier: Large Bulky. Measured on the best-selling mat (B0H798Q5HK), which is rolled to 87.6 cm — past the standard-size limit, so a $45 mat pays more to ship than it costs to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -5,
+                    amount: 2.24,
+                    detail: 'ASSUMED: the same 5% placeholder as the set.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                  },
+                ],
+                note: 'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series from
+                   the SAME six numbers (seed-virora-mahjong.ts COST_LINES).
+                   Change one, change both. Whole percents on purpose: they are
+                   September's pnl.json rates rounded (15.04, 3.01, 1.36, 9.51,
+                   15, 5), and 49% gives the headline's $87k. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: 110.1 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -15,
+                    emphasis: true,
+                    detail: '$38.67 a set and $4.40 a mat, on September’s 550 sets and 1,000 mats: 15.0% of revenue. See each product’s tab for its suppliers.',
+                  },
+                  { label: 'Tariff', pct: -3, detail: '20% of the cost to make. 3.0% of revenue.' },
+                  { label: 'Freight and inbound', pct: -1, detail: 'ASSUMED: $1.50 a unit. 1.4% of revenue.' },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -10,
+                    detail: 'Size tier: Large Standard, on the best seller. $8.97 a set and $11.29 a mat, which ships Large Bulky. 9.5% of revenue.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -5,
+                    detail: 'ASSUMED: a 5% placeholder.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                  },
+                ],
+                note:
+                  'September’s mix, rounded to whole percents, and every month on the chart carries it — months heavier on sets, mini sets or books would come out differently. Mini sets and sound books carry assumed costs of $30 and $4 with no supplier read; neither sold in September. Before storage, returns, removals and overhead: a ceiling on profit, not profit.',
+              },
+            ],
+          },
         ],
-        note:
-          'Search snippets price the category, not this brand’s supplier. The $45 sits inside the volume range and is our choice, and the freight line is ours too — the two things to replace with a real quote first.',
-      },
-      {
-        /* 🚨 The margin row is computed as 100% less these lines — 46% — and
-           the backend seed builds the profit and ad-spend series from the SAME
-           six numbers (COST_LINES). Change one, change both.
-           🚨 Whole percents on purpose: they are September's pnl.json rates
-           rounded (19.3, 3.86, 1.36, 9.51, 15, 5), and one-decimal rounding
-           would sum to 54.1% and move the headline's $78.5k to $78.3k. */
-        type: 'margin',
-        basis: { label: 'Average selling price', value: 110.1 },
-        lines: [
-          {
-            label: 'Cost of goods',
-            key: 'cogs',
-            pct: -19,
-            emphasis: true,
-            detail:
-              '$45 a set and $8.18 a mat, on September’s 550 sets and 1,000 mats: 19.3% of revenue. Both from Alibaba search snippets — derived, and weak.',
-          },
-          {
-            label: 'Tariff',
-            pct: -4,
-            detail: '20% of unit cost, from a secondary summary of the Section 301 rates, assuming China origin. 3.9% of revenue.',
-          },
-          {
-            label: 'Freight and inbound',
-            pct: -1,
-            detail: 'ASSUMED: $1.50 a unit. Only about $0.30 of it derives from the ocean-freight index; the rest is a placeholder. 1.4% of revenue.',
-          },
-          {
-            label: 'Amazon referral fee',
-            pct: -15,
-            detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
-          },
-          {
-            label: 'FBA fulfilment',
-            pct: -10,
-            detail:
-              'Measured per listing: $8.97 on a set and $11.29 on a mat, which is rolled to 876 mm and ships oversize. 9.5% of revenue.',
-          },
-          {
-            label: 'Advertising',
-            pct: -5,
-            detail:
-              'ASSUMED: a 5% placeholder. No sponsored placement of theirs was seen on four searches, which argues for less — but one read cannot rule out other ad types.',
-          },
-        ],
-        note:
-          'The rates are September’s mix, rounded to whole percents, and every month on the chart carries them — months that sold more sets, mini sets or books would come out differently at their own mix. Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
       },
       {
         type: 'prose',

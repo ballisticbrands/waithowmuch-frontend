@@ -80,6 +80,16 @@ export type Block =
    * — so a corrected cost line moves the answer instead of leaving a total
    * that no longer adds up.
    */
+  /**
+   * The launch-cost estimate, opened up: its three parts, the arithmetic behind
+   * the ad budget, setup line by line, and the date each input was read.
+   *
+   * Carries NO data of its own. Everything is read from the business's published
+   * `startingCostEstimate`, so a re-priced estimate updates the page and no
+   * authored prose can contradict the figure beside it. Renders a plain note
+   * when a business has no estimate, which §3a treats as a legitimate state.
+   */
+  | { type: "starting-cost" }
   | {
       type: "margin";
       /** What one order is worth, so each line can also be shown in money. */
@@ -91,6 +101,18 @@ export type Block =
          *  carrying its own copy of the percentage. Matching on `label` would
          *  work until somebody rewords a row. */
         key?: string;
+        /**
+         * The exact per-unit cost, when one was computed rather than estimated
+         * as a share of the sale.
+         *
+         * 🚨 PREFER THIS over deriving money from `pct`. Cost of goods is worked
+         * out in dollars — $1.78 to make plus $2.14 to ship — and rendering
+         * (pct/100) × basis printed $3.89 against a landed-cost table that said
+         * $3.92, a three-cent hole with nothing to explain it. `pct` stays,
+         * because the profit series is built from percentages, and it must equal
+         * `amount / basis.value`.
+         */
+        amount?: number;
         /** Negative: a share of revenue this line takes. */
         pct: number;
         detail?: string;
@@ -104,6 +126,36 @@ export type Block =
       /** The margin row's own note. */
       note?: string;
     }
+  /**
+   * The margin breakdown, one tab per main product, for a brand whose sales
+   * are split across products with different economics — a $229 set and a $45
+   * mat share no cost line worth averaging.
+   *
+   * 🚨 WHICH PRODUCTS: rank the products (every variation of one product counts
+   * as that product) by revenue in the snapshot month, and take them in order
+   * until they cover at least 80% of it. One product reaching 80% means no
+   * tabs — the plain `margin` block instead.
+   *
+   * Each product carries its own full breakdown as ordinary blocks: its COGS
+   * table (same columns as every profile), its `margin` block, any prose.
+   * The `blended` entry, when present, is the whole brand at the month's mix —
+   * the margin the profit series is built from, and the one the overview's
+   * COGS cell and check-profile read.
+   */
+  | {
+      type: "product-margins";
+      /** The month the shares were read from — the snapshot month, "2026-09". */
+      period: string;
+      products: Array<{
+        /** Stable, url-safe: also prefixes the anchors inside the tab. */
+        id: string;
+        label: string;
+        /** Share of the period's revenue, shown on the tab. Absent on `blended`. */
+        sharePct?: number;
+        blended?: boolean;
+        blocks: Block[];
+      }>;
+    }
   /** A plain table — supplier quotes, and anything else with columns. */
   | {
       type: "table";
@@ -114,7 +166,12 @@ export type Block =
        *  logo — "Powered by alibaba.com". A key into SOURCES in
        *  MarginBreakdown.tsx, not a URL, so the mark stays site chrome in
        *  /public rather than an image each profile carries. */
-      attribution?: "alibaba";
+      attribution?: "alibaba" | "freightos";
+      /** Zero-based indexes of columns holding SENTENCES rather than figures —
+       *  they read left, while everything else stays right-aligned like a
+       *  figures table. Declared, not guessed: the COGS table's last column is
+       *  a price and must stay right, the shipping table's is prose. */
+      noteColumns?: number[];
       columns: string[];
       rows: string[][];
       note?: string;
