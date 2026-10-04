@@ -942,9 +942,16 @@ export const PROFILES = {
           reviewTotal: 3492,
           ratingWeighted: 4.64,
           sellerFeedbackPct: 99,
-          /* RULE 2. The seller exists on Amazon Canada, but not one CA listing
-             carries a sold badge, so Amazon US is all of the measurable Amazon
-             revenue. */
+          /* RULE 2, and 🚨 deliberately NOT moved to 60 when Amazon Europe went
+             onto the chart on 2026-09-30. This factor prices the risk of one
+             Amazon storefront carrying everything, and it is worth -0.45 of
+             the multiple. What was MEASURED is that Amazon US carries all of
+             the Amazon revenue: no seller account on the UK, Germany, France,
+             Italy or Spain, and no badged listing on any of them. Relaxing the
+             penalty for an ESTIMATED European line would pay this business a
+             multiple for a channel the research could not find — the same
+             trade RULE 3 refuses for off-Amazon revenue. The Valuation prose
+             and the board note both say so out loud. */
           topMarketplaceSharePct: 100,
           marketplaces: ['US', 'CA'],
           /* December against the trailing twelve, from score-valuation.mjs. */
@@ -954,7 +961,7 @@ export const PROFILES = {
         },
       },
       basis:
-        'Trailing-twelve net profit at a modelled multiple. The Amazon business only — wholesale, the Jackson store and their own site are excluded.',
+        'Trailing-twelve net profit at a modelled multiple, across the three channels on the chart — Amazon US measured, Amazon Europe and their own store estimated. Wholesale and the Jackson shop are excluded.',
       note: 'Base 2.6, adjusted by what the public record supports.',
     },
 
@@ -977,7 +984,7 @@ export const PROFILES = {
       { label: 'Sourcing', value: 'Private label', note: 'Made in America, by their own account', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
       { label: 'Catalogue', value: 'Broad catalogue, low volume each', note: 'Top ten listings are 18% of revenue', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
       { label: 'Differentiation', value: 'Level 3', note: 'Functional customisation', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
-      { label: 'Channels', value: 'Amazon US, own store, wholesale', info: 'channels' },
+      { label: 'Channels', value: 'Amazon, own store, wholesale', note: 'Amazon US measured; Amazon Europe and the store estimated', info: 'channels' },
     ],
 
     selling: {
@@ -985,17 +992,17 @@ export const PROFILES = {
       'amazon-domestic': {
         status: 'yes',
         note:
-          'The only channel with a public number behind it. Every figure on this profile — the chart, the margin, the valuation — is Amazon US and nothing else.',
+          'The one channel with a public number behind it: 501 listings, 199 of them carrying Amazon’s sold badge. It is the measured base the other two channels on this page are modelled from.',
       },
       'amazon-international': {
         status: 'yes',
         note:
-          'The seller account exists on Amazon Canada with 86 ratings, but no Canadian listing sells enough to carry a badge. No account on Amazon UK or Germany.',
+          'Measured, and the measurement is an absence: a seller account on Amazon Canada with 86 ratings and no badged listing, no account on the UK, Germany, France, Italy or Spain, and zero badged listings on any of those five. Amazon Europe still sits on the chart as an estimate, labelled as one — see Revenue.',
       },
       'own-store': {
         status: 'yes',
         note:
-          'whitemountainpuzzles.com, on Shopify: 601 products at a median of $19.99 — the same price the best sellers carry on Amazon. Shopify publishes no sales.',
+          'whitemountainpuzzles.com, on Shopify: 601 products at a median of $19.99 — the same price the best sellers carry on Amazon. Shopify publishes no sales, so the store’s line on the chart is estimated from a visit count and an assumed conversion rate.',
       },
       'wholesale-out': {
         status: 'yes',
@@ -1042,7 +1049,7 @@ export const PROFILES = {
     },
 
     intro:
-      'White Mountain Puzzles has made jigsaw puzzles in Jackson, New Hampshire, since 1978, and the founders’ families still own it. Amazon is one of three ways it sells them, and the only one with a public number behind it.',
+      'White Mountain Puzzles has made jigsaw puzzles in Jackson, New Hampshire, since 1978, and the founders’ families still own it. Three channels are modelled here — Amazon in the United States, Amazon in Europe and their own store — and only the first of them is measured.',
 
     blocks: [
       { type: 'heading', text: 'A long tail, not a hit' },
@@ -1054,7 +1061,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'About five hundred puzzles are listed on Amazon. Most are 1,000 pieces at $19.99, but the range runs down through 500- and 300-piece puzzles to a set of six 100-piece minis — and by revenue the 1,000-piece puzzles are about 83% of the month and the 500-piece ones 14%. None of them is the business on its own, and that shape is the most unusual thing about it.',
+          'About five hundred puzzles are listed on Amazon. Most are 1,000 pieces at $19.99, but the range runs down through 500- and 300-piece puzzles to a set of six 100-piece minis — and by revenue the 1,000-piece puzzles are about 83% of the Amazon month and the 500-piece ones 14%. None of them is the business on its own, and that shape is the most unusual thing about it.',
       },
       {
         type: 'prose',
@@ -1148,7 +1155,7 @@ export const PROFILES = {
           {
             when: '31 Dec 2023',
             tag: 'Amazon',
-            what: '$893,712 — December',
+            what: '$893,712 on Amazon US — December',
             detail: 'The first Christmas in Amazon’s badge history, and already the biggest month of its year.',
           },
           {
@@ -1161,31 +1168,31 @@ export const PROFILES = {
           {
             when: '31 Dec 2024',
             tag: 'Amazon',
-            what: '$1,309,574 — December',
+            what: '$1,309,574 on Amazon US — December',
             detail: 'Nearly six times the September before it, which at $226,000 is the lowest month in the three years.',
           },
           {
             when: '30 Nov 2025',
             tag: 'Amazon',
-            what: 'November: $948,912',
+            what: 'Amazon US in November: $948,912',
             detail: 'Twice October, on the way to December.',
           },
           {
             when: '31 Dec 2025',
             tag: 'Amazon',
-            what: '$1,526,950 — December',
+            what: '$1,526,950 on Amazon US — December',
             detail: '76,800 puzzles, three times June, and 22% of the whole year in one month.',
           },
           {
             when: '31 Jan 2026',
             tag: 'Amazon',
             what: 'January falls 65%',
-            detail: '$526,215 — and still above six of the eight months that follow it.',
+            detail: '$526,215 on Amazon US — and still above six of the eight months that follow it.',
           },
           {
             when: '31 May 2026',
             tag: 'Amazon',
-            what: 'The year’s low: $246,072',
+            what: 'Amazon US’s low for the year: $246,072',
             detail:
               'Only 150 listings carried a badge that month, against 224 in June. A listing that dips under Amazon’s threshold of roughly 50 a month counts as zero, so part of this trough is the floor rather than the business.',
           },
@@ -1202,47 +1209,79 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The badge history reaches back to September 2023, where Amazon’s record of the badge begins, and it holds three Christmases: December came to $893,712 in 2023, $1.31M in 2024 and $1.53M in 2025, and each January gave back between 43% and 67% of it. Outside November to January the catalogue moves between roughly $226,000 and $571,000 a month. The older months are the softer floor — a puzzle discontinued since is not in today’s catalogue and counts as zero — so some of the climb between those Decembers is the method rather than the business. Of each month almost two-fifths is kept, before returns and overhead — on a cost of goods priced from Alibaba quotes and a freight figure nobody has quoted.',
+          'The chart is three channels added together, and only one of them was counted. Amazon US is measured — each month end’s sold badge on every listing, priced at the buy box, back to September 2023 where Amazon’s badge record begins. Amazon Europe is an estimate, set at 40% of Amazon revenue against the United States’ 60%. Their own store is an estimate too: a monthly visit count, a 3% conversion rate and the $19.99 shelf price. Both estimated lines are held at a fixed share of the measured one, so all three move with the same season.',
+      },
+      {
+        type: 'prose',
+        text:
+          'And the season is the shape of the whole year. On Amazon US the three Decembers in the record ran $893,712, $1.31M and $1.53M, each January gave back between 43% and 67% of it, and outside November to January that catalogue moves between roughly $226,000 and $571,000 a month. The older months are the softer floor — a puzzle discontinued since is not in today’s catalogue and counts as zero — so some of the climb between those Decembers is the method rather than the business. Of each month about two-fifths is kept, before returns and overhead.',
       },
       { type: 'chart' },
       {
-        /* From the Keepa seller record on each marketplace (2026-09-14) and the
-           first pass's per-marketplace read (2026-09-04). 🚨 The largest share
-           is valuation derived.topMarketplaceSharePct — the same fact, which
-           check-profile.mjs holds the two to. Canada and UK/Germany stay in at
-           0% because "looked and found nothing" is the finding. */
-        type: 'marketplaces',
-        title: 'Which Amazon marketplaces it sells in',
-        intro:
-          'One marketplace carries all of it. The seller account reaches Canada, but nothing listed there sells enough to count.',
+        /* 🚨 The per-marketplace RING was removed on 2026-09-30, and it had to
+           go. Its legend prices each share off latestMonthlyRevenue, and that
+           row is now three channels rather than Amazon revenue alone
+           (types.d.ts says so on the block), so every slice would have printed
+           inflated. What replaces it is a channel split that matches the model
+           and puts each line's tier on the line — no ring, and nothing here
+           claims a measured share. The Amazon-marketplace concentration the
+           valuation scores is a separate, still-measured fact; see
+           valuation.inputs.derived. */
+        type: 'channels',
+        caption: 'Where the revenue comes from',
         items: [
-          { label: 'Amazon United States', short: 'US', share: 100 },
-          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account live; no listing shows a sold badge' },
-          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+          {
+            label: 'Amazon United States — about 53% of the month',
+            value: 'Measured',
+            counted:
+              '199 listings carrying Amazon’s “bought in past month” badge, priced at the buy box — read 14 Sep 2026',
+            flag: true,
+            note: 'The one counted channel, and the base the other two are computed from.',
+          },
+          {
+            label: 'Amazon Europe — about 35% of the month',
+            value: 'Estimated',
+            note:
+              'Modelled at 40% of Amazon revenue against the United States’ 60%. Nothing here was counted, and what was counted points the other way: no White Mountain seller account on the UK, Germany, France, Italy or Spain, no badged listing on any of them, and their own international page sending European buyers to a distributor in Staffordshire.',
+          },
+          {
+            label: 'Their own store — about 12% of the month',
+            value: 'Estimated',
+            counted: '147,663 visits a month — Similarweb, read 30 Sep 2026',
+            note:
+              'Those visits at a 3% conversion rate and the $19.99 shelf price. The visit count is a reading; the conversion rate is an assumption, and Shopify publishes no sales.',
+          },
         ],
-        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges on each marketplace. A listing under roughly 50 sales a month shows no badge, so a small Canadian trade would not appear here.',
+        note:
+          'Shares of every month on the chart, not just the latest — the two estimated lines are held at a fixed share of the measured one. Wholesale and the shop in Jackson are real channels and are in none of this.',
       },
       {
         /* Generated from the Keepa catalogue — see the module's header. The
-           rows sum to the 2026-09 revenue row, which check-profile.mjs asserts. */
+           rows sum to the AMAZON US part of the month, which is all they ever
+           were; since 2026-09-30 that is about half of the revenue row, so the
+           block is marked `partial` (SKILL §2) and check-profile holds the
+           rows to no MORE than the month rather than equal to it. The table's
+           own total line says what the rows add up to, so nothing on the page
+           claims they are the whole of it. */
         type: 'breakdown',
+        partial: { of: 'Amazon US — the one measured channel of the three on the chart' },
         intro:
-          'No listing is more than 3% of the month. The ten best sellers are 18% of revenue and the top fifty 49%; the rest is a tail of puzzles each selling a few hundred a month or fewer.',
+          'These rows are the Amazon US month, the measured channel, and not the whole of the chart above. Inside it no listing is more than 3%: the ten best sellers are 18% of Amazon US revenue and the top fifty 49%, and the rest is a tail of puzzles each selling a few hundred a month or fewer.',
         items: WHITE_MOUNTAIN_BREAKDOWN,
         note:
-          '“Sold / mo” is Amazon’s own badge, which is a band — hence n+. Revenue is that band times today’s buy box, so every row is a floor. 281 more priced listings carry no badge, each under roughly 50 a month, and count as zero.',
+          '“Sold / mo” is Amazon’s own badge, which is a band — hence n+. Revenue is that band times today’s buy box, so every row is a floor. All 199 badged Amazon US listings are here and they sum to the Amazon US part of the month; the estimated Amazon Europe and own-store lines are not itemised and are in none of these rows. 281 more priced US listings carry no badge, each under roughly 50 a month, and count as zero.',
       },
       {
         type: 'callout',
         text:
-          'Revenue is a floor and profit is a ceiling — and the freight half of the cost of goods under that profit is a placeholder rather than a quote. Margin breakdown has the rest.',
+          'One channel counted and two modelled: the counted part is a floor, and the profit over all three is a ceiling. Margin breakdown has the rest.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
-          'Three channels are visible — Amazon, their own store and wholesale — and only Amazon publishes anything that can be counted.',
+          'Four channels are visible — Amazon in the United States, Amazon in Europe, their own store and wholesale — and only the first publishes anything that can be counted.',
       },
       {
         type: 'prose',
@@ -1252,7 +1291,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'What follows is presence rather than share. Nobody publishes what a Shopify store or a wholesale book takes, so this says which methods are in use and not what each is worth. A method nobody has looked for is listed as unchecked rather than counted as absent.',
+          'What follows is presence rather than share. Nobody publishes what a Shopify store or a wholesale book takes — the store’s line on the chart is modelled from a visit count, and wholesale is not on the chart at all — so this says which methods are in use and not what each is worth. A method nobody has looked for is listed as unchecked rather than counted as absent.',
       },
       { type: 'selling' },
 
@@ -1260,17 +1299,17 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Every cent of a $19.46 average sale, down to the almost two-fifths of it that is left — after Amazon’s two cuts, which together take more than three times what the puzzle costs to make and move.',
+          'Every cent of an average sale across the three channels, down to the three-eighths of it that is left — after Amazon’s two cuts, which on an Amazon order take more than two and a half times what the puzzle costs to make and move.',
       },
       {
         type: 'prose',
         text:
-          'A 1,000-piece puzzle is a big box for a $20 product, and Amazon prices fulfilment by size and weight rather than by price: about $6.02 to pick, pack and ship each one. Add the 15% referral fee and Amazon takes 46% of every sale before the puzzle itself is paid for.',
+          'A 1,000-piece puzzle is a big box for a $20 product, and Amazon prices fulfilment by size and weight rather than by price: about $6.02 to pick, pack and ship each one. Add the 15% referral fee and Amazon takes 46% of every Amazon sale before the puzzle itself is paid for. The lines below dilute those two, because the eighth of revenue that comes through their own store pays Amazon nothing — it pays a card processor about 4.4% instead.',
       },
       {
         type: 'prose',
         text:
-          'Making the puzzle is the cheap part. Three verified factories in China list a custom-printed 1,000-piece puzzle on Alibaba at $0.50–3.69 a unit, from minimums of 200 or 500 — a first order a new seller can actually place — and the longest-standing has been on Alibaba for 18 years and sold more than 70,000. Averaged, they come to $1.78 a puzzle, and that is the cost to make one below.',
+          'Making the puzzle is the cheap part. Three verified factories in China list a custom-printed 1,000-piece puzzle on Alibaba at $0.50–3.69 a unit, from minimums of 200 or 500 — a first order a new seller can actually place — and the longest-standing has been on Alibaba for 18 years and sold more than 70,000. Their lowest prices average $1.26 a puzzle, and that is the cost to make one below.',
       },
       {
         /* 🚨 Ordered by track record, not by price: the table's job is to show
@@ -1292,12 +1331,12 @@ export const PROFILES = {
           ['Shenzhen Senfutong Paper Co., Ltd', 'Verified · 18 yrs', 'No rating · 200+ store reviews', '70,837', '500 sets', '$1.59–3.69'],
           ['Dongguan Tongheng Printing Co., Ltd', 'Verified · 12 yrs', '5.0★ from 8 · 300+ store reviews', '11,889', '200 pieces', '$0.50–1.79'],
           ['Dongguan Senfutong Paper Co., Ltd', 'Verified · 10 yrs', '4.8★ from 12 · 50+ store reviews', '1', '500 sets', '$1.69–2.30'],
-          /* The figure the margin's cost-of-goods line uses. Worked in
-             suppliers.json → cogsAverage: $2.19, $1.14 and $2.00 per supplier. */
-          ['Average — the cost to make used below', '', '', '', '', '$1.78'],
+          /* The make half of the margin's cost of goods. Worked in
+             suppliers.json → cogsAverage: lowest prices $1.59, $0.50, $1.69. */
+          ['Average lowest price — the cost to make used below', '', '', '', '', '$1.26'],
         ],
         note:
-          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The average takes the middle of each listing’s price range, averages those per supplier and then across the three, so a supplier with several listings counts once. The two Senfutongs share a name and may be related.',
+          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The cost to make takes each supplier’s lowest listed price — $1.59, $0.50 and $1.69 — and averages them: the low end, because it is what a production order moves toward. The two Senfutongs share a name and may be related.',
       },
       {
         /* The other half of cost of goods. It used to be a flat $1.00 nobody
@@ -1333,43 +1372,51 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per puzzle', 'From'],
         rows: [
-          ['Production', '$1.78', 'The average of the three Alibaba quotes — COGS table above'],
+          ['Production', '$1.26', 'The three Alibaba suppliers’ lowest prices, averaged — COGS table above'],
           ['Shipping', '$2.14', 'This puzzle’s carton at $497/cbm — shipping table above'],
-          ['Landed cost', '$3.92', 'What one puzzle costs in Amazon’s warehouse, before it sells'],
+          ['Landed cost', '$3.40', 'What one puzzle costs in Amazon’s warehouse, before it sells'],
         ],
         note:
-          'This is the figure the cost-of-goods line below uses: $3.92 is 20.1% of a $19.46 sale, rounded to 20%. It covers making the puzzle and getting it to the warehouse — not the Amazon fees on the sale itself, which are their own lines.',
+          'This is the figure the cost-of-goods line below uses: $3.40 is 17.418% of the $19.52 average sale across the three channels. It covers making the puzzle and getting it to the warehouse — not the Amazon fees on the sale itself, which are their own lines.',
       },
       {
-        /* 🚨 The margin row is computed as 100% less these lines — 32% — and
-           the backend seed builds the profit and ad-spend series from the SAME
-           four numbers (COST_LINES). Change one, change both. */
+        /* 🚨 These five lines ARE the model. The margin row is 100% less them
+           — 37.461% — and the backend seed builds the profit and ad-spend
+           series from the same five numbers (COST_LINES). Change one, change
+           both, and keep three decimals: check-profile compares the block
+           against every month of the series.
+
+           Each is a per-channel rate times that channel's share of TOTAL
+           revenue (Amazon 87.800%, their own store 12.200%), except cost
+           of goods, which is $3.40 a puzzle on every channel ÷ $19.52:
+             referral    15% of Amazon revenue        → 13.170
+             FBA         31% of Amazon revenue        → 27.218
+             card fees   4.4% of store revenue        →  0.537
+             advertising 2% of Amazon + 20% of store  →  4.196
+           Advertising stays ONE line; its Amazon/off-Amazon split belongs to
+           the Advertising section's channels, not here. */
         type: 'margin',
-        basis: { label: 'Average selling price', value: 19.46 },
+        /* The three channels blended: $19.46 on Amazon (Sep 2026 revenue ÷
+           units) at 87.800% of revenue and $19.99 on their own store at
+           12.200%. Not a reading — a weighted average of one reading and one
+           shelf price. */
+        basis: { label: 'Average sale, all three channels', value: 19.52 },
         lines: [
           {
             label: 'Cost of goods',
             key: 'cogs',
-            /* $3.92 ÷ $19.46 = 20.1%.
-               🚨 Was 14% on a $1.00 freight PLACEHOLDER until 2026-09-28. The
-               $2.14 replacing it is priced from the product's own shipping box
-               against a dated LCL rate (see the shipping table above), so this
-               line — and therefore the profit series, the headline figure and
-               the valuation built on it — moved. That is the point: an invented
-               $1.00 made the margin look better than a new seller would find it. */
-            /* 🚨 TWO DECIMALS ON PURPOSE. The row renders money back OUT of this
-               percentage — (pct/100) × basis, MarginBreakdown.tsx:261 — so a
-               whole -20 printed $3.89 while the landed-cost table above said
-               $3.92, and a reader comparing the two found a three-cent hole with
-               nothing to explain it. -20.14 renders $3.92 and the chain closes. */
-            pct: -20.14,
-            /* The figure the landed-cost table above computes: $1.78 + $2.14.
-               Rendered directly, so the row cannot drift from the table by a
-               rounding step. `pct` is kept because the profit series is built
-               from percentages, and equals 3.92 / 19.46. */
-            amount: 3.92,
+            /* $3.40 landed ÷ the $19.52 blended sale = 17.418%. $1.26 to make
+               (each Alibaba supplier's lowest price, averaged) + $2.14 to ship,
+               priced from the puzzle's own carton at a dated LCL rate.
+               🚨 Was 14.000% on a $1.00 freight PLACEHOLDER and range-midpoint
+               make cost until 2026-10-04. Three decimals, like every line here:
+               check-profile compares them against the series. */
+            pct: -17.418,
+            /* Rendered directly so the row cannot drift from the landed-cost
+               table by a rounding step; `pct` must equal 3.40 / 19.52. */
+            amount: 3.4,
             detail:
-              '$1.78 to make — the average of the three Alibaba suppliers above — and $2.14 to ship, priced from this puzzle’s own carton at a read LCL rate rather than guessed. Together $3.92, which is 20.14% of a $19.46 sale.',
+              '$1.26 to make — the three Alibaba suppliers’ lowest prices above, averaged — and $2.14 to ship, priced from this puzzle’s own carton at a read LCL rate. Together $3.40 a puzzle, whichever channel sells it.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -1377,19 +1424,20 @@ export const PROFILES = {
           },
           {
             label: 'Amazon referral fee',
-            pct: -15,
-            detail: 'Amazon’s published Toys & Games rate, a flat 15% with a $0.30 minimum.',
+            pct: -13.17,
+            detail:
+              'Amazon’s published Toys & Games rate, a flat 15% with a $0.30 minimum. It reads as 13.17% here because it is charged on the Amazon revenue only, and their own store pays no referral at all.',
             links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
-            pct: -31,
+            pct: -27.218,
             emphasis: true,
             /* Size tier from the best seller's package on Keepa (B0DJWLQR6W,
                310 × 257 × 54 mm, 812 g) against Amazon's tier table — too tall
                and heavy for small standard. sources.json has the reading. */
             detail:
-              'Size tier: Large Standard. The best seller ships in a 12.2 × 10.1 × 2.1 inch box weighing 1.8 lb — too tall and too heavy for Small Standard. About $6.02 a unit, from the per-listing fees Amazon charges: the largest line here, and the one a bulky, low-priced product cannot negotiate.',
+              'Size tier: Large Standard. The best seller ships in a 12.2 × 10.1 × 2.1 inch box weighing 1.8 lb — too tall and too heavy for Small Standard. About $6.02 a unit, which is 31% of an Amazon sale and 27.2% of revenue across the three channels: still the largest line here, and the one a bulky, low-priced product cannot negotiate.',
             links: [
               {
                 label: 'All of Amazon’s size tiers, explained',
@@ -1398,10 +1446,20 @@ export const PROFILES = {
             ],
           },
           {
-            label: 'Advertising',
-            pct: -2,
+            /* The one cost that exists only off Amazon. Links to the card
+               rate it is taken from — there is no COGS row and no fee schedule
+               of Amazon's to point at. */
+            label: 'Card processing',
+            pct: -0.537,
             detail:
-              'Modelled, not observed. They buy sponsored placement on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
+              'Only their own store pays it: the standard online card rate of 2.9% plus $0.30 an order, which on a $19.99 puzzle is about 4.4% — and 0.54% of revenue once the Amazon side, which pays none of it, is counted in. Shipping on that channel is charged to the customer, so it nets to zero and has no line.',
+            links: [{ label: 'The published online card rate', href: 'https://www.shopify.com/pricing' }],
+          },
+          {
+            label: 'Advertising',
+            pct: -4.196,
+            detail:
+              'Modelled, not observed — and two very different things inside one line. About 2% of Amazon revenue, where they buy their own brand name and nothing else, and about 20% of store revenue, where they run a full paid programme on Meta and Google. Neither library publishes a bill.',
             links: [
               {
                 label: 'If you want to go in depth, go to the Advertising section',
@@ -1411,12 +1469,12 @@ export const PROFILES = {
           },
         ],
         note:
-          'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit.',
+          'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit. Wholesale is in none of it.',
       },
       {
         type: 'callout',
         text:
-          'Two parts of the cost-of-goods line are softer than the rest. The $1.00 freight is a placeholder, not a quote. And the $1.78 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books.',
+          'One part of the cost-of-goods line is softer than the rest: the $1.26 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
       },
 
       { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
@@ -1437,12 +1495,20 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Almost nothing here is bought. They defend their own name on Amazon and advertise nothing else, and the catalogue grows by adding puzzles rather than by promoting them.',
+          'They buy almost nothing on Amazon — and run a full paid-acquisition programme to their own store. The two halves of this business grow in opposite ways.',
       },
       {
         type: 'prose',
         text:
-          'On two generic searches — “1000 piece jigsaw puzzle” and “jigsaw puzzles for adults” — none of the 24 sponsored slots was theirs. On their own brand name, three of twelve were. That is brand defence without acquisition: the demand arrives already looking for White Mountain.',
+          'On Amazon, start with what is missing. On two generic searches — “1000 piece jigsaw puzzle” and “jigsaw puzzles for adults” — none of the 24 sponsored slots was theirs. On their own brand name, three of twelve were. That is brand defence without acquisition: the demand arrives at the listing already looking for White Mountain.',
+      },
+      {
+        /* 🚨 This paragraph exists because the section used to say they
+           “advertise nothing else”, which the 2026-09-30 ad-library reads
+           disproved. Do not put that claim back. */
+        type: 'prose',
+        text:
+          'Off Amazon it is the reverse. On 30 September 2026 about 52 Meta ads were running to their store across Facebook, Instagram, Messenger and Threads, the newest started the day before, and Google’s transparency centre showed 78 United States ads under a verified White Mountain Puzzles, Inc. advertiser account — 47 of them in the previous thirty days, on Search, YouTube, Maps and Shopping. Their own pages carry the machinery to match: a Meta pixel with server-side conversions, Google Ads conversion and remarketing tags, and Microsoft, Pinterest and TikTok tags behind them. What none of it says is the price. Advertising has the counts.',
       },
       {
         type: 'prose',
@@ -1457,33 +1523,70 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'What the public record cannot say is how big the other two channels are. A company with thousands of retail accounts and its own store may sell more off Amazon than on it — or far less.',
+          'What the public record still cannot say is how big any of it is. Their own store and Amazon Europe are on the chart as estimates, and wholesale — thousands of retail accounts, by their own account — is not on the chart at all.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
         type: 'lede',
         text:
-          'One channel was measured, and the finding is an absence. The figure is arithmetic; the counted line under it is what somebody actually saw.',
+          'Three ad libraries were read on 30 September 2026 and all three answer the same way: here are the ads, and no, we will not tell you what they cost. Every value below is arithmetic; every counted line under one is what somebody actually saw.',
       },
       {
+        type: 'prose',
+        text:
+          'Amazon and everywhere else pull in opposite directions here. On Amazon the footprint is brand defence and nothing more. Off Amazon there is a standing campaign on two networks, and the only spend figure either of them has ever published for this advertiser exists by accident: Meta mis-categorised six old ads as needing a political disclaimer, and one of those — running July to October 2024 — reports $6K–$7K for 500,000–600,000 impressions, about a $12 CPM. That is the anchor under the modelled line, and it is one ad from two years ago.',
+      },
+      {
+        /* 🚨 The row here until 2026-09-30 said “Meta and Google — Not
+           checked”. Both were then read and both are running. Never restore
+           that row; if these counts go stale, re-read the libraries. */
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            value: '≈ 2% of revenue',
+            value: '≈ 2% of Amazon revenue',
             counted: '0 of 24 sponsored slots on two generic searches; 3 of 12 on their brand name — read 4 Sep 2026',
             flag: true,
             note:
-              'Modelled, not observed. Brand-term clicks are cheap and low-volume, so a footprint that is brand defence and nothing else puts spend in the low single digits of revenue; 2% is the figure the margin uses. Nobody publishes the bill.',
+              'Modelled, not observed. Brand-term clicks are cheap and low-volume, so a footprint that is brand defence and nothing else puts spend in the low single digits of Amazon revenue; 2% is the figure the margin uses. Amazon publishes no bill.',
           },
           {
-            label: 'Meta and Google',
-            value: 'Not checked',
+            label: 'Meta — Facebook, Instagram, Messenger, Threads',
+            href: 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=164202616556&search_type=page&media_type=all',
+            value: 'Estimated',
+            counted:
+              'About 52 active United States ads on page 164202616556, newest started 29 Sep 2026, history back to September 2022 — read 30 Sep 2026',
             note:
-              'The Meta Ad Library and a paid-search history were not read for this profile. Absent here means unexamined, not zero.',
+              'Meta publishes no spend for ordinary consumer ads. The one exception on this page is a mis-categorisation: six inactive ads flagged as running without a political disclaimer carry figures, the largest $6K–$7K for 500K–600K impressions between July and October 2024. Filtered to the United Kingdom, Germany, France, Ireland or Canada the page returns no live ads at all.',
+          },
+          {
+            label: 'Google — Search, YouTube, Maps, Shopping',
+            href: 'https://adstransparency.google.com/advertiser/AR05228554132289224705?region=US&hl=en',
+            value: 'Estimated',
+            counted:
+              '78 United States ads, 47 of them in the last 30 days — Search 67, YouTube 39, Maps 31, Shopping 12 — advertiser AR05228554132289224705, verified as “White Mountain Puzzles, Inc.”, read 30 Sep 2026',
+            note:
+              'One creative can run on several surfaces, so those four do not add to 78. Google publishes no spend for non-political ads either. Searching the transparency centre by domain returns 96 ads pointing at whitemountainpuzzles.com from more than one account, so 78 is a floor.',
+          },
+          {
+            label: 'Off-Amazon spend, modelled',
+            value: '≈ 20% of store revenue',
+            flag: true,
+            note:
+              'Estimated. Nothing in either library is a bill, so this is a judgement resting on the one CPM Meta did publish and on a live footprint of about 52 Meta ads and 78 Google ads. In the margin block it sits inside a single advertising line with the Amazon figure: 1.756% of revenue from Amazon, 2.440% from off-Amazon, 4.196% together.',
+          },
+          {
+            label: 'The tags on their own store',
+            value: 'Measured',
+            counted:
+              'Meta Pixel with the server-side Conversions API, Google Ads conversion and remarketing through Google Tag Manager, GA4, Microsoft Advertising, Pinterest and TikTok — read off the live store, 30 Sep 2026',
+            note:
+              'Evidence that a paid stack exists, and nothing more. A tag fires the same whether the account behind it spends a hundred dollars a month or a hundred thousand.',
           },
         ],
+        note:
+          'Neither Meta nor Google publishes spend for United States consumer advertising; both publish the ads. So every counted line here is a footprint and every value beside one is modelled.',
       },
 
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
@@ -1512,18 +1615,18 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Nobody has priced this business. What follows is a model — a 2.6 base multiple moved by what the public record supports — applied to trailing-twelve net profit, and it prices the Amazon business alone.',
+          'Nobody has priced this business. What follows is a model — a 2.6 base multiple moved by what the public record supports — applied to trailing-twelve net profit across the three channels on the chart, two of which are estimates.',
       },
       { type: 'valuation' },
       {
         type: 'valuation-board',
         note:
-          'Wholesale, the Jackson shop and whitemountainpuzzles.com are excluded: real channels that cannot be sized from outside. And the net profit being multiplied prices each puzzle at Alibaba factory quotes plus a placeholder freight cost, not at White Mountain’s own American-made cost, so this figure is only as good as that line.',
+          'Wholesale and the Jackson shop are excluded: real channels that cannot be sized from outside. Two of the three that ARE in the profit being multiplied — Amazon Europe and their own store — are estimates, so this figure inherits both. The single-marketplace penalty is scored the other way, on what was measured: one Amazon marketplace, not the modelled European line. And the profit prices each puzzle at Alibaba factory quotes plus shipping from China, not at White Mountain’s own American-made cost.',
       },
       {
         type: 'prose',
         text:
-          'The positives are durability: fifteen years of listings, a 99% seller record over more than ten thousand ratings, and a catalogue no single listing can take down. The negative is concentration of another kind — every measured dollar comes from Amazon US.',
+          'The positives are durability: fifteen years of listings, a 99% seller record over more than ten thousand ratings, and a catalogue no single listing can take down. The negative is concentration of another kind — every measured dollar still comes from Amazon US, and the multiple is scored that way even though two estimated channels now sit in the profit it multiplies.',
       },
       {
         type: 'prose',
@@ -1672,7 +1775,7 @@ export const PROFILES = {
         status: 'yes',
         flag: true,
         note:
-          'The name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. That is the half of the month the four name puzzles make up. KALOTOYS GROUP has no FBA at all.',
+          'The name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. All four name puzzles, the half of the month they make up, are merchant-fulfilled on the Giftora account with no Prime badge, read 1 October 2026 — which is what a US finishing workshop would look like from outside. KALOTOYS GROUP has no FBA at all.',
       },
       'vendor-1p': {
         status: 'no',
@@ -1687,7 +1790,7 @@ export const PROFILES = {
       manufacturer: {
         status: 'yes',
         note:
-          'Two workshops in Hanoi, 2,300 m², by the founders’ own account — self-reported. The customs trail agrees with the shape: the shipper to the US sits at Kalo JSC’s own Hanoi street address.',
+          'Two workshops in Hanoi, 2,300 m², by the founders’ own account — self-reported. They put about 95% of a product in that factory and the last 5%, the personalised name, in a US workshop. The customs trail agrees with the shape: the shipper to the US sits at Kalo JSC’s own Hanoi street address.',
       },
       arbitrage: { status: 'no' },
 
@@ -1712,7 +1815,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Three product families carry the Amazon catalogue: personalised wooden name puzzles, made to order with a child’s name cut from plywood; Montessori busy boards of latches, zips and gears; and, since June 2026, personalised first-day-of-school signs. Around them sit nursery name signs, Halloween sign kits, ornaments and baby baskets — 370 listings in all, 176 of them added between June and August 2026.',
+          'Three product families carry the Amazon catalogue: personalised wooden name puzzles, made to order with a child’s name cut from plywood; Montessori busy boards of latches, zips and gears; and, since June 2026, personalised first-day-of-school signs. Around them sit nursery name signs, Halloween sign kits, ornaments and baby baskets — 370 listings in all, 176 of them added between June and August 2026. They make the toys themselves in their own Hanoi factory and, by their own account, finish the personalised pieces in a US workshop.',
       },
       {
         type: 'prose',
@@ -1744,8 +1847,9 @@ export const PROFILES = {
           'A workshop business founded in 2020, on national television in 2024, and on Amazon US through three seller accounts that appeared one after another.',
       },
       {
-        /* Oldest first. "2020" is the founders' own claim with no day on it;
-           it stays on this list and off the overview chart. */
+        /* Oldest first. "2020", "2021" and "April 2024" are the founders' own
+           claims with no day on them; they stay on this list and off the
+           overview chart, which only plots "D Mon YYYY". */
         type: 'timeline',
         items: [
           {
@@ -1754,6 +1858,15 @@ export const PROFILES = {
             what: 'Founded in Hanoi by Đồng Đức Thành and Lê Trung Anh',
             detail:
               'By their own account, when both were expecting their first children. Two workshops of 2,300 m² today, self-reported, and 100–199 staff on an employer listing.',
+          },
+          /* Year only: the founders name 2021 but no month, so it renders on
+             this list and is not a dot. Do not invent a day to make one. */
+          {
+            when: '2021',
+            tag: 'Brand',
+            what: 'First sales, by the founders’ own account',
+            detail:
+              'They put the first year at 25 billion VND and say it was profitable from it. Self-reported on video in September 2024, unaudited, and with no month behind it.',
           },
           {
             when: '7 Nov 2023',
@@ -1767,7 +1880,15 @@ export const PROFILES = {
             tag: 'Brand',
             what: 'A top-10 Etsy seller by orders, by their own account',
             detail:
-              'Not checked: the Etsy shop refused a direct fetch. The founders call Etsy their primary channel and put 2023 at 40% website, 60% marketplaces.',
+              'Not checked: the Etsy shop refused a direct fetch. The founders call Etsy their primary channel and put 2023 at 40% website, 60% marketplaces, and repeat the end-2023 top-ten claim on video a year later. Amazon, which they say is about seventy times the size of Etsy for them, only started the year after.',
+          },
+          /* Month only, as given on video: rendered here, not a chart dot. */
+          {
+            when: 'April 2024',
+            tag: 'Brand',
+            what: 'The Vietnamese domestic line launches',
+            detail:
+              'kalotoys.vn, by the founders’ own account on video. Self-reported, with no day behind it, and nothing about it is measured on this page.',
           },
           {
             when: '6 Aug 2024',
@@ -1801,6 +1922,13 @@ export const PROFILES = {
             what: 'The Giftora account, trading as “Kalotoys”, is first tracked',
             detail:
               'A Worcester, Massachusetts entity, by Keepa’s first-tracked date, which trails an account’s real opening. Tied to KaloToys by its seller name and listings — an inference, not a document.',
+          },
+          {
+            when: '19 Jan 2025',
+            tag: 'Brand',
+            what: 'The 2025 plan, on video: manufacture in the US, widen the range, push Amazon',
+            detail:
+              'Lê Trung Anh names the three priorities for the year, and says nearly 1,000 orders came in the day after the Shark Tank broadcast with the flow elevated about two weeks. Self-reported and unaudited.',
           },
           {
             when: '4 Mar 2025',
@@ -1903,7 +2031,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The founders put 2023 at 40% through their own website and 60% through marketplaces, with Etsy the one they called primary. On Amazon, fulfilment is split by product rather than by account: the busy boards and Halloween kits carry Amazon FBA fees, while the name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller.',
+          'The founders put 2023 at 40% through their own website and 60% through marketplaces, with Etsy the one they called primary. On Amazon, fulfilment is split by product rather than by account: the busy boards and Halloween kits carry Amazon FBA fees, while the name puzzles and nursery signs — made to order with a child’s name — carry no FBA fee and no package dimensions, so they ship from the seller. That split is also where a US workshop would show, and it does: all four name puzzles are merchant-fulfilled on the Giftora account and carry no Prime badge, read 1 October 2026. Brand owner sets out what the founders say is made where.',
       },
       {
         type: 'prose',
@@ -1925,6 +2053,11 @@ export const PROFILES = {
       },
       {
         type: 'table',
+        /* The id the margin lines link back to (SKILL §2). There is no
+           supplier-quote COGS table here — nobody quotes a price for a toy
+           this company makes itself — so this is what the lines explain
+           themselves against. */
+        id: 'cogs-breakdown',
         caption: 'The cost shares — what the founders said, and what is used here',
         columns: ['Line', 'Stated by the founders (2023, company-wide)', 'Used here', 'Basis'],
         rows: [
@@ -1951,12 +2084,14 @@ export const PROFILES = {
             key: 'cogs',
             pct: -16,
             detail:
-              'About $4.01 of a $25.07 sale. Derived from the founders’ self-reported ~16% for the whole company in 2023, not quoted for any product. Plywood imported from Russia and cut in their own Hanoi workshops, by their own account.',
+              'About $4.01 of a $25.07 sale. Derived from the founders’ self-reported ~16% for the whole company in 2023, not quoted for any product. It has to cover imported inputs: wood they say cannot be bought in Vietnam and comes from cold-climate sources, Russia named; screws from China cut to a US standard; child-safe paint from a Japanese supplier; and testing to ASTM F963. Cut in their own Hanoi workshops, all by their own account.',
+            links: [{ label: 'See the cost shares above', href: '#cogs-breakdown' }],
           },
           {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s published rate for Toys & Games and for Handmade — 15% either way, and 15.01% per listing in Keepa. The one measured line.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'Shipping and fulfilment',
@@ -1964,18 +2099,24 @@ export const PROFILES = {
             /* The largest line — the component labels the emphasised line
                "Biggest line", so it belongs here, not on advertising. */
             emphasis: true,
+            /* Keepa product record for B0GSZSCM69, read 2026-09-17:
+               356 × 229 × 38 mm, weight not published, no fbaFees entry —
+               it is made to order and merchant-fulfilled. The tier is read
+               off the dimensions alone. sources.json carries the same. */
             detail:
-              'Freight from Vietnam and delivery to the customer, at the founders’ self-reported 20–22% midpoint. Derived. Consistent with the $5.52–6.13 FBA fee on the busy boards; the made-to-order listings ship themselves.',
+              'Size tier: Large Standard. The best seller, the personalised name puzzle B0GSZSCM69, packs to 14.0 × 9.0 × 1.5 in — the 1.5 in is over Small Standard’s 0.75 in limit — and Amazon charges it nothing, because it is made to order and ships from the seller. Freight from Vietnam and delivery to the customer, at the founders’ self-reported 20–22% midpoint. Derived. A second founder statement, on video in September 2024, puts freight alone at about 20% of revenue on the all-Vietnam route — the route the planned US finishing workshop is meant to end, since a finished personalised board has to fly and a blank base can go by sea. Consistent too with the $5.52–6.13 FBA fee on the busy boards; the made-to-order listings ship themselves.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -16.5,
             detail:
               'Derived, on a self-reported basis: the founders’ 30–33% marketing share, which they said included platform commissions, less the 15% referral fee. The weakest line — the sponsored footprint on Amazon neither confirms nor contradicts it.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/kalotoys/advertising/' }],
           },
         ],
         note:
-          'Derived, self-reported basis: three of the four lines are the founders’ own 2023 company-wide shares. Returns, payroll, overhead and the US entities’ own costs are all at zero here, so this is a ceiling on profit rather than profit.',
+          'Derived, self-reported basis: three of the four lines are the founders’ own 2023 company-wide shares. They also predate the product this page now runs on — the four name puzzles only listed in March 2026, and are about half of the month. Returns, payroll, overhead and the US entities’ own costs are all at zero here, so this is a ceiling on profit rather than profit.',
       },
       {
         type: 'prose',
@@ -2005,9 +2146,17 @@ export const PROFILES = {
           'On a made-to-order catalogue that is the model rather than an accident. A personalised product is cheap to design and list, and whichever account lists the one that catches becomes, for a season, most of the business. The other side of it is a wide tail that sells little: of 234 priced listings, 29 carry a sold badge.',
       },
       {
+        /* The cause the series cannot show. Every figure in this paragraph is
+           the founders' own, from the two 2024–25 video interviews — none of
+           it is measured here, and the labelling must stay. */
         type: 'prose',
         text:
-          'Television did not visibly move Amazon. The Shark Tank episode aired in August 2024, months before the first KALOTOYS listing with a believable date, and nothing in the catalogue carried a sold badge until March 2025.',
+          'By the founders’ own account the shift onto Amazon was deliberate, and self-reported throughout. Etsy was the main channel in 2023 — a top-ten store there by orders at the end of that year — Amazon started in 2024, and they describe it as roughly seventy times the size of Etsy for them. In January 2025 they named three priorities for the year: begin manufacturing in the United States, widen the range, and, with US production behind it, push Amazon hard. They also said they were raising about $2M to expand Vietnam capacity and about $8M of working capital, because the Amazon push eats cash faster than the other channels do.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Television moved orders, but not ones this page can see. They say nearly a thousand came in the day after the Shark Tank broadcast, with the flow elevated about two weeks — self-reported, and on channels nobody publishes. On Amazon there is no trace: the episode aired in August 2024, months before the first KALOTOYS listing with a believable date, and nothing in the catalogue carried a sold badge until March 2025.',
       },
       {
         type: 'callout',
@@ -2174,6 +2323,20 @@ export const PROFILES = {
         ],
         note:
           'Feedback and addresses from Keepa’s seller records, read 15 September 2026; first-tracked dates are Keepa’s and trail an account’s real opening. Of September 2026’s brand revenue, 58.6% came through listings in Giftora’s storefront, 13.1% in KALO KIDS CORPORATION’s, 5.1% in both, and 23.2% outside both, where KALOTOYS GROUP holds the buy box.',
+      },
+      {
+        type: 'prose',
+        text:
+          'How the goods are made is the one thing the founders have described in detail, and all of it is self-reported and unaudited. About 95% of a product is made in their own Hanoi factory, they said in September 2024, and the last 5% — cutting the child’s name into it — is to be finished in a US workshop; in January 2025 starting US manufacturing was named as one of three priorities for the year. The reason they give is freight. A finished personalised board has to fly, a blank base can go by sea, shipping was running at about 20% of revenue on the all-Vietnam route, and delivery took about 14 days from order against the three to five days Amazon shoppers expect.',
+      },
+      {
+        /* 🚨 An INFERENCE, and labelled as one. The plan is dated and the
+           fulfilment agrees with it; nothing documents where the engraving
+           actually happens. Keepa, 2026-10-01: all four name puzzles ship
+           from seller A2PA1HBQL5NIQH (Giftora), merchant-fulfilled, no Prime. */
+        type: 'prose',
+        text:
+          'What the catalogue shows is consistent with that plan rather than proof of it. The busy boards carry Amazon’s own pick-and-pack fees, while all four name puzzles — half of September’s revenue — are merchant-fulfilled from the Giftora account with no Prime badge, read on 1 October 2026. The plan, the date they set for it and the way those listings ship all point the same way; no document says the engraving happens in the United States, so US finishing is an inference here and not a reading.',
       },
       {
         type: 'prose',
