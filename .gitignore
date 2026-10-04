@@ -9,6 +9,11 @@ tsconfig.tsbuildinfo
 # Screenshot output — for looking at, not for committing.
 screenshots/
 public/logos/*
+# Except the source credits, which are site chrome, not profile images:
+# MarginBreakdown.tsx SOURCES renders them under a table read from that source,
+# and Freightos' licence REQUIRES its credit wherever one of its rates is shown.
+!public/logos/alibaba.png
+!public/logos/freightos.svg
 
 # Share cards from scripts/build-og.mjs — uploaded to the bucket, never committed.
 og-out/
