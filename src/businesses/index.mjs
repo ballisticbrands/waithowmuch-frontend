@@ -56,6 +56,7 @@ import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
 import { LIGHTEN_LIFE_BREAKDOWN, lightenLifePhoto } from './lighten-life.breakdown.mjs';
 import { OTOTO_BREAKDOWN, ototoPhoto } from './ototo.breakdown.mjs';
+import { HIGHMARK_BREAKDOWN, highmarkPhoto } from './highmark-collective.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -6803,6 +6804,965 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and they are inferences. Differentiation is scored at level 3, character shapes of their own design. The moulds and the 150 design patents the site claims would make it level 4, and nobody has seen them. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. The trademark was not read, so the model does not score it. All of these are the first things to put to the owner, along with what the Amazon business is worth inside Essor.',
+      },
+    ],
+  },
+  'highmark-collective': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-highmark-collective-headline.ts,
+       from waithowmuch-research research/highmark-collective/headline.json —
+       and the page reads them from the row alone.
+       🚨 The snapshot is SEPTEMBER 2026, the last whole month. October's badge
+       read is a live mid-month reading and is deliberately not in the series;
+       it is quoted as a dated reading in Revenue. Every "Read" stamp below is
+       September's. */
+    headline: {
+      /* September's revenue leader and the object the title is about: the
+         $36.99 praying-lamb baptism set, 400 units of a 1,800-unit month. */
+      image: {
+        src: highmarkPhoto('B0GHZSS4VV'),
+        alt: 'A white praying lamb plush sitting on a folded muslin blanket beside a hardback board book, a wish card and a white gift box — the best-selling Highmark Collective baptism keepsake set on Amazon',
+      },
+    },
+
+    /* 🚨 NO `valuation` KEY, and no Valuation section. The model prices
+       trailing-twelve net profit and there are six full profit months. Keepa's
+       badge history for these ASINs begins 2026-04-21, so the series cannot be
+       lengthened and this is not a pull to redo. Do not add a stated multiple
+       instead: a multiple on half a year of a Christian gifting brand that has
+       never traded a Christmas or an Easter would be a guess dressed as a
+       figure. seed-highmark-collective-headline.ts stamps `valuation: null`. */
+
+    facts: [
+      { label: 'SKUs', value: '8', note: 'Four products; seven of the eight carried a sold badge at the read', info: 'skus' },
+      /* The best seller's own breadcrumb. 🚨 The four products sit in FOUR
+         different category trees — Christening, Decorative Jars, Spiral
+         Notebooks and Glassware & Drinkware — which is why the referral rate
+         was checked on each rather than assumed from one. */
+      {
+        label: 'Category',
+        value: 'Baby Products › Gifts › Keepsakes › Christening',
+        note: 'The best-selling baptism set. The four products sit in four different category trees',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Catalogue-wide figures, so NO `info` key — the shared ⓘ copy
+         describes one hero listing. The three journal ASINs report 77 reviews
+         each because Amazon pools a variation family's count; they are counted
+         ONCE here. Their badges differ, so units are summed and reviews are not. */
+      { label: 'Product reviews', value: '376', note: 'All eight listings — the three journals share one pooled count of 77' },
+      { label: 'Product rating', value: '4.7★', note: 'Review-weighted across the catalogue' },
+      { label: 'Seller feedback', value: '100%', note: 'Over 24 lifetime ratings · read 4 Oct 2026', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Commodity components assembled into their own kit — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'The baptism line is 65% of Sep 2026', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 2, not 3: the kit is assembled from commodity OEM parts any
+         factory lists, and what is theirs is the selection, the packaging and
+         a named prayer book — visible, but not functional. An inference. */
+      { label: 'Differentiation', value: 'Level 2', note: 'Cosmetic variation — their own kit and packaging on commodity parts, an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own Shopify store, Etsy', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'Every figure on this profile is the eight Highmark Collective listings on Amazon US. The seller is the only offer on all eight and holds 100% of the buy box, so nothing had to be split with anybody.',
+      },
+      /* 'no' rather than 'unchecked': the SELLER ID was looked up on each
+         domain, which is the only check that answers this. */
+      'amazon-international': {
+        status: 'no',
+        note: 'The seller account A2EDGVBEHEN117 was looked up by id on Amazon UK, Germany and Canada. It does not exist on any of them.',
+      },
+      'own-store': {
+        status: 'yes',
+        flag: true,
+        note:
+          'A Shopify store at highmarkcollective.com, live since 1 May 2026, with six products on it. It prices every one of the four comparable products ABOVE its own Amazon listing — by 2.7% on the baptism set and 25% on the gift bundle — and its free-shipping floor is higher than any single item costs.',
+      },
+      'other-marketplace': {
+        status: 'yes',
+        note:
+          'An Etsy shop, HighmarkCollective, opened in 2026 with about 70 lifetime sales and 12 reviews. Etsy served 403 to every direct fetch, so those counts come from a search index’s rendering of the shop page rather than a page anybody loaded.',
+      },
+      'tiktok-shop': {
+        status: 'no',
+        note: 'No TikTok Shop listing found and no TikTok account at the obvious handle — though a TikTok pixel is installed on the Shopify store.',
+      },
+      'wholesale-out': {
+        status: 'no',
+        note:
+          'There is a wholesale application page with a $300 opening minimum, and no wholesale presence behind it: no Faire brand page, no Abound, no Tundra, no retailer found carrying the brand. The page is an intention.',
+      },
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'All eight listings are FBA, with Amazon pick-and-pack fees of $5.61 to $7.46 each.',
+      },
+      fbm: {
+        status: 'no',
+        note: 'There is no merchant-fulfilled offer anywhere in the catalogue: every one of the eight is FBA, and the seller is the only offer on each.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the eight listings.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand on listings nobody else sells, assembled from components any Chinese factory lists at minimums of 50 to 500.',
+      },
+      /* 🚨 Unchecked, not no. The decisive test — whether their product
+         photographs appear on another seller's listing — needs a reverse image
+         search the research had no route to run. Temu, Shein, Walmart, eBay
+         and TikTok Shop were searched for the same kit and it was not found. */
+      'white-label': {
+        status: 'unchecked',
+        note:
+          'The components are commodity OEM items, and the assembled kit — with a named prayer book in it — was not found under any other brand. The decisive test, a reverse image search on their listing photographs, was not run.',
+      },
+      manufacturer: {
+        status: 'no',
+        note:
+          'Three of the eight listings name Yiwu Jiacheng Arts & Crafts Co.,Ltd as the manufacturer of record and a fourth names “Christian Gifts Collection”. They buy what they sell; they do not make it.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/HighmarkCollective, which Amazon gates behind Brand Registry enrolment.',
+      },
+      'subscribe-save': {
+        status: 'yes',
+        note: 'A 5% Subscribe & Save discount appeared on two of the three journal listings on 28 August 2026 and was live at the read.',
+      },
+      // amazon-handmade, amazon-custom and b2b left unchecked: nobody looked.
+    },
+
+    intro:
+      'Highmark Collective is a Florida company selling Christian and baptism gift sets on Amazon US — a keepsake box built around a praying lamb, a jar of scripture cards, a three-pack of Bible-study journals and a faith gift bundle. It is six months old, and it is the only seller on every listing it has.',
+
+    blocks: [
+      { type: 'heading', text: 'Four products, eight listings, one seller' },
+      {
+        type: 'prose',
+        text:
+          'The catalogue is eight ASINs and four products. A baptism keepsake set — a 10-inch praying lamb, a muslin blanket, a board book, a wish card and a gift box — runs on three listings, one for boys, one for girls and one for either. A glass jar of 200 scripture cards runs on one. A set of three hardcover Bible-study journals runs on three listings that share a parent. A faith gift bundle of a mug, journal, pen, bracelet, knitted doll and cards runs on the last one.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What is unusual is how little there is to disentangle. One seller account, one brand, no resellers, no hijackers and no second entity: every listing shows a single offer and the seller holds the buy box outright, so every gap in the history is a suppression or a stockout rather than somebody else selling. The catalogue is closed at eight, which four separate Keepa queries agree on — the brand string, two different manufacturer strings and the storefront’s own list all return the same set.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The counting trap is in the variations. Two of the four products are three listings each, and reading either one off its lead listing alone shows roughly a third of what it sells. The baptism line is the business, and two thirds of it sits on listings an owner reading his own best seller would not be looking at.',
+      },
+      /* No figures in the caption. The baptism set is what the business runs
+         on; the jar is the cheapest line and the one the UGC shot is of.
+         Bucket copies of the brand's own listing images. */
+      {
+        type: 'images',
+        items: [
+          {
+            src: highmarkPhoto('B0GHZRX7RP'),
+            alt: 'A pink-themed baptism keepsake set laid out: a white praying lamb plush, a folded pink muslin blanket, a board book titled The Little Lamb’s First Prayer Book, a wish card and a gift box',
+          },
+          {
+            src: highmarkPhoto('B0GHZMGNTQ'),
+            alt: 'A frosted glass jar with a bamboo lid filled with folded scripture cards, beside a small wooden cross, a wooden card stand and a printed gift box',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images: the baptism keepsake set the catalogue runs on, and the scripture-card jar that followed it in May.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A Delaware company registered in August 2025, eight Amazon listings published in the spring of 2026, and a first sold badge in April. Everything measurable about this business happened inside thirteen months.',
+      },
+      {
+        /* Oldest first, strictly. Every date is a reading: Delaware ICIS, RDAP,
+           USPTO TSDR, Keepa listedSince and monthlySoldHistory, Shopify's own
+           server-written product dates, and the Google Ads Transparency
+           Center's SearchCreatives payload. */
+        type: 'timeline',
+        items: [
+          {
+            when: '1 Aug 2025',
+            tag: 'Brand',
+            what: 'HIGHMARK COLLECTIVE CORP. is incorporated in Delaware',
+            detail:
+              'File number 10281379, a domestic general corporation, with a registered agent in Dover. Nothing about the brand — no entity, no domain, no filing, no account — exists anywhere before this date.',
+          },
+          {
+            when: '21 Oct 2025',
+            tag: 'Web',
+            what: 'highmarkcollective.com is registered',
+            detail: 'A one-year registration on Google Domains nameservers, registrant redacted. The store itself does not go live for another six months.',
+          },
+          {
+            when: '29 Dec 2025',
+            tag: 'Brand',
+            what: 'A trademark application is filed on an intent-to-use basis',
+            detail:
+              'Serial 99569246, for paper notebooks and blank journals only — nothing covering baptism keepsakes, prayer cards or gift sets. Filed through a low-cost self-serve service with no attorney of record, and claiming no first-use date.',
+          },
+          {
+            when: '24 Mar 2026',
+            tag: 'Amazon',
+            what: 'The first listings Amazon publishes a date for',
+            detail:
+              'The three baptism ASINs carry listedSince 24 March 2026. Amazon publishes no first-listed date for the other five; Keepa first saw them on 13 and 23 March. The seller account itself was first tracked on 26 March.',
+          },
+          {
+            when: '21 Apr 2026',
+            tag: 'Amazon',
+            what: 'The first sold badge anywhere in the catalogue',
+            detail:
+              'Amazon prints “bought in past month” from roughly 50 sales a month. This is the oldest reading that exists for any of these listings, which is why the chart starts in April and why April is a partial month.',
+          },
+          {
+            when: '24 Apr 2026',
+            tag: 'Web',
+            what: 'All six Shopify products are created',
+            detail: 'Shopify writes these timestamps server-side and a merchant cannot backdate them.',
+          },
+          {
+            when: '29 Apr 2026',
+            tag: 'Brand',
+            what: 'The USPTO issues a non-final office action on the trademark',
+            detail: 'Nobody answers it.',
+          },
+          {
+            when: '1 May 2026',
+            tag: 'Web',
+            what: 'The brand’s own store goes live',
+            detail: 'Five of the six products are published. The sixth, the scripture-card jar, follows at the end of the month.',
+          },
+          {
+            when: '18 May 2026',
+            tag: 'Amazon',
+            what: 'The Bible Verse Jar lists — the last of the eight',
+            detail:
+              'It opens at $29.99 and settles at $19.99 within three days, where it has stayed. Its badge appears on 11 June.',
+          },
+          {
+            when: '5 Jun 2026',
+            tag: 'Amazon',
+            what: 'The faith gift bundle is cut from $34.99 to $27.99',
+            detail: 'The deepest price cut in the catalogue, and the only one that did not work.',
+          },
+          {
+            when: '29 Jun 2026',
+            tag: 'Advertising',
+            what: 'The first Google Search text ads run',
+            detail:
+              'Three text creatives, for seventeen days to 15 July. Dates from the Transparency Center’s own payload, not the rendered page, which prints only “last shown”.',
+          },
+          {
+            when: '14 Jul 2026',
+            tag: 'Web',
+            what: 'A blog programme starts on the brand’s site',
+            detail: 'Twelve keyword-shaped gift-guide and Bible-verse posts in six weeks.',
+          },
+          {
+            when: '30 Jul 2026',
+            tag: 'Brand',
+            what: 'The trademark application is abandoned',
+            detail:
+              'For failure to respond to the office action. The brand holds no registered trademark, and the one class it applied in was notebooks.',
+          },
+          {
+            when: '7 Aug 2026',
+            tag: 'Amazon',
+            what: 'The baptism set is raised from $34.99 to $36.99',
+            detail:
+              'On both of the listings that sell at that price. It is the highest either has ever carried, so today’s price is a rise and not a discount — whatever the $56.99 strikethrough beside it suggests.',
+          },
+          {
+            when: '28 Aug 2026',
+            tag: 'Amazon',
+            what: 'A 5% Subscribe & Save discount appears on two journal listings',
+            detail: 'Still live at the read.',
+          },
+          {
+            when: '28 Aug 2026',
+            tag: 'Web',
+            what: 'The last blog post. Content stops',
+            detail: 'Twelve posts in six weeks, then nothing for five.',
+          },
+          {
+            when: '31 Aug 2026',
+            tag: 'Amazon',
+            what: '$64,879 — the best month on record',
+            detail: '2,150 units, and the first month the baptism line ran twelve hundred.',
+          },
+          {
+            when: '28 Sep 2026',
+            tag: 'Amazon',
+            what: 'The faith gift bundle loses its badge',
+            detail:
+              'Amazon stops printing a count, which means under roughly fifty a month — not none. Its sponsored placements stay where they are.',
+          },
+          {
+            when: '3 Oct 2026',
+            tag: 'Advertising',
+            what: 'One Google text ad is still running',
+            detail: 'Eighty-three days on one creative. Four text ads in total is the whole of their Google account.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'Six months of history and no more. Revenue here is Amazon’s own “bought in past month” badge on each of the eight listings at each month end, priced at the buy box in effect at that moment — not today’s price, because three of the four products have moved since April. The seller is the sole offer on every listing and holds the buy box outright, so there is no attribution to split and no reseller to subtract. Just over a quarter of each month is left after the goods, Amazon’s two fees and modelled advertising.',
+      },
+      {
+        type: 'prose',
+        text:
+          '🚨 Two months on the chart need their caveats said out loud. April is partial coverage: the oldest badge reading anywhere in this catalogue is 21 April 2026, so three weeks of that month have no reading behind them at all and the figure is the month-end badge stretched over a month the badge did not cover. And the series stops at September because October was not finished when this was read — a live badge read on 4 October put the catalogue at 1,650 units and about $46,700 a month, a tenth below September, with the faith gift bundle at zero. That is a reading taken mid-month, not a closed month, so it is not a point on the chart.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The badge is also a bracket rather than a count. Amazon prints 50+, 100+, 200+ and so on, so every month here is a floor, and on a catalogue of eight one listing crossing a bracket at midnight on the 31st moves the whole month. Reading the same history as a time-weighted daily mean instead of a month-end point disagrees by as much as 46% in a single month and agrees on the shape; the month-end read is the one used throughout, and September comes out lower on it than on the other.',
+      },
+      { type: 'chart' },
+      {
+        /* The seller id was looked up on each domain (SKILL §6), never the
+           brand string. 🚨 No valuation on this profile, so no
+           topMarketplaceSharePct to hold this against — the ring is the whole
+           statement. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of it is Amazon US. The seller account does not exist anywhere else.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon UK, Germany and Canada', short: 'UK, DE, CA', share: 0, note: 'The seller id was looked up on each domain and returns no account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Asked by seller id on every marketplace, not by brand name.',
+      },
+      {
+        /* Generated from the Keepa pull — see the module's header. All EIGHT
+           listings, no tail, and they sum to the 2026-09 revenue row, which
+           check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'The baptism keepsake set, across its three listings, is about two thirds of the month. The listing at the bottom is the one to look at twice: it is advertised harder than anything else in the catalogue and it sold nothing Amazon would count.',
+        items: HIGHMARK_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band — hence n+. Revenue is that band times the buy-box price in effect at the September month end, so every row is a floor. The three journal listings share one pooled review count but their badges are genuinely separate, so units are summed. The faith gift bundle shows zero because Amazon stopped printing a count for it around 28 September; under the badge floor it could still be selling up to about fifty a month.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The badge under-reports by rounding down to a bracket, and the profit above it deducts no storage, returns, removals, inbound placement or low-inventory fees, no software, no photography and no owner’s pay. Margin breakdown says which cost lines are measured and which are not.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'There are three channels and only one of them takes money at any scale. The other two are not priced to compete with it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Their own Shopify store sells the same four products for more than Amazon does — 2.7% more on the baptism set, 10% on the jar, 20% on the journals and 25% on the gift bundle — before Prime shipping, and with a free-shipping floor no single item reaches. A shopper comparing the two has no reason to buy direct. The Etsy shop has about seventy lifetime sales. The wholesale page is an application form with a $300 minimum and nothing found behind it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon the arrangement is as plain as it gets: eight listings, all FBA, one offer each, one seller holding the buy box on all of them. There is no second account, no merchant-fulfilled line and no 1P relationship. What follows is presence rather than share — nobody publishes what a Shopify store or an Etsy shop takes — and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'A little over a quarter of each dollar survives the kit, the box, the boat and Amazon — and on the cheapest product in the catalogue it is closer to a sixth.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two of these lines are measured and the rest are built. Amazon’s referral rate is 15% on all four products — checked on each, because they sit in four different category trees and one of them contains a bracelet, so a 20% jewellery rate was a live possibility — and the fulfilment fee is Amazon’s own pick-and-pack figure per listing. Everything under cost of goods is assembled: component prices the owner supplied from his own Alibaba quotes, a flat 20% tariff standing in for an HTS classification nobody has made, a dated ocean-freight reading, and two lines — kitting and prep — that nobody has quoted at all.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two products get their own breakdown below because they do not share a cost structure worth averaging. In September the baptism keepsake set was 65% of revenue and the scripture-card jar 19%; the set alone falls short of the four-fifths of the month a blended figure needs to describe, so both are here, with the whole brand at September’s mix last. The journals and the gift bundle are not broken out — together they were under a sixth of the month — but their costs are in the blended tab.',
+      },
+      {
+        /* 🚨 One breakdown per main product. Baptism and the jar are 65.1% and
+           19.4% of September's revenue — the two together are the first to
+           reach 80% (SKILL §2, "Products"). Per-unit figures are pnl.json's
+           lines to three decimals; the `all` tab is the whole brand at
+           September's mix and is the margin the backend's profit series is
+           built from (seed-highmark-collective.ts COST_LINES). Only the chosen
+           tab renders, so each can carry its own #cogs-breakdown,
+           #shipping-breakdown and #landed-cost. */
+        type: 'product-margins',
+        period: '2026-09',
+        products: [
+          {
+            id: 'baptism',
+            label: 'Baptism keepsake set',
+            sharePct: 65.1,
+            blocks: [
+              {
+                /* 🚨 NOT the standard Alibaba supplier table, and deliberately
+                   so: Alibaba served a captcha to everything but one search,
+                   and these component prices are the OWNER'S OWN quotes rather
+                   than listings anybody can go and read. A supplier table with
+                   track records and sold counts would be inventing a provenance
+                   this does not have. Published Made-in-China.com list prices
+                   were the fallback for the two lines the owner did not quote,
+                   and the Basis column says which is which. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'Bill of materials — what a baptism keepsake set costs to make',
+                noteColumns: [2],
+                columns: ['Component', 'Per set', 'Basis'],
+                rows: [
+                  ['10in praying lamb plush', '$1.59', 'The owner’s own quote — £1.20, converted at 1.32248 on 4 Oct 2026'],
+                  ['Printed cotton muslin blanket', '$2.54', 'The owner’s own quote — £1.92. He also corrected the spec: the blanket is blank, not printed'],
+                  ['Full-colour board book', '$1.31', 'The owner’s own tiered quote. The 2,000–9,999 tier, because the line runs about 900 sets a month'],
+                  ['Printed wish card', '$0.28', 'One published supplier list price (Tianjin Caile Printing) — not a quote to this seller'],
+                  ['Printed rigid gift box', '$0.05', 'The owner’s own figure. He calls the packaging negligible'],
+                  ['Kitting and assembly', '$0.60', 'ASSUMED. A five-piece kit has to be packed by somebody and nobody quoted it'],
+                  ['Components and kitting — the cost to make used below', '$6.36', ''],
+                ],
+                note:
+                  'Component prices are the owner’s own Alibaba quotes, supplied 4 October 2026 — his reading of his own supplier prices, not a quote given to us and not an invoice. They replaced published Made-in-China.com list prices the research opened with, which survive on the wish card alone. Tariff and freight are not components; they are the two rows under this table.',
+              },
+              {
+                /* The move half of cost of goods, priced from this product's
+                   own carton against a dated rate rather than a placeholder. */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one baptism set from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '28.0 × 21.1 × 14.0 cm, 0.889 kg', 'The lead listing’s own package size (B0GJ133W12)'],
+                  ['Volume', '0.00827 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$496.67 / cbm', 'Less-than-container-load, Shanghai → Los Angeles, door to door'],
+                  ['Shipping, per set', '$4.11', '0.00827 cbm × $496.67'],
+                ],
+                note:
+                  'The rate is the low end of the quoted band, read 28 September 2026; the top of that band prices express services. It is door to door — customs clearance and inland delivery included, duty and tariffs excluded — which is why it overlaps the inbound half of the prep line below, and why the landed cost under it is a ceiling. The other three products ship in different boxes and carry different figures.',
+              },
+              {
+                /* Neither a component quote nor a freight quote: the sum, and
+                   the figure the cost-of-goods line actually uses. Its own
+                   table because burying it in the shipping one would read as a
+                   shipping number. Five rows rather than three — this product
+                   carries a tariff and a prep line that White Mountain's
+                   three-row version did not. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — what one baptism set costs in Amazon’s warehouse',
+                noteColumns: [2],
+                columns: ['Line', 'Per set', 'From'],
+                rows: [
+                  ['Components and kitting', '$6.36', 'The bill of materials above'],
+                  ['Tariff', '$1.27', '20% of the cost to make — Section 301 List 4A plus the reciprocal rate on China, applied flat'],
+                  ['Ocean freight', '$4.11', 'This set’s carton at $496.67/cbm — the shipping table above'],
+                  ['Prep and inbound', '$0.70', 'ASSUMED: drayage, 3PL prep, labelling and Amazon inbound placement. Nobody quoted it'],
+                  ['Landed cost', '$12.44', 'What one set costs before it sells'],
+                ],
+                note:
+                  'This is the figure the cost-of-goods line below uses: $12.44 is 33.4% of the $37.21 average sale across the three baptism listings. 🚨 It is a CEILING, by about the inbound half of the prep line — the freight above is quoted door to door and already includes customs clearance and inland delivery, and the prep line is left standing anyway rather than netted off a figure nobody has priced.',
+              },
+              {
+                type: 'margin',
+                /* The three baptism listings blended: 300 and 400 units at
+                   $36.99 and 200 at $37.99 = $33,491 over 900 units. Not a
+                   price anybody pays — a weighted average of three that are. */
+                basis: { label: 'Average sale across the three listings', value: 37.21 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    /* $12.443 landed ÷ $37.212 = 33.438%. Three decimals,
+                       because check-profile compares the blended tab against
+                       every month of the profit series. */
+                    pct: -33.438,
+                    amount: 12.44,
+                    emphasis: true,
+                    detail:
+                      '$6.36 of parts and kitting, $1.27 of tariff, $4.11 of ocean freight and $0.70 of prep. The biggest line, and the softest: only the freight has a date on it.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See the bill of materials above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 5.58,
+                    detail: 'Amazon’s published rate, a flat 15%. Measured on the listing: Keepa reports 15% on all four products.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -20.047,
+                    amount: 7.46,
+                    /* Keepa product record for B0GHZSS4VV, read 2026-10-04:
+                       276 × 219 × 141 mm, 835 g, pickAndPackFee 746 cents. The
+                       lead listing B0GJ133W12 is 280 × 211 × 140 mm, 889 g and
+                       carries the same fee. */
+                    detail:
+                      'Size tier: Large Standard. The best seller, B0GHZSS4VV, packs to 10.9 × 8.6 × 5.6 in at 29 oz — the 5.6 in depth is far past Small Standard’s 0.75 in limit, and the weight is past its 16 oz limit too. $7.46 a set, and the same on all three baptism listings.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -2.3,
+                    amount: 0.86,
+                    detail:
+                      'MODELLED, not observed. The brand’s 2.3% applied flat to every product so that the tabs and the chart are one model; the per-product model puts this line nearer 2.4%, the highest of the four.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                  },
+                ],
+                note:
+                  'Before storage, long-term storage, returns, removals, inbound placement surcharges, low-inventory fees, software, photography, samples and all owner pay — none of which is modelled. A ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'jar',
+            label: 'Bible Verse Jar',
+            sharePct: 19.4,
+            blocks: [
+              {
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'Bill of materials — what a Bible Verse Jar costs to make',
+                noteColumns: [2],
+                columns: ['Component', 'Per jar', 'Basis'],
+                rows: [
+                  ['200 printed scripture cards', '$1.20', 'The owner’s own figure. A maker quoted him $1.00; he asked for $1.20 to be used'],
+                  ['Glass jar with bamboo lid', '$0.96', 'Three published Made-in-China.com supplier list prices, each listing’s midpoint averaged per supplier then across suppliers'],
+                  ['Small wooden cross', '$0.43', 'The owner’s own quote — £0.3217'],
+                  ['Small wooden card stand', '$1.00', 'The owner’s own figure. He says theirs is better than anything the search found'],
+                  ['Printed gift box', '$0.05', 'The owner’s own figure. Plain packaging, which he calls negligible'],
+                  ['Kitting and assembly', '$0.50', 'ASSUMED. Nobody quoted it'],
+                  ['Components and kitting — the cost to make used below', '$4.13', ''],
+                ],
+                note:
+                  'The card print used to be the widest uncertainty on this profile — five printers listed the same 200-card deck between $0.61 and $4.92 — and the owner’s own $1.20 replaced it on 4 October 2026. The jar itself is the one line still priced off published supplier listings rather than his quotes.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one jar from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '15.6 × 15.3 × 13.4 cm, 0.730 kg', 'The listing’s own package size (B0GHZMGNTQ)'],
+                  ['Volume', '0.00320 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$496.67 / cbm', 'Less-than-container-load, Shanghai → Los Angeles, door to door'],
+                  ['Shipping, per jar', '$1.59', '0.00320 cbm × $496.67'],
+                ],
+                note:
+                  'The same dated rate as the baptism set — the low end of the quoted band, read 28 September 2026, door to door with customs clearance and inland delivery in and duty and tariffs out. A jar is a third of the volume of a keepsake box, which is the whole of the difference between $1.59 and $4.11.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — what one jar costs in Amazon’s warehouse',
+                noteColumns: [2],
+                columns: ['Line', 'Per jar', 'From'],
+                rows: [
+                  ['Components and kitting', '$4.13', 'The bill of materials above'],
+                  ['Tariff', '$0.83', '20% of the cost to make, on the same flat basis as every product here'],
+                  ['Ocean freight', '$1.59', 'This jar’s carton at $496.67/cbm — the shipping table above'],
+                  ['Prep and inbound', '$0.50', 'ASSUMED: drayage, 3PL prep, labelling and inbound placement. Nobody quoted it'],
+                  ['Landed cost', '$7.05', 'What one jar costs before it sells'],
+                ],
+                note:
+                  '$7.05 is 35.3% of the $19.99 price — the highest cost-of-goods share in the catalogue, on the cheapest product in it. A ceiling on the same count as the baptism set: the door-to-door freight overlaps the inbound half of the prep line and the prep line is left standing.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: 19.99 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -35.253,
+                    amount: 7.05,
+                    detail: '$4.13 of parts and kitting, $0.83 of tariff, $1.59 of freight and $0.50 of prep — $7.05 landed on a $19.99 product.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See the bill of materials above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 3.0,
+                    detail: 'Amazon’s published rate, a flat 15%, measured on the listing.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -28.814,
+                    amount: 5.76,
+                    emphasis: true,
+                    /* Keepa product record for B0GHZMGNTQ, read 2026-10-04:
+                       156 × 153 × 134 mm, 730 g, pickAndPackFee 576 cents. */
+                    detail:
+                      'Size tier: Large Standard. The jar packs to 6.1 × 6.0 × 5.3 in at 26 oz — a small box, but 5.3 in deep and over a pound, so nowhere near Small Standard. $5.76 to pick and pack a $19.99 product: the largest line here, and the one a heavy glass jar at this price cannot negotiate away.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -2.3,
+                    amount: 0.46,
+                    detail:
+                      'MODELLED. The brand’s 2.3% applied flat, so the tabs and the chart are one model; the per-product model puts this line nearer 1.2%, the lowest of the four, because the jar holds sponsored slots on only five keywords.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                  },
+                ],
+                note:
+                  'Before storage, returns, removals, inbound placement, low-inventory fees and overhead, none of which is modelled. The gap between this and the baptism set is not the kit — it is that Amazon charges almost the same to move both, and one of them sells for half as much.',
+              },
+            ],
+          },
+          {
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series
+                   from these SAME four numbers (seed-highmark-collective.ts
+                   COST_LINES). Change one, change both.
+                   🚨 ONE DECIMAL, and it matters: these are September's own
+                   rates rounded to a tenth (32.27 / 22.99 / 15.00 / 2.30), and
+                   27.4% is what gives the headline's $14.1k. Rounded to whole
+                   percents the same month comes out $14.4k and the title on the
+                   Business row goes wrong. */
+                type: 'margin',
+                basis: { label: 'Average sale across the catalogue', value: 28.6 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -32.3,
+                    emphasis: true,
+                    detail:
+                      '$12.44 a baptism set, $7.05 a jar, $4.73 a set of journals and $9.73 a gift bundle, at September’s unit mix. See each product’s tab for the parts, the carton and the rate behind it.',
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s published rate, a flat 15%, measured on all four products — which sit in four different category trees, so this was checked rather than assumed.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -23,
+                    detail:
+                      'Size tier: Large Standard, on the best seller and on all eight listings. $5.61 to $7.46 a unit, which at September’s mix is 23.0% of revenue — within a tenth of a point of what Amazon’s referral fee takes.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -2.3,
+                    detail:
+                      'MODELLED, and the whole of it is in the Advertising section: a keyword-level model over the thirty terms they hold a sponsored slot on, with a band of 0.5% to 4.2%. It replaces a 12% placeholder the research opened with, which nothing measured supports.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                  },
+                ],
+                note:
+                  'September’s mix, and every month on the chart carries it — a month heavier on the jar keeps less of each dollar, and a month heavier on the baptism set keeps more. Before storage, long-term storage, returns, removals, inbound placement, low-inventory fees, software, photography, samples and all owner pay: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The three softest figures in the model, in order: the overlap between the door-to-door freight rate and the prep line, which makes every landed cost a ceiling; the flat 20% tariff, which stands in for a customs broker classifying each kit; and kitting, which is a real cost on a five-piece box that nobody has put a price on. Closing all three would move the margin by a point or two, in a direction the overlap says is up.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The margin block and the profit series on the chart are one model, so they cannot disagree with each other. What neither can do is replace an invoice: nobody at Highmark Collective has shown us a supplier bill, a freight bill or an advertising bill, and only Amazon’s two fees here are read from Amazon.',
+      },
+
+      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The margin above is what this business keeps. This is the other half of the question — and on this one it has no answer yet.',
+      },
+      /* 🚨 No authored figures in this section: the block reads the published
+         estimate off the Business row. There is none here, and the component
+         prices are the owner's own quotes with no minimum order attached, so
+         §3a leaves the figure NULL rather than inventing an order size. The
+         block renders its own note saying so. */
+      { type: 'starting-cost' },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'From nothing to a peak in five months, then a fall — and the lever behind both was price, not audience.',
+      },
+      {
+        type: 'prose',
+        text:
+          'All eight listings opened with a $5.00 coupon, carried it for two to four weeks and then dropped it: March and April for the seven that listed first, late May for the jar. That is the standard way to buy a first page of velocity, and it worked — the first badge appeared on 21 April, three weeks after the first listings went up. Through June the catalogue was running about 1,250 units a month.',
+      },
+      {
+        type: 'prose',
+        text:
+          'July and August are where the business arrived. Units went from 1,250 to 1,900 to 2,150, and the baptism line alone went from 400 a month to 1,200. On 7 August they raised the two main baptism listings from $34.99 to $36.99 — the highest price either had ever carried — and August was still the best month on record. Then September fell back to 1,800 units. One summer is not a season, and a Christian gifting brand that has not yet traded a Christmas or an Easter has not shown its two biggest months in either direction.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Off Amazon the growth work is thin and dated. Twelve keyword-shaped blog posts went up between 14 July and 28 August and then stopped. Four Google Search text ads have run since 29 June, one of them for eighty-three days. The Shopify store, live since May, prices above Amazon. Nothing here looks like an audience being built; it looks like a marketplace listing being fed.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The one piece of the catalogue that stopped growing is the one being advertised hardest. The faith gift bundle was cut 20% in June, kept its sponsored placements, and lost its badge at the end of September — the Advertising section is where that collides.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'They buy acquisition, not defence — the opposite of the usual pattern — and the whole bill models out at a fraction of what a placeholder would have guessed.',
+      },
+      {
+        type: 'prose',
+        text:
+          '🚨 Nobody can measure a competitor’s ad spend from outside the account, and the figure below is modelled rather than counted. The two sit side by side here on purpose. The COUNTED side is a live search read: amazon.com in Chrome, logged out, delivering to New York 10001, on 4 October 2026, run twice, with every sponsored card on sixty results per query classified and matched to their ASINs. The MODELLED side multiplies Jungle Scout’s share of sponsored impressions on each keyword by that keyword’s thirty-day search volume, by a click-through to the first sponsored slot measured on five of the thirty keywords and pooled at 8.87% on the rest, by the median suggested bid. It comes out at 2.3% of September’s revenue, in a band of 0.5% to 4.2%.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What the footprint shows is a brand buying strangers. They hold a sponsored slot on five of the seven generic head terms read, including the #1 slot on “christian journal set of 3” and #4 on “baptism gifts for girl”, and exactly one slot on their own name — where all ten organic results are theirs already and the term has no measurable search volume at all. That is the inverse of the brand-defence pattern most small sellers run.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Every part of the model has a hole in it and they all point the same way. A bid is the price to win a slot, not the price billed, and a cleared auction runs below it. Twenty-five of the thirty keywords borrow a pooled click-through rather than their own. Auto campaigns, product targeting, Sponsored Brands and Sponsored Display are invisible to a keyword model entirely, and no Sponsored Brands headline or video unit was seen for them on any query. Treat 2.3% as the middle of a wide band, not a reading.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=baptism+gifts+for+girl',
+            value: '≈ 2.3% of revenue',
+            counted:
+              '2 of 9 sponsored slots on “baptism gifts for girl”, one of them at #4 · 2 of 9 on “baptism gifts for boys” · 1 of 12 on “christian journal set of 3”, at #1 · 1 of 12 on “bible study journal” · 1 of 6 on “bible verse jar” · 0 of 12 on “scripture cards” · 0 of 8 on “christian gifts for women” — New York delivery, 4 Oct 2026, read twice',
+            flag: true,
+            note:
+              'Modelled over the thirty keywords they hold a sponsored slot on, at a band of 0.5% to 4.2% of revenue. It replaces a 12% placeholder the research opened with, which is about five times the central figure and which nothing measured supports. A footprint is not a spend, and this is the only line on the page where the two are shown separately because they are two different kinds of number.',
+          },
+          {
+            label: 'The faith gift bundle — buying traffic, converting nothing',
+            href: 'https://www.amazon.com/dp/B0GHZM48XR',
+            value: 'Sponsored #1, #2 and #4',
+            counted:
+              '#1 of 11 sponsored slots on “spiritual gifts for women”, #2 of 11 on “faith gifts for women”, #4 of 12 on “christian gift sets for women” — read 4 Oct 2026 at 18:17 UTC. A sponsored rank on 12 of its top 20 keywords, and the largest single sponsored advertiser on two of the three terms',
+            flag: true,
+            note:
+              '🚨 This listing sold nothing Amazon would count in September. Its badge went to zero around 28 September, after a cut from $34.99 to $27.99 in June, and the ads did not go with it — it is still holding the top of page one on its own category terms. On the modelled arithmetic it needs about 10.4% conversion at its $1.06 median bid merely to break even. Per dollar of revenue it is the most expensive line in the catalogue, and an earlier read missed it entirely by testing the product on one term it does not appear on.',
+          },
+          {
+            label: 'Their own brand term',
+            href: 'https://www.amazon.com/s?k=highmark+collective',
+            value: '1 of 1 slot',
+            counted: '“highmark collective”: one sponsored slot, at position 9, and all ten organic results already theirs — 4 Oct 2026',
+            note:
+              'Jungle Scout returns no volume for the term and its keyword endpoint has no record of it at all, so the term sits below one tool’s reporting floor — which is not the same as a measured zero. Either way, brand defence cannot be a material line here.',
+          },
+          {
+            label: 'Google Search',
+            href: 'https://adstransparency.google.com/',
+            value: '4 text ads',
+            counted:
+              'Three creatives ran 29 Jun – 15 Jul 2026, seventeen days; a fourth has run 83 days to 3 Oct 2026. All four are text ads, no image or video. Advertiser HIGHMARK COLLECTIVE CORP, identity verified, based in the United States',
+            note:
+              'Google publishes no spend, impressions or budget for US consumer advertising, so there is no dollar figure here and any would be invented. A Merchant Center tag is installed beside the Google tag, so a Shopping feed is wired up. Four creatives is a very small account.',
+          },
+          {
+            label: 'Meta and TikTok',
+            value: 'No ad found',
+            counted: 'Meta Ad Library, United States, all ad categories, active and inactive, searched twice: no ad from this brand. TikTok has no US ad transparency library at all',
+            note:
+              'Both pixels are installed on the Shopify store. A Meta keyword search matches ad text and advertiser name, so an ad running from a differently-named Page would not surface — and the Meta pixel normally requires a connected Page that could not be found or named. A strong negative, not an airtight one. TikTok ads in the US are unobservable by design.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'There is no audience off Amazon to measure. Not a small one — none that could be found on any platform.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Instagram, TikTok, Facebook, Pinterest and YouTube were each checked at the brand’s own handle, and six further handle variants after that. The Instagram handle exists and belongs to a backcountry snowmobile account with no posts; TikTok and YouTube return not-found; Pinterest redirects to an error; the Facebook vanity URL is unavailable. The brand’s own homepage carries zero outbound links — no social icons, no Amazon link, no press, no newsletter.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The honest limit on that: a Meta pixel is installed through Shopify’s Facebook and Instagram app, which normally needs a connected Page, so a Page probably exists somewhere under a name nobody could find. What is being said here is that no social account was found, not that no Page exists. Site traffic was not measured at all — no free source gives a defensible visit count for a site this small, and a number put here would be a guess.',
+      },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Site visits', value: 'Not measured', note: 'No defensible free source for a site this size; nothing is estimated here' },
+          { label: 'Outbound links from the homepage', value: '0', note: 'Every <a href> on the rendered page was enumerated' },
+          { label: 'Social accounts found', value: 'None', note: 'Five platforms at the brand handle, plus six variants' },
+          { label: 'Blog posts', value: '12', note: '14 Jul – 28 Aug 2026, then nothing' },
+          { label: 'Etsy sales', value: '~70', note: 'Lifetime · via a search index, not a page we loaded' },
+        ],
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — highmarkcollective.com',
+            href: 'https://highmarkcollective.com/',
+            value: '6 products',
+            note:
+              'Shopify, live since 1 May 2026. Prices every comparable product above its own Amazon listing, by 2.7% to 25%. Three paid-acquisition pixels are installed — Google, Meta and TikTok — and no email platform and no reviews app. The stack is set up to buy traffic rather than to keep it.',
+          },
+          {
+            label: 'Etsy — HighmarkCollective',
+            href: 'https://www.etsy.com/shop/HighmarkCollective',
+            value: '~70 sales',
+            flag: true,
+            note:
+              'About seventy lifetime sales, 4.1★ over 12 reviews, earliest visible review 4 July 2026. Etsy returned 403 to curl, to headless Chrome and to headful Chrome, so these come from a search index’s rendering of the shop page and the counts are approximate.',
+          },
+          {
+            label: 'Shop app storefront',
+            href: 'https://shop.app/m/4d1tj5c6eq',
+            value: '2 products',
+            note: 'Auto-generated by Shopify. No followers, no reviews. A by-product of being on Shopify rather than a channel anybody built.',
+          },
+          {
+            label: 'Wholesale',
+            href: 'https://highmarkcollective.com/pages/wholesale',
+            value: 'A form, no presence',
+            note:
+              'An application page with a $300 opening minimum and display signage over $1,500. No Faire brand page, no Abound, no Tundra, no retailer found carrying the brand.',
+          },
+          {
+            label: 'Walmart, eBay, Temu, Shein, TikTok Shop, Faire, Target',
+            value: 'Not found',
+            note:
+              'Searched on each. Walmart and Faire served bot walls, so those two negatives rest on domain-restricted index searches rather than pages anybody loaded; eBay served its own error page to every request and one candidate item could not be opened, so eBay is unknown rather than absent.',
+          },
+          {
+            label: 'Trustpilot, BBB, Reddit, press',
+            value: 'Nothing',
+            note: 'No review profile, no BBB file, no thread and no coverage. Every search for the name returns Highmark the Pittsburgh health insurer, which is unrelated.',
+          },
+        ],
+      },
+      {
+        /* 🚨 No off-Amazon keyword table: no search-volume read was taken for
+           their own domain, and the blog's keyword shape is an observation
+           rather than a measurement. The Amazon keyword work is on
+           Advertising, where the SERP read belongs. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        noteColumns: [3],
+        columns: ['Listing', 'Sales rank', 'Rating', 'In'],
+        rows: [
+          ['Baptism keepsake set — boy or girl', '8,661', '4.5★ / 45', 'Baby Products'],
+          ['Baptism keepsake set — boys', '10,643', '4.5★ / 59', 'Baby Products'],
+          ['Christian notebooks — Scripture Botanical', '18,653', '4.8★ / 77 pooled', 'Office Products'],
+          ['Christian notebooks — Joyful Bloom', '18,724', '4.8★ / 77 pooled', 'Office Products'],
+          ['Christian notebooks — Blessed Botanical Cross', '18,725', '4.8★ / 77 pooled', 'Office Products'],
+          ['Baptism keepsake set — girl', '42,000', '4.8★ / 78', 'Toys & Games'],
+          ['Bible Verse Jar', '52,770', '4.7★ / 59', 'Home & Kitchen'],
+          ['Faith gift bundle', '93,410', '5.0★ / 58', 'Home & Kitchen'],
+        ],
+        note:
+          'Keepa’s sales rank in each listing’s root category, read 4 October 2026, best first. The three notebook listings report one pooled review count of 77 between them because Amazon shares a variation family’s reviews; their sold badges are genuinely separate. The faith gift bundle holds the catalogue’s best rating and its worst rank.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Essentially all of this business is on Amazon, and the rest is paperwork and pixels. That is a concentration risk a buyer would price, and it is also why the figures on this page can be as complete as they are.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'HIGHMARK COLLECTIVE CORP.', note: 'Delaware general corporation · file 10281379' },
+          { label: 'Incorporated', value: '1 Aug 2025', note: 'Delaware Division of Corporations' },
+          { label: 'Operating address', value: 'Palmetto Bay, Florida', note: '7840 SW 161 Street, a residential street south of Miami' },
+          { label: 'Registered agent', value: 'Dover, Delaware', note: 'A Registered Agent, Inc. — an agent service, not an office' },
+          { label: 'Amazon seller', value: 'A2EDGVBEHEN117', note: 'Highmark Collective · first tracked 26 Mar 2026' },
+          { label: 'Seller feedback', value: '100%', note: 'Over 24 lifetime ratings · read 4 Oct 2026', info: 'sellerFeedback' },
+          { label: 'First listing', value: '24 Mar 2026' },
+          { label: 'Trademark', value: 'None', note: 'The one application, for notebooks, was abandoned 30 Jul 2026' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The measured dates are close together and they are all recent. The company was incorporated in Delaware on 1 August 2025 and nothing about the brand exists anywhere before that — no entity, no domain, no filing, no account, no post. The domain followed in October 2025, the trademark application in December, the Amazon listings in March 2026, the first badged sales in April, and the brand’s own store on 1 May. Nobody at Highmark Collective has spoken to us, and every date here is read from a registry, a registrar or a marketplace rather than told to us.',
+      },
+      {
+        type: 'prose',
+        text:
+          'No individual is named anywhere public. Delaware’s free record lists no officers, the trademark filing names no attorney and no signatory, and the About page is signed by the team. The operating address is the same on two independent sources — the trademark filing and the store’s own contact page — and it is a residential street in Palmetto Bay rather than one of the agent-mill addresses that usually turn up here, which is a small point in their favour and not proof of anything. The registered agent in Dover is exactly the kind of service that tells you nothing about where a business actually is.',
+      },
+      {
+        /* 🚨 MEASURED, and the reading matters as much as the fact. Three ASINs
+           carry a Zhejiang exporter in the manufacturer attribute; the dossier
+           reads this as contract sourcing left in listing data, NOT as Chinese
+           ownership, and the page must keep saying which. It is also the trap
+           that nearly lost half the catalogue: brand:[] returns 8, but
+           manufacturer:[Highmark Collective] returns only 4. */
+        type: 'prose',
+        text:
+          'Three of the eight listings name Yiwu Jiacheng Arts & Crafts Co.,Ltd as the manufacturer of record — the three baptism ASINs, which are the business — and a fourth names “Christian Gifts Collection”. A Zhejiang crafts exporter in a listing attribute is evidence of contract sourcing left in the data, not evidence of who owns the company: the seller entity, the Florida address and the business name all read as a US operator, and the same query run against that manufacturer name on Amazon US returns these three listings and nothing else. It is also the reason the catalogue has to be assembled from several queries at once — searching by brand returns eight listings and searching by manufacturer returns four, and picking the wrong field loses the product line that carries the business.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The trademark is the one piece of IP paperwork there is, and it is gone. The application was filed on 29 December 2025 on an intent-to-use basis covering paper notebooks and blank journals only, through a low-cost self-serve filing service with no attorney of record; the examiner issued an office action on 29 April 2026, nobody answered, and it was abandoned on 30 July. The brand has no registered mark today, and nothing was ever filed covering the baptism keepsakes that are two thirds of its revenue.',
+      },
+      {
+        type: 'prose',
+        text:
+          'One name collision is worth recording rather than dismissing: a HIGHMARK COLLECTIVE LLC was formed in Tampa on 3 September 2026 by a different person, in a different structure, thirteen months after the Delaware corporation. Nothing links it to this brand and nothing rules it out. Highmark the Pittsburgh health insurer, which dominates every search for the name, is unrelated.',
       },
     ],
   },
