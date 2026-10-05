@@ -3,7 +3,7 @@ import type { BusinessDetail, ChartPoint, MetricsResponse } from "@/lib/api";
 type Dec = string | number;
 import { rowsOfType } from "@/lib/api";
 import type { Block, Fact, Profile } from "@/businesses/types";
-import { exactMoney, money, percent, price, monthLabel } from "@/lib/format";
+import { ageLabel, exactMoney, money, percent, price, monthLabel } from "@/lib/format";
 import { startingCostFigure, startingCostRange } from "@/lib/starting-cost";
 import { METRIC_INFO } from "@/data/metric-info";
 import { scoreProfile, ttmWindow, valuationAsOf } from "@/valuation/inputs.mjs";
@@ -64,20 +64,90 @@ export function HeadlineCard({
  * number a reader assumes is a trailing year when it might be six weeks, and
  * on this page every figure is supposed to say how it was reached.
  */
+/**
+ * Revenue, profit and margin in ONE card.
+ *
+ * They are three readings of the same month off the same row, and as three
+ * cards they took the whole headline row — on a phone, three full-width
+ * blocks before anything else. Together they also read as what they are: a
+ * month's trading, not three unrelated figures. The month is stated once,
+ * under all three, for the same reason it was on each card before.
+ */
+function MonthlyCard({
+  revenue,
+  profit,
+  margin,
+  basis,
+  link,
+}: {
+  revenue: string;
+  profit: string;
+  margin: string;
+  basis: string;
+  link?: { href: string; label: string };
+}) {
+  return (
+    <div data-card="" data-monthly="">
+      <span data-card-label="">Monthly performance</span>
+      <dl data-monthly-figures="">
+        <div>
+          <dt>Revenue</dt>
+          <dd data-figure="">{revenue}</dd>
+        </div>
+        <div>
+          <dt>Profit</dt>
+          <dd data-figure="">{profit}</dd>
+        </div>
+        <div>
+          <dt>Margin</dt>
+          <dd data-figure="">{margin}</dd>
+        </div>
+      </dl>
+      <span data-card-sub="">{basis}</span>
+      {link && (
+        <a data-card-jump="" href={link.href}>
+          {link.label}
+          <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+            <path
+              d="M8 3v10M4 9.5L8 13.5L12 9.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
+      )}
+    </div>
+  );
+}
+
 export function AverageCard({
   label,
   value,
   basis,
   link,
+  info,
+  infoExtra,
 }: {
   label: string;
   value: string;
   basis: string;
   link?: { href: string; label: string };
+  /** Key into METRIC_INFO, as on a metric cell: the ⓘ beside the label. */
+  info?: string;
+  /** This business's own paragraphs, after the shared ones. */
+  infoExtra?: string[];
 }) {
+  const shared = info ? METRIC_INFO[info] : undefined;
+  const paragraphs = shared || infoExtra?.length ? [...(shared ?? []), ...(infoExtra ?? [])] : undefined;
   return (
     <div data-card="">
-      <span data-card-label="">{label}</span>
+      <span data-card-label="">
+        {label}
+        {paragraphs && <InfoTip label={label} paragraphs={paragraphs} />}
+      </span>
       <strong data-card-value="" data-figure="">
         {value}
       </strong>
@@ -260,15 +330,11 @@ export function TopMetrics({
     (monthlyRevenue && monthlyProfit !== null ? (monthlyProfit / monthlyRevenue) * 100 : null);
   const monthBasis = b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month";
 
-  /* Ad spend has no column on the Business row, so the latest month comes off
-     the series — and carries its OWN month, because ad spend is not guaranteed
-     to be published for the same months as revenue. */
-  const lastAdRow = allAdRows.length ? allAdRows[allAdRows.length - 1]! : null;
-  const latestAdSpend = lastAdRow ? Number(lastAdRow.value) : null;
-
-  // Ad spend has its own card in the headline row; what the grid keeps is
-  // TACoS. A ratio, so it takes the totals rather than the mean of the monthly
-  // rates — and only when both series cover the same months.
+  /* Ad spend lost its headline card: it is an input, not a result, and on a
+     phone it pushed the figures the page is about below the fold. The series
+     still draws it on the chart, and what the grid keeps is TACoS — a ratio,
+     so it takes the totals rather than the mean of the monthly rates, and
+     only when both series cover the same months. */
   const derivedFacts: Fact[] = [];
   if (adSpends.length === n && n > 0) {
     if (sum(revenues)) {
@@ -321,19 +387,8 @@ export function TopMetrics({
     });
   }
 
-  const startingCost = startingCostFigure(b);
-  if (startingCost !== null) {
-    const range = startingCostRange(b);
-    derivedFacts.push({
-      label: "To start",
-      value: exactMoney(startingCost, b.currency),
-      note: range
-        ? `Estimated, ${exactMoney(range.low, b.currency)}–${exactMoney(range.high, b.currency)}`
-        : undefined,
-      info: "toStart",
-      infoExtra: startingCostWorking(b),
-    });
-  }
+  /* "To start" and the age are CARDS now (the headline row), not cells here:
+     two copies of a figure is how an overview comes to disagree with itself. */
   /* Both prices come off the sales-breakdown block rather than being typed
      beside it, so the grid and the table on the Revenue page cannot disagree
      — and the blend moves the moment a row is corrected.
@@ -366,43 +421,43 @@ export function TopMetrics({
     }
   }
 
-  if (b.establishedAt) {
-    derivedFacts.push({
-      label: "Listed since",
-      value: b.establishedAt.slice(0, 4),
-      info: "listedSince",
-    });
-  }
+  const startingCost = startingCostFigure(b);
+  const range = startingCost === null ? null : startingCostRange(b);
+  const startingCostRangeNote = range
+    ? `Estimated, ${exactMoney(range.low, b.currency)}–${exactMoney(range.high, b.currency)}`
+    : null;
+
   const facts = [...derivedFacts, ...(profile?.facts ?? [])];
 
   return (
     <section data-glance="" aria-label="Key figures">
       <div data-cards="">
-        <AverageCard
-          label="Monthly revenue"
-          value={monthlyRevenue === null ? "—" : exactMoney(Math.round(monthlyRevenue), b.currency)}
-          basis={monthBasis}
-        />
-        <AverageCard
-          label="Monthly profit"
-          value={monthlyProfit === null ? "—" : exactMoney(Math.round(monthlyProfit), b.currency)}
-          basis={monthBasis}
-        />
-        <AverageCard
-          label="Profit margin"
-          value={percent(margin)}
+        <MonthlyCard
+          revenue={monthlyRevenue === null ? "—" : exactMoney(Math.round(monthlyRevenue), b.currency)}
+          profit={monthlyProfit === null ? "—" : exactMoney(Math.round(monthlyProfit), b.currency)}
+          margin={percent(margin)}
           basis={monthBasis}
           link={n ? { href: chartHref, label: "View the figures" } : undefined}
         />
-        {/* Only where the series carries it. A "—" card on every business that
-            publishes no ad spend would read as "spends nothing". */}
-        {latestAdSpend !== null && (
-          <AverageCard
-            label="Monthly ad spend"
-            value={exactMoney(Math.round(latestAdSpend), b.currency)}
-            basis={monthLabel(lastAdRow!.periodStart)}
-          />
-        )}
+        {/* What it took to start and how long it has been going: the two
+            questions a reader asks straight after "what does it make". Both
+            were cells in Additional metrics, where the figures the page is
+            about had to be scrolled to. */}
+        <AverageCard
+          label="To start"
+          value={startingCost === null ? "—" : exactMoney(startingCost, b.currency)}
+          basis={
+            startingCostRangeNote ?? (startingCost === null ? "Not researched yet" : "Estimated")
+          }
+          info="toStart"
+          infoExtra={startingCostWorking(b)}
+        />
+        <AverageCard
+          label="Age"
+          value={b.establishedAt ? ageLabel(b.establishedAt) : "—"}
+          basis={b.establishedAt ? `Listed ${monthLabel(b.establishedAt)}` : "Listing date unknown"}
+          info="listedSince"
+        />
       </div>
 
       {/* Directly under the averages: the chart is the months they were taken
