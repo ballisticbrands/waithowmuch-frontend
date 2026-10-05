@@ -302,6 +302,14 @@ h1, h2, h3, h4 {
     position: static; width: auto; height: auto;
     border-right: none; border-bottom: 1px solid var(--border);
     padding: 0.5rem var(--gutter); overflow-x: auto;
+    /* 🚨 Both of these, or the strip is not a strip.
+       The base rule's `align-self: flex-start` survives into this column
+       flex container, where it means "size to your content" on the cross
+       axis — so the rail laid itself out 1053px wide on a 390px phone,
+       `overflow-x: auto` never engaged (the box was not overflowing, the
+       PAGE was), and the items past the edge could not be reached at all.
+       `min-width: 0` is the usual flex-item floor on top of it. */
+    align-self: stretch; min-width: 0;
   }
   [data-rail] nav { flex-direction: row; gap: 0.25rem; align-items: center; }
   [data-rail-link] { white-space: nowrap; }
@@ -656,11 +664,31 @@ img[data-row-logo] {
   gap: 0.75rem;
 }
 
-/* The overview's averages are four cards, and at 13.5rem the fourth wrapped
-   onto a row of its own in the content column. A narrower floor keeps them
-   one row on a desktop and folds them 2×2 on a phone. Scoped to the overview
-   row: the valuation cards keep the wider floor. */
-[data-glance] > [data-cards] { grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); }
+/* The overview row is one wide card (revenue, profit and margin together)
+   and two narrow ones. Flex rather than the grid above, because the narrow
+   cards are conditional: a business with no starting-cost figure leaves two
+   cards, and auto-fit would stretch them into a row of odd widths. Scoped to
+   the overview: the valuation cards keep the grid. */
+[data-glance] > [data-cards] { display: flex; flex-wrap: wrap; }
+[data-glance] > [data-cards] > [data-card] { flex: 1 1 10rem; min-width: 0; }
+[data-glance] > [data-cards] > [data-monthly] { flex: 2 1 21rem; }
+
+/* The three figures of a month, across the card. They wrap to two rows on a
+   narrow phone rather than squeezing the figures into columns too tight to
+   read. */
+[data-monthly-figures] {
+  display: flex; flex-wrap: wrap; gap: 0.5rem 1.75rem;
+  margin: 0.45rem 0 0.1rem;
+}
+[data-monthly-figures] > div { min-width: 0; }
+[data-monthly-figures] dt {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.03em;
+  text-transform: uppercase; color: var(--muted-foreground);
+}
+[data-monthly-figures] dd {
+  margin: 0.1rem 0 0; font-size: 1.375rem; font-weight: 680;
+  letter-spacing: -0.02em; line-height: 1.15;
+}
 
 [data-card] {
   display: flex; flex-direction: column; gap: 0.15rem;
@@ -674,6 +702,7 @@ img[data-row-logo] {
 }
 
 [data-card-label] {
+  display: flex; align-items: center; gap: 0.3rem;
   font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
   color: var(--muted-foreground); font-weight: 600;
 }
