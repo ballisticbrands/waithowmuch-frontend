@@ -57,6 +57,7 @@ import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.bre
 import { LIGHTEN_LIFE_BREAKDOWN, lightenLifePhoto } from './lighten-life.breakdown.mjs';
 import { OTOTO_BREAKDOWN, ototoPhoto } from './ototo.breakdown.mjs';
 import { HIGHMARK_BREAKDOWN, highmarkPhoto } from './highmark-collective.breakdown.mjs';
+import { MOUNT_CLEVEREST_BREAKDOWN, mountCleverestPhoto } from './mount-cleverest.breakdown.mjs';
 
 /** @type {Record<string, import('./types').Profile>} */
 export const PROFILES = {
@@ -7763,6 +7764,897 @@ export const PROFILES = {
         type: 'prose',
         text:
           'One name collision is worth recording rather than dismissing: a HIGHMARK COLLECTIVE LLC was formed in Tampa on 3 September 2026 by a different person, in a different structure, thirteen months after the Delaware corporation. Nothing links it to this brand and nothing rules it out. Highmark the Pittsburgh health insurer, which dominates every search for the name, is unrelated.',
+      },
+    ],
+  },
+  'mount-cleverest': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-mount-cleverest-headline.ts, from
+       waithowmuch-research research/mount-cleverest/headline.json (approved
+       2026-10-07) — and the page reads them from the row alone.
+       🚨 The snapshot is SEPTEMBER 2026, the last whole month. October's badge
+       read is a live mid-month reading and is deliberately not in the series;
+       it is quoted as a dated reading in Revenue. Every "Read" stamp below is
+       September's. September is a quiet, rising month, not the peak, which is
+       exactly what the subtitle is about. */
+    headline: {
+      /* The Original Edition: 1,000 of September's 2,700 units and the object
+         the title is about. */
+      image: {
+        src: mountCleverestPhoto('B0B6B25BKW'),
+        alt: 'A dark grey triangular box shaped like a snow-capped mountain, printed MOUNT CLEVEREST — Face the Facts! — The true or false trivia game — the best-selling Mount Cleverest card game on Amazon',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand, their own
+             questions and their own box, sold by the company that owns the
+             listings. */
+          primaryMethod: 'private_label',
+          /* The Mount Cleverest line is 57% of September 2026 and the Original
+             deck alone 43%, with two older ranges (100 PICS flash cards and
+             SMART CARDS) sold alongside. A flagship shape, not a long tail. */
+          catalogStructure: 'flagship',
+          /* Level 2, an inference and probably the low side. The box is a
+             custom triangle and the 54 questions are their own, but a rival can
+             order a card game of any shape from the same kind of factory, and
+             nothing read says the question set is protected. Whether it is
+             owner-written content with a following of its own is the first
+             question for the owner. */
+          diffTooling: 'no',
+          diffCustom: 'no',
+          diffVisible: 'yes',
+          /* A READ: the Brand Store at /stores/MountCleverest-FaceTheFacts is
+             gated behind Brand Registry enrolment. */
+          brandRegistry: 'yes',
+          /* 🚨 `trademark` left out on purpose. A Justia page lists trademarks
+             under the owner name, but it returned 403 and nobody read which
+             marks are registered or for what, so none is scored. */
+        },
+        derived: {
+          /* RULE 1: B07L6MJ1X5, 100 PICS Animals, listed 2019-07-16, the
+             catalogue's first listing. Not the company (2013) and not Mount
+             Cleverest itself (2022-07-15). */
+          sellingSince: '2019-07-16',
+          /* All 18 listings, each its own count (the three Mount Cleverest
+             editions report 1,829, 188 and 102, so none is pooled). A floor. */
+          reviewTotal: 10618,
+          /* Revenue-weighted over September's badged listings: 4.59. */
+          ratingWeighted: 4.6,
+          sellerFeedbackPct: 97,
+          /* RULE 2. The seller account also exists on Amazon Canada with 7
+             ratings; Amazon US is all of the measured revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* November 2025 against the trailing twelve, from score-valuation.mjs. */
+          peakMonthSharePct: 46.67,
+          /* RULE 3: offAmazonSharePct unset. Walmart and eBay listings exist
+             and their sellers were never read; the own store's sales are
+             unpublished. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. The Poptacular catalogue on Amazon US only: the own store, Walmart and eBay are excluded because nobody read their sales.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      { label: 'SKUs', value: '18', note: 'The whole storefront; 11 carried a sold badge in September', info: 'skus' },
+      /* The hero's own breadcrumb. */
+      {
+        label: 'Category',
+        value: 'Toys & Games › Games & Accessories › Card Games › Dedicated Deck Card Games',
+        note: 'The Mount Cleverest listings. The 100 PICS flash cards sit under Flash Cards',
+        info: 'category',
+        wide: true,
+      },
+      /* 🚨 Catalogue-wide figures, so NO `info` key — the shared ⓘ copy
+         describes one hero listing. */
+      { label: 'Product reviews', value: '10,618', note: 'All 18 listings, each its own count' },
+      { label: 'Product rating', value: '4.6★', note: 'Revenue-weighted, September’s badged listings' },
+      { label: 'Seller feedback', value: '97%', note: 'Over 484 lifetime ratings · read 6 Oct 2026', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own brand and their own questions on listings nobody else sells — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'The Mount Cleverest line is 57% of Sep 2026', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 2 and an inference, probably the low side: the questions are
+         their own content. See the valuation answers. */
+      { label: 'Differentiation', value: 'Level 2', note: 'A custom box and their own question set, but nothing read shows it is hard to copy — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, an app audience', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'Every figure on this profile is the eighteen listings in the Poptacular Ltd storefront on Amazon US. The seller holds 100% of the buy box on every top listing and Amazon itself sells none.',
+      },
+      /* 'unchecked', not 'no': the seller id exists on Canada with 7 ratings
+         and not on the UK or Germany, but the brand's own store says it sells
+         on Amazon UK and Keepa cannot tie that page to this seller account. */
+      'amazon-international': {
+        status: 'unchecked',
+        note:
+          'The seller account exists on Amazon Canada with 7 ratings and was not found on the UK or Germany. The brand’s own store says it sells on Amazon UK, a page nobody could tie to this seller id, so the answer is not a clean no.',
+      },
+      'own-store': {
+        status: 'yes',
+        note:
+          'mount-cleverest.com, branded the Poptacular Store, sells the Mount Cleverest, 100 PICS and SMART CARDS ranges directly. Its sales are not published, so only its existence is counted.',
+      },
+      'other-marketplace': {
+        status: 'yes',
+        note:
+          'Mount Cleverest listings appear on Walmart.com and on eBay. The eBay sellers look like resellers, and Walmart served a bot check, so nobody read who sells there.',
+      },
+      'tiktok-shop': { status: 'unchecked' },
+      'wholesale-out': { status: 'unchecked' },
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Every listing is FBA, with Amazon pick-and-pack fees of $2.58 to $4.09 each.',
+      },
+      'vendor-1p': {
+        status: 'no',
+        note: 'Amazon itself offers none of the listings that were checked.',
+      },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand names and their own content on listings nobody else sells. Nothing read shows who makes the printed goods.',
+      },
+      manufacturer: {
+        status: 'unchecked',
+        note: 'The Amazon manufacturer string reads “Poptacular”. Whether they print the decks themselves or buy them from a printer was not established.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/MountCleverest-FaceTheFacts, which Amazon gates behind Brand Registry enrolment.',
+      },
+      // fbm, white-label, subscribe-save, amazon-handmade, amazon-custom and
+      // b2b left unchecked: nobody looked.
+    },
+
+    intro:
+      'Mount Cleverest is a true-or-false trivia card game sold on Amazon US by Poptacular Ltd, a London games company that made its name with the 100 PICS quiz app. The card game began as one of its own phone apps, and it is now the product the Amazon business runs on, with two older card ranges sold beside it.',
+
+    blocks: [
+      { type: 'heading', text: 'One mountain-shaped deck, two older ranges' },
+      {
+        type: 'prose',
+        text:
+          'The storefront is eighteen listings and three product lines. Mount Cleverest is a boxed deck of true-or-false questions in three editions: the Original, a Geography edition and a Movie edition, all at the same price and all in a triangular box printed to look like a snow-capped peak. The other fifteen are older. Ten are 100 PICS flash-card travel games, which turn the company’s picture-quiz app into a pocket deck, and five are SMART CARDS, a 50-card deck that plays seven games.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The shape of the catalogue is the story. The three Mount Cleverest editions rank in the top 250 of all Toys & Games; the older ranges rank between about 8,000 and 258,000. Seven of the eighteen listings carried no sold badge at all in September, which means each is selling under roughly fifty a month, and the flash cards that were the whole business before 2022 now sell a fraction of what the one newer deck does.',
+      },
+      {
+        type: 'images',
+        items: [
+          {
+            src: mountCleverestPhoto('B0CBSHKWSD'),
+            alt: 'The Mount Cleverest Geography Edition: the same snow-capped mountain box in blue-green, printed with a globe',
+          },
+          {
+            src: mountCleverestPhoto('B087MWB61Y'),
+            alt: 'A 100 PICS US States and Capitals flash-card deck in its slide-reveal plastic case, showing a map of the United States',
+          },
+        ],
+        caption:
+          'Two of the brand’s own Amazon listing images: the Geography edition of the Mount Cleverest deck, and the 100 PICS flash cards that came before it.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A company incorporated in 2013 to make quiz apps, cards on Amazon from 2019, and one deck in 2022 that took over. Most of what is known about this business is when it did things, and the dates cluster at Christmas.',
+      },
+      {
+        /* Oldest first, strictly. Every date is a reading: Companies House,
+           the Apple App Store, Keepa listedSince, trackedSince and
+           monthlySoldHistory, and a dated blog post. */
+        type: 'timeline',
+        items: [
+          {
+            when: '15 May 2013',
+            tag: 'Brand',
+            what: 'The company is incorporated as 100 PICS LIMITED',
+            detail:
+              'Company 08530431, a private limited company in England, with two directors appointed on the day and neither since resigned. Registered for games retail and for interactive entertainment software.',
+          },
+          {
+            when: '13 Mar 2014',
+            tag: 'Brand',
+            what: 'It becomes Poptacular Ltd',
+            detail: 'The 100 PICS name stays on the quiz app and, later, on the flash cards.',
+          },
+          {
+            when: '15 Oct 2014',
+            tag: 'Web',
+            what: 'The Mount Cleverest app is released on iOS',
+            detail:
+              'Eight years before the card deck. Free with in-app purchases from $0.99 to $28.99, last updated 29 September 2025, and rated 4.9 over 383 ratings.',
+          },
+          {
+            when: '16 Jul 2019',
+            tag: 'Amazon',
+            what: 'The first card listing goes up',
+            detail: '100 PICS Animals, a flash-card travel game. Keepa first tracked the seller account five months later, on 15 December 2019.',
+          },
+          {
+            when: '19 Aug 2021',
+            tag: 'Amazon',
+            what: 'SMART CARDS arrive',
+            detail: 'A second card range, a 50-card deck that plays seven games, starting with a Cars and a US Road Signs listing.',
+          },
+          {
+            when: '15 Jul 2022',
+            tag: 'Amazon',
+            what: 'The Mount Cleverest Original Edition lists',
+            detail: 'The deck the business now runs on. Keepa’s sold-badge history only begins in 2023, so its first year carries no sales reading.',
+          },
+          {
+            when: '13 Jul 2023',
+            tag: 'Amazon',
+            what: 'The Geography and Movie editions list',
+            detail: 'Same price, same box, new question sets, so one deck becomes a line.',
+          },
+          {
+            when: '30 Nov 2023',
+            tag: 'Amazon',
+            what: 'The first Christmas the catalogue shows up in the data',
+            detail: 'November 2023 sells three times October, and the series’ first month of six-figure sales. The first of three Christmases on the chart.',
+          },
+          {
+            when: '31 Oct 2024',
+            tag: 'Amazon',
+            what: 'The season arrives a month early: $212,582',
+            detail: 'More than November or December of that year ($130,409 and $100,104). A deck that sells as a gift sold most of its Christmas before Black Friday.',
+          },
+          {
+            when: '29 Sep 2025',
+            tag: 'Web',
+            what: 'The Mount Cleverest app gets its latest update',
+            detail: 'Version 2.05.',
+          },
+          {
+            when: '13 Oct 2025',
+            tag: 'Web',
+            what: 'A parenting-and-games blog publishes a review of the Original and Movie editions',
+            detail: 'An affiliate-link review, the kind of third-party content that sends shoppers to the listing.',
+          },
+          {
+            when: '7 Nov 2025',
+            tag: 'Web',
+            what: 'The Instagram account posts a video clip, and has not posted since',
+            detail: 'The last visible post on a verified account of 25.6K followers.',
+          },
+          {
+            when: '30 Nov 2025',
+            tag: 'Amazon',
+            what: '$410,597 — the best month on record',
+            detail: 'About 25,000 units, and 47% of the trailing year in one month.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: '$4,351 — the quietest month in the three years of data',
+            detail: 'Six months after the peak, the same catalogue sells about one percent of what it did in November.',
+          },
+          {
+            when: '6 Oct 2026',
+            tag: 'Amazon',
+            what: 'The season starts to build',
+            detail: 'A live mid-month read of about 4,700 units, already past all of September.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'Thirty-seven months of history, from September 2023, which is as far back as Amazon’s “bought in past month” badge goes in Keepa. Revenue here is that badge on each of the eighteen listings at each month end, priced at the buy box. The seller holds the buy box on every top listing and Amazon sells none of them, so nothing is split with a reseller. Roughly a quarter of September was left after the goods, shipping, tariff and Amazon’s two fees.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The chart is three Christmases and a long flat floor. November 2023 sold $105,480, October 2024 $212,582 and November 2025 $410,597, each roughly double the last, and between them the catalogue sold between $4,000 and $40,000 a month. The year to September 2026 totals $879,746, against $619,244 the year before; the whole of that gain is in the last three months of the calendar year, and the nine months outside it were lower. Nobody reading a single month would know which one they had.',
+      },
+      {
+        type: 'prose',
+        text:
+          '🚨 The series stops at September because October was not finished when this was read. A live badge read on 6 October 2026 put the catalogue at about 4,700 units and $73,990, already past all of September and early in what has been the biggest quarter each year. It is a mid-month reading, not a closed month, so it is not a point on the chart.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The badge is a bracket rather than a count. Amazon prints 50+, 100+, 200+ and so on up to 3,000+, so every month here is a floor, and the hero deck is the bracket that matters: a move between 3,000+ and 4,000+ is worth about $17,000 on its own. Seven of the eighteen listings carry no badge at all in September and are counted at zero.',
+      },
+      { type: 'chart' },
+      {
+        /* The seller id was looked up on each domain (SKILL §6), never the
+           brand string. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'All of the measured revenue is Amazon US. The seller account exists on Canada with 7 ratings and nowhere else.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'The seller account exists, with 7 ratings and no sold badge on any listing' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'The seller id returns no account on either, although the brand’s own store says it sells on Amazon UK' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Asked by seller id on every marketplace, not by brand name.',
+      },
+      {
+        /* All EIGHTEEN storefront listings, and they sum to the 2026-09 revenue
+           row, which check-profile.mjs asserts. */
+        type: 'breakdown',
+        intro:
+          'The Original edition alone is two fifths of September and the three Mount Cleverest editions together more than half. The listing in second place is the 100 PICS US States flash cards, a 2020 listing that has outlived most of its siblings.',
+        items: MOUNT_CLEVEREST_BREAKDOWN,
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, so every row is a floor. Revenue is that band times the buy-box price. The seven rows at zero carry no badge, which means under roughly fifty a month, not none. Each band is priced at today’s buy box, so a month before a price change carries the new price.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The badge under-reports by rounding down to a bracket, and the profit above it deducts no storage, returns, removals, inbound placement or peak-season fulfilment surcharge, no software and no owner pay. Margin breakdown says which cost lines are measured and which are not.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon US takes the money. A second audience, the one the company built for its phone apps, is the likeliest reason it comes at all.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon the arrangement is plain: eighteen listings, all FBA, one offer on each, one seller holding the buy box. There is no second account, no merchant-fulfilled line and no 1P relationship. Off Amazon there is an own store, a Walmart listing nobody could read and eBay resellers, none of which publishes sales. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The notable absence is an ad budget. In a live search read the brand held no sponsored slot on any page where ads rendered, and its organic positions are first to sixth on the narrow terms “true or false game” and “mount cleverest game”. That points to demand arriving through gifting, search and a name people already carry in their head, which is what a long-running app with a following would produce. It is a reading of the footprint and not a proof, and the Advertising section says how much of it was seen.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'About a quarter of each September dollar survives the box, the boat and Amazon, and on the older flash cards it is closer to one in six: a fulfilment fee that does not shrink with the price takes the rest.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two lines are measured, two are assumed, and the last two are built from other readings. Amazon’s referral rate is 15% on all eighteen listings, and the fulfilment fee is Amazon’s own pick-and-pack figure per listing. Production is a figure given by the person running this research, $3.50 to $4.00 a unit with the midpoint used, and no supplier or quote stands behind it. The tariff is a flat 20% of that cost, on the assumption of Chinese origin that nothing read supports or rules out. Freight is priced from a dated public rate and the box’s own dimensions, and the advertising line is modelled.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two products get their own breakdown because they do not share a cost structure worth averaging. In September the Mount Cleverest decks were 57% of revenue and the 100 PICS flash cards 38%; neither reaches four fifths alone, so both are here, with the whole brand at September’s mix last. The SMART CARDS, the last 5%, sit in the blended tab.',
+      },
+      {
+        /* 🚨 One breakdown per main product. Mount Cleverest and 100 PICS are
+           56.6% and 38.3% of September's revenue, together the first to reach
+           80% (SKILL §2, "Products"). The `all` tab is the whole brand at
+           September's mix and is the margin the backend's profit series is
+           built from (seed-mount-cleverest.ts COST_LINES). */
+        type: 'product-margins',
+        period: '2026-09',
+        products: [
+          {
+            id: 'mount-cleverest',
+            label: 'Mount Cleverest decks',
+            sharePct: 56.6,
+            blocks: [
+              {
+                /* 🚨 NOT the standard Alibaba supplier table, deliberately: no
+                   supplier screenshot was taken and nobody quoted this seller.
+                   The cost is a figure the researcher supplied, and a table of
+                   suppliers would invent a provenance it does not have. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'Production — what one Mount Cleverest deck costs to make',
+                noteColumns: [2],
+                columns: ['Line', 'Per deck', 'Basis'],
+                rows: [
+                  ['Production cost', '$3.75', 'ASSUMED. The person running this research gave $3.50 to $4.00 on 7 Oct 2026 and the midpoint is used. No supplier, quote or invoice stands behind it'],
+                  ['Production — the cost to make used below', '$3.75', ''],
+                ],
+                note:
+                  'A 54-card deck in a custom triangular box. Where it is made is unknown, which matters twice over: a Chinese printer would carry the tariff and the freight lane priced below, and a UK or EU one would carry neither.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one deck from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '16.7 × 14.6 × 4.2 cm, 0.230 kg', 'The lead listing’s own package size (B0B6B25BKW)'],
+                  ['Volume', '0.001024 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$496.67 / cbm', 'Less-than-container-load, Shanghai → Los Angeles, door to door'],
+                  ['Shipping, per deck', '$0.51', '0.001024 cbm × $496.67'],
+                ],
+                note:
+                  'The rate is the low end of the quoted band, read 28 September 2026; the top of that band prices express services and would be $4.34 a deck. It is door to door, customs clearance and inland delivery included, duty and tariffs excluded, and it prices the retail box rather than a master carton. The other ranges ship in different boxes and carry different figures. If the decks are made in the UK or EU this lane is the wrong one.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — what one Mount Cleverest deck costs in Amazon’s warehouse',
+                noteColumns: [2],
+                columns: ['Line', 'Per deck', 'From'],
+                rows: [
+                  ['Production', '$3.75', 'The production table above'],
+                  ['Tariff', '$0.75', 'ASSUMED: 20% of production, Section 301 plus the reciprocal rate on China, applied flat'],
+                  ['Ocean freight', '$0.51', 'This deck’s carton at $496.67/cbm, the shipping table above'],
+                  ['Landed cost', '$5.01', 'What one deck costs before it sells'],
+                ],
+                note:
+                  '$5.01 is 29.5% of the $16.99 price. No prep or inbound-placement line is added, so the figure is a floor on that count; against that, the door-to-door freight already includes delivery to a warehouse.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: 16.99 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -29.488,
+                    amount: 5.01,
+                    emphasis: true,
+                    detail:
+                      '$3.75 of production, $0.75 of tariff and $0.51 of ocean freight. The softest line on the page: two of its three parts are not quoted by anyone.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See production cost above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 2.55,
+                    detail: 'Amazon’s published rate, a flat 15%. Measured on the listing: Keepa reports 15% on every one of the eighteen.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -24.073,
+                    amount: 4.09,
+                    emphasis: true,
+                    /* Keepa product record for B0B6B25BKW, read 2026-10-07:
+                       167 × 146 × 42 mm, 230 g, pickAndPackFee 409 cents. */
+                    detail:
+                      'Size tier: Large Standard. The best seller, B0B6B25BKW, packs to 6.6 × 5.7 × 1.7 in at 8.1 oz. It is light enough for Small Standard, but 1.7 in deep against that tier’s 0.75 in limit. $4.09 a deck, and the same on all three editions: a quarter of the price.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -0.07,
+                    amount: 0.01,
+                    detail:
+                      'MODELLED, not observed, and nearly nothing: the visible keyword spend (about $15 a month at the middle of a $7 to $29 band) divided over this line’s September revenue. Auto campaigns, product targeting, Sponsored Brands and video are invisible to the method.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                  },
+                ],
+                note:
+                  'Before storage, returns, removals, inbound placement, the October 15 to January 14 peak fulfilment surcharge, software and owner pay, none of which is modelled. That surcharge falls on the three months that carry the year. A ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'flash-cards',
+            label: '100 PICS flash cards',
+            sharePct: 38.3,
+            blocks: [
+              {
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'Production — what one 100 PICS card deck costs to make',
+                noteColumns: [2],
+                columns: ['Line', 'Per deck', 'Basis'],
+                rows: [
+                  ['Production cost', '$3.75', 'ASSUMED. The Mount Cleverest figure carried over with no basis of its own'],
+                  ['Production — the cost to make used below', '$3.75', ''],
+                ],
+                note:
+                  'A pocket deck of 100 picture cards in a slide-reveal plastic case, a smaller object than the Mount Cleverest box. It almost certainly costs less than $3.75 to make, so this errs against the line.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one 100 PICS deck from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '11.0 × 7.7 × 3.2 cm, 0.150 kg', 'The listing’s own package size (B087MWB61Y, the US States deck)'],
+                  ['Volume', '0.000271 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$496.67 / cbm', 'Less-than-container-load, Shanghai → Los Angeles, door to door'],
+                  ['Shipping, per deck', '$0.13', '0.000271 cbm × $496.67'],
+                ],
+                note:
+                  'The same dated rate as the Mount Cleverest deck, read 28 September 2026. The deck is a quarter of the volume, which is the whole of the difference between $0.51 and $0.13; the blended figure uses each listing’s own box.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — what one 100 PICS deck costs in Amazon’s warehouse',
+                noteColumns: [2],
+                columns: ['Line', 'Per deck', 'From'],
+                rows: [
+                  ['Production', '$3.75', 'The production table above'],
+                  ['Tariff', '$0.75', 'ASSUMED: 20% of production, applied flat'],
+                  ['Ocean freight', '$0.14', 'The September mix of boxes at $496.67/cbm; the US States deck alone is $0.13'],
+                  ['Landed cost', '$4.64', 'What one deck costs before it sells'],
+                ],
+                note:
+                  '$4.64 is 37.2% of the $12.47 average sale across September’s 100 PICS listings, the highest cost-of-goods share on the page, on a product with the same fulfilment fee as one that sells for $4.50 more.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average sale across the badged listings', value: 12.47 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -37.17,
+                    amount: 4.64,
+                    emphasis: true,
+                    detail: '$3.75 of production, $0.75 of tariff and $0.14 of ocean freight. The same assumed production figure as the Mount Cleverest tab, on a cheaper product.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See production cost above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 1.87,
+                    detail: 'Amazon’s published rate, a flat 15%, measured on every listing.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -31.95,
+                    amount: 3.98,
+                    emphasis: true,
+                    /* Keepa product records read 2026-10-07: B087MWB61Y 110 × 77
+                       × 32 mm, 150 g, pickAndPackFee 409 cents; the logos and
+                       riddles decks 324 cents. September's badge-weighted
+                       average is $3.98. */
+                    detail:
+                      'Size tier: Large Standard, on the best seller and on most of the range. The best seller, B087MWB61Y, packs to 4.3 × 3.0 × 1.3 in at 5.3 oz: tiny, but 1.3 in deep against Small Standard’s 0.75 in limit. $4.09 on it, $3.24 on two of the others. The biggest line here, and the one a $12.99 card deck cannot negotiate away.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: 0,
+                    amount: 0,
+                    detail:
+                      'MODELLED at nothing. No sponsored placement was seen for any 100 PICS listing in the search read; the small visible spend sits on the Mount Cleverest name.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                  },
+                ],
+                note:
+                  'Before storage, returns, removals, inbound placement and the peak fulfilment surcharge, none of which is modelled. The gap between this tab and the Mount Cleverest one is not the production cost, which is the same assumed figure on both: it is that Amazon charges almost the same to pick a $12 deck as a $17 one.',
+              },
+            ],
+          },
+          {
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series
+                   from these SAME numbers (seed-mount-cleverest.ts COST_LINES:
+                   cogs 25.93 + tariff 5.19 + freight 2.14 = 33.26 here).
+                   Change one, change both. */
+                type: 'margin',
+                basis: { label: 'Average sale across the catalogue', value: 14.46 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -33.26,
+                    emphasis: true,
+                    detail:
+                      '$5.01 a Mount Cleverest deck, $4.64 a 100 PICS deck and $4.55 a SMART CARDS deck, at September’s unit mix: production, tariff and freight. See each product’s tab for the parts, the carton and the rate behind it.',
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s published rate, a flat 15%, measured on every listing.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -27.29,
+                    detail:
+                      'Size tier: Large Standard on the best seller and on most of the range; Small Standard on the SMART CARDS. $2.58 to $4.09 a unit, which at September’s mix is 27.3% of revenue, nearly twice what Amazon’s referral fee is worth.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -0.04,
+                    detail:
+                      'MODELLED, and the whole of it is in the Advertising section: the visible keyword spend, about $15 a month in a $7 to $29 band. Every format the method cannot see is excluded.',
+                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                  },
+                ],
+                note:
+                  'September’s mix, and every month on the chart carries it. A month heavier on the Mount Cleverest decks, such as November, keeps more of each dollar than this does, so the profit series understates the peak: the month-by-month model in the research folder gives November 2025 about 30% against September’s 24%. Before storage, returns, removals, inbound placement, the peak fulfilment surcharge, software and owner pay: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The three softest figures in the model, in order: the production cost, which is a number someone supplied and not a quote; the tariff, which depends on a country of origin nobody has established; and the freight lane, which is priced for China and is wrong for a UK or EU printer. They move in different directions. A European factory removes the tariff, adds a different freight line and could lift trailing profit by up to a fifth before the new freight is counted; the top of Freightos’ band for a Chinese lane would take most of it away.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The margin block and the profit series on the chart are one model, so they cannot disagree with each other. What neither can do is replace an invoice: nobody at Poptacular has shown us a printing bill, a freight bill or an advertising bill, and only Amazon’s two fees here are read from Amazon.',
+      },
+
+      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The margin above is what this business keeps. This is the other half of the question, and on this one it has no answer yet.',
+      },
+      /* 🚨 No authored figures in this section: the block reads the published
+         estimate off the Business row. There is none here, because the
+         research has a production cost but no supplier quote and so no minimum
+         order, and §3a leaves the figure NULL rather than inventing an order
+         size. The block renders its own note saying so. */
+      { type: 'starting-cost' },
+
+      { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
+      {
+        type: 'lede',
+        text:
+          'One new deck, three Christmases, each about double the last, and nothing else added since. The growth is a product finding its season, not a catalogue being built.',
+      },
+      {
+        type: 'prose',
+        text:
+          'In September 2023, the first month the data shows, the whole storefront sold $25,969. Three years later September sold half as much again and the November peak had gone from $105,480 to $410,597. The older ranges, 100 PICS flash cards and SMART CARDS listed between 2019 and 2024, are most of the listing count and a minority of the growth. The Mount Cleverest editions, which list from July 2022 and July 2023, are more than half of a quiet month and a larger share of a loud one.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The Original edition has done it on reviews and rank rather than a bought push. It has 1,829 reviews at 4.6 stars, a rank near the top 250 of Toys & Games, and organic positions between first and sixth on the two narrow terms that describe it. A trivia deck that families give each other is a product that gets reviewed in December and bought again the next December, which is consistent with each Christmas being about twice the last, and is also an inference: nothing read shows who the buyers are.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What has not grown is the range. The newest storefront listing is dated 30 May 2024, the last new edition of the deck listed in July 2023, the Instagram account posted last in November 2025, and the app was last updated in September 2025. Whether that is a business choosing to harvest one product or one that has not had the time to build a second is not something the public record can say.',
+      },
+      {
+        type: 'callout',
+        text:
+          'A deck that sells 47% of its year in one month is one stock decision a year. The business has to fund and hold the inventory for November in the quietest months, and the data gives no sign of when, how or from whom.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'They are not buying much. The ads that could be seen sit on their own name and one niche phrase, and the search read found them on neither.',
+      },
+      {
+        type: 'prose',
+        text:
+          '🚨 Nobody can measure a competitor’s ad spend from outside the account, and the figure below is modelled rather than counted. The two sit side by side here on purpose. The COUNTED side is a live search read: amazon.com in headless Chrome, logged out, on 7 October 2026, with nineteen queries and every sponsored card classified. Amazon showed “deliver to Israel” on every read, because a US delivery address was accepted but did not hold for a guest session, and it drew ads on only five of the nineteen pages, so a page with no sponsored cards says nothing about advertisers. The MODELLED side takes Jungle Scout’s share of sponsored impressions on ten keywords and prices the clicks at Amazon’s own suggested bids.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The two sources disagree and both are reported. Jungle Scout’s panel saw them sponsored on their own name, “mount cleverest”, with three products and 11% of the sponsored slots, and on “true or false game”, with three products and 15%. The search read found no sponsored Mount Cleverest card on any page that drew ads, the brand term included, where the four sponsored slots above their organic results were TV wall mounts bidding on the word “mount”. The gap between a panel averaged over a window and a single instant is the error bar on this section.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Everything the method cannot see points the other way, and none of it was counted: auto campaigns, product targeting, Sponsored Brands and video, and the October to December peak, which is when a seasonal deck is most likely to advertise. What can be said is narrower. On the visible keywords the whole bill models at $7 to $29 a month, around $15 at the middle, and at Amazon’s own suggested bids a click on a broad term such as “family game” costs $1.73 against a $16.99 deck, about $7 to $9 of ads for each sale at the 14% conversion the brand term shows. That arithmetic is consistent with them not buying those terms.',
+      },
+      {
+        type: 'table',
+        caption: 'What Amazon would charge to advertise against the Original edition',
+        noteColumns: [3],
+        columns: ['Keyword', 'Amazon’s suggested bid (exact)', 'Jungle Scout bid, nearest term', 'Sponsored share seen'],
+        rows: [
+          ['mount cleverest', '$2.11', 'none returned', '3 products, 11% (panel); none in the search read'],
+          ['true or false game', 'not returned', '$0.46', '3 products, 15% (panel); none in the search read'],
+          ['family game', '$1.73', '$1.30 (family games)', 'none'],
+          ['kid game', '$1.25', '$1.00 (card games for kids)', 'none'],
+          ['stocking stuffer', '$0.63', '$0.75 (stocking stuffers for kids)', 'none'],
+          ['party game', '$0.35', 'not returned', 'none'],
+        ],
+        note:
+          'Amazon’s bids are from its own Ads API on the Original’s ASIN, read 7 October 2026, from a US seller profile that is not theirs; they are what it would suggest, not what anyone paid. The API returns cents and the conversion was cross-checked against Jungle Scout on one shared term ($1.67 against $1.42 for the family card game phrases).',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            href: 'https://www.amazon.com/s?k=mount+cleverest',
+            value: '≈ $15 a month visible',
+            counted:
+              '0 of 12 sponsored slots on “mount cleverest” · 0 on “mount cleverest game”, “family game”, “kid game” and “games for family game night” — the five pages that drew ads, 7 Oct 2026, delivery to Israel · organic #1 to #6 on “true or false game” and “mount cleverest game”, #5–#7 on the brand name below four TV-mount ads',
+            flag: true,
+            note:
+              'Modelled over the two keywords Jungle Scout saw them sponsored on, at 2,764 monthly searches for the brand name, 11.1% of its sponsored slots, a 1.8% to 4.5% click rate borrowed from another dossier and not re-fitted here, and Amazon’s $1.24 to $2.11 bids: 5.5 to 13.8 paid clicks, $7 to $29. If every one of the brand name’s 1,400 monthly clicks were paid it would be $1,800 to $3,000, which the search read rules out. A footprint is not a spend, and the two are shown apart because they are different kinds of number.',
+          },
+          {
+            label: 'The brand name, in clicks',
+            href: 'https://www.amazon.com/s?k=mount+cleverest',
+            value: '≈ 1,400 clicks a month',
+            counted:
+              'Jungle Scout’s panel: 332 clicks and 46 conversions in a week on the Original for “mount cleverest”, a 14% conversion rate, scaled to a month. Those clicks are organic and paid together',
+            note:
+              'The brand name converts about 197 orders a month, roughly 4% of the units the catalogue sold in October. So most of what sells does not come through a search for the name, and the people who do search for it are not mostly arriving through an ad.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'There is an audience off Amazon, and it was built for phone apps. Whether any of it comes to the cards is the question the record cannot answer.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Poptacular’s best-known product is the 100 PICS Quiz app, a picture-guessing game. A tracker page puts it past 15 million Google Play downloads and the company’s ten apps at about 20 million in total, a figure read from a search summary because the page itself refused the fetch, so it is third-party and a range rather than a count. The Mount Cleverest app is smaller and shows what the audience looks like: 383 ratings at 4.9 stars, free with ads and in-app purchases, and updated as recently as September 2025.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The brand’s Instagram, @100picsquiz, is verified and has 25.6K followers, bills itself as the home of 100 PICS and Mount Cleverest, and last posted on 7 November 2025. Its TikTok and Facebook pages are linked from the brand’s own store and returned a login page, so their size is not known. Site traffic was not measured at all: no free source gives a defensible visit count for a store this small, and a number put here would be a guess.',
+      },
+      {
+        type: 'facts',
+        items: [
+          { label: 'App downloads', value: '15M+', note: 'The 100 PICS Quiz app on Google Play · a tracker page, third-party, read via a search summary' },
+          { label: 'Instagram', value: '25.6K', note: '@100picsquiz · verified · read 7 Oct 2026 · last post 7 Nov 2025' },
+          { label: 'Mount Cleverest app', value: '4.9★ / 383', note: 'Apple App Store · released 15 Oct 2014 · updated 29 Sep 2025' },
+          { label: 'Site visits', value: 'Not measured', note: 'No defensible free source for a store this size; nothing is estimated here' },
+        ],
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — mount-cleverest.com',
+            href: 'https://mount-cleverest.com/',
+            value: 'Three ranges',
+            note:
+              'Branded the Poptacular Store. Sells Mount Cleverest, 100 PICS and SMART CARDS, links its Instagram, TikTok and Facebook, and says its products are also on Amazon UK. Its prices and sales were not compared or measured.',
+          },
+          {
+            label: 'Mobile apps',
+            href: 'https://apps.apple.com/app/id924417686',
+            value: '~20M downloads',
+            flag: true,
+            note:
+              'The audience that predates the cards by years. App revenue is not published and nothing read shows whether the apps point to the Amazon listings. The downloads figure is a third-party summary and was not checked at the source.',
+          },
+          {
+            label: 'Instagram — @100picsquiz',
+            href: 'https://www.instagram.com/100picsquiz/',
+            value: '25.6K followers',
+            note: 'Verified, 24 accounts followed. Last post 7 November 2025, a video clip, at the start of the year’s biggest month.',
+          },
+          {
+            label: 'TikTok and Facebook',
+            href: 'https://www.tiktok.com/@100pics',
+            value: 'Exist, unsized',
+            note: 'TikTok @100pics and Facebook /100Pics, both linked from the store. Neither page gave a follower count to an unauthenticated read.',
+          },
+          {
+            label: 'Walmart.com',
+            href: 'https://www.walmart.com/ip/18914022012',
+            value: 'Listed, seller unknown',
+            note: 'Mount Cleverest editions appear on Walmart. The page served a bot check, so nobody could read whether Poptacular or a reseller sells them.',
+          },
+          {
+            label: 'eBay',
+            href: 'https://www.ebay.com/str/melissan33',
+            value: 'Resellers',
+            note: 'Third-party sellers list the Original at $4.96 to $15.34 with bulk discounts, which is below the Amazon price. They look like resellers rather than the brand.',
+          },
+          {
+            label: 'Amazon UK',
+            value: 'Claimed, not found',
+            note: 'The brand’s site says it sells on Amazon UK and amazon.co.uk/100pics is linked from poptacular.com. The seller id returns no account on Amazon UK, so the listing, if it exists, is not under this seller.',
+          },
+          {
+            label: 'Reviews and press',
+            href: 'https://www.game-2-play.com/blog/mount-cleverest-game-review/',
+            value: 'One blog',
+            note: 'A games blog published an affiliate-link review of the Original and Movie editions on 13 October 2025. No traditional press was found.',
+          },
+        ],
+      },
+      {
+        type: 'callout',
+        text:
+          'The brand is not an Amazon start-up and cannot be copied as one: the cards sit on top of an audience that took a decade and a games studio to build. That is the difference between this profile and most of the others on the site, and it is the part of the economics that does not appear in any cost line.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'POPTACULAR LTD', note: 'English private limited company · 08530431 · formerly 100 PICS LIMITED' },
+          { label: 'Incorporated', value: '15 May 2013', note: 'Companies House' },
+          { label: 'Registered office', value: 'London WC2R', note: '7 Savoy Court, Strand' },
+          { label: 'Directors', value: '2', note: 'James Emile Dubern and Julian Stocker, both appointed on incorporation' },
+          { label: 'Amazon seller', value: 'A26BYIJHPZYRKQ', note: 'Poptacular Ltd · first tracked 15 Dec 2019' },
+          { label: 'Seller feedback', value: '97%', note: 'Over 484 lifetime ratings · read 6 Oct 2026', info: 'sellerFeedback' },
+          { label: 'First listing', value: '16 Jul 2019' },
+          { label: 'Accounts', value: 'Full, to March 2025', note: 'Total exemption full accounts, filed 28 Oct 2025' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The company is a registry record with two directors, who have held the office since the day it was incorporated, and no person with significant control: it has filed the statement that it knows of no registrable person. It was incorporated under the name of its first app, renamed Poptacular within ten months and has filed accounts every year since 2018. The registered office is a Strand address and the business moved between London and Hampshire between 2018 and 2021. Nobody at the company has spoken to us, and every date here is read from a registry, an app store or a marketplace rather than told to us.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The filed accounts are six-page total-exemption full accounts and were not opened for a turnover figure. The Amazon seller account is registered to the London address, which makes this a British company selling into the US through FBA. The same seller exists on Canada with 7 ratings and does not appear on the UK or Germany, despite the brand’s own store saying it sells on Amazon UK.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Two further loose ends. The Amazon manufacturer string reads “Poptacular”, and a search on it returns 24 listings that are not in the storefront; they were not opened, so the catalogue here may be short by some. And a company page for the brand’s trademarks exists under the owner’s name, but it refused the fetch, so what is registered and for what is unknown. Poptacular also advertises “Prunella”, a service that automates Amazon ad bids, which suggests a team that knows the ad tools well and still buys little.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model, a 2.6 base multiple moved by what the public record supports, applied to trailing-twelve profit. It prices the Poptacular catalogue on Amazon US as one operation.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'The own store, Walmart, eBay and every other channel are excluded because nobody read their sales, and the apps are not a card business and are not counted. The profit being multiplied carries September 2026’s cost rates into every month, on a production cost nobody has quoted and a tariff nobody has established, before storage, returns and the peak fulfilment surcharge. On that basis it understates the November peak against the research model and overstates nothing else, but it is an upper bound on a business that has to fund a year of inventory to catch a few weeks of sales.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are age and reputation: a catalogue first listed in 2019, ten thousand reviews across it, an average of 4.6 stars, and an enrolled brand store. The negatives are the shape of the year and the reach of the business. November alone is nearly half of the trailing twelve, every measured dollar is on Amazon US, and the company has not launched a new listing in two years.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The whole figure rests on assumptions that are not the data’s. The production cost and tariff are put in, not read. Sourcing, catalogue shape and differentiation are questionnaire answers taken from the public record, and the differentiation level is probably the low side, because the question set is the company’s own content and nothing read says how hard it would be to copy. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
     ],
   },
