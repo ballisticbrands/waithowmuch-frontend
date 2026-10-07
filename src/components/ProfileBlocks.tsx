@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { Block, MetricKey, Profile } from "@/businesses/types";
 import { type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
@@ -79,6 +80,14 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
       );
     case "callout":
       return <div data-notice style={{ margin: "1.25rem 0" }}><div>{block.text}</div></div>;
+    case "strategy":
+      return (
+        <aside data-strategy="">
+          <p data-strategy-eyebrow="">Advertising strategy</p>
+          <h3>{block.label}</h3>
+          <ul>{block.points.map((p, n) => <li key={n}>{p}</li>)}</ul>
+        </aside>
+      );
     case "image":
       /* Not an Exhibit. The wide blocks break out of the 44rem measure because
          a chart or a table needs the column; a photograph of one object does
@@ -345,7 +354,7 @@ function Exhibit({
     case "starting-cost":
       /* Reads the published estimate off the business — the block itself
          carries no data, so the page cannot disagree with the figure. */
-      return <StartingCost business={business} />;
+      return <StartingCost business={business} products={block.products} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
     case "product-margins":
@@ -380,7 +389,13 @@ function ProductMargins({
   series: MetricsResponse | null;
   profile: Profile;
 }) {
-  const [active, setActive] = useState(block.products[0]?.id);
+  /* `?product=mat` opens that tab — how a product's "What it costs to start"
+     tab links to its own shipping and landed-cost tables. */
+  const [params] = useSearchParams();
+  const asked = params.get("product");
+  const [active, setActive] = useState(
+    block.products.some((p) => p.id === asked) ? asked! : block.products[0]?.id,
+  );
   const product = block.products.find((p) => p.id === active) ?? block.products[0];
   if (!product) return null;
   const runs = groupSections(product.blocks).flatMap((s) => s.runs);

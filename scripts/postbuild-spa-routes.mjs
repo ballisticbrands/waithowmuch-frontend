@@ -585,6 +585,7 @@ for (const b of all) {
               ].filter(Boolean).join('');
             }
             case 'callout': return `<p>${esc(blk.text)}</p>`;
+            case 'strategy': return `<h3>Advertising strategy: ${esc(blk.label)}</h3><ul>${blk.points.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
             /* The links row is the one block whose content comes from the DB
                record rather than from the authored profile. 🚨 Off `detail`,
                NOT off `b`: `b` is the LISTING projection and carries no

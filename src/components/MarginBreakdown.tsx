@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Block } from "@/businesses/types";
 import { percent, price } from "@/lib/format";
+import { linePct } from "@/lib/pct.mjs";
 
 type Margin = Extract<Block, { type: "margin" }>;
 
@@ -9,6 +10,7 @@ type Margin = Extract<Block, { type: "margin" }>;
  *  to whole dollars on an $8.87 order would round the advertising line to the
  *  same figure as the referral fee. */
 const perUnit = (v: number, currency: string) => price(Math.abs(v), currency);
+
 
 /** What one line costs per unit: the exact figure when the research computed one
  *  in dollars, else its share of the sale. See `amount` in businesses/types.d.ts. */
@@ -122,7 +124,7 @@ function MarginDonut({
           viewBox={`0 0 ${DONUT.size} ${DONUT.size}`}
           role="img"
           aria-label={`Where an average order goes: ${segments
-            .map((s) => `${s.label} ${Math.round(s.pct)}%`)
+            .map((s) => `${s.label} ${linePct(s.pct)}`)
             .join(", ")}.`}
         >
           {slices.map((s, i) => (
@@ -138,7 +140,7 @@ function MarginDonut({
               /* The slice is a control, so it says what it is. The visible
                  tooltip is decoration on top of this, not the only copy. */
               role="img"
-              aria-label={`${s.label}, ${percent(s.pct)}, ${s.money} of the order`}
+              aria-label={`${s.label}, ${linePct(s.pct)}, ${s.money} of the order`}
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
               onBlur={() => setActive(null)}
@@ -163,7 +165,7 @@ function MarginDonut({
           >
             <span data-donut-tip-name="">{shown.label}</span>
             <span data-donut-tip-figure="">
-              {percent(shown.pct)} · {shown.money}
+              {linePct(shown.pct)} · {shown.money}
             </span>
           </div>
         )}
@@ -183,7 +185,7 @@ function MarginDonut({
           >
             <span data-donut-swatch="" style={{ background: s.fill }} aria-hidden="true" />
             <span data-donut-name="">{s.label}</span>
-            <span data-donut-pct="" data-figure="">{percent(s.pct)}</span>
+            <span data-donut-pct="" data-figure="">{linePct(s.pct)}</span>
           </li>
         ))}
       </ul>
@@ -260,7 +262,7 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
               {l.emphasis && <em data-margin-flag="">Biggest line</em>}
             </span>
             <span data-margin-pct="" data-figure="">
-              −{percent(Math.abs(l.pct))}
+              −{linePct(Math.abs(l.pct))}
             </span>
             <span data-margin-unit="" data-figure="">
               −{lineMoney(l, basis.value, currency)}
@@ -312,6 +314,9 @@ const SOURCES = {
 export function BlockTable({ block }: { block: Table }) {
   const source = block.attribution ? SOURCES[block.attribution] : null;
   const notes = new Set(block.noteColumns ?? []);
+  const [expanded, setExpanded] = useState(false);
+  const limit = block.visibleRows;
+  const folds = limit !== undefined && block.rows.length > limit;
   return (
     <section data-block-table="" id={block.id}>
       {block.caption && <h3>{block.caption}</h3>}
@@ -336,7 +341,7 @@ export function BlockTable({ block }: { block: Table }) {
           </thead>
           <tbody>
             {block.rows.map((row, i) => (
-              <tr key={i}>
+              <tr key={i} hidden={folds && !expanded && i >= limit ? true : undefined}>
                 {row.map((cell, j) =>
                   j === 0 ? (
                     <th key={j} scope="row">
@@ -353,6 +358,11 @@ export function BlockTable({ block }: { block: Table }) {
           </tbody>
         </table>
       </div>
+      {folds && (
+        <button type="button" data-btn="" data-variant="ghost" data-table-more="" aria-expanded={expanded} onClick={() => setExpanded((v) => !v)}>
+          {expanded ? `Show the first ${limit}` : `Show all ${block.rows.length}`}
+        </button>
+      )}
       {block.note && <p data-breakdown-note="">{block.note}</p>}
     </section>
   );

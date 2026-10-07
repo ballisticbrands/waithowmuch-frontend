@@ -89,7 +89,17 @@ export type Block =
    * authored prose can contradict the figure beside it. Renders a plain note
    * when a business has no estimate, which §3a treats as a legitimate state.
    */
-  | { type: "starting-cost" }
+  | {
+      type: "starting-cost";
+      /**
+       * One tab per product, for a brand whose margin breakdown is split by
+       * product — the same ids as the `product-margins` tabs, so each tab's
+       * links land on its own product's tables. Each reads the published
+       * estimate for that product (`productStartingCosts`); still no figures
+       * here. Omit for a business priced as a whole.
+       */
+      products?: Array<{ id: string; label: string }>;
+    }
   | {
       type: "margin";
       /** What one order is worth, so each line can also be shown in money. */
@@ -174,6 +184,10 @@ export type Block =
       noteColumns?: number[];
       columns: string[];
       rows: string[][];
+      /** Show only the first N rows, with a button for the rest — a keyword
+       *  list worth fifty rows whose point is made by its first ten. Every row
+       *  is still in the prerendered HTML; the rest are hidden, not missing. */
+      visibleRows?: number;
       note?: string;
     }
   /**
@@ -298,6 +312,14 @@ export type Block =
   | { type: "list"; items: string[] }
   | { type: "quote"; text: string; attribution?: string }
   | { type: "callout"; text: string }
+  /**
+   * The Advertising section's opening card: the strategy the ads add up to,
+   * named in a few words ("Brand defence") and backed by three or four points.
+   * `label` is amazon-adspend-spy's `strategy.label`, so two profiles with the
+   * same footprint get the same name; the points are authored from
+   * adspend.json's figures and say what was measured and what was modelled.
+   */
+  | { type: "strategy"; label: string; points: string[] }
   /** Renders a figure pulled from the DB — never a hardcoded number. */
   | { type: "stat"; metric: MetricKey; label: string }
   /** Renders the monthly series from the DB. */
