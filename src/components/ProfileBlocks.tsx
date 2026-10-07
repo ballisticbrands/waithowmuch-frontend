@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { Block, MetricKey, Profile } from "@/businesses/types";
 import { type BusinessDetail, type ChartPoint, type MetricsResponse } from "@/lib/api";
 import { EarningsCard } from "./Earnings";
@@ -345,7 +346,7 @@ function Exhibit({
     case "starting-cost":
       /* Reads the published estimate off the business — the block itself
          carries no data, so the page cannot disagree with the figure. */
-      return <StartingCost business={business} />;
+      return <StartingCost business={business} products={block.products} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
     case "product-margins":
@@ -380,7 +381,13 @@ function ProductMargins({
   series: MetricsResponse | null;
   profile: Profile;
 }) {
-  const [active, setActive] = useState(block.products[0]?.id);
+  /* `?product=mat` opens that tab — how a product's "What it costs to start"
+     tab links to its own shipping and landed-cost tables. */
+  const [params] = useSearchParams();
+  const asked = params.get("product");
+  const [active, setActive] = useState(
+    block.products.some((p) => p.id === asked) ? asked! : block.products[0]?.id,
+  );
   const product = block.products.find((p) => p.id === active) ?? block.products[0];
   if (!product) return null;
   const runs = groupSections(product.blocks).flatMap((s) => s.runs);

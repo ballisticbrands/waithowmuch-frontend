@@ -1818,6 +1818,8 @@ img[data-row-logo] {
 [data-table-source] img { height: 0.95rem; width: auto; display: block; }
 /* A margin line pointing back at a table lands below the sticky strip. */
 [data-block-table][id] { scroll-margin-top: 4.75rem; }
+/* "Show all 50" under a folded table, left-aligned with the rows it opens. */
+[data-table-more] { margin-top: 0.75rem; font-size: 0.875rem; }
 
 /* Read-more links under a margin line: Amazon's own fee pages, or another part
    of the profile. Ink with a quiet underline — the accent is kept for actions. */

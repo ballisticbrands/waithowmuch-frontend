@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import type { BusinessDetail } from "@/lib/api";
+import type { BusinessDetail, StartingCostEstimate } from "@/lib/api";
 import { dayLabel, exactMoney, money, price } from "@/lib/format";
 import { StartingCostWaterfall } from "./StartingCostWaterfall";
 
@@ -16,6 +17,10 @@ import { StartingCostWaterfall } from "./StartingCostWaterfall";
  * — no prose in index.mjs restates a figure that might later change. An estimate
  * priced before a field existed simply omits that row, which is why every block
  * is guarded rather than assumed.
+ *
+ * ONE TAB PER PRODUCT for a brand whose margin breakdown is split by product
+ * (`products` on the block): each tab is the same four parts for that product's
+ * own published estimate, and its links open that product's margin tab.
  *
  * 🚨 ATTRIBUTION IS NOT DECORATION. The freight rate comes from Freightos, whose
  * licence requires "clear acknowledgement of Freightos with a link to
@@ -63,8 +68,57 @@ const COMPETITION_LABEL: Record<string, string> = {
   HIGH: "a crowded keyword",
 };
 
-export function StartingCost({ business }: { business: BusinessDetail }) {
-  const e = business.startingCostEstimate;
+export function StartingCost({
+  business,
+  products,
+}: {
+  business: BusinessDetail;
+  products?: Array<{ id: string; label: string }>;
+}) {
+  const [active, setActive] = useState(products?.[0]?.id);
+  if (!products?.length) return <EstimateView business={business} estimate={business.startingCostEstimate} />;
+
+  const product = products.find((p) => p.id === active) ?? products[0]!;
+  const estimate = business.productStartingCosts?.find((e) => e.product === product.id);
+  return (
+    <div data-product-margins="">
+      <div role="tablist" aria-label="Product" data-product-tabs="">
+        {products.map((p) => {
+          const e = business.productStartingCosts?.find((x) => x.product === p.id);
+          return (
+            <button
+              key={p.id}
+              type="button"
+              role="tab"
+              id={`start-tab-${p.id}`}
+              aria-selected={p.id === product.id}
+              aria-controls={`start-panel-${p.id}`}
+              data-product-tab=""
+              onClick={() => setActive(p.id)}
+            >
+              <span>{p.label}</span>
+              {e && <span data-product-share="">{money(e.midpoint, business.currency ?? "USD")} to start</span>}
+            </button>
+          );
+        })}
+      </div>
+      <div role="tabpanel" id={`start-panel-${product.id}`} aria-labelledby={`start-tab-${product.id}`}>
+        <EstimateView key={product.id} business={business} estimate={estimate} product={product} />
+      </div>
+    </div>
+  );
+}
+
+function EstimateView({
+  business,
+  estimate: e,
+  product,
+}: {
+  business: BusinessDetail;
+  estimate: StartingCostEstimate | null | undefined;
+  /** Set when this is one product's tab. */
+  product?: { id: string; label: string };
+}) {
   const currency = business.currency ?? "USD";
 
   // No published estimate is a legitimate state, not an error: §3a leaves the
@@ -73,7 +127,7 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
     return (
       <section data-starting-cost="">
         <p data-empty="">
-          No launch-cost estimate for this business. One needs a supplier quote with a minimum order — without it a
+          No launch-cost estimate for {product ? `the ${product.label.toLowerCase()}` : "this business"}. One needs a supplier quote with a minimum order — without it a
           figure would be invented rather than estimated.
         </p>
       </section>
@@ -86,18 +140,22 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
   const inputs = e.inputs;
   const f = inputs.freight;
   const kr = e.keywordReading;
-  const marginHref = `/business/${business.slug}/margin#cogs-breakdown`;
-  const shippingHref = `/business/${business.slug}/margin#shipping-breakdown`;
-  const landedHref = `/business/${business.slug}/margin#landed-cost`;
+  // A product tab's links open the same product's margin tab.
+  const margin = `/business/${business.slug}/margin${product ? `?product=${product.id}` : ""}`;
+  const marginHref = `${margin}#cogs-breakdown`;
+  const shippingHref = `${margin}#shipping-breakdown`;
+  const landedHref = `${margin}#landed-cost`;
 
-  // Freight is inside landedUnitCost, so the make half is what remains of it.
+  // Freight and duty are inside landedUnitCost, so the make part is what
+  // remains of it.
+  const duty = inputs.duty;
   const landedLow = n(inputs.landedUnitCost.low);
-  const makeLow = f && landedLow !== null ? landedLow - f.perUnit : null;
+  const makeLow = f && landedLow !== null ? landedLow - f.perUnit - (duty?.perUnit ?? 0) : null;
 
   return (
     <section data-starting-cost="">
       <p data-starting-cost-lede="">
-        Launching a copy of this business today would cost about{" "}
+        Launching a copy of {product ? `the ${product.label.toLowerCase()}` : "this business"} today would cost about{" "}
         <strong data-figure="">{money(e.midpoint, currency)}</strong>, somewhere between{" "}
         {exactMoney(e.low, currency)} and {exactMoney(e.high, currency)}. It is an estimate, not a quote
         {inputs.asOf ? <>, and it describes {dayLabel(inputs.asOf)}</> : null}. Here is each part of it.
@@ -108,19 +166,48 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
         1. The first order{" "}
         {parts ? <span data-starting-cost-amount="">{span(parts.inventory, currency)}</span> : null}
       </h3>
-      <p>
-        A supplier will not press a single unit. The smallest run the quotes allow is{" "}
-        <strong>{int(inputs.moq)} units</strong> per product, and this launch buys{" "}
-        {int(inputs.launchSkus)} {Number(inputs.launchSkus) === 1 ? "product" : "products"}
-        {w.unitsPerSku ? (
-          <>
-            {" "}
-            — {int(w.unitsPerSku.low)}–{int(w.unitsPerSku.high)} units, the minimum at the low end and as many as the
-            ads can sell at the high one
-          </>
-        ) : null}
-        .
-      </p>
+      {w.firstOrderUnits ? (
+        /* Model 2026-10-05 on: a fixed launch order, whatever the supplier's
+           minimum — owner's call (backend FIRST_ORDER_UNITS). */
+        <p>
+          The first order is <strong>{int(w.firstOrderUnits)} units</strong> per product
+          {w.vineUnits ? (
+            <>
+              : {int(w.vineUnits)} go to Amazon Vine for the first reviews, and {int(w.firstOrderUnits - w.vineUnits)}{" "}
+              are there to watch sell before committing to a production run
+            </>
+          ) : null}
+          . This launch buys {int(inputs.launchSkus)} {Number(inputs.launchSkus) === 1 ? "product" : "products"}
+          {Number(inputs.moq) > w.firstOrderUnits ? (
+            <>
+              , and the supplier quotes ask for at least {int(inputs.moq)}, so an order this small is one to negotiate
+              rather than one quoted
+            </>
+          ) : null}
+          .
+          {w.unitsPerSku ? (
+            <>
+              {" "}
+              The ads below are expected to sell {int(w.unitsPerSku.low)}–{int(w.unitsPerSku.high)} units; everything
+              past the first order is reordered out of sales.
+            </>
+          ) : null}
+        </p>
+      ) : (
+        <p>
+          A supplier will not press a single unit. The smallest run the quotes allow is{" "}
+          <strong>{int(inputs.moq)} units</strong> per product, and this launch buys{" "}
+          {int(inputs.launchSkus)} {Number(inputs.launchSkus) === 1 ? "product" : "products"}
+          {w.unitsPerSku ? (
+            <>
+              {" "}
+              — {int(w.unitsPerSku.low)}–{int(w.unitsPerSku.high)} units, the minimum at the low end and as many as the
+              ads can sell at the high one
+            </>
+          ) : null}
+          .
+        </p>
+      )}
 
       <div data-table-wrap="">
         <table data-earnings-table="">
@@ -145,6 +232,18 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
                 </td>
               </tr>
             )}
+            {duty && (
+              <tr>
+                <th scope="row">Tariff</th>
+                <td data-figure="">{price(duty.perUnit, currency)}</td>
+                <td data-note="">
+                  {duty.basis ?? "Duty paid at the border"}
+                  <span data-margin-links="">
+                    <Link to={landedHref}>See landed cost</Link>
+                  </span>
+                </td>
+              </tr>
+            )}
             {f && (
               <tr>
                 <th scope="row">Shipping cost</th>
@@ -154,7 +253,7 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
                     <>A flat placeholder — no package dimensions were available for this product</>
                   ) : (
                     <>
-                      This puzzle’s carton at a read sea-freight rate
+                      This product’s own carton at a read sea-freight rate
                       <span data-margin-links="">
                         <Link to={shippingHref}>See shipping breakdown</Link>
                       </span>
@@ -167,7 +266,8 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
               <th scope="row">Landed cost</th>
               <td data-figure="">{price(inputs.landedUnitCost.low, currency)}</td>
               <td data-note="">
-                Unit cost plus shipping — what one unit costs in Amazon’s warehouse, before a single sale
+                {duty ? "Unit cost, tariff and shipping" : "Unit cost plus shipping"} — what one unit costs in Amazon’s
+                warehouse, before a single sale
                 <span data-margin-links="">
                   <Link to={landedHref}>See landed cost</Link>
                 </span>
@@ -244,7 +344,9 @@ export function StartingCost({ business }: { business: BusinessDetail }) {
                   {int(w.launchUnits.low)}–{int(w.launchUnits.high)}
                 </td>
                 <td data-note="">
-                  What those clicks convert to — more than one minimum run at the high end, reordered out of sales
+                  {w.firstOrderUnits
+                    ? `What those clicks convert to — the first ${int(w.firstOrderUnits)} units, then reorders paid for by sales`
+                    : "What those clicks convert to — more than one minimum run at the high end, reordered out of sales"}
                 </td>
               </tr>
             )}

@@ -89,7 +89,17 @@ export type Block =
    * authored prose can contradict the figure beside it. Renders a plain note
    * when a business has no estimate, which §3a treats as a legitimate state.
    */
-  | { type: "starting-cost" }
+  | {
+      type: "starting-cost";
+      /**
+       * One tab per product, for a brand whose margin breakdown is split by
+       * product — the same ids as the `product-margins` tabs, so each tab's
+       * links land on its own product's tables. Each reads the published
+       * estimate for that product (`productStartingCosts`); still no figures
+       * here. Omit for a business priced as a whole.
+       */
+      products?: Array<{ id: string; label: string }>;
+    }
   | {
       type: "margin";
       /** What one order is worth, so each line can also be shown in money. */
@@ -174,6 +184,10 @@ export type Block =
       noteColumns?: number[];
       columns: string[];
       rows: string[][];
+      /** Show only the first N rows, with a button for the rest — a keyword
+       *  list worth fifty rows whose point is made by its first ten. Every row
+       *  is still in the prerendered HTML; the rest are hidden, not missing. */
+      visibleRows?: number;
       note?: string;
     }
   /**
