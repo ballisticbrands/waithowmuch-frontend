@@ -206,4 +206,15 @@ export const MOUNT_CLEVEREST_BREAKDOWN = [
     revenue: 0,
     image: mountCleverestPhoto('B08BCB8DK5'),
   },
+  {
+    /* 🚨 Not a listing: the whole UK TikTok Shop "100 PICS" (Kalodata shop/detail,
+       2026-09, 43 units, $941.14). A third-party estimate, no ASIN, shown with
+       the Original's photo because every row gets one. */
+    name: 'TikTok Shop UK, all products (Kalodata estimate)',
+    listed: 'Oct 2025',
+    sold: 43,
+    price: 21.89,
+    revenue: 941.14,
+    image: mountCleverestPhoto('B0B6B25BKW'),
+  },
 ];

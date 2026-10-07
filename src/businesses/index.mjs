@@ -7786,6 +7786,12 @@ export const PROFILES = {
       },
     },
 
+    /* 🚨 Two channels, two margins. Months with no TikTok sales (everything before
+       October 2025, and January to August 2026) earn Amazon's own September rate,
+       24.41%; months with both sit near the Whole-brand tab's 25.24%.
+       check-profile.mjs accepts either, within half a point. */
+    profitSeriesAltPct: [24.41],
+
     valuation: {
       inputs: {
         answers: {
@@ -7824,24 +7830,30 @@ export const PROFILES = {
           /* Revenue-weighted over September's badged listings: 4.59. */
           ratingWeighted: 4.6,
           sellerFeedbackPct: 97,
-          /* RULE 2. The seller account also exists on Amazon Canada with 7
-             ratings; Amazon US is all of the measured revenue. */
-          topMarketplaceSharePct: 100,
+          /* RULE 2, widened on 2026-10-07 by the person running this research:
+             the site covers every channel a brand sells through, so the share
+             is the largest channel's share of ALL measured revenue in the
+             snapshot month, Amazon US $39,048 of $39,989.14 = 97.65%. */
+          topMarketplaceSharePct: 97.65,
           marketplaces: ['US', 'CA'],
           /* November 2025 against the trailing twelve, from score-valuation.mjs. */
-          peakMonthSharePct: 46.67,
-          /* RULE 3: offAmazonSharePct unset. Walmart and eBay listings exist
-             and their sellers were never read; the own store's sales are
-             unpublished. */
+          peakMonthSharePct: 47.84,
+          /* RULE 3, same decision: TikTok Shop UK is sized, from Kalodata's
+             shop estimate, so it is scored. $53,167 of the $932,914 trailing
+             twelve = 5.7%, a third-party estimate (see the Revenue section).
+             The own store, Walmart and eBay are still unsized and excluded. */
+          offAmazonSharePct: 5.7,
         },
       },
       basis:
-        'Trailing-twelve net profit at a modelled multiple. The Poptacular catalogue on Amazon US only: the own store, Walmart and eBay are excluded because nobody read their sales.',
+        'Trailing-twelve net profit at a modelled multiple. Amazon US and the TikTok Shop UK brand shop, the second from a third-party estimate: the own store, Walmart and eBay are excluded because nobody read their sales.',
       note: 'Base 2.6, adjusted by what the public record supports.',
+      offAmazonBasis:
+        'TikTok Shop UK, the “100 PICS” brand shop: Kalodata’s monthly estimate, $53,167 of the $932,914 trailing twelve (5.7%). A third-party figure, and the shop’s own dashboard would replace it.',
     },
 
     facts: [
-      { label: 'SKUs', value: '18', note: 'The whole storefront; 11 carried a sold badge in September', info: 'skus' },
+      { label: 'SKUs', value: '18', note: 'The whole Amazon storefront; 11 carried a sold badge in September. The TikTok shop sells three of them', info: 'skus' },
       /* The hero's own breadcrumb. */
       {
         label: 'Category',
@@ -7860,7 +7872,7 @@ export const PROFILES = {
       /* 🚨 Level 2 and an inference, probably the low side: the questions are
          their own content. See the valuation answers. */
       { label: 'Differentiation', value: 'Level 2', note: 'A custom box and their own question set, but nothing read shows it is hard to copy — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
-      { label: 'Channels', value: 'Amazon US, own store, an app audience', info: 'channels' },
+      { label: 'Channels', value: 'Amazon US, TikTok Shop UK, own store, an app audience', info: 'channels' },
     ],
 
     selling: {
@@ -7868,7 +7880,7 @@ export const PROFILES = {
       'amazon-domestic': {
         status: 'yes',
         note:
-          'Every figure on this profile is the eighteen listings in the Poptacular Ltd storefront on Amazon US. The seller holds 100% of the buy box on every top listing and Amazon itself sells none.',
+          'The eighteen listings in the Poptacular Ltd storefront on Amazon US are about 98% of the measured revenue. The seller holds 100% of the buy box on every top listing and Amazon itself sells none.',
       },
       /* 'unchecked', not 'no': the seller id exists on Canada with 7 ratings
          and not on the UK or Germany, but the brand's own store says it sells
@@ -7888,7 +7900,13 @@ export const PROFILES = {
         note:
           'Mount Cleverest listings appear on Walmart.com and on eBay. The eBay sellers look like resellers, and Walmart served a bot check, so nobody read who sells there.',
       },
-      'tiktok-shop': { status: 'unchecked' },
+      /* Read on 2026-10-07 from Kalodata and the brand's own TikTok profile. */
+      'tiktok-shop': {
+        status: 'yes',
+        flag: true,
+        note:
+          'A UK TikTok Shop, “100 PICS”, a brand seller, with revenue first showing in October 2025. Kalodata estimates $53K over the twelve months to September 2026, $35.7K of it in November, and half of it through 44 affiliate creators. A third-party estimate, and the US shops selling Mount Cleverest belong to other sellers.',
+      },
       'wholesale-out': { status: 'unchecked' },
 
       // ── Fulfilment ────────────────────────────────────────────────────
@@ -7922,7 +7940,7 @@ export const PROFILES = {
     },
 
     intro:
-      'Mount Cleverest is a true-or-false trivia card game sold on Amazon US by Poptacular Ltd, a London games company that made its name with the 100 PICS quiz app. The card game began as one of its own phone apps, and it is now the product the Amazon business runs on, with two older card ranges sold beside it.',
+      'Mount Cleverest is a true-or-false trivia card game sold on Amazon US by Poptacular Ltd, a London games company that made its name with the 100 PICS quiz app. The card game began as one of its own phone apps, and it is now the product the business runs on, mostly on Amazon US and since late 2025 also on a UK TikTok Shop, with two older card ranges sold beside it.',
 
     blocks: [
       { type: 'heading', text: 'One mountain-shaped deck, two older ranges' },
@@ -8009,6 +8027,13 @@ export const PROFILES = {
             detail: 'Same price, same box, new question sets, so one deck becomes a line.',
           },
           {
+            when: '26 Sep 2023',
+            tag: 'Web',
+            what: 'A TikTok post on @100pics gets 106.7K plays',
+            detail:
+              '“True or false: woolly mammoths were around when the Pyramids were built.” 200 likes, 55 shares, and no product link in the post. The account has about 5,000 followers, and the hero deck’s sold badge went from 100 to 200 the next day.',
+          },
+          {
             when: '30 Nov 2023',
             tag: 'Amazon',
             what: 'The first Christmas the catalogue shows up in the data',
@@ -8027,6 +8052,13 @@ export const PROFILES = {
             detail: 'Version 2.05.',
           },
           {
+            when: '1 Oct 2025',
+            tag: 'Brand',
+            what: 'The UK TikTok Shop starts to sell',
+            detail:
+              'Kalodata first records sales on the “100 PICS” brand shop in October 2025 and none before it, although its Original Edition listing carries a launch date of 12 April 2024. It sells the three Mount Cleverest decks and four other products, to UK shoppers.',
+          },
+          {
             when: '13 Oct 2025',
             tag: 'Web',
             what: 'A parenting-and-games blog publishes a review of the Original and Movie editions',
@@ -8041,14 +8073,21 @@ export const PROFILES = {
           {
             when: '30 Nov 2025',
             tag: 'Amazon',
-            what: '$410,597 — the best month on record',
-            detail: 'About 25,000 units, and 47% of the trailing year in one month.',
+            what: '$446,338 across both channels — the best month on record',
+            detail: 'Amazon US $410,597, about 25,000 units, and a UK TikTok Shop estimated at $35,741. Together 48% of the trailing year in one month.',
           },
           {
             when: '31 May 2026',
             tag: 'Amazon',
             what: '$4,351 — the quietest month in the three years of data',
             detail: 'Six months after the peak, the same catalogue sells about one percent of what it did in November.',
+          },
+          {
+            when: '24 Sep 2026',
+            tag: 'Advertising',
+            what: 'The first TikTok ads under the company’s name',
+            detail:
+              'TikTok’s ad library, which covers the UK and EU, lists 151 ads from POPTACULAR LTD between 24 September and 6 October 2026, none earlier. Most ran for a day. It does not say what they promote or what they cost.',
           },
           {
             when: '6 Oct 2026',
@@ -8063,17 +8102,17 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Thirty-seven months of history, from September 2023, which is as far back as Amazon’s “bought in past month” badge goes in Keepa. Revenue here is that badge on each of the eighteen listings at each month end, priced at the buy box. The seller holds the buy box on every top listing and Amazon sells none of them, so nothing is split with a reseller. Roughly a quarter of September was left after the goods, shipping, tariff and Amazon’s two fees.',
+          'Thirty-seven months of history, from September 2023, which is as far back as Amazon’s “bought in past month” badge goes in Keepa. Revenue is two channels. Amazon US is that badge on each of the eighteen listings at each month end, priced at the buy box; the seller holds the buy box on every top listing, so nothing is split with a reseller. TikTok Shop UK is a third-party estimate of the brand’s shop, from Kalodata, which reads zero before October 2025. Roughly a quarter of September was left after the goods, shipping, tariff and each channel’s fees.',
       },
       {
         type: 'prose',
         text:
-          'The chart is three Christmases and a long flat floor. November 2023 sold $105,480, October 2024 $212,582 and November 2025 $410,597, each roughly double the last, and between them the catalogue sold between $4,000 and $40,000 a month. The year to September 2026 totals $879,746, against $619,244 the year before; the whole of that gain is in the last three months of the calendar year, and the nine months outside it were lower. Nobody reading a single month would know which one they had.',
+          'The chart is three Christmases and a long flat floor. On Amazon, November 2023 sold $105,480, October 2024 $212,582 and November 2025 $410,597, each roughly double the last, and between them the catalogue sold between $4,000 and $40,000 a month. The year to September 2026 totals $879,746 on Amazon, against $619,244 the year before; the whole of that gain is in the last three months of the calendar year, and the nine months outside it were lower. TikTok Shop UK adds an estimated $53,167 over the same year, 5.7% of the combined total, with $35,741 of it in November 2025 and nothing from January to August 2026. Nobody reading a single month would know which one they had.',
       },
       {
         type: 'prose',
         text:
-          '🚨 The series stops at September because October was not finished when this was read. A live badge read on 6 October 2026 put the catalogue at about 4,700 units and $73,990, already past all of September and early in what has been the biggest quarter each year. It is a mid-month reading, not a closed month, so it is not a point on the chart.',
+          '🚨 The series stops at September because October was not finished when this was read. A live badge read on 6 October 2026 put Amazon at about 4,700 units and $73,990, already past all of September and early in what has been the biggest quarter each year. It is a mid-month reading, not a closed month, so it is not a point on the chart, and it has no TikTok figure.',
       },
       {
         type: 'prose',
@@ -8085,24 +8124,25 @@ export const PROFILES = {
         /* The seller id was looked up on each domain (SKILL §6), never the
            brand string. */
         type: 'marketplaces',
-        title: 'Which Amazon marketplaces it sells in',
-        intro: 'All of the measured revenue is Amazon US. The seller account exists on Canada with 7 ratings and nowhere else.',
+        title: 'Where the revenue comes from',
+        intro: 'Nearly all of it is Amazon US, with a small, seasonal UK TikTok Shop beside it.',
         items: [
-          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon United States', short: 'US', share: 97.65 },
+          { label: 'TikTok Shop UK', short: 'TikTok UK', share: 2.35, note: 'A third-party estimate, and September is a quiet month for it: November 2025 was 8% of the month' },
           { label: 'Amazon Canada', short: 'CA', share: 0, note: 'The seller account exists, with 7 ratings and no sold badge on any listing' },
           { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'The seller id returns no account on either, although the brand’s own store says it sells on Amazon UK' },
         ],
-        note: 'Shares of the latest month’s Amazon revenue, from Amazon’s sold badges. Asked by seller id on every marketplace, not by brand name.',
+        note: 'Shares of the latest month’s revenue across the channels that could be measured: Amazon’s sold badges, read by seller id on every marketplace, and Kalodata’s estimate of the TikTok shop. The own store, Walmart and eBay are not sized.',
       },
       {
         /* All EIGHTEEN storefront listings, and they sum to the 2026-09 revenue
            row, which check-profile.mjs asserts. */
         type: 'breakdown',
         intro:
-          'The Original edition alone is two fifths of September and the three Mount Cleverest editions together more than half. The listing in second place is the 100 PICS US States flash cards, a 2020 listing that has outlived most of its siblings.',
+          'The Original edition alone is two fifths of September on Amazon and the three Mount Cleverest editions together more than half. The listing in second place is the 100 PICS US States flash cards, a 2020 listing that has outlived most of its siblings. The last row is the whole UK TikTok Shop, a third-party estimate, not a listing.',
         items: MOUNT_CLEVEREST_BREAKDOWN,
         note:
-          '“Sold / mo” is Amazon’s own badge, a band, so every row is a floor. Revenue is that band times the buy-box price. The seven rows at zero carry no badge, which means under roughly fifty a month, not none. Each band is priced at today’s buy box, so a month before a price change carries the new price.',
+          '“Sold / mo” is Amazon’s own badge, a band, so every Amazon row is a floor. Revenue is that band times the buy-box price. The seven rows at zero carry no badge, which means under roughly fifty a month, not none. Each band is priced at today’s buy box, so a month before a price change carries the new price.',
       },
       {
         type: 'callout',
@@ -8114,17 +8154,17 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Amazon US takes the money. A second audience, the one the company built for its phone apps, is the likeliest reason it comes at all.',
+          'Amazon US takes almost all of the money, a UK TikTok Shop a small, seasonal slice. An audience the company built for its phone apps is the likeliest reason either comes at all.',
       },
       {
         type: 'prose',
         text:
-          'On Amazon the arrangement is plain: eighteen listings, all FBA, one offer on each, one seller holding the buy box. There is no second account, no merchant-fulfilled line and no 1P relationship. Off Amazon there is an own store, a Walmart listing nobody could read and eBay resellers, none of which publishes sales. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+          'On Amazon the arrangement is plain: eighteen listings, all FBA, one offer on each, one seller holding the buy box. There is no second account and no 1P relationship. The UK TikTok Shop is the only other channel with a revenue figure, and it is an estimate: about 6% of the trailing year, nearly all of it in the weeks before Christmas, and half of it through creators paid a commission. An own store, a Walmart listing nobody could read and eBay resellers publish no sales. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
       },
       {
         type: 'prose',
         text:
-          'The notable absence is an ad budget. In a live search read the brand held no sponsored slot on any page where ads rendered, and its organic positions are first to sixth on the narrow terms “true or false game” and “mount cleverest game”. That points to demand arriving through gifting, search and a name people already carry in their head, which is what a long-running app with a following would produce. It is a reading of the footprint and not a proof, and the Advertising section says how much of it was seen.',
+          'The notable absence is an ad budget. In a live search read the brand held no sponsored slot on any Amazon page where ads rendered, and its organic positions are first to sixth on the narrow terms “true or false game” and “mount cleverest game”. That points to demand arriving through gifting, search and a name people already carry in their head, which is what a long-running app with a following would produce. On TikTok the money is creator commission, not advertising, until a burst of ads began in late September 2026. It is a reading of the footprint and not a proof, and the Advertising section says how much of it was seen.',
       },
       { type: 'selling' },
 
@@ -8132,7 +8172,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'About a quarter of each September dollar survives the box, the boat and Amazon, and on the older flash cards it is closer to one in six: a fulfilment fee that does not shrink with the price takes the rest.',
+          'About a quarter of each September dollar survives the box, the boat and the marketplaces, and on the older Amazon flash cards it is closer to one in six: a fulfilment fee that does not shrink with the price takes the rest. The UK TikTok Shop keeps about a third.',
       },
       {
         type: 'prose',
@@ -8142,7 +8182,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Two products get their own breakdown because they do not share a cost structure worth averaging. In September the Mount Cleverest decks were 57% of revenue and the 100 PICS flash cards 38%; neither reaches four fifths alone, so both are here, with the whole brand at September’s mix last. The SMART CARDS, the last 5%, sit in the blended tab.',
+          'Two products get their own breakdown, for Amazon, because they do not share a cost structure worth averaging. In September the Mount Cleverest decks were 55% of all revenue and the 100 PICS flash cards 37%; neither reaches four fifths alone, so both are here, with the whole brand last. The SMART CARDS, the UK TikTok Shop and the rest sit in the blended tab, and the TikTok Shop has its own table below.',
       },
       {
         /* 🚨 One breakdown per main product. Mount Cleverest and 100 PICS are
@@ -8156,7 +8196,7 @@ export const PROFILES = {
           {
             id: 'mount-cleverest',
             label: 'Mount Cleverest decks',
-            sharePct: 56.6,
+            sharePct: 55.2,
             blocks: [
               {
                 /* 🚨 NOT the standard Alibaba supplier table, deliberately: no
@@ -8258,7 +8298,7 @@ export const PROFILES = {
           {
             id: 'flash-cards',
             label: '100 PICS flash cards',
-            sharePct: 38.3,
+            sharePct: 37.4,
             blocks: [
               {
                 type: 'table',
@@ -8365,48 +8405,67 @@ export const PROFILES = {
                    cogs 25.93 + tariff 5.19 + freight 2.14 = 33.26 here).
                    Change one, change both. */
                 type: 'margin',
-                basis: { label: 'Average sale across the catalogue', value: 14.46 },
+                basis: { label: 'Average sale across both channels', value: 14.58 },
                 lines: [
                   {
                     label: 'Cost of goods',
                     key: 'cogs',
-                    pct: -33.26,
+                    pct: -32.87,
                     emphasis: true,
                     detail:
-                      '$5.01 a Mount Cleverest deck, $4.64 a 100 PICS deck and $4.55 a SMART CARDS deck, at September’s unit mix: production, tariff and freight. See each product’s tab for the parts, the carton and the rate behind it.',
+                      'Production, tariff and ocean freight on Amazon units ($5.01 a Mount Cleverest deck, $4.64 a 100 PICS deck), and $3.75 of production on each TikTok order. See each product’s tab for the parts, the carton and the rate behind it.',
                   },
                   {
-                    label: 'Amazon referral fee',
-                    pct: -15,
-                    detail: 'Amazon’s published rate, a flat 15%, measured on every listing.',
+                    label: 'Marketplace and creator fees',
+                    pct: -14.83,
+                    detail:
+                      'Amazon’s flat 15% referral fee, and on TikTok Shop UK a 5% referral fee, 50p an order and a 9% commission on the sales creators made. The Amazon rate is measured; the TikTok rates come from one published summary, and another reports 9% for the referral fee.',
                     links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
                   },
                   {
-                    label: 'FBA fulfilment',
-                    pct: -27.29,
+                    label: 'FBA fulfilment and TikTok shipping',
+                    pct: -27.02,
                     detail:
-                      'Size tier: Large Standard on the best seller and on most of the range; Small Standard on the SMART CARDS. $2.58 to $4.09 a unit, which at September’s mix is 27.3% of revenue, nearly twice what Amazon’s referral fee is worth.',
+                      'Size tier: Large Standard on the Amazon best seller and on most of the range; Small Standard on the SMART CARDS. $2.58 to $4.09 a unit, which at September’s mix is 26.7% of revenue, nearly twice what Amazon’s referral fee is worth. The rest is $3.50 a TikTok unit of outbound shipping, which nobody quoted.',
                     links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
                   },
                   {
                     label: 'Advertising',
                     pct: -0.04,
                     detail:
-                      'MODELLED, and the whole of it is in the Advertising section: the visible keyword spend, about $15 a month in a $7 to $29 band. Every format the method cannot see is excluded.',
+                      'MODELLED, and the whole of it is in the Advertising section: the visible Amazon keyword spend, about $15 a month in a $7 to $29 band. TikTok creator commissions are in the fees line, and the TikTok ads that began in September 2026 have no published spend.',
                     links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
                   },
                 ],
                 note:
-                  'September’s mix, and every month on the chart carries it. A month heavier on the Mount Cleverest decks, such as November, keeps more of each dollar than this does, so the profit series understates the peak: the month-by-month model in the research folder gives November 2025 about 30% against September’s 24%. Before storage, returns, removals, inbound placement, the peak fulfilment surcharge, software and owner pay: a ceiling on profit, not profit.',
+                  'September’s two-channel mix. Every month on the chart is built from its own channel mix, Amazon at its September rate and the TikTok shop from its own units, and the two stay within half a point of this figure. Before storage, returns, removals, inbound placement, UK duty and freight, the peak fulfilment surcharge, VAT, software and owner pay: a ceiling on profit, not profit.',
               },
             ],
           },
         ],
       },
       {
+        type: 'table',
+        id: 'tiktok-shop-economics',
+        caption: 'TikTok Shop UK, November 2025 — what the channel keeps',
+        noteColumns: [2],
+        columns: ['Line', 'Month', 'Basis'],
+        rows: [
+          ['Sales', '$35,741', 'Kalodata’s estimate for the “100 PICS” brand shop, 2,603 units'],
+          ['Production', '−$9,761', 'ASSUMED $3.75 a unit, the figure given for the Amazon decks'],
+          ['Referral fee, 5%', '−$1,787', 'Published UK rate; one source reports 9%'],
+          ['Order fee, 50p', '−$1,721', 'Published UK merchant-fulfilled fee, one order per unit assumed'],
+          ['Creator commission, 9%', '−$1,530', 'Kalodata’s rate on its $17,002 of affiliate sales'],
+          ['Outbound shipping', '−$9,111', 'ASSUMED $3.50 a unit; nobody quoted it'],
+          ['Kept', '$11,831', '33.1% of sales, before duty, inbound freight, VAT and returns'],
+        ],
+        note:
+          'A modelled month, built from that month’s own units and affiliate sales. No UK import duty or freight to the UK is priced, and Kalodata does not say whether its sales figure includes VAT, so every line is a ceiling. The shop sold nothing in January to August 2026 and $941 in September, so the channel is a Christmas quarter and little else.',
+      },
+      {
         type: 'prose',
         text:
-          'The three softest figures in the model, in order: the production cost, which is a number someone supplied and not a quote; the tariff, which depends on a country of origin nobody has established; and the freight lane, which is priced for China and is wrong for a UK or EU printer. They move in different directions. A European factory removes the tariff, adds a different freight line and could lift trailing profit by up to a fifth before the new freight is counted; the top of Freightos’ band for a Chinese lane would take most of it away.',
+          'The softest figures in the model, in order: the production cost, which is a number someone supplied and not a quote; the tariff, which depends on a country of origin nobody has established; the freight lane, which is priced for China and is wrong for a UK or EU printer; and the TikTok shipping and fee lines, which are one published summary and a placeholder. They move in different directions. A European factory removes the tariff, adds a different freight line and could lift trailing profit by up to a fifth before the new freight is counted; the top of Freightos’ band for a Chinese lane would take most of it away.',
       },
       {
         type: 'callout',
@@ -8446,6 +8505,11 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
+          'A second channel arrived late and small. The UK TikTok Shop first shows sales in October 2025 and made an estimated $35,741 that November, four times its next-best month and less than a tenth of Amazon’s. It sold nothing in the eight months after. The Original’s listing there carries a launch date of April 2024, so either it sat dormant for eighteen months or Kalodata did not see it. Either way, the shop did not cause the 2023 Amazon ramp: it did not exist in the data then.',
+      },
+      {
+        type: 'prose',
+        text:
           'What has not grown is the range. The newest storefront listing is dated 30 May 2024, the last new edition of the deck listed in July 2023, the Instagram account posted last in November 2025, and the app was last updated in September 2025. Whether that is a business choosing to harvest one product or one that has not had the time to build a second is not something the public record can say.',
       },
       {
@@ -8458,7 +8522,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'They are not buying much. The ads that could be seen sit on their own name and one niche phrase, and the search read found them on neither.',
+          'They are not buying much on Amazon, and on TikTok the spend that shows is creator commission. A burst of TikTok ads began two weeks before this was read.',
       },
       {
         type: 'prose',
@@ -8474,6 +8538,11 @@ export const PROFILES = {
         type: 'prose',
         text:
           'Everything the method cannot see points the other way, and none of it was counted: auto campaigns, product targeting, Sponsored Brands and video, and the October to December peak, which is when a seasonal deck is most likely to advertise. What can be said is narrower. On the visible keywords the whole bill models at $7 to $29 a month, around $15 at the middle, and at Amazon’s own suggested bids a click on a broad term such as “family game” costs $1.73 against a $16.99 deck, about $7 to $9 of ads for each sale at the 14% conversion the brand term shows. That arithmetic is consistent with them not buying those terms.',
+      },
+      {
+        type: 'prose',
+        text:
+          'TikTok is a different picture. In TikTok’s public ad library, which covers the UK and EU and not the US, the advertiser POPTACULAR LTD has 151 ads, every one first shown from 24 September 2026 and none in the three and a half years of library history before it: 24 started in September and 127 in the first week of October, most running a day, with 146 reaching under a thousand people and three reaching ten to a hundred thousand. That is a creative-testing burst, and the product it promotes was not read. The library publishes no spend, so there is no dollar figure here. The money that does show on TikTok is the shop’s creators: Kalodata puts roughly half of the UK shop’s year through 44 affiliates at a 9% commission, which is in the fees line of the margin.',
       },
       {
         type: 'table',
@@ -8505,6 +8574,25 @@ export const PROFILES = {
               'Modelled over the two keywords Jungle Scout saw them sponsored on, at 2,764 monthly searches for the brand name, 11.1% of its sponsored slots, a 1.8% to 4.5% click rate borrowed from another dossier and not re-fitted here, and Amazon’s $1.24 to $2.11 bids: 5.5 to 13.8 paid clicks, $7 to $29. If every one of the brand name’s 1,400 monthly clicks were paid it would be $1,800 to $3,000, which the search read rules out. A footprint is not a spend, and the two are shown apart because they are different kinds of number.',
           },
           {
+            label: 'TikTok ads — the UK and EU library',
+            href: 'https://library.tiktok.com/ads?region=all&adv_name=Poptacular',
+            value: '151 ads, from 24 Sep 2026',
+            counted:
+              '24 first shown in September and 127 in October · median run one day · 131 still showing 1–6 Oct · 146 reached under 1K people, 2 reached 1K–10K and 3 reached 10K–100K',
+            flag: true,
+            note:
+              'Matched on the legal advertiser name, so a creator or agency running ads under another name would not show, and US ads are not in this library at all. No spend is published, and the promoted product was not read. Nothing under this name in the library before the 24th, so the 2023 relaunch was not TikTok ads from the company’s own account.',
+          },
+          {
+            label: 'TikTok Shop creators — commission, not ads',
+            href: 'https://www.kalodata.com/open-center/home',
+            value: '≈ 46% of the UK shop’s year',
+            counted:
+              'Kalodata: $25,038 of the shop’s $54,122 over twelve months came through affiliate creators, 44 of them, at a 9% commission rate; 20 videos and 19 livestreams',
+            note:
+              'A third-party estimate. It is a cost paid only when a creator sells, so it behaves like advertising without being booked as it, and it is modelled in the fees line, about $2.2K over the year.',
+          },
+          {
             label: 'The brand name, in clicks',
             href: 'https://www.amazon.com/s?k=mount+cleverest',
             value: '≈ 1,400 clicks a month',
@@ -8520,7 +8608,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'There is an audience off Amazon, and it was built for phone apps. Whether any of it comes to the cards is the question the record cannot answer.',
+          'There is an audience off Amazon, and it was built for phone apps. One small slice of it reaches a UK TikTok Shop, and the rest is not measured.',
       },
       { type: 'links' },
       {
@@ -8539,6 +8627,8 @@ export const PROFILES = {
           { label: 'App downloads', value: '15M+', note: 'The 100 PICS Quiz app on Google Play · a tracker page, third-party, read via a search summary' },
           { label: 'Instagram', value: '25.6K', note: '@100picsquiz · verified · read 7 Oct 2026 · last post 7 Nov 2025' },
           { label: 'Mount Cleverest app', value: '4.9★ / 383', note: 'Apple App Store · released 15 Oct 2014 · updated 29 Sep 2025' },
+          { label: 'TikTok Shop UK', value: '$53K', note: 'Kalodata estimate, twelve months to Sep 2026 · $35.7K of it in Nov 2025 · opened Oct 2025' },
+          { label: 'TikTok', value: '5,065', note: '@100pics followers · 172 videos · read 7 Oct 2026' },
           { label: 'Site visits', value: 'Not measured', note: 'No defensible free source for a store this size; nothing is estimated here' },
         ],
       },
@@ -8560,6 +8650,14 @@ export const PROFILES = {
             flag: true,
             note:
               'The audience that predates the cards by years. App revenue is not published and nothing read shows whether the apps point to the Amazon listings. The downloads figure is a third-party summary and was not checked at the source.',
+          },
+          {
+            label: 'TikTok Shop UK — “100 PICS”',
+            href: 'https://www.tiktok.com/@100pics',
+            value: '≈ $53K a year, estimated',
+            flag: true,
+            note:
+              'A brand shop that first sells in October 2025: $9,003, then $35,741 in November, $7,482 in December, nothing from January to August 2026 and $941 in September. 20 videos, 19 livestreams and 44 creators sell for it, and about 46% of its sales run through creators. The profile bio says the games are on TikTok Shop. Kalodata is an estimate and the shop’s own dashboard would settle it. The US listings it also found belong to other sellers.',
           },
           {
             label: 'Instagram — @100picsquiz',
@@ -8638,18 +8736,18 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Nobody has priced this business. What follows is a model, a 2.6 base multiple moved by what the public record supports, applied to trailing-twelve profit. It prices the Poptacular catalogue on Amazon US as one operation.',
+          'Nobody has priced this business. What follows is a model, a 2.6 base multiple moved by what the public record supports, applied to trailing-twelve profit. It prices Amazon US and the UK TikTok Shop as one operation.',
       },
       { type: 'valuation' },
       {
         type: 'valuation-board',
         note:
-          'The own store, Walmart, eBay and every other channel are excluded because nobody read their sales, and the apps are not a card business and are not counted. The profit being multiplied carries September 2026’s cost rates into every month, on a production cost nobody has quoted and a tariff nobody has established, before storage, returns and the peak fulfilment surcharge. On that basis it understates the November peak against the research model and overstates nothing else, but it is an upper bound on a business that has to fund a year of inventory to catch a few weeks of sales.',
+          'The own store, Walmart, eBay and every other channel are excluded because nobody read their sales, and the apps are not a card business and are not counted. The TikTok Shop is in, from a third-party estimate, and is what earns the off-Amazon line. The profit being multiplied is built channel by channel and month by month, Amazon at September 2026’s rate, on a production cost nobody has quoted and a tariff nobody has established, before storage, returns and the peak fulfilment surcharge. On that basis it is an upper bound on a business that has to fund a year of inventory to catch a few weeks of sales.',
       },
       {
         type: 'prose',
         text:
-          'The positives are age and reputation: a catalogue first listed in 2019, ten thousand reviews across it, an average of 4.6 stars, and an enrolled brand store. The negatives are the shape of the year and the reach of the business. November alone is nearly half of the trailing twelve, every measured dollar is on Amazon US, and the company has not launched a new listing in two years.',
+          'The positives are age and reputation: a catalogue first listed in 2019, ten thousand reviews across it, an average of 4.6 stars, and an enrolled brand store. The negatives are the shape of the year and the reach of the business. November alone is nearly half of the trailing twelve, about 94% of the measured trailing twelve is on Amazon US, and the company has not launched a new listing in two years.',
       },
       {
         type: 'prose',
