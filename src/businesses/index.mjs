@@ -54,7 +54,15 @@ import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD } from './mount-cleverest.adspend.mjs';
+import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD } from './highmark-collective.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
+
+/* Highmark Collective's advertising, from amazon-adspend-spy (highmark-collective.adspend.mjs).
+   🚨 The margin's three advertising lines, the channels row and the Ad spend table are all
+   built from HM_AD, never typed. */
+const hmAd = (id) => HM_AD.products.find((p) => p.id === id);
+const HM_AD_ORDER = 28.6; // the Whole brand tab's average sale across the catalogue
+const hmBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 
 /* Mount Cleverest's advertising, from amazon-adspend-spy (mount-cleverest.adspend.mjs).
    🚨 The margin's advertising lines, the channels row and the Ad spend table are all
@@ -7382,7 +7390,7 @@ export const PROFILES = {
            check-profile.mjs asserts. */
         type: 'breakdown',
         intro:
-          'The baptism keepsake set, across its three listings, is about two thirds of the month. The listing at the bottom is the one to look at twice: it is advertised harder than anything else in the catalogue and it sold nothing Amazon would count.',
+          'The baptism keepsake set, across its three listings, is about two thirds of the month. The listing at the bottom is the one to look at twice: it sold nothing Amazon would count, and on 4 October it still held sponsored slots on its own category searches.',
         items: HIGHMARK_BREAKDOWN,
         note:
           '“Sold / mo” is Amazon’s own badge, a band — hence n+. Revenue is that band times the buy-box price in effect at the September month end, so every row is a floor. The three journal listings share one pooled review count but their badges are genuinely separate, so units are summed. The faith gift bundle shows zero because Amazon stopped printing a count for it around 28 September; under the badge floor it could still be selling up to about fifty a month.',
@@ -7554,11 +7562,13 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -2.3,
-                    amount: 0.86,
-                    detail:
-                      'MODELLED, not observed. The brand’s 2.3% applied flat to every product so that the tabs and the chart are one model; the per-product model puts this line nearer 2.4%, the highest of the four.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                    pct: -hmAd('baptism').ratePct.central,
+                    amount: hmAd('baptism').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(hmAd('baptism').monthlyUsd.central)} a month on the baptism searches, ${linePct(hmAd('baptism').ratePct.central)} of September’s set revenue, in a band of ${linePct(hmAd('baptism').ratePct.low)} to ${linePct(hmAd('baptism').ratePct.high)}. This is where nearly all of the brand’s ad money goes. A floor: it counts sponsored ads in search and cannot see ads on product pages.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/highmark-collective/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -7656,11 +7666,13 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -2.3,
-                    amount: 0.46,
-                    detail:
-                      'MODELLED. The brand’s 2.3% applied flat, so the tabs and the chart are one model; the per-product model puts this line nearer 1.2%, the lowest of the four, because the jar holds sponsored slots on only five keywords.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                    pct: -hmAd('jar').ratePct.central,
+                    amount: hmAd('jar').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(hmAd('jar').monthlyUsd.central)} a month on the jar searches, ${linePct(hmAd('jar').ratePct.central)} of September’s jar revenue. The jar is the thin one: at a 20% ad rate its margin would be under 1%, so it could not carry much advertising and the read finds it carrying little. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/highmark-collective/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -7678,8 +7690,9 @@ export const PROFILES = {
                    from these SAME four numbers (seed-highmark-collective.ts
                    COST_LINES). Change one, change both.
                    🚨 ONE DECIMAL, and it matters: these are September's own
-                   rates rounded to a tenth (32.27 / 22.99 / 15.00 / 2.30), and
-                   27.4% is what gives the headline's $14.1k. Rounded to whole
+                   rates rounded to a tenth (32.27 / 22.99 / 15.00), with advertising
+                   at amazon-adspend-spy's exact 2.447%, and 27.25% is what gives
+                   the headline's $14.0k. Rounded to whole
                    percents the same month comes out $14.4k and the title on the
                    Business row goes wrong. */
                 type: 'margin',
@@ -7708,10 +7721,12 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -2.3,
-                    detail:
-                      'MODELLED, and the whole of it is in the Advertising section: a keyword-level model over the thirty terms they hold a sponsored slot on, with a band of 0.5% to 4.2%. It replaces a 12% placeholder the research opened with, which nothing measured supports.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' }],
+                    pct: -HM_AD.ratePct.central,
+                    detail: `Modelled, not observed: about ${monthUsd(HM_AD.monthlyUsd.central)} a month across the three products that sold in September, ${linePct(HM_AD.ratePct.central)} of the month’s revenue, in a band of ${linePct(HM_AD.ratePct.low)} to ${linePct(HM_AD.ratePct.high)}. A floor: it counts sponsored ads in search and cannot see ads on product pages.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/highmark-collective/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/highmark-collective/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -7769,60 +7784,50 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The one piece of the catalogue that stopped growing is the one being advertised hardest. The faith gift bundle was cut 20% in June, kept its sponsored placements, and lost its badge at the end of September — the Advertising section is where that collides.',
+          'The one piece of the catalogue that stopped growing is the faith gift bundle. It was cut 20% in June, kept its sponsored placements on 4 October, and lost its badge at the end of September — the Advertising section says what is, and is not, in the ad figure.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'They buy acquisition, not defence — the opposite of the usual pattern — and the whole bill models out at a fraction of what a placeholder would have guessed.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-07, read at New York 10001. */
+        type: 'strategy',
+        label: HM_AD.strategy,
+        points: [
+          'None of the modelled ad spend, about $1,260 a month, is on the Highmark Collective name. Jungle Scout saw their ads on 132 of the 1,172 searches their listings show up on, and about 88% of the money, $1,105 a month, is on the baptism searches.',
+          'A New York read of fifteen of their biggest searches the same day found a sponsored Highmark card on twelve of them: #2 on “baptism gifts for girl”, #4 on “baptism gifts for boys” and #2 on “christening gifts for girls”, and a card between #11 and #22 on each of the journal and jar searches. The only ones with none were “journal for women”, “diary for women” and “sermon notes notebook”.',
+          'They are buying strangers’ searches, not their own: the opposite of the usual small-seller pattern of paying to defend a brand name.',
+          'Modelled from outside the account, so a floor: Amazon automatic and product-targeting campaigns, Sponsored Brands and video are invisible to it. The Google and Meta ad libraries show a handful of text ads and no Meta ad at all.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        rows: HM_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          'Jungle Scout, for the eight Highmark Collective listings: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
       },
       {
         type: 'prose',
         text:
-          '🚨 Nobody can measure a competitor’s ad spend from outside the account, and the figure below is modelled rather than counted. The two sit side by side here on purpose. The COUNTED side is a live search read: amazon.com in Chrome, logged out, delivering to New York 10001, on 4 October 2026, run twice, with every sponsored card on sixty results per query classified and matched to their ASINs. The MODELLED side multiplies Jungle Scout’s share of sponsored impressions on each keyword by that keyword’s thirty-day search volume, by a click-through to the first sponsored slot measured on five of the thirty keywords and pooled at 8.87% on the rest, by the median suggested bid. It comes out at 2.3% of September’s revenue, in a band of 0.5% to 4.2%.',
+          'Where they rank without paying is thin: the keepsake set sits in the first twenty on a handful of baptism searches and the jar is 12th on “bible verse jar”, but on the big journal searches they are mostly beyond the first page unless they pay. That is the reverse of a brand with an audience, and it is why the ads sit where they do. “Journal for women” alone draws about 220,000 searches a month and they are on it for under a cent in the dollar of the sponsored results, so the journals are bought in small slices rather than head on.',
       },
       {
         type: 'prose',
         text:
-          'What the footprint shows is a brand buying strangers. They hold a sponsored slot on five of the seven generic head terms read, including the #1 slot on “christian journal set of 3” and #4 on “baptism gifts for girl”, and exactly one slot on their own name — where all ten organic results are theirs already and the term has no measurable search volume at all. That is the inverse of the brand-defence pattern most small sellers run.',
-      },
-      {
-        type: 'prose',
-        text:
-          'Every part of the model has a hole in it and they all point the same way. A bid is the price to win a slot, not the price billed, and a cleared auction runs below it. Twenty-five of the thirty keywords borrow a pooled click-through rather than their own. Auto campaigns, product targeting, Sponsored Brands and Sponsored Display are invisible to a keyword model entirely, and no Sponsored Brands headline or video unit was seen for them on any query. Treat 2.3% as the middle of a wide band, not a reading.',
+          'Two things changed since the first read on 4 October. A hand count of seven generic searches found a sponsored slot on five; the same search read at New York 10001 across fifteen finds twelve, and the model now measures its click rate off two other brands whose clicks come mostly from ads rather than pooling one from five of their own keywords, which moves the modelled bill from 2.3% to 2.4% of revenue with a band of 2.4% to 6.4%. The faith gift bundle, which sold nothing in September after a June price cut, was still holding sponsored #1, #2 and #4 on its own category terms on 4 October; it is not one of the three products modelled here, so nothing it spends is in the figure.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=baptism+gifts+for+girl',
-            value: '≈ 2.3% of revenue',
-            counted:
-              '2 of 9 sponsored slots on “baptism gifts for girl”, one of them at #4 · 2 of 9 on “baptism gifts for boys” · 1 of 12 on “christian journal set of 3”, at #1 · 1 of 12 on “bible study journal” · 1 of 6 on “bible verse jar” · 0 of 12 on “scripture cards” · 0 of 8 on “christian gifts for women” — New York delivery, 4 Oct 2026, read twice',
+            value: `≈ ${monthUsd(HM_AD.monthlyUsd.central)} a month, ${linePct(HM_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 132 of 1,172 keywords they rank on — Jungle Scout share of voice; a sponsored card on 12 of 15 searches read from New York',
             flag: true,
             note:
-              'Modelled over the thirty keywords they hold a sponsored slot on, at a band of 0.5% to 4.2% of revenue. It replaces a 12% placeholder the research opened with, which is about five times the central figure and which nothing measured supports. A footprint is not a spend, and this is the only line on the page where the two are shown separately because they are two different kinds of number.',
-          },
-          {
-            label: 'The faith gift bundle — buying traffic, converting nothing',
-            href: 'https://www.amazon.com/dp/B0GHZM48XR',
-            value: 'Sponsored #1, #2 and #4',
-            counted:
-              '#1 of 11 sponsored slots on “spiritual gifts for women”, #2 of 11 on “faith gifts for women”, #4 of 12 on “christian gift sets for women” — read 4 Oct 2026 at 18:17 UTC. A sponsored rank on 12 of its top 20 keywords, and the largest single sponsored advertiser on two of the three terms',
-            flag: true,
-            note:
-              '🚨 This listing sold nothing Amazon would count in September. Its badge went to zero around 28 September, after a cut from $34.99 to $27.99 in June, and the ads did not go with it — it is still holding the top of page one on its own category terms. On the modelled arithmetic it needs about 10.4% conversion at its $1.06 median bid merely to break even. Per dollar of revenue it is the most expensive line in the catalogue, and an earlier read missed it entirely by testing the product on one term it does not appear on.',
-          },
-          {
-            label: 'Their own brand term',
-            href: 'https://www.amazon.com/s?k=highmark+collective',
-            value: '1 of 1 slot',
-            counted: '“highmark collective”: one sponsored slot, at position 9, and all ten organic results already theirs — 4 Oct 2026',
-            note:
-              'Jungle Scout returns no volume for the term and its keyword endpoint has no record of it at all, so the term sits below one tool’s reporting floor — which is not the same as a measured zero. Either way, brand defence cannot be a material line here.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid. The click rate, 4.0% (3.9–10.9%), is measured off two other brands whose clicks come mostly from ads, and a keyword’s paid clicks never exceed the brand’s own observed clicks on it. It is a floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off. Nobody publishes the bill.',
           },
           {
             label: 'Google Search',
@@ -7841,6 +7846,21 @@ export const PROFILES = {
               'Both pixels are installed on the Shopify store. A Meta keyword search matches ad text and advertiser name, so an ad running from a differently-named Page would not surface — and the Meta pixel normally requires a connected Page that could not be found or named. A strong negative, not an airtight one. TikTok ads in the US are unobservable by design.',
           },
         ],
+      },
+      {
+        /* The Margin breakdown's advertising lines, row for row, built from HM_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...HM_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${hmBand(p.monthlyUsd)}`]),
+          ['Total — the Whole brand line', monthUsd(HM_AD.monthlyUsd.central), linePct(HM_AD.ratePct.central), lineUsd((HM_AD_ORDER * HM_AD.ratePct.central) / 100), `Modelled: ${hmBand(HM_AD.monthlyUsd)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising, line for line: each product’s tab uses its own row, and the Whole brand tab the last. Per sale is the share of that product’s price, or of the $28.60 average sale. The faith gift bundle sold nothing in September and is not in it. Google’s text ads publish no spend, so none is here.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
