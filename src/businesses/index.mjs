@@ -51,6 +51,7 @@ import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs
 import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
+import { VIRORA_TOP_KEYWORDS, VIRORA_AD_KEYWORDS } from './virora-mahjong.keywords.mjs';
 import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
@@ -3063,7 +3064,7 @@ export const PROFILES = {
        page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/virora-mahjong/1a8e0c0a2b199d14d3f3ccc8bf10101bf860b05c8da9ad99be95c3cc866c42e2.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/virora-mahjong/48f4c855256ada80aced793779fc8b6d2f71e51136c4957b7e2201ef15141527.png',
       /* The best seller, and more than half of the snapshot month by itself. */
       image: {
         src: viroraPhoto('B0H793VVWP'),
@@ -3423,6 +3424,44 @@ export const PROFILES = {
                   'Six acrylic American-mahjong listings from three companies in China, all rated 4.5 or better, none Verified, each selling single sets — the price a buyer of one set pays, which a production order would likely beat. Four of the six are US local stock, which carries domestic shipping in the price. The cost to make takes each supplier’s lowest listed price — $18, $49 and $49 — and averages them: the low end, because it is what an order bigger than one set moves toward. Sold counts are Alibaba’s own per-listing counters added up per supplier. Searched “american mahjong set” with the 4.5+ supplier-rating filter, read 2 October 2026.',
               },
               {
+                /* The freight half of the landed cost, priced from the best
+                   seller's own carton (Keepa, read 2026-10-02) at the same dated
+                   LCL rate White Mountain uses — calibration/freight-rates.json in
+                   waithowmuch-research. "What it costs to start" reads these same
+                   numbers from its estimate rather than restating them. */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one set from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '43.6 × 25.0 × 7.4 cm, 3.25 kg', 'The best-selling set’s own package size (B0H793VVWP)'],
+                  ['Volume', '0.00807 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per set', '$4.01', '0.00807 cbm × $497'],
+                ],
+                note:
+                  'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included — and excludes the duty, which is its own line. A set is heavy for its size, but sea freight on a part-container is charged by volume until a cubic metre weighs more than a tonne, so the box, not the 3.25 kg, sets the price.',
+              },
+              {
+                /* Derived from the two tables above and the tariff line below —
+                   no source logo, because nothing here was read on its own. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per set',
+                noteColumns: [2],
+                columns: ['Line', 'Per set', 'From'],
+                rows: [
+                  ['Production', '$38.67', 'The three Alibaba sellers’ lowest prices, averaged — COGS table above'],
+                  ['Tariff', '$7.73', '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', '$4.01', 'This set’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', '$50.41', 'What one set costs in Amazon’s warehouse, before it sells'],
+                ],
+                note:
+                  'The first three lines of the breakdown below, added up: $50.41 is 22.0% of the $229 price. It covers making the set and getting it to the warehouse — not the Amazon fees on the sale, which are their own lines.',
+              },
+              {
                 type: 'margin',
                 basis: { label: 'Selling price', value: 229 },
                 lines: [
@@ -3440,14 +3479,22 @@ export const PROFILES = {
                     pct: -3.38,
                     amount: 7.73,
                     detail: '20% of the cost to make: Section 301 List 4A 7.5% plus a 12.5% China tier, from a secondary summary, assuming China origin.',
-                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
                   },
                   {
-                    label: 'Freight and inbound',
-                    pct: -0.66,
-                    amount: 1.5,
-                    detail: 'ASSUMED: $1.50 a set. Ocean freight alone is about $0.30 on the FBX01 index; the rest is a placeholder for drayage, prep and inbound placement.',
-                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                    /* $4.01 ÷ $229 = 1.751%. Was an ASSUMED $1.50 (0.66%) until
+                       2026-10-05, when the set's carton was priced. */
+                    label: 'Shipping',
+                    pct: -1.75,
+                    amount: 4.01,
+                    detail: '$4.01 a set, priced from the best seller’s own carton at a read sea-freight rate, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
                   },
                   {
                     label: 'Amazon referral fee',
@@ -3467,7 +3514,7 @@ export const PROFILES = {
                     label: 'Advertising',
                     pct: -5,
                     amount: 11.45,
-                    detail: 'ASSUMED: a 5% placeholder. No sponsored placement of theirs was seen on four searches, which argues for less.',
+                    detail: 'ASSUMED: a 5% placeholder. Their ads show on 26 of the 739 keywords their listings appear on, modelled at under 1% of revenue, which argues for less.',
                     links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
                   },
                 ],
@@ -3496,6 +3543,39 @@ export const PROFILES = {
                   'The cost to make averages the lowest listed price of the two suppliers quoting production orders, $5.20 and $3.60 — the low end, because it is what a production order moves toward. Yiwu Ruijie sells single mats at a retail price, not a factory one, and is left out; with it the average would be $11.27. Guangdong Yousheng’s mat is described as neoprene; Virora’s is sold as rubber. Read 17 September 2026.',
               },
               {
+                /* Same rate and method as the set's table; the carton is the
+                   best-selling mat's (Keepa, read 2026-10-05). */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one mat from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '87.6 × 8.9 × 8.9 cm, 2.56 kg', 'The best-selling mat’s own package size, rolled (B0H798Q5HK)'],
+                  ['Volume', '0.00694 cbm', 'The carton, in cubic metres'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per mat', '$3.45', '0.00694 cbm × $497'],
+                ],
+                note:
+                  'The same Freightos reading as the set: the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026, door to door and excluding duty. A rolled mat ships in a long, thin tube, so it costs nearly as much to move as a set does — 78% of what it costs to make.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per mat',
+                noteColumns: [2],
+                columns: ['Line', 'Per mat', 'From'],
+                rows: [
+                  ['Production', '$4.40', 'The two production suppliers’ lowest prices, averaged — COGS table above'],
+                  ['Tariff', '$0.88', '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', '$3.45', 'This mat’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', '$8.73', 'What one mat costs in Amazon’s warehouse, before it sells'],
+                ],
+                note:
+                  'The first three lines of the breakdown below, added up: $8.73 is 19.5% of the $44.70 average mat sale. It covers making the mat and getting it to the warehouse — not the Amazon fees on the sale, which are their own lines.',
+              },
+              {
                 type: 'margin',
                 basis: { label: 'Selling price', value: 44.7 },
                 lines: [
@@ -3512,14 +3592,22 @@ export const PROFILES = {
                     pct: -1.97,
                     amount: 0.88,
                     detail: '20% of the cost to make, on the same basis as the set.',
-                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
                   },
                   {
-                    label: 'Freight and inbound',
-                    pct: -3.36,
-                    amount: 1.5,
-                    detail: 'ASSUMED: $1.50 a mat, the same placeholder as the set. Nobody quoted it.',
-                    links: [{ label: 'See COGS breakdown above', href: '#cogs-breakdown' }],
+                    /* $3.45 ÷ $44.70 = 7.718%. Was an ASSUMED $1.50 (3.36%) until
+                       2026-10-05, when the mat's carton was priced. */
+                    label: 'Shipping',
+                    pct: -7.72,
+                    amount: 3.45,
+                    detail: '$3.45 a mat, priced from the best-selling mat’s own rolled carton at the same sea-freight rate as the set.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
                   },
                   {
                     label: 'Amazon referral fee',
@@ -3557,8 +3645,9 @@ export const PROFILES = {
                 /* 🚨 The backend seed builds the profit and ad-spend series from
                    the SAME six numbers (seed-virora-mahjong.ts COST_LINES).
                    Change one, change both. Whole percents on purpose: they are
-                   September's pnl.json rates rounded (15.04, 3.01, 1.36, 9.51,
-                   15, 5), and 49% gives the headline's $87k. */
+                   September's rates rounded (15.04, 3.01, 3.31, 9.51, 15, 5),
+                   and 51% off leaves the 49% that gives the headline's $84k.
+                   Shipping was an assumed $1.50 a unit (1%) until 2026-10-05. */
                 type: 'margin',
                 basis: { label: 'Average selling price', value: 110.1 },
                 lines: [
@@ -3570,7 +3659,11 @@ export const PROFILES = {
                     detail: '$38.67 a set and $4.40 a mat, on September’s 550 sets and 1,000 mats: 15.0% of revenue. See each product’s tab for its suppliers.',
                   },
                   { label: 'Tariff', pct: -3, detail: '20% of the cost to make. 3.0% of revenue.' },
-                  { label: 'Freight and inbound', pct: -1, detail: 'ASSUMED: $1.50 a unit. 1.4% of revenue.' },
+                  {
+                    label: 'Shipping',
+                    pct: -3,
+                    detail: '$4.01 a set and $3.45 a mat, each priced from its own carton at a read sea-freight rate: 3.3% of revenue. See each product’s tab for the box.',
+                  },
                   {
                     label: 'Amazon referral fee',
                     pct: -15,
@@ -3605,7 +3698,29 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read, with advertising and freight as placeholders beside it — the first three numbers to replace.',
+          'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read, with advertising a placeholder beside it — the first two numbers to replace. Shipping is no longer one: each product’s carton is priced at a read rate.',
+      },
+
+      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The margin above is what this business keeps. This is the other half of the question: what a copy of each ' +
+          'of its two products would cost to put on the same shelf today.',
+      },
+      /* 🚨 No authored figures in this section, as on White Mountain. Each tab
+         reads that product's published estimate off the API
+         (productStartingCosts), priced by waithowmuch-research
+         starting-cost.mjs --product <id> from starting-cost.<id>.inputs.json.
+         The ids match the margin tabs, so each tab's links open its own
+         product's COGS, shipping and landed-cost tables. The set is published
+         --primary: its figure is the business's "To start". */
+      {
+        type: 'starting-cost',
+        products: [
+          { id: 'set', label: '160-tile set' },
+          { id: 'mat', label: 'Mahjong mat' },
+        ],
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -3644,12 +3759,21 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'One read on one day, and the finding is an absence — including on their own brand name, where competitors bought every sponsored slot.',
+          'Their listings show up on 739 Amazon searches and their ads on 26 — their own name and narrow phrases, none of the searches that carry the volume.',
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ad', 'Cost per click'],
+        rows: VIRORA_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          'Jungle Scout, read 5 October 2026, for the eight listings that sold in September: its exact-match monthly searches, the best position any of the eight held, and its suggested exact-match bid. The 50 biggest of the 660 searches where a listing of theirs ranks in the top 60 or carries an ad. Positions move by the hour; this is one reading.',
       },
       {
         type: 'prose',
         text:
-          'On “virora mahjong” all twelve sponsored results were other American mahjong sets and a mat, and nothing of theirs defended the term — while Virora’s own listings held organic #1 and 17 of the 60 results. On three generic searches they ranked organically between #9 and #41 and bought nothing. A logged-out read cannot see Sponsored Brands or Display elsewhere on the page, dayparting, or TikTok and influencer spend, and it says nothing about earlier months.',
+          'On the big searches they rank without paying: #3 on “mahjong tiles”, #14 on “mahjong set” and #22 on “mahjong mat”, with no ad of theirs on any of the three, though a click on them would cost $0.75–$1.27. What they do buy is their own name — the #1 ad on “virora mahjong”, #2 on “virora mahjong tiles” — and colour and style phrases searched a few hundred to a few thousand times a month. The name is new: on 15 September all twelve sponsored results on “virora mahjong” were competitors’. Jungle Scout sees Sponsored Products in search results only — not ads on other listings’ pages, Sponsored Brands, Display, or anything off Amazon.',
       },
       {
         type: 'channels',
@@ -3657,10 +3781,10 @@ export const PROFILES = {
           {
             label: 'Amazon Sponsored Products',
             value: '≈ 5% of revenue — assumed',
-            counted: '0 of 48 sponsored slots on four searches — read 15 Sep 2026',
+            counted: 'Ads on 26 of 739 keywords, about 2% of their searches — Jungle Scout, read 5 Oct 2026',
             flag: true,
             note:
-              'The figure is a placeholder, and the same 5% the margin takes off. The count is the measured part, and it argues for less than 5%, not more. Nobody publishes the bill.',
+              'The 5% is a placeholder, the same the margin takes off. Modelled from the 26 keywords, the ads cost about $250–$1,240 a month, 0.1–0.7% of September’s revenue. That leaves out ads on product pages and automatic targeting, so it is a floor, but it is a long way under 5%. Nobody publishes the bill.',
           },
           {
             label: 'Meta, TikTok and Google',
@@ -3669,6 +3793,17 @@ export const PROFILES = {
           },
         ],
       },
+      {
+        type: 'table',
+        caption: 'Where their ads appear',
+        columns: ['Keyword', 'Searches a month', 'Their ad position', 'Cost per click', 'Ad cost a month'],
+        rows: VIRORA_AD_KEYWORDS,
+        visibleRows: 10,
+        note:
+          'Every keyword where Jungle Scout saw an ad of theirs, 5 October 2026. Ad cost is searches × a 1% click rate × cost per click, $614 a month in all — $247 at a 0.4% click rate, $1,237 at 2%. Jungle Scout prices none of these 26, so each takes $1.00, the median of the 102 mahjong keywords it does price. Searches of exactly 450 look like Jungle Scout’s floor for small terms rather than counts.',
+      },
+      /* The hand read that came first. Kept, dated: it is what shows the
+         brand-name ads above are new since. */
       {
         type: 'table',
         caption: 'Four Amazon searches, 15 September 2026',

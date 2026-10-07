@@ -97,6 +97,9 @@ type Dec = string | number;
 /** The published "to start" estimate — backend StartingCostEstimate, with the
  *  keyword reading that sized it. */
 export type StartingCostEstimate = {
+  /** Which product this prices — a product-margins tab id ("set", "mat") — or
+   *  absent for the business as a whole. */
+  product?: string | null;
   low: Dec;
   high: Dec;
   midpoint: Dec;
@@ -132,6 +135,9 @@ export type StartingCostEstimate = {
       weightG?: number;
       placeholder?: boolean;
     };
+    /** The duty half of landedUnitCost, when the margin breakdown carries a
+     *  tariff line. Already inside landedUnitCost. */
+    duty?: { perUnit: number; basis?: string };
     /** When each input was observed. They do not all equal `asOf` — a source
      *  publishes when it publishes — but each is within 90 days of it. */
     readings?: {
@@ -151,8 +157,12 @@ export type StartingCostEstimate = {
       clickShare?: Range;
       launchDays?: Range;
       launchUnits?: Range;
-      /** Units ordered per SKU — the MOQ, or more when demand needs it. */
+      /** Units the launch is expected to sell per SKU. Before model
+       *  2026-10-05 it was floored at the MOQ. */
       unitsPerSku?: Range;
+      /** The first order per SKU (Vine units included). Model 2026-10-05 on. */
+      firstOrderUnits?: number;
+      vineUnits?: number;
     };
     /** The fixed costs before a first sale, each with what prices it. */
     setupItems?: Array<{ label: string; cost: Range; basis: string }>;
@@ -221,6 +231,9 @@ export type BusinessDetail = BusinessCard & {
   /** The published estimate behind the range, and its keyword reading.
    *  Optional until every API the frontend can meet serves it. */
   startingCostEstimate?: StartingCostEstimate | null;
+  /** One live estimate per product, for a brand whose margin breakdown is split
+   *  by product. Optional until every API the frontend can meet serves it. */
+  productStartingCosts?: StartingCostEstimate[];
   /** The month this profile's story is told as of — the date every stamp on
    *  the page carries (lib/reading.ts). Null for a business with no researched
    *  headline. Optional only until every API the frontend can meet serves it. */

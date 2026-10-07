@@ -312,6 +312,9 @@ const SOURCES = {
 export function BlockTable({ block }: { block: Table }) {
   const source = block.attribution ? SOURCES[block.attribution] : null;
   const notes = new Set(block.noteColumns ?? []);
+  const [expanded, setExpanded] = useState(false);
+  const limit = block.visibleRows;
+  const folds = limit !== undefined && block.rows.length > limit;
   return (
     <section data-block-table="" id={block.id}>
       {block.caption && <h3>{block.caption}</h3>}
@@ -336,7 +339,7 @@ export function BlockTable({ block }: { block: Table }) {
           </thead>
           <tbody>
             {block.rows.map((row, i) => (
-              <tr key={i}>
+              <tr key={i} hidden={folds && !expanded && i >= limit ? true : undefined}>
                 {row.map((cell, j) =>
                   j === 0 ? (
                     <th key={j} scope="row">
@@ -353,6 +356,11 @@ export function BlockTable({ block }: { block: Table }) {
           </tbody>
         </table>
       </div>
+      {folds && (
+        <button type="button" data-btn="" data-variant="ghost" data-table-more="" aria-expanded={expanded} onClick={() => setExpanded((v) => !v)}>
+          {expanded ? `Show the first ${limit}` : `Show all ${block.rows.length}`}
+        </button>
+      )}
       {block.note && <p data-breakdown-note="">{block.note}</p>}
     </section>
   );
