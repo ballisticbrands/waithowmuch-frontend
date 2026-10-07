@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { BusinessDetail, StartingCostEstimate } from "@/lib/api";
 import { dayLabel, exactMoney, money, price } from "@/lib/format";
+import { InfoTip } from "./InfoTip";
 import { StartingCostWaterfall } from "./StartingCostWaterfall";
 
 /**
@@ -145,6 +146,7 @@ function EstimateView({
   const marginHref = `${margin}#cogs-breakdown`;
   const shippingHref = `${margin}#shipping-breakdown`;
   const landedHref = `${margin}#landed-cost`;
+  const launchProducts = e.breakdown?.products?.length ? e.breakdown.products : null;
 
   // Freight and duty are inside landedUnitCost, so the make part is what
   // remains of it.
@@ -161,6 +163,10 @@ function EstimateView({
         {inputs.asOf ? <>, and it describes {dayLabel(inputs.asOf)}</> : null}. Here is each part of it.
       </p>
 
+      {launchProducts ? (
+        <LaunchParts business={business} estimate={e} products={launchProducts} />
+      ) : (
+        <>
       {/* ── 1. The first order ─────────────────────────────────────── */}
       <h3>
         1. The first order{" "}
@@ -359,6 +365,9 @@ function EstimateView({
         sales it buys restock nothing.
       </p>
 
+        </>
+      )}
+
       {/* ── 3. Fixed costs ─────────────────────────────────────────── */}
       <h3>
         3. Fixed costs {parts ? <span data-starting-cost-amount="">{span(parts.setup, currency)}</span> : null}
@@ -434,8 +443,8 @@ function EstimateView({
       <p>
         The page shows the midpoint, <strong data-figure="">{money(e.midpoint, currency)}</strong>. The spread is wide
         because the ads are: {parts ? `${span(parts.ads, currency)} of a ` : ""}
-        {span({ low: e.low, high: e.high }, currency)} range turns on how much of the keyword a launch has to buy, and
-        that is the least knowable part of it.
+        {span({ low: e.low, high: e.high }, currency)} range turns on how much of {launchProducts ? "each search" : "the keyword"} a
+        launch has to buy, and that is the least knowable part of it.
       </p>
       {inputs.note && <p data-starting-cost-source="">{inputs.note}</p>}
       <StartingCostWaterfall estimate={e} currency={currency} />
@@ -445,5 +454,150 @@ function EstimateView({
         reading and none is refreshed afterwards — the figure records what a launch cost then, not now.
       </p>
     </section>
+  );
+}
+
+
+type LaunchProducts = NonNullable<StartingCostEstimate["breakdown"]["products"]>;
+
+/**
+ * Parts 1 and 2 for a launch priced product by product (model 2026-10-07 on):
+ * the first order split by product, and the launch ads split by product AND by
+ * the searches each would buy its way onto page one of.
+ *
+ * 🚨 "Cost per month" is searches × the share of them a launch has to take ×
+ * the cost of a click — an estimate of what holding page one for that search
+ * costs, not a quote. Its ⓘ says so.
+ */
+function LaunchParts({
+  business,
+  estimate: e,
+  products,
+}: {
+  business: BusinessDetail;
+  estimate: StartingCostEstimate;
+  products: LaunchProducts;
+}) {
+  const currency = business.currency ?? "USD";
+  const parts = e.breakdown.parts;
+  const w = e.breakdown.working;
+  const marginFor = (id: string) => `/business/${business.slug}/margin?product=${id}#landed-cost`;
+  return (
+    <>
+      {/* ── 1. The first order, by product ─────────────────────────── */}
+      <h3>
+        1. The first order <span data-starting-cost-amount="">{span(parts.inventory, currency)}</span>
+      </h3>
+      <p>
+        The first order is <strong>{int(w.firstOrderUnits)} units</strong> of each product it launches
+        {w.vineUnits ? (
+          <>
+            : {int(w.vineUnits)} go to Amazon Vine for the first reviews, and {int((w.firstOrderUnits ?? 0) - w.vineUnits)} are
+            there to watch sell before committing to a production run
+          </>
+        ) : null}
+        . Everything the ads sell past it is reordered out of sales. Each product is the one the Margin breakdown
+        prices, at its landed cost there.
+      </p>
+      <div data-table-wrap="">
+        <table data-earnings-table="">
+          <caption>The first order, by product</caption>
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Units</th>
+              <th scope="col">Landed cost per unit</th>
+              <th scope="col">First order</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id}>
+                <th scope="row">
+                  {p.label}
+                  <span data-margin-links="">
+                    <Link to={marginFor(p.id)}>See landed cost</Link>
+                  </span>
+                </th>
+                <td data-figure="">{int(p.units)}</td>
+                <td data-figure="">{price(p.landedUnitCost.low, currency)}</td>
+                <td data-figure="">{span(p.inventory, currency)}</td>
+              </tr>
+            ))}
+            <tr data-total="">
+              <th scope="row">First order</th>
+              <td data-figure="">{int(products.reduce((a, p) => a + p.units, 0))}</td>
+              <td />
+              <td data-figure="">{span(parts.inventory, currency)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── 2. Launch ads, by product and by search ────────────────── */}
+      <h3>
+        2. Launch ads <span data-starting-cost-amount="">{span(parts.ads, currency)}</span>
+      </h3>
+      <p>
+        Stock nobody can find does not sell. Each product has to buy its way onto the first page of the searches
+        below, which is what the launch ads pay for. The searches are the ones a listing of the original brand already
+        ranks on, so they are searches a copy can plausibly hold.
+      </p>
+      {products.map((p) => (
+        <div key={p.id} data-launch-product="">
+          <div data-table-wrap="">
+            <table data-earnings-table="">
+              <caption>
+                {p.label} — {span(p.ads, currency)} of launch ads
+              </caption>
+              <thead>
+                <tr>
+                  <th scope="col">Search term</th>
+                  <th scope="col">Searches a month</th>
+                  <th scope="col">Cost per click</th>
+                  <th scope="col">
+                    Cost per month{" "}
+                    <InfoTip
+                      label="Cost per month"
+                      paragraphs={[
+                        "What it costs a month to be on page one of Amazon for this search term.",
+                        "It is an estimate, not a quote: the term’s search volume (SV) a month, times the click-through (CTR) a new listing has to win to sell on a term this contested, times the cost of a click.",
+                      ]}
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {p.keywords.map((k) => (
+                  <tr key={k.keyword}>
+                    <th scope="row">{k.keyword}</th>
+                    <td data-figure="">{int(k.monthlySearches)}</td>
+                    <td data-figure="">{price(k.cpc.low, currency)}</td>
+                    <td data-figure="">{span(k.monthlyCost, currency)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+      {e.inputs.launch && (
+        <p data-starting-cost-source="">
+          Searches a month and cost per click: {e.inputs.launch.source}. The launch runs {int(w.launchDays?.low)}–
+          {int(w.launchDays?.high)} days, so each search’s launch spend is its cost per month for that long; a product’s
+          ads are never put under {span({ low: 1000, high: 2000 }, currency)}.
+        </p>
+      )}
+      <p data-starting-cost-source="">
+        None of this spend is expected to pay itself back. The estimate treats every launch dollar as spent, and the
+        sales it buys restock nothing.
+      </p>
+      <p data-starting-cost-validate="">
+        <strong>You can test a business like this before you commit to it.</strong> Choose which search terms you want
+        to try to launch on, put the first order of each product behind them, and see whether the clicks turn into
+        orders. Swap in your own terms — a cheaper search costs less a month to hold, and the cost per month above is
+        what to compare them with. Scale up only on the ones that sell.
+      </p>
+    </>
   );
 }

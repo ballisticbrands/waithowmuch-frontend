@@ -115,6 +115,8 @@ export type StartingCostEstimate = {
     landedUnitCost: Range;
     tooling?: Range;
     niche: { keyword: string; monthlySearches: number; source: string; readAt: string; cpc: Range };
+    /** Where the launch keywords' volumes and bids were read (model 2026-10-07 on). */
+    launch?: { source: string; readAt: string };
     note?: string;
     /** Per input, where the figure came from — keyed by input name. */
     workings?: Record<string, string>;
@@ -166,6 +168,32 @@ export type StartingCostEstimate = {
     };
     /** The fixed costs before a first sale, each with what prices it. */
     setupItems?: Array<{ label: string; cost: Range; basis: string }>;
+    /** Model 2026-10-07 on, when the launch is priced product by product: each
+     *  product's first order and its ads, keyword by keyword. */
+    products?: Array<{
+      id: string;
+      label: string;
+      sellingPrice: number;
+      landedUnitCost: Range;
+      units: number;
+      inventory: Range;
+      ads: Range;
+      launchUnits: Range;
+      keywords: Array<{
+        keyword: string;
+        monthlySearches: number;
+        organicRank: number | null;
+        cpc: Range;
+        competition: "LOW" | "MEDIUM" | "HIGH";
+        clickShare: Range;
+        launchDays: Range;
+        clicks: Range;
+        /** Searches × click share × cost per click: a month on page one. */
+        monthlyCost: Range;
+        launchCost: Range;
+        launchUnits: Range;
+      }>;
+    }>;
   };
   modelVersion: string;
   note: string | null;
