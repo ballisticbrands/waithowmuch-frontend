@@ -414,6 +414,9 @@ export type Profile = {
     basis: string;
     /** Shown under the multiple. Where the multiple itself came from. */
     note?: string;
+    /** Required when `inputs.derived.offAmazonSharePct` is set: which channel it
+     *  sizes and from what. Not rendered. */
+    offAmazonBasis?: string;
   };
   /**
    * The "Additional metrics" grid. Qualitative facts only — anything the

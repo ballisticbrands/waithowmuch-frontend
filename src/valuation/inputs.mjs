@@ -54,7 +54,17 @@ export const AGE_BASIS = "catalogue";
 export const CONCENTRATION_SCOPE = "amazon-only";
 
 /**
- * ── RULE 3: off-Amazon revenue is not scored for now ─────────────────────
+ * ── RULE 3: off-Amazon revenue is scored only when it is SIZED ───────────
+ *
+ * 🚨 AMENDED 2026-10-07 (decision of the person running the research: the site
+ * covers every channel a brand sells through, not only Amazon). The share may
+ * now be set when a sourced third-party estimate sizes a channel, as Kalodata's
+ * TikTok Shop figures do for Mount Cleverest, and the profile must say so in
+ * `valuation.offAmazonBasis`; the revenue and profit series then include that
+ * channel too, and `topMarketplaceSharePct` is the largest channel's share of
+ * ALL measured revenue (check-profile.mjs asserts the ring agrees). A channel
+ * nobody sized (an own store, Walmart) is still left out and named as such.
+ * The original reasoning follows and still holds for an UNSIZED channel.
  *
  * `offAmazonSharePct` is left UNSET rather than estimated. Sizing a Shopify
  * store or a TikTok Shop from outside means multiplying a traffic estimate by
