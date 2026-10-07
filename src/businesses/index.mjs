@@ -53,7 +53,17 @@ import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
+import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD } from './mount-cleverest.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
+
+/* Mount Cleverest's advertising, from amazon-adspend-spy (mount-cleverest.adspend.mjs).
+   🚨 The margin's advertising lines, the channels row and the Ad spend table are all
+   built from MC_AD, never typed. Only Amazon Sponsored Products is modelled in it;
+   TikTok creator commission is in the fees line, and TikTok's own ad spend is not
+   published. */
+const mcAd = (id) => MC_AD.products.find((p) => p.id === id);
+const MC_AD_ORDER = 14.58; // the Whole brand tab's average sale across both channels
+const mcBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 
 /* Virora's advertising, from amazon-adspend-spy (virora-mahjong.adspend.mjs).
    🚨 The margin's three advertising lines, the Advertising section's channels
@@ -8001,9 +8011,9 @@ export const PROFILES = {
 
     /* 🚨 Two channels, two margins. Months with no TikTok sales (everything before
        October 2025, and January to August 2026) earn Amazon's own September rate,
-       24.41%; months with both sit near the Whole-brand tab's 25.24%.
+       24.34%; months with both sit near the Whole-brand tab's 25.15%.
        check-profile.mjs accepts either, within half a point. */
-    profitSeriesAltPct: [24.41],
+    profitSeriesAltPct: [24.34],
 
     valuation: {
       inputs: {
@@ -8496,11 +8506,14 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -0.07,
-                    amount: 0.01,
+                    pct: -mcAd('mount-cleverest').ratePct.central,
+                    amount: mcAd('mount-cleverest').perUnit,
                     detail:
-                      'MODELLED, not observed, and nearly nothing: the visible keyword spend (about $15 a month at the middle of a $7 to $29 band) divided over this line’s September revenue. Auto campaigns, product targeting, Sponsored Brands and video are invisible to the method.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                      `MODELLED, not observed: about ${monthUsd(mcAd('mount-cleverest').monthlyUsd.central)} a month (${mcBand(mcAd('mount-cleverest').monthlyUsd)}), which is ${linePct(mcAd('mount-cleverest').ratePct.central)} of this line’s September revenue. Automatic campaigns, product targeting, Sponsored Brands and video are invisible to the method.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/mount-cleverest/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -8595,11 +8608,14 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: 0,
-                    amount: 0,
+                    pct: -mcAd('100-pics').ratePct.central,
+                    amount: mcAd('100-pics').perUnit,
                     detail:
-                      'MODELLED at nothing. No sponsored placement was seen for any 100 PICS listing in the search read; the small visible spend sits on the Mount Cleverest name.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                      `MODELLED: about ${monthUsd(mcAd('100-pics').monthlyUsd.central)} a month, the smallest line on the page. No sponsored placement of theirs was seen on any 100 PICS search read from New York.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/mount-cleverest/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -8618,7 +8634,7 @@ export const PROFILES = {
                    cogs 25.93 + tariff 5.19 + freight 2.14 = 33.26 here).
                    Change one, change both. */
                 type: 'margin',
-                basis: { label: 'Average sale across both channels', value: 14.58 },
+                basis: { label: 'Average sale across both channels', value: MC_AD_ORDER },
                 lines: [
                   {
                     label: 'Cost of goods',
@@ -8644,10 +8660,13 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -0.04,
+                    pct: -MC_AD.ratePct.central,
                     detail:
-                      'MODELLED, and the whole of it is in the Advertising section: the visible Amazon keyword spend, about $15 a month in a $7 to $29 band. TikTok creator commissions are in the fees line, and the TikTok ads that began in September 2026 have no published spend.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' }],
+                      `MODELLED, and the whole of it is in the Advertising section: the visible Amazon keyword spend, about ${monthUsd(MC_AD.monthlyUsd.central)} a month (${mcBand(MC_AD.monthlyUsd)}). TikTok creator commissions are in the fees line, and the TikTok ads that began in September 2026 have no published spend.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/mount-cleverest/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/mount-cleverest/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -8728,63 +8747,45 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'A deck that sells 47% of its year in one month is one stock decision a year. The business has to fund and hold the inventory for November in the quietest months, and the data gives no sign of when, how or from whom.',
+          'A deck that sells 48% of its year in one month is one stock decision a year. The business has to fund and hold the inventory for November in the quietest months, and the data gives no sign of when, how or from whom.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'They are not buying much on Amazon, and on TikTok the spend that shows is creator commission. A burst of TikTok ads began two weeks before this was read.',
-      },
-      {
-        type: 'prose',
-        text:
-          '🚨 Nobody can measure a competitor’s ad spend from outside the account, and the figure below is modelled rather than counted. The two sit side by side here on purpose. The COUNTED side is a live search read: amazon.com in headless Chrome, logged out, on 7 October 2026, with nineteen queries and every sponsored card classified. Amazon showed “deliver to Israel” on every read, because a US delivery address was accepted but did not hold for a guest session, and it drew ads on only five of the nineteen pages, so a page with no sponsored cards says nothing about advertisers. The MODELLED side takes Jungle Scout’s share of sponsored impressions on ten keywords and prices the clicks at Amazon’s own suggested bids.',
-      },
-      {
-        type: 'prose',
-        text:
-          'The two sources disagree and both are reported. Jungle Scout’s panel saw them sponsored on their own name, “mount cleverest”, with three products and 11% of the sponsored slots, and on “true or false game”, with three products and 15%. The search read found no sponsored Mount Cleverest card on any page that drew ads, the brand term included, where the four sponsored slots above their organic results were TV wall mounts bidding on the word “mount”. The gap between a panel averaged over a window and a single instant is the error bar on this section.',
-      },
-      {
-        type: 'prose',
-        text:
-          'Everything the method cannot see points the other way, and none of it was counted: auto campaigns, product targeting, Sponsored Brands and video, and the October to December peak, which is when a seasonal deck is most likely to advertise. What can be said is narrower. On the visible keywords the whole bill models at $7 to $29 a month, around $15 at the middle, and at Amazon’s own suggested bids a click on a broad term such as “family game” costs $1.73 against a $16.99 deck, about $7 to $9 of ads for each sale at the 14% conversion the brand term shows. That arithmetic is consistent with them not buying those terms.',
-      },
-      {
-        type: 'prose',
-        text:
-          'TikTok is a different picture. In TikTok’s public ad library, which covers the UK and EU and not the US, the advertiser POPTACULAR LTD has 151 ads, every one first shown from 24 September 2026 and none in the three and a half years of library history before it: 24 started in September and 127 in the first week of October, most running a day, with 146 reaching under a thousand people and three reaching ten to a hundred thousand. That is a creative-testing burst, and the product it promotes was not read. The library publishes no spend, so there is no dollar figure here. The money that does show on TikTok is the shop’s creators: Kalodata puts roughly half of the UK shop’s year through 44 affiliates at a 9% commission, which is in the fees line of the margin.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-07, read at New York 10001. */
+        type: 'strategy',
+        label: MC_AD.strategy,
+        points: [
+          'None of the modelled ad spend, about $49 a month, is on the Mount Cleverest name, and none of it is on the fourteen biggest generic searches: not “card games”, “travel games”, “card games for adults” or “adult games”. They rank there without paying, and on “mount cleverest game” they are #1.',
+          'The ads Jungle Scout saw sit on sixty-eight long-tail phrases, about a twentieth of the 1,485 searches their listings show up on. A New York read of sixteen searches the same day found no sponsored Mount Cleverest card on any of them, and two sponsored SMART CARDS cards on the search for that name.',
+          'TikTok is a separate story: the UK shop’s sales run about 46% through creators on a 9% commission, and TikTok’s ad library shows 151 ads under the company’s name, all from 24 September 2026.',
+          'Modelled from outside the account, so a floor: Amazon automatic and product-targeting campaigns, Sponsored Brands and video are invisible to it.',
+        ],
       },
       {
         type: 'table',
-        caption: 'What Amazon would charge to advertise against the Original edition',
-        noteColumns: [3],
-        columns: ['Keyword', 'Amazon’s suggested bid (exact)', 'Jungle Scout bid, nearest term', 'Sponsored share seen'],
-        rows: [
-          ['mount cleverest', '$2.11', 'none returned', '3 products, 11% (panel); none in the search read'],
-          ['true or false game', 'not returned', '$0.46', '3 products, 15% (panel); none in the search read'],
-          ['family game', '$1.73', '$1.30 (family games)', 'none'],
-          ['kid game', '$1.25', '$1.00 (card games for kids)', 'none'],
-          ['stocking stuffer', '$0.63', '$0.75 (stocking stuffers for kids)', 'none'],
-          ['party game', '$0.35', 'not returned', 'none'],
-        ],
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        rows: MC_TOP_KEYWORDS,
+        visibleRows: 10,
         note:
-          'Amazon’s bids are from its own Ads API on the Original’s ASIN, read 7 October 2026, from a US seller profile that is not theirs; they are what it would suggest, not what anyone paid. The API returns cents and the conversion was cross-checked against Jungle Scout on one shared term ($1.67 against $1.42 for the family card game phrases).',
+          'Jungle Scout, for the listings of the Mount Cleverest and 100 PICS ranges that sold in September: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
+      },
+      {
+        type: 'prose',
+        text:
+          'What carries the business is organic. The Original sits first on “mount cleverest game” and within the first fifty on most of the big card-game searches, with no ad of theirs on any of them in Jungle Scout’s window or in a New York read; Amazon would charge about $0.46 to $1.71 a click to try. The brand name itself draws about 2,800 searches a month and a conversion rate near 14% in Jungle Scout’s panel, which is the footprint of an audience that arrives already knowing the name. The modelled spend is tiny next to the sales it sits beside, and on a business that sells almost half its year in November, an October read says little about what November does.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=mount+cleverest',
-            value: '≈ $15 a month visible',
-            counted:
-              '0 of 12 sponsored slots on “mount cleverest” · 0 on “mount cleverest game”, “family game”, “kid game” and “games for family game night” — the five pages that drew ads, 7 Oct 2026, delivery to Israel · organic #1 to #6 on “true or false game” and “mount cleverest game”, #5–#7 on the brand name below four TV-mount ads',
+            value: `≈ ${monthUsd(MC_AD.monthlyUsd.central)} a month, ${linePct(MC_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 68 of 1,485 keywords, about 5% of their searches — Jungle Scout share of voice; none for Mount Cleverest on 15 of 16 searches read from New York, and two SMART CARDS ads on the sixteenth, “smart cards”',
             flag: true,
             note:
-              'Modelled over the two keywords Jungle Scout saw them sponsored on, at 2,764 monthly searches for the brand name, 11.1% of its sponsored slots, a 1.8% to 4.5% click rate borrowed from another dossier and not re-fitted here, and Amazon’s $1.24 to $2.11 bids: 5.5 to 13.8 paid clicks, $7 to $29. If every one of the brand name’s 1,400 monthly clicks were paid it would be $1,800 to $3,000, which the search read rules out. A footprint is not a spend, and the two are shown apart because they are different kinds of number.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand: there was no sponsored-dominant row here to measure one. It is a floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off. Nobody publishes the bill.',
           },
           {
             label: 'TikTok ads — the UK and EU library',
@@ -8794,7 +8795,7 @@ export const PROFILES = {
               '24 first shown in September and 127 in October · median run one day · 131 still showing 1–6 Oct · 146 reached under 1K people, 2 reached 1K–10K and 3 reached 10K–100K',
             flag: true,
             note:
-              'Matched on the legal advertiser name, so a creator or agency running ads under another name would not show, and US ads are not in this library at all. No spend is published, and the promoted product was not read. Nothing under this name in the library before the 24th, so the 2023 relaunch was not TikTok ads from the company’s own account.',
+              'Matched on the legal advertiser name, so a creator or agency running ads under another name would not show, and US ads are not in this library at all. No spend is published, so none is in the margin. Nothing under this name before the 24th, so the 2023 relaunch was not TikTok ads from the company’s own account.',
           },
           {
             label: 'TikTok Shop creators — commission, not ads',
@@ -8803,18 +8804,24 @@ export const PROFILES = {
             counted:
               'Kalodata: $25,038 of the shop’s $54,122 over twelve months came through affiliate creators, 44 of them, at a 9% commission rate; 20 videos and 19 livestreams',
             note:
-              'A third-party estimate. It is a cost paid only when a creator sells, so it behaves like advertising without being booked as it, and it is modelled in the fees line, about $2.2K over the year.',
-          },
-          {
-            label: 'The brand name, in clicks',
-            href: 'https://www.amazon.com/s?k=mount+cleverest',
-            value: '≈ 1,400 clicks a month',
-            counted:
-              'Jungle Scout’s panel: 332 clicks and 46 conversions in a week on the Original for “mount cleverest”, a 14% conversion rate, scaled to a month. Those clicks are organic and paid together',
-            note:
-              'The brand name converts about 197 orders a month, roughly 4% of the units the catalogue sold in October. So most of what sells does not come through a search for the name, and the people who do search for it are not mostly arriving through an ad.',
+              'A third-party estimate. It is paid only when a creator sells, so it behaves like advertising without being booked as it, and it sits in the Margin breakdown’s fees line, about $2.2K over the year, not in the Ad spend table.',
           },
         ],
+      },
+      {
+        /* The Margin breakdown's advertising lines, row for row, built from MC_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...MC_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${mcBand(p.monthlyUsd)}`]),
+          ['Total — the Whole brand line', monthUsd(MC_AD.monthlyUsd.central), linePct(MC_AD.ratePct.central), lineUsd((MC_AD_ORDER * MC_AD.ratePct.central) / 100), `Modelled: ${mcBand(MC_AD.monthlyUsd)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising, line for line: each product’s tab uses its own row, and the Whole brand tab the last. Per sale is the share of that product’s price, or of the $14.58 average sale. TikTok’s creator commission is in the fees line and TikTok’s ad spend is not published, so neither is here.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
