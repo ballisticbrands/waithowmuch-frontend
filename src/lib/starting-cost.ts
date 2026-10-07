@@ -3,7 +3,8 @@ import type { BusinessCard } from "./api.js";
 /**
  * "To start" is stored as an estimated RANGE — what launching a copy would
  * cost today (backend src/lib/starting-cost.ts). This is where the page
- * decides what single figure to show for it: the midpoint.
+ * decides what single figure to show for it: the LOW end, so a reader is never
+ * told a launch costs more than the cheapest honest estimate of it.
  *
  * Mirrored in postbuild-spa-routes.mjs, which is plain Node and cannot import
  * this; change one, change both.
@@ -22,5 +23,5 @@ export function startingCostRange(b: BusinessCard): { low: number; high: number 
  *  a business priced before ranges, or an API that predates them. */
 export function startingCostFigure(b: BusinessCard): number | null {
   const r = startingCostRange(b);
-  return r ? Math.round((r.low + r.high) / 2) : n(b.startingCost);
+  return r ? Math.round(r.low) : n(b.startingCost);
 }

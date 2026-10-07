@@ -235,7 +235,7 @@ function startingCostWorking(b: BusinessDetail): string[] | undefined {
       ? `${r.rawVolume.toLocaleString("en-US")} searches in a week of ${week}, from ${READING_SOURCE[r.source] ?? r.source}, adjusted ×${Number(r.calibrationFactor)} to Amazon's own counts`
       : `from ${READING_SOURCE[r.source] ?? r.source}, as of ${week}`;
   const lines = [
-    `For this business: ${span(e)}, shown at its midpoint.`,
+    `For this business: ${span(e)}, shown at its low end.`,
     `First order ${span(breakdown.parts.inventory)} — ${skus} at a ${inputs.moq.toLocaleString("en-US")}-unit minimum, ${span(inputs.landedUnitCost, price)} a unit landed.`,
     `Launch ads ${span(breakdown.parts.ads)} — ranking for “${r.keyword}”, about ${Math.round(r.monthlySearches / 1000).toLocaleString(
       "en-US",

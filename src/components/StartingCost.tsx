@@ -98,7 +98,7 @@ export function StartingCost({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              {e && <span data-product-share="">{money(e.midpoint, business.currency ?? "USD")} to start</span>}
+              {e && <span data-product-share="">{money(e.low, business.currency ?? "USD")} to start</span>}
             </button>
           );
         })}
@@ -158,8 +158,8 @@ function EstimateView({
     <section data-starting-cost="">
       <p data-starting-cost-lede="">
         Launching a copy of {product ? `the ${product.label.toLowerCase()}` : "this business"} today would cost about{" "}
-        <strong data-figure="">{money(e.midpoint, currency)}</strong>, somewhere between{" "}
-        {exactMoney(e.low, currency)} and {exactMoney(e.high, currency)}. It is an estimate, not a quote
+        <strong data-figure="">{money(e.low, currency)}</strong> at the least, and as much as{" "}
+        {exactMoney(e.high, currency)}. It is an estimate, not a quote
         {inputs.asOf ? <>, and it describes {dayLabel(inputs.asOf)}</> : null}. Here is each part of it.
       </p>
 
@@ -441,7 +441,7 @@ function EstimateView({
         </div>
       )}
       <p>
-        The page shows the midpoint, <strong data-figure="">{money(e.midpoint, currency)}</strong>. The spread is wide
+        The page shows the low end, <strong data-figure="">{money(e.low, currency)}</strong>. The spread is wide
         because the ads are: {parts ? `${span(parts.ads, currency)} of a ` : ""}
         {span({ low: e.low, high: e.high }, currency)} range turns on how much of {launchProducts ? "each search" : "the keyword"} a
         launch has to buy, and that is the least knowable part of it.

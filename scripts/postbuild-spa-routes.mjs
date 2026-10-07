@@ -70,12 +70,12 @@ const money = (v, c = 'USD') => {
   return `${sym}${Math.round(Number(v)).toLocaleString('en-US')}`;
 };
 
-/* "To start" is an estimated range shown at its midpoint. Mirrors
+/* "To start" is an estimated range shown at its LOW end. Mirrors
    startingCostFigure in lib/starting-cost.ts; change one, change both. */
 const startingCostFigure = (b) => {
   const low = b.startingCostLow, high = b.startingCostHigh;
   if (low != null && low !== '' && high != null && high !== '') {
-    return Math.round((Number(low) + Number(high)) / 2);
+    return Math.round(Number(low));
   }
   return b.startingCost ?? null;
 };
