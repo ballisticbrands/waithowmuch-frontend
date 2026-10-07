@@ -312,6 +312,14 @@ export type Block =
   | { type: "list"; items: string[] }
   | { type: "quote"; text: string; attribution?: string }
   | { type: "callout"; text: string }
+  /**
+   * The Advertising section's opening card: the strategy the ads add up to,
+   * named in a few words ("Brand defence") and backed by three or four points.
+   * `label` is amazon-adspend-spy's `strategy.label`, so two profiles with the
+   * same footprint get the same name; the points are authored from
+   * adspend.json's figures and say what was measured and what was modelled.
+   */
+  | { type: "strategy"; label: string; points: string[] }
   /** Renders a figure pulled from the DB — never a hardcoded number. */
   | { type: "stat"; metric: MetricKey; label: string }
   /** Renders the monthly series from the DB. */

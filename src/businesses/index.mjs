@@ -48,10 +48,38 @@ const deckPhoto = (asin) => DECK_PHOTOS[asin] && `${SPITE_HOUSE_BUCKET}${DECK_PH
 
 /* 199 generated rows — too many to author inline. See the module's header. */
 import { WHITE_MOUNTAIN_BREAKDOWN } from './white-mountain-puzzles.breakdown.mjs';
+import { TOP_KEYWORDS as WMP_TOP_KEYWORDS, AD_SPEND as WMP_AD } from './white-mountain-puzzles.adspend.mjs';
 import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
-import { VIRORA_TOP_KEYWORDS, VIRORA_AD_KEYWORDS } from './virora-mahjong.keywords.mjs';
+import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
+import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
+
+/* Virora's advertising, from amazon-adspend-spy (virora-mahjong.adspend.mjs).
+   🚨 The margin's three advertising lines, the Advertising section's channels
+   row and its "Ad spend" table are all built from this — never typed — so the
+   two sections cannot disagree (build-ecom-biz-page §2). */
+const viroraAd = (id) => VIRORA_AD.products.find((p) => p.id === id);
+const VIRORA_AD_ORDER = 110.1; // the Whole brand tab's average selling price
+const viroraBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+
+/* White Mountain's advertising line, in two halves, each a channel's rate
+   times its share of TOTAL revenue (research/white-mountain-puzzles/pnl.json
+   channels, 2026-09). Amazon is amazon-adspend-spy's rate (WMP_AD, measured on
+   Amazon US, applied to Europe too); the store's 20% is a judgement on the
+   ad libraries. 🚨 The margin line, the channels rows and the Ad spend table
+   are all built from WMP_ADS — and the backend seed's COST_LINES.advertising
+   must equal WMP_ADS.total (check-profile compares them). */
+const WMP_REVENUE = { amazon: 382391.5 + 254927.67, store: 88553.5 };
+const WMP_TOTAL = WMP_REVENUE.amazon + WMP_REVENUE.store;
+const WMP_AVG_SALE = 19.52; // the margin block's basis: the three channels blended
+const WMP_STORE_AD_RATE = 20;
+const WMP_ADS = (() => {
+  const amazon = +((WMP_AD.ratePct.central * WMP_REVENUE.amazon) / WMP_TOTAL).toFixed(3);
+  const store = +((WMP_STORE_AD_RATE * WMP_REVENUE.store) / WMP_TOTAL).toFixed(3);
+  return { amazon, store, total: +(amazon + store).toFixed(3) };
+})();
+const wmpRow = (label, pct, basis) => [label, monthUsd((pct * WMP_TOTAL) / 100), linePct(pct), lineUsd((pct * WMP_AVG_SALE) / 100), basis];
 import { KAJUN_BREAKDOWN } from './kajun-loaded-tea.breakdown.mjs';
 import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
@@ -1237,7 +1265,7 @@ export const PROFILES = {
             label: 'Amazon United States — about 53% of the month',
             value: 'Measured',
             counted:
-              '199 listings carrying Amazon’s “bought in past month” badge, priced at the buy box — read 14 Sep 2026',
+              '199 listings carrying Amazon’s “bought in past month” badge, priced at the buy box',
             flag: true,
             note: 'The one counted channel, and the base the other two are computed from.',
           },
@@ -1250,7 +1278,7 @@ export const PROFILES = {
           {
             label: 'Their own store — about 12% of the month',
             value: 'Estimated',
-            counted: '147,663 visits a month — Similarweb, read 30 Sep 2026',
+            counted: '147,663 visits a month — Similarweb',
             note:
               'Those visits at a 3% conversion rate and the $19.99 shelf price. The visit count is a reading; the conversion rate is an assumption, and Shopify publishes no sales.',
           },
@@ -1339,7 +1367,7 @@ export const PROFILES = {
           ['Average lowest price — the cost to make used below', '', '', '', '', '$1.26'],
         ],
         note:
-          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer, read 15 September 2026. Sold counts are Alibaba’s own per-listing counters added up per supplier. The cost to make takes each supplier’s lowest listed price — $1.59, $0.50 and $1.69 — and averages them: the low end, because it is what a production order moves toward. The two Senfutongs share a name and may be related.',
+          'All three are Alibaba Verified, FSC-certified and in China, and every listing was a sponsored result on a search filtered to minimums of 1,000 or fewer. Sold counts are Alibaba’s own per-listing counters added up per supplier. The cost to make takes each supplier’s lowest listed price — $1.59, $0.50 and $1.69 — and averages them: the low end, because it is what a production order moves toward. The two Senfutongs share a name and may be related.',
       },
       {
         /* The other half of cost of goods. It used to be a flat $1.00 nobody
@@ -1361,7 +1389,7 @@ export const PROFILES = {
           ['Shipping, per puzzle', '$2.14', '0.00430 cbm × $497'],
         ],
         note:
-          'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included, which is why it runs several times the port-to-port rates freight guides quote — and excludes duty and tariffs. A different product in this catalogue ships in a different box, so it would carry a different figure.',
+          'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included, which is why it runs several times the port-to-port rates freight guides quote — and excludes duty and tariffs. A different product in this catalogue ships in a different box, so it would carry a different figure.',
       },
       {
         /* Neither a supplier quote nor a freight quote: the sum of both, and the
@@ -1384,7 +1412,7 @@ export const PROFILES = {
       },
       {
         /* 🚨 These five lines ARE the model. The margin row is 100% less them
-           — 37.461% — and the backend seed builds the profit and ad-spend
+           — 38.978% — and the backend seed builds the profit and ad-spend
            series from the same five numbers (COST_LINES). Change one, change
            both, and keep three decimals: check-profile compares the block
            against every month of the series.
@@ -1395,7 +1423,10 @@ export const PROFILES = {
              referral    15% of Amazon revenue        → 13.170
              FBA         31% of Amazon revenue        → 27.218
              card fees   4.4% of store revenue        →  0.537
-             advertising 2% of Amazon + 20% of store  →  4.196
+             advertising 0.272% of Amazon + 20% of store  →  2.679
+               (Amazon: amazon-adspend-spy, research/white-mountain-puzzles/
+               adspend.json 2026-10-07, $1,040 a month central → 0.239. It was
+               an assumed 2% → 1.756, and the line 4.196, until then.)
            Advertising stays ONE line; its Amazon/off-Amazon split belongs to
            the Advertising section's channels, not here. */
         type: 'margin',
@@ -1403,7 +1434,7 @@ export const PROFILES = {
            units) at 87.800% of revenue and $19.99 on their own store at
            12.200%. Not a reading — a weighted average of one reading and one
            shelf price. */
-        basis: { label: 'Average sale, all three channels', value: 19.52 },
+        basis: { label: 'Average sale, all three channels', value: WMP_AVG_SALE },
         lines: [
           {
             label: 'Cost of goods',
@@ -1460,10 +1491,11 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -4.196,
+            pct: -WMP_ADS.total,
             detail:
-              'Modelled, not observed — and two very different things inside one line. About 2% of Amazon revenue, where they buy their own brand name and nothing else, and about 20% of store revenue, where they run a full paid programme on Meta and Google. Neither library publishes a bill.',
+              `Modelled, not observed — and two very different things inside one line. ${linePct(WMP_AD.ratePct.central)} of Amazon revenue, where three-quarters of the spend is their own brand name; and ${WMP_STORE_AD_RATE}% of store revenue, where they run a full paid programme on Meta and Google. Neither publishes a bill.`,
             links: [
+              { label: 'See the ad spend behind this line', href: '/business/white-mountain-puzzles/advertising/#ad-spend' },
               {
                 label: 'If you want to go in depth, go to the Advertising section',
                 href: '/business/white-mountain-puzzles/advertising/',
@@ -1503,7 +1535,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'On Amazon, start with what is missing. On two generic searches — “1000 piece jigsaw puzzle” and “jigsaw puzzles for adults” — none of the 24 sponsored slots was theirs. On their own brand name, three of twelve were. That is brand defence without acquisition: the demand arrives at the listing already looking for White Mountain.',
+          'On Amazon, start with what is missing. Read from New York, “jigsaw puzzles 1000 pieces”, “halloween puzzle” and “adult puzzles” carried 36 sponsored results and none was theirs; on “puzzles”, 300,000 searches a month, two of theirs sat at #28 and #35. On their own brand name they held the first four. That is brand defence with a little acquisition at the edges: the demand arrives at the listing already looking for White Mountain.',
       },
       {
         /* 🚨 This paragraph exists because the section used to say they
@@ -1511,7 +1543,7 @@ export const PROFILES = {
            disproved. Do not put that claim back. */
         type: 'prose',
         text:
-          'Off Amazon it is the reverse. On 30 September 2026 about 52 Meta ads were running to their store across Facebook, Instagram, Messenger and Threads, the newest started the day before, and Google’s transparency centre showed 78 United States ads under a verified White Mountain Puzzles, Inc. advertiser account — 47 of them in the previous thirty days, on Search, YouTube, Maps and Shopping. Their own pages carry the machinery to match: a Meta pixel with server-side conversions, Google Ads conversion and remarketing tags, and Microsoft, Pinterest and TikTok tags behind them. What none of it says is the price. Advertising has the counts.',
+          'Off Amazon it is the reverse. About 52 Meta ads were running to their store across Facebook, Instagram, Messenger and Threads, the newest started the day before, and Google’s transparency centre showed 78 United States ads under a verified White Mountain Puzzles, Inc. advertiser account — 47 of them in the previous thirty days, on Search, YouTube, Maps and Shopping. Their own pages carry the machinery to match: a Meta pixel with server-side conversions, Google Ads conversion and remarketing tags, and Microsoft, Pinterest and TikTok tags behind them. What none of it says is the price. Advertising has the counts.',
       },
       {
         type: 'prose',
@@ -1531,14 +1563,35 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'Three ad libraries were read on 30 September 2026 and all three answer the same way: here are the ads, and no, we will not tell you what they cost. Every value below is arithmetic; every counted line under one is what somebody actually saw.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-07 —
+           Amazon only. The off-Amazon point is the ad libraries'. */
+        type: 'strategy',
+        label: 'Brand defence plus a few generic searches',
+        points: [
+          'Three-quarters of the modelled Amazon ad spend, about $786 of $1,040 a month, is their own name, where they hold the first four sponsored results from New York.',
+          'Of the 13 biggest generic searches they buy one, thinly: two ads at #28 and #35 on “puzzles”, 300,000 searches a month — which Jungle Scout’s window does not show at all.',
+          'Off Amazon it is the reverse: about 52 Meta ads and 78 Google ads running to their own store, modelled at about 20% of what the store sells.',
+          'Ads on 112 of the 202 Amazon keywords modelled. Modelled from outside the account, so a floor.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        rows: WMP_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          'Jungle Scout, for the ten best-selling listings: exact-match monthly searches and the best organic position any of the ten held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the ten. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
       },
       {
         type: 'prose',
         text:
-          'Amazon and everywhere else pull in opposite directions here. On Amazon the footprint is brand defence and nothing more. Off Amazon there is a standing campaign on two networks, and the only spend figure either of them has ever published for this advertiser exists by accident: Meta mis-categorised six old ads as needing a political disclaimer, and one of those — running July to October 2024 — reports $6K–$7K for 500,000–600,000 impressions, about a $12 CPM. That is the anchor under the modelled line, and it is one ad from two years ago.',
+          'Three ad libraries answer the same way: here are the ads, and no, we will not tell you what they cost. Every value below is arithmetic; every counted line under one is what somebody actually saw.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon and everywhere else pull in opposite directions here. On Amazon the footprint is brand defence and very little more: of about $1,040 a month modelled across 112 keywords, $786 is their own name. Off Amazon there is a standing campaign on two networks, and the only spend figure either of them has ever published for this advertiser exists by accident: Meta mis-categorised six old ads as needing a political disclaimer, and one of those — running July to October 2024 — reports $6K–$7K for 500,000–600,000 impressions, about a $12 CPM. That is the anchor under the modelled line, and it is one ad from two years ago.',
       },
       {
         /* 🚨 The row here until 2026-09-30 said “Meta and Google — Not
@@ -1548,18 +1601,18 @@ export const PROFILES = {
         items: [
           {
             label: 'Amazon Sponsored Products',
-            value: '≈ 2% of Amazon revenue',
-            counted: '0 of 24 sponsored slots on two generic searches; 3 of 12 on their brand name — read 4 Sep 2026',
+            value: `≈ ${monthUsd(WMP_AD.monthlyUsd.central)} a month, ${linePct(WMP_AD.ratePct.central)} of Amazon US revenue — modelled`,
+            counted: 'Ads on 112 of the 202 keywords modelled, about 7% of their searches; #1–#4 on their own name from New York',
             flag: true,
             note:
-              'Modelled, not observed. Brand-term clicks are cheap and low-volume, so a footprint that is brand defence and nothing else puts spend in the low single digits of Amazon revenue; 2% is the figure the margin uses. Amazon publishes no bill.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid; band $624–$1,336. The click rate is BORROWED, 3% (1.8–4.5%): these searches had only one brand seen mainly through ads to measure it on. On their own name the model is capped at the clicks Jungle Scout actually saw them take. A floor — product-page ads, Sponsored Brands and Display are invisible to it. Amazon publishes no bill.',
           },
           {
             label: 'Meta — Facebook, Instagram, Messenger, Threads',
             href: 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=US&view_all_page_id=164202616556&search_type=page&media_type=all',
             value: 'Estimated',
             counted:
-              'About 52 active United States ads on page 164202616556, newest started 29 Sep 2026, history back to September 2022 — read 30 Sep 2026',
+              'About 52 active United States ads on page 164202616556, newest started 29 Sep 2026, history back to September 2022',
             note:
               'Meta publishes no spend for ordinary consumer ads. The one exception on this page is a mis-categorisation: six inactive ads flagged as running without a political disclaimer carry figures, the largest $6K–$7K for 500K–600K impressions between July and October 2024. Filtered to the United Kingdom, Germany, France, Ireland or Canada the page returns no live ads at all.',
           },
@@ -1568,28 +1621,44 @@ export const PROFILES = {
             href: 'https://adstransparency.google.com/advertiser/AR05228554132289224705?region=US&hl=en',
             value: 'Estimated',
             counted:
-              '78 United States ads, 47 of them in the last 30 days — Search 67, YouTube 39, Maps 31, Shopping 12 — advertiser AR05228554132289224705, verified as “White Mountain Puzzles, Inc.”, read 30 Sep 2026',
+              '78 United States ads, 47 of them in the last 30 days — Search 67, YouTube 39, Maps 31, Shopping 12 — advertiser AR05228554132289224705, verified as “White Mountain Puzzles, Inc.”',
             note:
               'One creative can run on several surfaces, so those four do not add to 78. Google publishes no spend for non-political ads either. Searching the transparency centre by domain returns 96 ads pointing at whitemountainpuzzles.com from more than one account, so 78 is a floor.',
           },
           {
             label: 'Off-Amazon spend, modelled',
-            value: '≈ 20% of store revenue',
+            value: `≈ ${WMP_STORE_AD_RATE}% of store revenue`,
             flag: true,
             note:
-              'Estimated. Nothing in either library is a bill, so this is a judgement resting on the one CPM Meta did publish and on a live footprint of about 52 Meta ads and 78 Google ads. In the margin block it sits inside a single advertising line with the Amazon figure: 1.756% of revenue from Amazon, 2.440% from off-Amazon, 4.196% together.',
+              'Estimated. Nothing in either library is a bill, so this is a judgement resting on the one CPM Meta did publish and on a live footprint of about 52 Meta ads and 78 Google ads. In the margin block it sits inside a single advertising line with the Amazon figure — the Ad spend table below shows the two halves and the total.',
           },
           {
             label: 'The tags on their own store',
             value: 'Measured',
             counted:
-              'Meta Pixel with the server-side Conversions API, Google Ads conversion and remarketing through Google Tag Manager, GA4, Microsoft Advertising, Pinterest and TikTok — read off the live store, 30 Sep 2026',
+              'Meta Pixel with the server-side Conversions API, Google Ads conversion and remarketing through Google Tag Manager, GA4, Microsoft Advertising, Pinterest and TikTok — read off the live store',
             note:
               'Evidence that a paid stack exists, and nothing more. A tag fires the same whether the account behind it spends a hundred dollars a month or a hundred thousand.',
           },
         ],
         note:
           'Neither Meta nor Google publishes spend for United States consumer advertising; both publish the ads. So every counted line here is a footprint and every value beside one is modelled.',
+      },
+      {
+        /* The Margin breakdown's advertising line, row for row — both built
+           from WMP_ADS. check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          wmpRow('Amazon ads', WMP_ADS.amazon, `Modelled: ${monthUsd(WMP_AD.monthlyUsd.central)} on Amazon US (${monthUsd(WMP_AD.monthlyUsd.low)}–${monthUsd(WMP_AD.monthlyUsd.high)}), Europe at the same ${linePct(WMP_AD.ratePct.central)}`),
+          wmpRow('Store ads, Meta and Google', WMP_ADS.store, `Estimated: ${WMP_STORE_AD_RATE}% of store sales`),
+          wmpRow('Total — the margin line', WMP_ADS.total, ''),
+        ],
+        note:
+          'What the Margin breakdown takes off for advertising, line for line. Share is of all three channels’ revenue; per sale is that share of the $19.52 average sale.',
       },
 
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
@@ -3421,7 +3490,7 @@ export const PROFILES = {
                   ['Average lowest price — the cost to make used below', '', '', '', '', '$38.67'],
                 ],
                 note:
-                  'Six acrylic American-mahjong listings from three companies in China, all rated 4.5 or better, none Verified, each selling single sets — the price a buyer of one set pays, which a production order would likely beat. Four of the six are US local stock, which carries domestic shipping in the price. The cost to make takes each supplier’s lowest listed price — $18, $49 and $49 — and averages them: the low end, because it is what an order bigger than one set moves toward. Sold counts are Alibaba’s own per-listing counters added up per supplier. Searched “american mahjong set” with the 4.5+ supplier-rating filter, read 2 October 2026.',
+                  'Six acrylic American-mahjong listings from three companies in China, all rated 4.5 or better, none Verified, each selling single sets — the price a buyer of one set pays, which a production order would likely beat. Four of the six are US local stock, which carries domestic shipping in the price. The cost to make takes each supplier’s lowest listed price — $18, $49 and $49 — and averages them: the low end, because it is what an order bigger than one set moves toward. Sold counts are Alibaba’s own per-listing counters added up per supplier. Searched “american mahjong set” with the 4.5+ supplier-rating filter.',
               },
               {
                 /* The freight half of the landed cost, priced from the best
@@ -3442,7 +3511,7 @@ export const PROFILES = {
                   ['Shipping, per set', '$4.01', '0.00807 cbm × $497'],
                 ],
                 note:
-                  'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included — and excludes the duty, which is its own line. A set is heavy for its size, but sea freight on a part-container is charged by volume until a cubic metre weighs more than a tonne, so the box, not the 3.25 kg, sets the price.',
+                  'The rate is the low end of a $993–$8,482 estimate for a 2 cbm shipment; the top of that band prices express services a first order would not buy. It is door to door — customs clearance and delivery included — and excludes the duty, which is its own line. A set is heavy for its size, but sea freight on a part-container is charged by volume until a cubic metre weighs more than a tonne, so the box, not the 3.25 kg, sets the price.',
               },
               {
                 /* Derived from the two tables above and the tariff line below —
@@ -3512,10 +3581,13 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -5,
-                    amount: 11.45,
-                    detail: 'ASSUMED: a 5% placeholder. Their ads show on 26 of the 739 keywords their listings appear on, modelled at under 1% of revenue, which argues for less.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                    pct: -viroraAd('set').ratePct.central,
+                    amount: viroraAd('set').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(viroraAd('set').monthlyUsd.central)} a month on set keywords, ${linePct(viroraAd('set').ratePct.central)} of September’s set revenue. Their ads show almost only on their own name; nothing of theirs is sponsored on “mahjong set” or “mahjong tiles”. A floor — it cannot see ads on product pages.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/virora-mahjong/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' },
+                    ],
                   },
                 ],
                 note: 'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
@@ -3558,7 +3630,7 @@ export const PROFILES = {
                   ['Shipping, per mat', '$3.45', '0.00694 cbm × $497'],
                 ],
                 note:
-                  'The same Freightos reading as the set: the low end of a $993–$8,482 estimate for a 2 cbm shipment, read 28 September 2026, door to door and excluding duty. A rolled mat ships in a long, thin tube, so it costs nearly as much to move as a set does — 78% of what it costs to make.',
+                  'The same Freightos reading as the set: the low end of a $993–$8,482 estimate for a 2 cbm shipment, door to door and excluding duty. A rolled mat ships in a long, thin tube, so it costs nearly as much to move as a set does — 78% of what it costs to make.',
               },
               {
                 type: 'table',
@@ -3626,10 +3698,13 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -5,
-                    amount: 2.24,
-                    detail: 'ASSUMED: the same 5% placeholder as the set.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                    pct: -viroraAd('mat').ratePct.central,
+                    amount: viroraAd('mat').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(viroraAd('mat').monthlyUsd.central)} a month on mat keywords, ${linePct(viroraAd('mat').ratePct.central)} of September’s mat revenue. No ad of theirs on “mahjong mat” or “mahjong mats”; what they buy is colour searches like “orange mahjong mat”. A floor, like the set’s.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/virora-mahjong/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' },
+                    ],
                   },
                 ],
                 note: 'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit.',
@@ -3645,11 +3720,14 @@ export const PROFILES = {
                 /* 🚨 The backend seed builds the profit and ad-spend series from
                    the SAME six numbers (seed-virora-mahjong.ts COST_LINES).
                    Change one, change both. Whole percents on purpose: they are
-                   September's rates rounded (15.04, 3.01, 3.31, 9.51, 15, 5),
-                   and 51% off leaves the 49% that gives the headline's $84k.
+                   September's rates rounded (15.04, 3.01, 3.31, 9.51, 15) —
+                   except advertising, which is amazon-adspend-spy's exact
+                   central rate (VIRORA_AD, 0.186), the same figure the
+                   Advertising section's Ad spend table prints. 46.186% off
+                   leaves 53.814%. Until 2026-10-07 ads were an assumed 5%.
                    Shipping was an assumed $1.50 a unit (1%) until 2026-10-05. */
                 type: 'margin',
-                basis: { label: 'Average selling price', value: 110.1 },
+                basis: { label: 'Average selling price', value: VIRORA_AD_ORDER },
                 lines: [
                   {
                     label: 'Cost of goods',
@@ -3678,9 +3756,12 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -5,
-                    detail: 'ASSUMED: a 5% placeholder.',
-                    links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' }],
+                    pct: -VIRORA_AD.ratePct.central,
+                    detail: `Modelled, not observed: about ${monthUsd(VIRORA_AD.monthlyUsd.central)} a month across both products, ${linePct(VIRORA_AD.ratePct.central)} of September’s revenue. A floor: it counts sponsored ads in search and cannot see ads on product pages.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/virora-mahjong/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/virora-mahjong/advertising/' },
+                    ],
                   },
                 ],
                 note:
@@ -3698,7 +3779,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read, with advertising a placeholder beside it — the first two numbers to replace. Shipping is no longer one: each product’s carton is priced at a read rate.',
+          'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read — the first number to replace. Shipping and advertising are no longer placeholders: each product’s carton is priced at a read rate, and the ads are modelled from their actual sponsored footprint.',
       },
 
       { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
@@ -3757,34 +3838,40 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'Their listings show up on 739 Amazon searches and their ads on 26 — their own name and narrow phrases, none of the searches that carry the volume.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-07. */
+        type: 'strategy',
+        label: 'Brand defence',
+        points: [
+          'Two-thirds of the modelled ad spend, about $213 of $317 a month, is their own name — chiefly around 90% of the sponsored results on “virora mahjong tiles”.',
+          'None of the 15 biggest generic searches carries an ad of theirs: not “mahjong set”, “mahjong mat” or “mahjong tiles”, in Jungle Scout’s window or from New York. They rank there organically instead.',
+          'The other $104 or so goes on narrow colour and style phrases, like “fall mahjong mat” and “orange mahjong mat”.',
+          'Ads on 33 of the 740 searches their listings show up on. Modelled from outside the account, so a floor.',
+        ],
       },
       {
         type: 'table',
         caption: 'Top keywords',
-        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ad', 'Cost per click'],
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
         rows: VIRORA_TOP_KEYWORDS,
         visibleRows: 10,
         note:
-          'Jungle Scout, read 5 October 2026, for the eight listings that sold in September: its exact-match monthly searches, the best position any of the eight held, and its suggested exact-match bid. The 50 biggest of the 660 searches where a listing of theirs ranks in the top 60 or carries an ad. Positions move by the hour; this is one reading.',
+          'Jungle Scout, for the eight listings that sold in September: exact-match monthly searches and the best organic position any of the eight held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the eight. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
       },
       {
         type: 'prose',
         text:
-          'On the big searches they rank without paying: #3 on “mahjong tiles”, #14 on “mahjong set” and #22 on “mahjong mat”, with no ad of theirs on any of the three, though a click on them would cost $0.75–$1.27. What they do buy is their own name — the #1 ad on “virora mahjong”, #2 on “virora mahjong tiles” — and colour and style phrases searched a few hundred to a few thousand times a month. The name is new: on 15 September all twelve sponsored results on “virora mahjong” were competitors’. Jungle Scout sees Sponsored Products in search results only — not ads on other listings’ pages, Sponsored Brands, Display, or anything off Amazon.',
+          'On the big searches they rank without paying: #9 on “mahjong tiles”, #10 on “mahjong mat” and #31 on “mahjong set”, with no ad of theirs on any of them in Jungle Scout’s window or in a New York read the same day — though Amazon would charge $0.38–$0.87 a click to try. What they buy is their own name: about 90% of the sponsored results on “virora mahjong tiles”, which is $187 of the $317, and colour phrases like “orange mahjong mat”. On 15 September every sponsored result on “virora mahjong” was a competitor’s, so even the name is recent.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            value: '≈ 5% of revenue — assumed',
-            counted: 'Ads on 26 of 739 keywords, about 2% of their searches — Jungle Scout, read 5 Oct 2026',
+            value: `≈ ${monthUsd(VIRORA_AD.monthlyUsd.central)} a month, ${linePct(VIRORA_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 33 of 740 keywords, about 2% of their searches — Jungle Scout share of voice',
             flag: true,
             note:
-              'The 5% is a placeholder, the same the margin takes off. Modelled from the 26 keywords, the ads cost about $250–$1,240 a month, 0.1–0.7% of September’s revenue. That leaves out ads on product pages and automatic targeting, so it is a floor, but it is a long way under 5%. Nobody publishes the bill.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid. The click rate, 4.6% (2.3–6.5%), is measured off three brands on these same searches that are seen mainly through ads. It is a floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off. Nobody publishes the bill.',
           },
           {
             label: 'Meta, TikTok and Google',
@@ -3794,28 +3881,19 @@ export const PROFILES = {
         ],
       },
       {
+        /* The Margin breakdown's advertising lines, row for row — both built
+           from VIRORA_AD. check-profile fails if they drift apart. */
         type: 'table',
-        caption: 'Where their ads appear',
-        columns: ['Keyword', 'Searches a month', 'Their ad position', 'Cost per click', 'Ad cost a month'],
-        rows: VIRORA_AD_KEYWORDS,
-        visibleRows: 10,
-        note:
-          'Every keyword where Jungle Scout saw an ad of theirs, 5 October 2026. Ad cost is searches × a 1% click rate × cost per click, $614 a month in all — $247 at a 0.4% click rate, $1,237 at 2%. Jungle Scout prices none of these 26, so each takes $1.00, the median of the 102 mahjong keywords it does price. Searches of exactly 450 look like Jungle Scout’s floor for small terms rather than counts.',
-      },
-      /* The hand read that came first. Kept, dated: it is what shows the
-         brand-name ads above are new since. */
-      {
-        type: 'table',
-        caption: 'Four Amazon searches, 15 September 2026',
-        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
         rows: [
-          ['american mahjong set', '12', '0', '#31'],
-          ['mahjong mat', '12', '0', '#28, #41'],
-          ['mahjong tiles', '12', '0', '#9, #24'],
-          ['virora mahjong', '12', '0 — all 12 are competitors', '#1, and 16 more of 60'],
+          ...VIRORA_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${viroraBand(p.monthlyUsd)}`]),
+          ['Total — the Whole brand line', monthUsd(VIRORA_AD.monthlyUsd.central), linePct(VIRORA_AD.ratePct.central), lineUsd((VIRORA_AD_ORDER * VIRORA_AD.ratePct.central) / 100), `Modelled: ${viroraBand(VIRORA_AD.monthlyUsd)}`],
         ],
         note:
-          'Headless Chrome, logged out, US, one read per term, matched against all 53 brand listings. Amazon localises and rotates its results, so this is a reading on a day, not a rank that holds.',
+          'What the Margin breakdown takes off for advertising, line for line: each product’s tab uses its own row, and the Whole brand tab the last. Per sale is the share of that product’s price, or of the $110.10 average order. Off-Amazon advertising was not read, so it is not in the line.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
@@ -3884,7 +3962,7 @@ export const PROFILES = {
           ['Green 160-tile set', '#31,653', '#256 · Tile Games', '4.8★ over 41 reviews'],
         ],
         note:
-          'Read through Keepa on 15 September 2026. Rank moves daily. Variations share a parent listing, so a colour can carry its siblings’ rank and reviews.',
+          'Read through Keepa. Rank moves daily. Variations share a parent listing, so a colour can carry its siblings’ rank and reviews.',
       },
 
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },

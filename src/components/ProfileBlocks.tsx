@@ -80,6 +80,14 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
       );
     case "callout":
       return <div data-notice style={{ margin: "1.25rem 0" }}><div>{block.text}</div></div>;
+    case "strategy":
+      return (
+        <aside data-strategy="">
+          <p data-strategy-eyebrow="">Advertising strategy</p>
+          <h3>{block.label}</h3>
+          <ul>{block.points.map((p, n) => <li key={n}>{p}</li>)}</ul>
+        </aside>
+      );
     case "image":
       /* Not an Exhibit. The wide blocks break out of the 44rem measure because
          a chart or a table needs the column; a photograph of one object does
