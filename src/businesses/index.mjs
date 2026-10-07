@@ -80,6 +80,10 @@ const mcBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 const viroraAd = (id) => VIRORA_AD.products.find((p) => p.id === id);
 const VIRORA_AD_ORDER = 110.1; // the Whole brand tab's average selling price
 const viroraBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+/* What a Top keywords table's "Ad spend a month" column adds up to — summed
+   from the generated rows, so the note under the table cannot drift. "under
+   $1" rows count as nothing. */
+const topSpend = (rows) => rows.reduce((t, r) => t + (/^under/.test(r[5]) ? 0 : Number(String(r[5]).replace(/[^0-9.]/g, '')) || 0), 0);
 
 /* White Mountain's advertising line, in two halves, each a channel's rate
    times its share of TOTAL revenue (research/white-mountain-puzzles/pnl.json
@@ -1595,11 +1599,11 @@ export const PROFILES = {
       {
         type: 'table',
         caption: 'Top keywords',
-        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
         rows: WMP_TOP_KEYWORDS,
         visibleRows: 10,
         note:
-          'Jungle Scout, for the ten best-selling listings: exact-match monthly searches and the best organic position any of the ten held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the ten. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
+          `Jungle Scout, for the ten best-selling listings: exact-match monthly searches and the best organic position any of the ten held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the ten. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword: these fifty carry ${monthUsd(topSpend(WMP_TOP_KEYWORDS))} of the ${monthUsd(WMP_AD.monthlyUsd.central)} modelled on Amazon US, and the rest sits on smaller searches below them. Positions move by the hour; this is one reading.`,
       },
       {
         type: 'prose',
@@ -1677,6 +1681,99 @@ export const PROFILES = {
         ],
         note:
           'What the Margin breakdown takes off for advertising, line for line. Share is of all three channels’ revenue; per sale is that share of the $19.52 average sale.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'One social account with a real audience — Instagram, at 23K — and a store that draws about 148,000 visits a month. The rest of their social presence is small.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'Their site links two accounts. Instagram carries 23K followers over 568 posts; Facebook is the page their Meta ads run from, and shows no count to a logged-out reader, so its size is unread rather than small. Two more carry their name and their tagline but are not linked from the site: a TikTok with 1,145 followers and no public videos, and a YouTube channel with 267 subscribers and twelve videos. On Amazon, where most of the money is, their best seller sits at #12,601 in all of Toys & Games and #304 among jigsaw puzzles — no single puzzle ranks high, which is the catalogue’s shape: many titles, each modest.',
+      },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Store visits', value: '147,663 a month', note: 'Similarweb, supplied by the owner' },
+          { label: 'Shopify products', value: '601' },
+          { label: 'Instagram', value: '23K followers', note: '568 posts' },
+          { label: 'TikTok', value: '1,145 followers', note: 'No public videos' },
+          { label: 'YouTube', value: '267 subscribers', note: '12 videos' },
+          { label: 'Facebook', value: 'Unread', note: 'No count shown logged out' },
+        ],
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — whitemountainpuzzles.com',
+            href: 'https://www.whitemountainpuzzles.com/',
+            value: '601 products',
+            flag: true,
+            note: 'Shopify, with a $19.99 shelf price for a 1,000-piece puzzle and a paid programme behind it — the Advertising section has the ad counts. Its header links Instagram and Facebook.',
+          },
+          {
+            label: 'Instagram — @whitemountainpuzzles',
+            href: 'https://www.instagram.com/whitemountainpuzzles/',
+            value: '23K followers',
+            note: 'Instagram’s own rounded figure, over 568 posts. The bio leads on “Proudly MADE IN AMERICA.”',
+          },
+          {
+            label: 'Facebook — White Mountain Puzzles',
+            href: 'https://www.facebook.com/WhiteMountainPuzzles',
+            value: 'Unread',
+            note: 'The page their Meta ads run from. Facebook shows no follower count to a logged-out reader.',
+          },
+          {
+            label: 'TikTok — @whitemountainpuzzles',
+            href: 'https://www.tiktok.com/@whitemountainpuzzles',
+            value: '1,145 followers',
+            note: 'Opened in April 2022, no public videos. Not linked from their site; the name and the bio — their tagline, word for word — are what tie it to them.',
+          },
+          {
+            label: 'YouTube — @whitemountainpuzzles',
+            href: 'https://www.youtube.com/@whitemountainpuzzles',
+            value: '267 subscribers',
+            note: 'Twelve videos. Not linked from their site; matched on the channel name and its description.',
+          },
+        ],
+      },
+      {
+        /* Keepa, research/white-mountain-puzzles/keepa/listings.json — the
+           top 20 storefront listings, ordered by overall rank. Names as the
+           Revenue breakdown has them. */
+        type: 'table',
+        caption: 'Where they rank on Amazon',
+        columns: ['Listing', 'Toys & Games', 'Subcategory', 'Rating'],
+        rows: [
+          ['Did You Know · 1,000 pieces', '#12,601', '#304 · Jigsaw Puzzles', '4.8★ over 308 reviews'],
+          ['Horror Stories · 1,000 pieces', '#15,171', '#377 · Jigsaw Puzzles', '4.8★ over 91 reviews'],
+          ['Welcome Fall · 1,000 pieces', '#18,448', '#473 · Jigsaw Puzzles', '4.9★ over 54 reviews'],
+          ['Halloween Crochet · 1,000 pieces', '#19,408', '#505 · Jigsaw Puzzles', '4.7★ over 77 reviews'],
+          ['State Trivia · 1,000 pieces', '#20,718', '#546 · Jigsaw Puzzles', '4.8★ over 33 reviews'],
+          ['Card Games · 1,000 pieces', '#22,205', '#591 · Jigsaw Puzzles', '4.9★ over 134 reviews'],
+          ['Mini Cereal Boxes · 100 pieces', '#22,483', '#597 · Jigsaw Puzzles', '4.3★ over 862 reviews'],
+          ['Family Retreat · 1,000 pieces', '#25,397', '#685 · Jigsaw Puzzles', '4.7★ over 228 reviews'],
+          ['Crazy State Laws · 1,000 pieces', '#25,646', '#697 · Jigsaw Puzzles', '4.6★ over 244 reviews'],
+          ['Halloween Horror · 1,000 pieces', '#25,997', '#713 · Jigsaw Puzzles', '4.7★ over 85 reviews'],
+          ['I Love Fishing · 1,000 pieces', '#28,045', '#789 · Jigsaw Puzzles', '5★ over 49 reviews'],
+          ['Lobster Landing · 1,000 pieces', '#28,957', '#826 · Jigsaw Puzzles', '4.7★ over 95 reviews'],
+          ['Halloween Dog House · 1,000 pieces', '#29,835', '#855 · Jigsaw Puzzles', '5★ over 40 reviews'],
+          ['Slang We Used · 1,000 pieces', '#31,675', '#914 · Jigsaw Puzzles', '4.8★ over 326 reviews'],
+          ['Book Collage · 1,000 pieces', '#33,221', '#968 · Jigsaw Puzzles', '4.8★ over 61 reviews'],
+          ['Sports Heroes · 1,000 pieces', '#37,018', '#1,086 · Jigsaw Puzzles', '4.7★ over 133 reviews'],
+          ['Things Parents Say · 1,000 pieces', '#39,304', '#1,163 · Jigsaw Puzzles', '4.7★ over 431 reviews'],
+          ['Dock Dogs · 1,000 pieces', '#44,817', '#1,324 · Jigsaw Puzzles', '4.7★ over 124 reviews'],
+          ['Potting Shed · 1,000 pieces', '#48,097', '#1,437 · Jigsaw Puzzles', '4.8★ over 93 reviews'],
+          ['Patriotic Porch · 1,000 pieces', '#51,248', '#1,537 · Jigsaw Puzzles', '5★ over 24 reviews'],
+        ],
+        visibleRows: 10,
+        note: 'Read through Keepa. Rank moves daily, and a lower number is a better seller.',
       },
 
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
@@ -3869,11 +3966,11 @@ export const PROFILES = {
       {
         type: 'table',
         caption: 'Top keywords',
-        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
         rows: VIRORA_TOP_KEYWORDS,
         visibleRows: 10,
         note:
-          'Jungle Scout, for the eight listings that sold in September: exact-match monthly searches and the best organic position any of the eight held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the eight. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
+          `Jungle Scout, for the eight listings that sold in September: exact-match monthly searches and the best organic position any of the eight held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among the eight. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword: these fifty carry ${monthUsd(topSpend(VIRORA_TOP_KEYWORDS))} of the ${monthUsd(VIRORA_AD.monthlyUsd.central)}, and the rest sits on smaller searches below them. Positions move by the hour; this is one reading.`,
       },
       {
         type: 'prose',
@@ -7802,11 +7899,11 @@ export const PROFILES = {
       {
         type: 'table',
         caption: 'Top keywords',
-        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
         rows: HM_TOP_KEYWORDS,
         visibleRows: 10,
         note:
-          'Jungle Scout, for the eight Highmark Collective listings: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
+          `Jungle Scout, for the eight Highmark Collective listings: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword: these fifty carry ${monthUsd(topSpend(HM_TOP_KEYWORDS))} of the ${monthUsd(HM_AD.monthlyUsd.central)}, and the rest sits on smaller searches below them. Positions move by the hour; this is one reading.`,
       },
       {
         type: 'prose',
@@ -8785,11 +8882,11 @@ export const PROFILES = {
       {
         type: 'table',
         caption: 'Top keywords',
-        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click'],
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
         rows: MC_TOP_KEYWORDS,
         visibleRows: 10,
         note:
-          'Jungle Scout, for the listings of the Mount Cleverest and 100 PICS ranges that sold in September: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Positions move by the hour; this is one reading.',
+          `Jungle Scout, for the listings of the Mount Cleverest and 100 PICS ranges that sold in September: exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword: these fifty carry ${monthUsd(topSpend(MC_TOP_KEYWORDS))} of the ${monthUsd(MC_AD.monthlyUsd.central)}, and the rest sits on smaller searches below them. Positions move by the hour; this is one reading.`,
       },
       {
         type: 'prose',

@@ -47,7 +47,8 @@ function detail(link: BusinessLink): string | null {
   // Column first, meta second — see linkFollowers. Reading only the blob is
   // what blanked the TikTok and Instagram counts.
   const followers = linkFollowers(link);
-  if (followers != null) return `${compact(followers)} followers`;
+  // YouTube counts subscribers, not followers — say what the platform says.
+  if (followers != null) return `${compact(followers)} ${link.platform === "YOUTUBE" ? "subscribers" : "followers"}`;
   if (typeof meta.visitsPerMonth === "number") return `${compact(meta.visitsPerMonth)} visits / mo`;
   if (typeof meta.asins === "number") return `${meta.asins} ASINs`;
   return shownHandle(link);
