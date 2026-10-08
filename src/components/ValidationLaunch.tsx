@@ -252,12 +252,12 @@ export function ValidationLaunch({ business, launch }: { business: BusinessDetai
                   </td>
                 ))}
                 <td data-note="">
-                  As fast as competing listings turn clicks into orders on the product’s searches (the median) —{" "}
+                  As fast as similar products sell on these searches:{" "}
                   {selection.map((p, i) => (
                     <span key={p.id}>
                       {i > 0 ? "; " : ""}
-                      {selection.length > 1 ? `${p.label.toLowerCase()} ` : ""}
-                      {rate(p.conversion.market)} across {int(p.conversion.rows)} listing-and-search pairs
+                      {selection.length > 1 ? `for the ${p.label.toLowerCase()}, ` : ""}about {rate(p.conversion.market)} of
+                      clicks become orders
                     </span>
                   ))}
                 </td>
