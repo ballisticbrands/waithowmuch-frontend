@@ -228,6 +228,19 @@ function startingCostWorking(b: BusinessDetail): string[] | undefined {
   const { inputs, breakdown, keywordReading: r } = e;
   const span = (x: { low: Dec; high: Dec }, f = exactMoney) =>
     Number(x.low) === Number(x.high) ? f(x.low, b.currency) : `${f(x.low, b.currency)}–${f(x.high, b.currency)}`;
+  /* The validation test (model 2026-10-08 on): what "What it costs to start"
+     shows, every product at once. Said in its own terms, not the launch's. */
+  const v = breakdown.validation;
+  if (v) {
+    const t = v.together;
+    const products = v.products.length === 1 ? "the product" : `each of its ${v.products.length} products`;
+    return [
+      `For this business it is the validation test: what it costs to find out whether it sells — ${span(e)}, shown at its low end.`,
+      `First order ${exactMoney(t.inventory, b.currency)} — ${v.gate.firstOrderUnits} units of ${products}, ${v.gate.vineUnits} of them to Amazon Vine for the first reviews.`,
+      `Test ads ${exactMoney(t.ads, b.currency)} at most — enough clicks on searches naming ${v.variant.label} to show whether the other ${v.gate.paidUnits} sell.`,
+      `Setup ${span(breakdown.parts.setup)}. If the test passes, the units the ads sell pay back about ${exactMoney(t.moneyBack, b.currency)} after Amazon’s fees.`,
+    ];
+  }
   const skus = inputs.launchSkus === 1 ? "one product" : `${inputs.launchSkus} products`;
   const week = monthLabel(r.periodStart);
   const read =

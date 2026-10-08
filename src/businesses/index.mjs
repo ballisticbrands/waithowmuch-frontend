@@ -53,8 +53,6 @@ import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
-import { VALIDATION_LAUNCH as VIRORA_VALIDATION } from './virora-mahjong.validation.mjs';
-import { VALIDATION_LAUNCH as WMP_VALIDATION } from './white-mountain-puzzles.validation.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD } from './highmark-collective.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
@@ -1536,16 +1534,16 @@ export const PROFILES = {
           'One part of the cost-of-goods line is softer than the rest: the $1.26 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
       },
 
-      /* The least it costs to find out whether the puzzle sells. Generated, see
-         white-mountain-puzzles.validation.mjs; it carries its own figures. */
+      /* The least it costs to find out whether the puzzle sells: the validation
+         test, read off the published "to start" estimate, like Virora's. */
       { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
           'The least it costs to validate the product: to find out whether it sells before you commit to a bigger launch.',
       },
-      { type: 'validation-strategy', launch: WMP_VALIDATION },
-      { type: 'validation-launch', launch: WMP_VALIDATION },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
@@ -3896,18 +3894,18 @@ export const PROFILES = {
           'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read — the first number to replace. Shipping and advertising are no longer placeholders: each product’s carton is priced at a read rate, and the ads are modelled from their actual sponsored footprint.',
       },
 
-      /* The least it costs to find out whether each product sells. Generated,
-         see virora-mahjong.validation.mjs; it carries its own figures. This is
-         the profile's only "What it costs to start" — the earlier per-product
-         estimate section was removed 2026-10-08. */
+      /* The least it costs to find out whether each product sells: the
+         validation test, read off the business's published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --publish), so the
+         section and the headline figure are one record. */
       { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
           'The least it costs to validate each product: to find out whether it sells before you commit to a bigger launch.',
       },
-      { type: 'validation-strategy', launch: VIRORA_VALIDATION },
-      { type: 'validation-launch', launch: VIRORA_VALIDATION },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {

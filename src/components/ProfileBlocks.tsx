@@ -90,7 +90,7 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
         </aside>
       );
     case "validation-strategy":
-      return <ValidationStrategy business={business} launch={block.launch} />;
+      return <ValidationStrategy business={business} />;
     case "image":
       /* Not an Exhibit. The wide blocks break out of the 44rem measure because
          a chart or a table needs the column; a photograph of one object does
@@ -362,7 +362,7 @@ function Exhibit({
          carries no data, so the page cannot disagree with the figure. */
       return <StartingCost business={business} products={block.products} />;
     case "validation-launch":
-      return <ValidationLaunch business={business} launch={block.launch} />;
+      return <ValidationLaunch business={business} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
     case "product-margins":

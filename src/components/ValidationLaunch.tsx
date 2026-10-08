@@ -22,9 +22,10 @@ import { StartingCostWaterfall } from "./StartingCostWaterfall";
  * conversion line is PER PRODUCT — a $229 set and a $45 mat do not convert
  * alike.
  *
- * 🚨 EVERY FIGURE IS GENERATED, none typed here: `launch` comes from
- * make-validation-launch.mjs, which takes the first order and setup costs from
- * the backend's own estimator.
+ * 🚨 EVERY FIGURE COMES FROM THE PUBLISHED ESTIMATE, none typed here: the test
+ * is the business's "to start" estimate (breakdown.validation), priced by the
+ * backend's estimateValidation and published by make-validation-launch.mjs. The
+ * section and the headline "To start" figure are therefore one record.
  */
 
 type Product = Launch["products"][number];
@@ -40,7 +41,9 @@ const rate = (v: number) => `${(v * 100).toFixed(1)}%`;
  * works in the order a seller meets it. Kept at reading width, so it is its own
  * block; the numbers that follow take the full column.
  */
-export function ValidationStrategy({ business, launch }: { business: BusinessDetail; launch: Launch }) {
+export function ValidationStrategy({ business }: { business: BusinessDetail }) {
+  const launch = business.startingCostEstimate?.breakdown?.validation;
+  if (!launch) return null;
   const currency = business.currency ?? "USD";
   const g = launch.gate;
   const v = launch.variant;
@@ -133,11 +136,34 @@ export function ValidationStrategy({ business, launch }: { business: BusinessDet
   );
 }
 
-export function ValidationLaunch({ business, launch }: { business: BusinessDetail; launch: Launch }) {
+export function ValidationLaunch({ business }: { business: BusinessDetail }) {
+  const launch = business.startingCostEstimate?.breakdown?.validation;
+  const [active, setActive] = useState(launch?.products[0]?.id);
+  // No published test is a legitimate state, as for any "to start" estimate.
+  if (!launch) {
+    return (
+      <section data-starting-cost="">
+        <p data-empty="">No validation test is published for this business yet.</p>
+      </section>
+    );
+  }
+  return <ValidationNumbers business={business} launch={launch} active={active} setActive={setActive} />;
+}
+
+function ValidationNumbers({
+  business,
+  launch,
+  active,
+  setActive,
+}: {
+  business: BusinessDetail;
+  launch: Launch;
+  active: string | undefined;
+  setActive: (id: string) => void;
+}) {
   const currency = business.currency ?? "USD";
   const g = launch.gate;
   const many = launch.products.length > 1;
-  const [active, setActive] = useState(launch.products[0]!.id);
 
   const selected: Product[] = active === TOGETHER ? launch.products : launch.products.filter((p) => p.id === active);
   const selection = selected.length ? selected : [launch.products[0]!];
