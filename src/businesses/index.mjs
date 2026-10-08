@@ -3898,32 +3898,11 @@ export const PROFILES = {
           'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read — the first number to replace. Shipping and advertising are no longer placeholders: each product’s carton is priced at a read rate, and the ads are modelled from their actual sponsored footprint.',
       },
 
-      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
-      {
-        type: 'lede',
-        text:
-          'The margin above is what this business keeps. This is the other half of the question: what a copy of each ' +
-          'of its two products would cost to put on the same shelf today.',
-      },
-      /* 🚨 No authored figures in this section, as on White Mountain. Each tab
-         reads that product's published estimate off the API
-         (productStartingCosts), priced by waithowmuch-research
-         starting-cost.mjs --product <id> from starting-cost.<id>.inputs.json.
-         The ids match the margin tabs, so each tab's links open its own
-         product's COGS, shipping and landed-cost tables. The set is published
-         --primary: its figure is the business's "To start". */
-      {
-        type: 'starting-cost',
-        products: [
-          { id: 'set', label: '160-tile set' },
-          { id: 'mat', label: 'Mahjong mat' },
-        ],
-      },
-
       /* The least it costs to find out whether each product sells. Generated,
-         see virora-mahjong.validation.mjs; it carries its own figures and
-         does not read the section above. */
-      { type: 'section', id: 'to-start-2', title: 'What it costs to start (2)', group: 'What it earns', asOf: true },
+         see virora-mahjong.validation.mjs; it carries its own figures. This is
+         the profile's only "What it costs to start" — the earlier per-product
+         estimate section was removed 2026-10-08. */
+      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
