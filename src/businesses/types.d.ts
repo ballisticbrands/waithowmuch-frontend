@@ -100,6 +100,22 @@ export type Block =
        */
       products?: Array<{ id: string; label: string }>;
     }
+  /**
+   * The same launch priced on smaller searches — what it costs to find out
+   * whether the products sell, rather than to hold the biggest search. Data is
+   * the generated `<slug>.validation.mjs`; the component compares it with the
+   * published estimate when the API serves one.
+   */
+  | {
+      type: "validation-launch";
+      launch: import("../lib/api").ValidationLaunch;
+    }
+  /** The same test, explained, in the Advertising section's strategy container.
+   *  Reading width, so it is not a wide exhibit like the block above. */
+  | {
+      type: "validation-strategy";
+      launch: import("../lib/api").ValidationLaunch;
+    }
   | {
       type: "margin";
       /** What one order is worth, so each line can also be shown in money. */

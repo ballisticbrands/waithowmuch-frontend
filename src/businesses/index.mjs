@@ -53,6 +53,7 @@ import { KALOTOYS_BREAKDOWN, kalotoysPhoto } from './kalotoys.breakdown.mjs';
 import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs';
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
+import { VALIDATION_LAUNCH as VIRORA_VALIDATION } from './virora-mahjong.validation.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD } from './highmark-collective.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
@@ -3918,6 +3919,18 @@ export const PROFILES = {
           { id: 'mat', label: 'Mahjong mat' },
         ],
       },
+
+      /* The least it costs to find out whether each product sells. Generated,
+         see virora-mahjong.validation.mjs; it carries its own figures and
+         does not read the section above. */
+      { type: 'section', id: 'to-start-2', title: 'What it costs to start (2)', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The least it costs to validate each product: to find out whether it sells before you commit to a bigger launch.',
+      },
+      { type: 'validation-strategy', launch: VIRORA_VALIDATION },
+      { type: 'validation-launch', launch: VIRORA_VALIDATION },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {

@@ -1962,6 +1962,8 @@ img[data-row-logo] {
 [data-strategy] h3 { margin: 0.2rem 0 0.6rem; font-size: 1.15rem; font-weight: 650; letter-spacing: -0.01em; }
 [data-strategy] ul { margin: 0; padding-left: 1.1rem; }
 [data-strategy] li { margin: 0.3rem 0; line-height: 1.5; }
+[data-strategy] ol { margin: 0.75rem 0 1rem; padding-left: 1.25rem; }
+[data-strategy] p:not([data-strategy-eyebrow]) { margin: 0.6rem 0; line-height: 1.5; }
 
 [data-chart] { width: 100%; height: auto; display: block; }
 
@@ -2172,6 +2174,10 @@ img[data-row-logo] {
   float: right; font-weight: 600; font-variant-numeric: tabular-nums;
   color: var(--muted-foreground); font-size: 0.9em;
 }
+/* The validation test's steps, in the order a seller meets them. */
+[data-validation-steps] { margin: 0.75rem 0 1rem; padding-left: 1.25rem; }
+[data-validation-steps] li { margin: 0 0 0.7rem; line-height: 1.55; }
+
 /* The "To start" row closes the sum, so it reads as an answer, not another line. */
 [data-starting-cost] tr[data-total] th, [data-starting-cost] tr[data-total] td {
   border-top: 2px solid var(--border); font-weight: 700; color: var(--foreground);

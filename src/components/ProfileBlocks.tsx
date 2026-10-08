@@ -8,6 +8,7 @@ import { MetricCell, ValuationCards } from "./MetricCards";
 import { ValuationBoard } from "./ValuationBoard";
 import { SalesBreakdown } from "./SalesBreakdown";
 import { StartingCost } from "./StartingCost";
+import { ValidationLaunch, ValidationStrategy } from "./ValidationLaunch";
 import { MarginBreakdown, BlockTable } from "./MarginBreakdown";
 import { Channels } from "./Channels";
 import { MarketplaceSplit } from "./MarketplaceSplit";
@@ -88,6 +89,8 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
           <ul>{block.points.map((p, n) => <li key={n}>{p}</li>)}</ul>
         </aside>
       );
+    case "validation-strategy":
+      return <ValidationStrategy business={business} launch={block.launch} />;
     case "image":
       /* Not an Exhibit. The wide blocks break out of the 44rem measure because
          a chart or a table needs the column; a photograph of one object does
@@ -142,6 +145,7 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
     case "marketplaces":
     case "selling":
     case "starting-cost":
+    case "validation-launch":
     case "product-margins":
       /* Hoisted out of the prose run by ProfileBlocks below, so these are
          unreachable — kept only because the switch is exhaustive over Block. */
@@ -199,6 +203,7 @@ type Wide = Extract<
       | "marketplaces"
       | "selling"
       | "starting-cost"
+      | "validation-launch"
       | "product-margins";
   }
 >;
@@ -238,6 +243,7 @@ function groupSections(blocks: Block[]): Section[] {
       block.type === "marketplaces" ||
       block.type === "selling" ||
       block.type === "starting-cost" ||
+      block.type === "validation-launch" ||
       block.type === "product-margins"
     ) {
       section.runs.push({ kind: "wide", block, first: block.type === "chart" && !seenChart });
@@ -355,6 +361,8 @@ function Exhibit({
       /* Reads the published estimate off the business — the block itself
          carries no data, so the page cannot disagree with the figure. */
       return <StartingCost business={business} products={block.products} />;
+    case "validation-launch":
+      return <ValidationLaunch business={business} launch={block.launch} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
     case "product-margins":

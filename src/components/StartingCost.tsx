@@ -35,7 +35,7 @@ const n = (v: number | string | null | undefined): number | null =>
 
 /** A range, exact. This page exists to be precise: money()'s "$6k" for $5,969
  *  reads as a rounder, more confident figure than the estimate is. */
-function span(r: Range | null | undefined, currency: string): string {
+export function span(r: Range | null | undefined, currency: string): string {
   const low = n(r?.low);
   const high = n(r?.high);
   if (low === null || high === null) return "—";
@@ -44,7 +44,7 @@ function span(r: Range | null | undefined, currency: string): string {
     : `${exactMoney(low, currency)}–${exactMoney(high, currency)}`;
 }
 
-const int = (v: number | string | null | undefined) => {
+export const int = (v: number | string | null | undefined) => {
   const x = n(v);
   return x === null ? "—" : Math.round(x).toLocaleString("en-US");
 };
@@ -159,8 +159,7 @@ function EstimateView({
       <p data-starting-cost-lede="">
         Launching a copy of {product ? `the ${product.label.toLowerCase()}` : "this business"} today would cost about{" "}
         <strong data-figure="">{money(e.low, currency)}</strong> at the least, and as much as{" "}
-        {exactMoney(e.high, currency)}. It is an estimate, not a quote
-        {inputs.asOf ? <>, and it describes {dayLabel(inputs.asOf)}</> : null}. Here is each part of it.
+        {exactMoney(e.high, currency)}. It is an estimate, not a quote. Here is each part of it.
       </p>
 
       {launchProducts ? (

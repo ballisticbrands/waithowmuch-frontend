@@ -40,7 +40,13 @@ function axisMax(v: number): number {
   return Math.ceil(v / step) * step;
 }
 
-export function StartingCostWaterfall({ estimate: e, currency }: { estimate: StartingCostEstimate; currency: string }) {
+/** What the waterfall draws: the total and the parts. A published estimate has
+ *  both; so does anything else that prices a launch the same way. */
+export type WaterfallInput = Pick<StartingCostEstimate, "low" | "high"> & {
+  breakdown?: { parts?: StartingCostEstimate["breakdown"]["parts"] };
+};
+
+export function StartingCostWaterfall({ estimate: e, currency }: { estimate: WaterfallInput; currency: string }) {
   const p = e.breakdown?.parts;
   const total = { low: n(e.low), high: n(e.high) };
   if (!p || !total.high) return null;
