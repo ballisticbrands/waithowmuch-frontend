@@ -237,7 +237,7 @@ function startingCostWorking(b: BusinessDetail): string[] | undefined {
     return [
       `For this business it is the validation test: what it costs to find out whether it sells — ${span(e)}, shown at its low end.`,
       `First order ${exactMoney(t.inventory, b.currency)} — ${v.gate.firstOrderUnits} units of ${products}, ${v.gate.vineUnits} of them to Amazon Vine for the first reviews.`,
-      `Test ads ${exactMoney(t.ads, b.currency)} at most — enough clicks on searches naming ${v.variant.label} to show whether the other ${v.gate.paidUnits} sell.`,
+      `Test ads ${exactMoney(t.ads, b.currency)} at most — enough clicks on searches naming ${v.variant.kind === "version" ? "each product’s version" : v.variant.label} to show whether the other ${v.gate.paidUnits} sell.`,
       `Setup ${span(breakdown.parts.setup)}. If the test passes, the units the ads sell pay back about ${exactMoney(t.moneyBack, b.currency)} after Amazon’s fees.`,
     ];
   }

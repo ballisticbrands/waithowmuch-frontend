@@ -32,6 +32,14 @@ type Product = Launch["products"][number];
 
 const TOGETHER = "together";
 
+/** A product label mid-sentence: lower-case, except a word that is always
+ *  capitalised — "the Bible verse jar", not "the bible verse jar". */
+const PROPER = new Set(["Bible", "God", "Christmas", "Easter", "American"]);
+const inSentence = (label: string) =>
+  label
+    .split(" ")
+    .map((w) => (PROPER.has(w) ? w : w.toLowerCase()))
+    .join(" ");
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 /** A conversion rate: one decimal, because a set's 1.8% is not "2%". */
 const rate = (v: number) => `${(v * 100).toFixed(1)}%`;
@@ -50,7 +58,8 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
   const colour = v.kind === "colour";
   const many = launch.products.length > 1;
   /** The words the searches have to contain, as a reader would say them. */
-  const named = colour ? v.label : v.words.map((w) => `“${w}”`).join(" or ");
+  const named =
+    v.kind === "version" ? "that version" : colour ? v.label : v.words.map((w) => `“${w}”`).join(" or ");
   const spread = launch.products.map((p) => p.adsDays);
   const days = Math.min(...spread) === Math.max(...spread) ? int(spread[0]!) : `${int(Math.min(...spread))}–${int(Math.max(...spread))}`;
   return (
@@ -65,7 +74,20 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
       </p>
       <ol data-validation-steps="">
         <li>
-          {colour ? (
+          {v.kind === "version" ? (
+            <>
+              <strong>Make your first order one version of each product</strong> —{" "}
+              {launch.products.map((p, i) => (
+                <span key={p.id}>
+                  {i > 0 ? (i === launch.products.length - 1 ? " and " : ", ") : ""}
+                  the {inSentence(p.label)}
+                  {p.variant?.label ? ` ${p.variant.label}` : " in its one design"}
+                </span>
+              ))}
+              . Each product’s searches name that version, so the product has to match. One version is enough to
+              validate; add the others once it works.
+            </>
+          ) : colour ? (
             <>
               <strong>Make your first order in one colour — {v.label}.</strong> The searches in this plan all name the
               colour, so the product has to match. One colour is enough to validate; add the others once it works.
@@ -100,7 +122,7 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
           {launch.products.map((p, i) => (
             <span key={p.id}>
               {i > 0 ? "; " : ""}
-              {many ? `the ${p.label.toLowerCase()} (${money(p.sellingPrice, currency)}): ` : ""}all{" "}
+              {many ? `the ${inSentence(p.label)} (${money(p.sellingPrice, currency)}): ` : ""}all{" "}
               {int(g.paidUnits)} within {int(p.passClicks)} clicks to pass, under {int(g.failBelowUnits)}{" "}
               {p.passClicks === p.clicksNeeded ? "by then" : `by ${int(p.clicksNeeded)}`} to fail
             </span>
@@ -182,7 +204,7 @@ function ValidationNumbers({
   const totalsDays = totals.adsDays;
   const tabId = active === TOGETHER || selection.length > 1 ? TOGETHER : selection[0]!.id;
 
-  const subject = selection.length > 1 ? "Both products together" : `The ${selection[0]!.label.toLowerCase()}`;
+  const subject = selection.length > 1 ? "Both products together" : `The ${inSentence(selection[0]!.label)}`;
 
   return (
     <section data-starting-cost="" data-validation-launch="">
@@ -282,7 +304,7 @@ function ValidationNumbers({
                   {selection.map((p, i) => (
                     <span key={p.id}>
                       {i > 0 ? "; " : ""}
-                      {selection.length > 1 ? `for the ${p.label.toLowerCase()}, ` : ""}about {rate(p.conversion.market)} of
+                      {selection.length > 1 ? `for the ${inSentence(p.label)}, ` : ""}about {rate(p.conversion.market)} of
                       clicks become orders
                     </span>
                   ))}
@@ -379,7 +401,7 @@ function ValidationNumbers({
             {(p.widened || p.atMinimumClicks) && (
               <p data-starting-cost-source="">
                 {p.widened
-                  ? `Competing listings convert ${rate(p.conversion.market)} on these searches, so it takes ${int(p.clicksNeeded)} clicks to sell ${int(g.paidUnits)} units. The ${launch.variant.kind === "colour" ? launch.variant.label : `“${launch.variant.label}”`} searches of ${int(launch.band.min)}–${int(launch.band.max)} a month cannot deliver that many, so the smallest one above them is added.`
+                  ? `Competing listings convert ${rate(p.conversion.market)} on these searches, so it takes ${int(p.clicksNeeded)} clicks to sell ${int(g.paidUnits)} units. The ${launch.variant.kind === "colour" ? launch.variant.label : launch.variant.kind === "version" ? "matching" : `“${launch.variant.label}”`} searches of ${int(launch.band.min)}–${int(launch.band.max)} a month cannot deliver that many, so the smallest one above them is added.`
                   : `Competing listings convert ${rate(p.conversion.market)}, so all ${int(g.paidUnits)} units should be gone within ${int(p.passClicks)} clicks. The test buys up to ${int(g.minClicks)}, the least that tells you anything reliable, so a fail is read on enough clicks to trust.`}
               </p>
             )}
@@ -394,7 +416,7 @@ function ValidationNumbers({
         <h3>Adding it up</h3>
         <div data-table-wrap="">
           <table data-earnings-table="">
-            <caption>What it costs to validate: {subject.toLowerCase()}</caption>
+            <caption>What it costs to validate: {selection.length > 1 ? "both products together" : `the ${inSentence(selection[0]!.label)}`}</caption>
             <thead>
               <tr>
                 <th scope="col">Part</th>

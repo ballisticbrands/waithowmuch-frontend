@@ -226,7 +226,7 @@ export type ValidationLaunch = {
   bidsReadAt: string;
   /** The one version the first order is made in — a colour, or a design's
    *  theme — and the words its searches name. */
-  variant: { kind: "colour" | "theme"; label: string; words: string[] };
+  variant: { kind: "colour" | "theme" | "version"; label: string; words: string[] };
   band: { min: number; max: number };
   maxRank: number;
   /** What a product has to do to pass, and the numbers the launch is sized by. */
@@ -268,6 +268,10 @@ export type ValidationLaunch = {
       to: string;
     };
     clicksNeeded: number;
+    /** This product's own version, when the products' versions differ (kind
+     *  "version"): the words its searches name, and how the page says it — or a
+     *  null label for a product that comes in one design. */
+    variant?: { label: string | null; words: string[] } | null;
     /** Pass: the paid units sold within this many clicks — the market's rate. */
     passClicks: number;
     /** Days of ads the clicks take at the smallest click share. */

@@ -7836,14 +7836,14 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'The margin above is what this business keeps. This is the other half of the question — and on this one it has no answer yet.',
+          'The least it costs to validate each product: to find out whether it sells before you commit to a bigger launch.',
       },
-      /* 🚨 No authored figures in this section: the block reads the published
-         estimate off the Business row. There is none here, and the component
-         prices are the owner's own quotes with no minimum order attached, so
-         §3a leaves the figure NULL rather than inventing an order size. The
-         block renders its own note saying so. */
-      { type: 'starting-cost' },
+      /* The validation test, read off the published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --variants
+         "baptism=boy,boys:for boys;jar=jar" --products baptism,jar --publish),
+         so the section and the headline figure are one record. */
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
