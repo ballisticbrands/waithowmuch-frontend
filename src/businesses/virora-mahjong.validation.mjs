@@ -1,17 +1,23 @@
 /**
- * virora-mahjong — the validation launch ("What it costs to start", second view).
+ * virora-mahjong — "What it costs to start": the validation launch.
  *
  * 🚨 GENERATED. waithowmuch-research skills/build-ecom-biz-page/scripts/
- * make-validation-launch.mjs --colour pink (read 2026-10-05); the first order and
- * setup costs are the backend's own (starting-cost.ts, model
- * 2026-10-07). Re-run it rather than editing a row. Spy data behind
- * it: adspend.json, retrieved 2026-10-07.
+ * make-validation-launch.mjs virora-mahjong --variant pink --exclude "viora,oh my mahjong,linda li,amalfi,atelier,yellow mountain,sweet jojo,pumiboo"
+ * (keywords: ad-keywords.json, read 2026-10-05); the first order and setup costs
+ * are the backend's own (starting-cost.ts, model 2026-10-07). Re-run it
+ * rather than editing a row. Spy data behind it: adspend.json, retrieved 2026-10-07.
  */
 export const VALIDATION_LAUNCH = {
   "model": "2026-10-07",
   "readAt": "2026-10-05",
   "bidsReadAt": "2026-10-07",
-  "colour": "pink",
+  "variant": {
+    "kind": "colour",
+    "label": "pink",
+    "words": [
+      "pink"
+    ]
+  },
   "band": {
     "min": 1000,
     "max": 5500
@@ -26,6 +32,8 @@ export const VALIDATION_LAUNCH = {
     "rating": 4.2,
     "returns": 0.1,
     "organicRank": 20,
+    "reviewsBeforeAds": 5,
+    "failBelowUnits": 10,
     "clickShare": 0.04,
     "windowDays": 60
   },
@@ -48,6 +56,10 @@ export const VALIDATION_LAUNCH = {
         "to": "2026-10-03"
       },
       "clicksNeeded": 1091,
+      "passClicks": 1091,
+      "adsDays": 52,
+      "payout": 185.75,
+      "moneyBack": 3715,
       "atMinimumClicks": false,
       "widened": true,
       "keywords": [
@@ -112,6 +124,10 @@ export const VALIDATION_LAUNCH = {
         "to": "2026-10-03"
       },
       "clicksNeeded": 300,
+      "passClicks": 269,
+      "adsDays": 48,
+      "payout": 26.96,
+      "moneyBack": 539,
       "atMinimumClicks": true,
       "widened": false,
       "keywords": [
@@ -140,6 +156,8 @@ export const VALIDATION_LAUNCH = {
       "high": 2420
     },
     "low": 4355,
-    "high": 5985
+    "high": 5985,
+    "moneyBack": 4254,
+    "adsDays": 52
   }
 };

@@ -222,8 +222,9 @@ export type ValidationLaunch = {
   model: string;
   readAt: string;
   bidsReadAt: string;
-  /** The one colour the first order is made in; the searches name it. */
-  colour: string;
+  /** The one version the first order is made in — a colour, or a design's
+   *  theme — and the words its searches name. */
+  variant: { kind: "colour" | "theme"; label: string; words: string[] };
   band: { min: number; max: number };
   maxRank: number;
   /** What a product has to do to pass, and the numbers the launch is sized by. */
@@ -236,6 +237,10 @@ export type ValidationLaunch = {
     rating: number;
     returns: number;
     organicRank: number;
+    /** Vine reviews in before the ads start. */
+    reviewsBeforeAds: number;
+    /** Fewer paid units than this sold by the click cap is a fail. */
+    failBelowUnits: number;
     clickShare: number;
     windowDays: number;
   };
@@ -261,6 +266,14 @@ export type ValidationLaunch = {
       to: string;
     };
     clicksNeeded: number;
+    /** Pass: the paid units sold within this many clicks — the market's rate. */
+    passClicks: number;
+    /** Days of ads the clicks take at the smallest click share. */
+    adsDays: number;
+    /** What Amazon pays out on one sale, after its referral and FBA fees. */
+    payout: number;
+    /** What a passing test's paid units bring back. */
+    moneyBack: number;
     atMinimumClicks: boolean;
     widened: boolean;
     keywords: Array<{
@@ -279,7 +292,7 @@ export type ValidationLaunch = {
     high: number;
   }>;
   /** Every product at once: one setup, however many launch. */
-  together: { inventory: number; ads: number; setup: Range; low: number; high: number };
+  together: { inventory: number; ads: number; setup: Range; low: number; high: number; moneyBack: number; adsDays: number };
 };
 
 export type BusinessLink = {

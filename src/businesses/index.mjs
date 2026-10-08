@@ -54,6 +54,7 @@ import { MARYRUTH_PHOTOS, MARYRUTH_TOP_LISTINGS } from './maryruth.breakdown.mjs
 import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD } from './virora-mahjong.adspend.mjs';
 import { VALIDATION_LAUNCH as VIRORA_VALIDATION } from './virora-mahjong.validation.mjs';
+import { VALIDATION_LAUNCH as WMP_VALIDATION } from './white-mountain-puzzles.validation.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD } from './highmark-collective.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
@@ -1535,19 +1536,16 @@ export const PROFILES = {
           'One part of the cost-of-goods line is softer than the rest: the $1.26 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
       },
 
+      /* The least it costs to find out whether the puzzle sells. Generated, see
+         white-mountain-puzzles.validation.mjs; it carries its own figures. */
       { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
       {
         type: 'lede',
         text:
-          'The margin above is what this business keeps. This is the other half of the question: what a copy of it ' +
-          'would cost to put on the same shelf today.',
+          'The least it costs to validate the product: to find out whether it sells before you commit to a bigger launch.',
       },
-      /* 🚨 No authored figures in this section. The block reads the published
-         estimate off the API, so a re-priced estimate moves the page and no
-         prose here can contradict the number beside it. Everything the reader
-         needs — the three parts, the ad arithmetic, the setup lines and the date
-         each input was read — comes out of the estimate itself. */
-      { type: 'starting-cost' },
+      { type: 'validation-strategy', launch: WMP_VALIDATION },
+      { type: 'validation-launch', launch: WMP_VALIDATION },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
