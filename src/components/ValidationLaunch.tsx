@@ -240,8 +240,8 @@ export function ValidationLaunch({ business, launch }: { business: BusinessDetai
                   </td>
                 ))}
                 <td data-note="">
-                  What sells the {int(g.paidUnits)} paid units at the rate competing listings sell, never under{" "}
-                  {int(g.minClicks)}
+                  Enough clicks for all {int(g.paidUnits)} units to sell if the product sells as well as similar
+                  products do. Never fewer than {int(g.minClicks)}, so one lucky or unlucky day cannot decide the result
                 </td>
               </tr>
               <tr>
@@ -260,7 +260,6 @@ export function ValidationLaunch({ business, launch }: { business: BusinessDetai
                       {rate(p.conversion.market)} across {int(p.conversion.rows)} listing-and-search pairs
                     </span>
                   ))}
-                  . Jungle Scout’s model, the week of {dayLabel(selection[0]!.conversion.from)}
                 </td>
               </tr>
               <tr>
