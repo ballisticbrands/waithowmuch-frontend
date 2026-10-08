@@ -614,7 +614,19 @@ img[data-row-logo] {
   color: var(--muted-foreground); font-weight: 600;
   border-bottom: 1px solid var(--border); background: var(--muted);
 }
-[data-row-head] span:nth-child(n+3) { text-align: right; }
+[data-row-head] > span:nth-child(n+3) { text-align: right; }
+/* The one heading with an ⓘ: the icon sits after the words, on the same line. */
+[data-row-head-info] { display: inline-flex; align-items: center; justify-content: flex-end; gap: 0.25rem; }
+/* The panel is inside the heading, so undo the heading's type: it is prose. */
+[data-row-head-info] [data-infotip] {
+  text-align: left; text-transform: none; letter-spacing: normal; font-weight: 400;
+}
+/* "How it's worked out" under the To start figure — a way into the section that
+   explains it, quieter than the figure, underlined so it reads as a link. */
+[data-row-link] {
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+[data-row-link]:hover, [data-row-link]:focus-visible { color: var(--foreground); }
 
 @media (max-width: 760px) {
   /* Below this the six columns cannot hold their widths without the figures

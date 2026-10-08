@@ -1,26 +1,51 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { BusinessCard } from "@/lib/api";
 import { businessPath } from "@/data/site";
 import { money, percent, monthLabel, ageLabel } from "@/lib/format";
 import { startingCostFigure } from "@/lib/starting-cost";
 import { Provenance } from "./Provenance";
+import { InfoTip } from "./InfoTip";
+
+/** What "To start" means, behind the ⓘ on the column heading. */
+const TO_START_INFO = [
+  "What it would cost to validate launching a competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells.",
+  "It covers a first order of 50 units (30 of them go to Amazon Vine for the first reviews), the ads that test whether the rest sell, and setup — the seller account, a trademark, samples, photos and packaging. It is an estimate, shown at its low end, not what the founders spent.",
+  "Each business’s “What it costs to start” section works it out step by step: follow the link under the figure.",
+];
 
 /** Column headings for the rows below. Hidden on narrow screens, where the
- *  row folds and each figure carries its own label instead. */
+ *  row folds and each figure carries its own label instead.
+ *
+ *  The plain headings are aria-hidden, since every row's figure carries its
+ *  own label; "To start" is not, because its ⓘ is a real button and a focusable
+ *  control must not sit inside an aria-hidden subtree. */
 export function IdeaRowHead() {
   return (
-    <div data-row-head aria-hidden="true">
-      <span />
-      <span>Business</span>
-      <span>Profit / mo</span>
-      <span>Margin</span>
-      <span>To start</span>
-      <span>Age</span>
+    <div data-row-head>
+      <span aria-hidden="true" />
+      <span aria-hidden="true">Business</span>
+      <span aria-hidden="true">Profit / mo</span>
+      <span aria-hidden="true">Margin</span>
+      <span data-row-head-info>
+        To start <InfoTip label="To start" paragraphs={TO_START_INFO} />
+      </span>
+      <span aria-hidden="true">Age</span>
     </div>
   );
 }
 
 export function IdeaRow({ business: b }: { business: BusinessCard }) {
+  const navigate = useNavigate();
+  const toStart = startingCostFigure(b);
+  /* 🚨 Not a <Link>: the whole row already is one, and an <a> inside an <a> is
+     invalid HTML that browsers repair by splitting the row apart. A click
+     target that cancels the row's navigation and makes its own does the job,
+     with role="link" and Enter so it still reads and works as a link. */
+  const howItWorks = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`${businessPath(b.slug)}to-start/`);
+  };
   return (
     <Link data-row to={businessPath(b.slug)}>
       {b.logoUrl ? (
@@ -79,7 +104,22 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
         </dl>
         <dl data-row-stat>
           <dt>To start</dt>
-          <dd data-figure>{money(startingCostFigure(b), b.currency)}</dd>
+          <dd data-figure>{money(toStart, b.currency)}</dd>
+          {toStart !== null && (
+            <dd data-row-sub>
+              <span
+                role="link"
+                tabIndex={0}
+                data-row-link
+                onClick={howItWorks}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") howItWorks(e);
+                }}
+              >
+                How it’s worked out
+              </span>
+            </dd>
+          )}
         </dl>
         <dl data-row-stat>
           <dt>Age</dt>
