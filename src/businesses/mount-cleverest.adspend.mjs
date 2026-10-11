@@ -2,7 +2,7 @@
  * mount-cleverest — the Advertising section's tables.
  *
  * 🚨 GENERATED. waithowmuch-research skills/amazon-adspend-spy/scripts/
- * profile-tables.mjs from research/mount-cleverest/adspend.json (read 2026-10-07).
+ * profile-tables.mjs from research/mount-cleverest/adspend.json (read 2026-10-11).
  * Re-run that script rather than editing a row.
  */
 
@@ -131,3 +131,80 @@ export const TOP_KEYWORDS = [
   ["fun party games","2,986","#52","None seen","$0.86","$0"],
   ["card games for teens","2,863","#25","None seen","$2.30","$0"],
 ];
+
+/** Every keyword an ad of theirs was seen on, biggest modelled spend first:
+ *  keyword, product, searches a month, their ads, cost per click, modelled
+ *  spend a month (to the cent, so the rows visibly add up to the total). */
+export const AD_KEYWORDS = [
+  ["geography games for kids 8-12","Mount Cleverest decks","551","27% of ads","$0.93","$4.22"],
+  ["boys adrift the six factors","Mount Cleverest decks","450","49% of ads","$0.59","$3.94"],
+  ["best games","Mount Cleverest decks","1,755","7% of ads","$1.05","$3.74"],
+  ["no wrong answers game","Mount Cleverest decks","450","25% of ads","$1.08","$3.58"],
+  ["stop! that! train!","SMART CARDS","1,326","22% of ads","$0.37","$3.22"],
+  ["jeopardy game","Mount Cleverest decks","1,295","10% of ads","$0.76","$3.06"],
+  ["dinosaur playing cards","SMART CARDS","450","30% of ads","$0.63","$2.54"],
+  ["geography board game","Mount Cleverest decks","450","14% of ads","$1.18","$2.20"],
+  ["train back to boston","SMART CARDS","450","43% of ads","$0.35","$2.04"],
+  ["overrated underrated card game","Mount Cleverest decks","450","14% of ads","$1.03","$1.92"],
+  ["trivia games for kids","Mount Cleverest decks","392","15% of ads","$0.96","$1.74"],
+  ["america's game","SMART CARDS","450","30% of ads","$0.37","$1.49"],
+  ["stop that train dvd","SMART CARDS","458","22% of ads","$0.49","$1.46"],
+  ["trivia games for family","Mount Cleverest decks","450","14% of ads","$0.75","$1.40"],
+  ["trivia card games","Mount Cleverest decks","581","10% of ads","$0.73","$1.32"],
+  ["south park game","Mount Cleverest decks","480","25% of ads","$0.37","$1.31"],
+  ["professor noggin","Mount Cleverest decks","450","23% of ads","$0.35","$1.08"],
+  ["parks roll and hike game","Mount Cleverest decks","513","14% of ads","$0.44","$0.94"],
+  ["america games","100 PICS flash cards","450","16% of ads","$0.38","$0.80"],
+  ["only murders in the building game","Mount Cleverest decks","450","14% of ads","$0.35","$0.65"],
+  ["fun facts game","Mount Cleverest decks","450","5% of ads","$0.92","$0.62"],
+  ["leading adult learning","100 PICS flash cards","450","5% of ads","$0.90","$0.61"],
+  ["black flag game","100 PICS flash cards","450","10% of ads","$0.36","$0.50"],
+  ["slappy camper game","Mount Cleverest decks","450","10% of ads","$0.35","$0.49"],
+  ["terrible therapist game","Mount Cleverest decks","450","10% of ads","$0.35","$0.49"],
+  ["poorly explained movies game","Mount Cleverest decks","692","5% of ads","$0.46","$0.48"],
+  ["animal playing cards","SMART CARDS","450","6% of ads","$0.48","$0.41"],
+  ["trivia game","Mount Cleverest decks","1,902","1% of ads","$0.75","$0.34"],
+  ["little it","SMART CARDS","450","7% of ads","$0.35","$0.34"],
+  ["geography games","Mount Cleverest decks","1,913","1% of ads","$0.85","$0.28"],
+  ["old boy deluxe edition","Mount Cleverest decks","450","6% of ads","$0.35","$0.28"],
+  ["ww2 games","Mount Cleverest decks","450","3% of ads","$0.44","$0.18"],
+  ["timeline game","Mount Cleverest decks","1,211","1% of ads","$0.65","$0.13"],
+  ["lego police train","SMART CARDS","421","2% of ads","$0.37","$0.12"],
+  ["boys who taint","Mount Cleverest decks","450","2% of ads","$0.35","$0.10"],
+  ["the heiress of two worlds","100 PICS flash cards","450","2% of ads","$0.35","$0.10"],
+  ["mystery train","SMART CARDS","506","1% of ads","$0.75","$0.09"],
+  ["pandasaurus games","Mount Cleverest decks","450","under 1% of ads","$1.36","$0.08"],
+  ["flag flash cards","100 PICS flash cards","439","1% of ads","$0.95","$0.07"],
+  ["states and capitals flash cards","100 PICS flash cards","1,370","under 1% of ads","$0.41","$0.05"],
+  ["ago","100 PICS flash cards","450","1% of ads","$0.51","$0.05"],
+  ["worlds f","100 PICS flash cards","1,257","under 1% of ads","$0.35","$0.04"],
+  ["flag toys","100 PICS flash cards","450","1% of ads","$0.35","$0.04"],
+  ["geography games for kids","Mount Cleverest decks","388","under 1% of ads","$0.76","$0.04"],
+  ["state capital flashcards","100 PICS flash cards","682","under 1% of ads","$0.42","$0.03"],
+  ["flags of the world flash cards","100 PICS flash cards","450","under 1% of ads","$0.88","$0.03"],
+  ["snap dinosaurs","SMART CARDS","450","under 1% of ads","$0.57","$0.03"],
+  ["dinosaur cards","SMART CARDS","1,174","under 1% of ads","$0.35","$0.02"],
+  ["states and capitals game","100 PICS flash cards","879","under 1% of ads","$0.42","$0.02"],
+  ["gilmore girls trivia","Mount Cleverest decks","428","under 1% of ads","$0.40","$0.02"],
+  ["train gifts for boys","SMART CARDS","1,126","under 1% of ads","$0.50","$0.01"],
+  ["the world's game","100 PICS flash cards","450","under 1% of ads","$0.61","$0.01"],
+  ["travel games for kids ages 6-8","100 PICS flash cards","450","under 1% of ads","$0.73","$0.01"],
+  ["world wa","100 PICS flash cards","942","under 1% of ads","—","no bid, not priced"],
+  ["zany trains","SMART CARDS","686","under 1% of ads","$0.36","$0.00"],
+  ["all around the world","100 PICS flash cards","674","under 1% of ads","$0.35","$0.00"],
+  ["me and you against the world","100 PICS flash cards","647","under 1% of ads","—","no bid, not priced"],
+  ["state and capital flash cards","100 PICS flash cards","642","under 1% of ads","$0.41","$0.00"],
+  ["world o","100 PICS flash cards","585","1% of ads","—","no bid, not priced"],
+  ["country flash cards","100 PICS flash cards","450","under 1% of ads","$0.44","$0.00"],
+  ["the book of 100 drinking games","100 PICS flash cards","450","7% of ads","—","no bid, not priced"],
+  ["workd","100 PICS flash cards","450","under 1% of ads","—","no bid, not priced"],
+  ["world flags for kids","100 PICS flash cards","450","under 1% of ads","$0.35","$0.00"],
+  ["world t","100 PICS flash cards","450","6% of ads","—","no bid, not priced"],
+  ["americas gam","SMART CARDS","450","30% of ads","—","no bid, not priced"],
+  ["cars playing cards","SMART CARDS","450","under 1% of ads","$0.35","$0.00"],
+  ["train in vain the clash","SMART CARDS","450","24% of ads","—","no bid, not priced"],
+  ["world hold on","100 PICS flash cards","436","18% of ads","—","no bid, not priced"],
+];
+
+/** What AD_KEYWORDS' spend column adds up to — the advertising line, unrounded. */
+export const AD_KEYWORDS_TOTAL = 48.76;

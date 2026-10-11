@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { listBusinesses, listCategories, type BusinessCard, type FacetCategory } from "@/lib/api";
 import { collectionBySlug, collectionPath, COLLECTIONS, MORE } from "@/data/collections.mjs";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
@@ -7,6 +7,7 @@ import { IdeaRow, IdeaRowHead } from "@/components/IdeaRow";
 import { Filters, EMPTY_FILTERS, toQuery, type FilterState } from "@/components/Filters";
 import { ideasBootstrap } from "@/lib/bootstrap";
 import { BRAND_NAME } from "@/data/site";
+import { searchBusinesses } from "@/lib/search";
 
 export default function Ideas() {
   const { collection = "all-ideas" } = useParams();
@@ -19,6 +20,13 @@ export default function Ideas() {
   const [facets, setFacets] = useState<FacetCategory[]>(boot?.categories ?? []);
   const [error, setError] = useState(false);
   const first = useRef(true);
+  /* The search box filters the loaded rows in the browser (lib/search.ts) and
+     lives in the URL, so a search can be shared and survives a reload. */
+  const [params, setParams] = useSearchParams();
+  const q = params.get("q") ?? "";
+  const setQ = (v: string) =>
+    setParams((p) => { const n = new URLSearchParams(p); if (v) n.set("q", v); else n.delete("q"); return n; }, { replace: true });
+  const shown = useMemo(() => (rows ? searchBusinesses(rows, q) : null), [rows, q]);
 
   useEffect(() => {
     if (facets.length) return;
@@ -76,6 +84,21 @@ export default function Ideas() {
     <main data-main>
         <h1 style={{ marginBottom: "1.25rem" }}>{meta.title}</h1>
 
+        <div data-search>
+          <label htmlFor="case-search" data-sr-only>Search case studies by name</label>
+          <input
+            id="case-search"
+            data-input
+            data-search-input
+            type="search"
+            placeholder="Search by name — e.g. Mary Ruth, Spite House, mahjong"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+
         <Filters state={filters} onChange={setFilters} facets={facets} total={total} />
 
         {error && <div data-empty>Could not load case studies. Refresh to try again.</div>}
@@ -88,10 +111,17 @@ export default function Ideas() {
             </p>
           </div>
         )}
-      {rows && rows.length > 0 && (
+      {q && shown && rows && rows.length > 0 && (
+        <p data-result-count>
+          {shown.length === 0 ? `No case study matches “${q}”` : `${shown.length} of ${rows.length} match “${q}”`}
+          {" · "}
+          <button data-btn data-variant="ghost" onClick={() => setQ("")}>Clear search</button>
+        </p>
+      )}
+      {shown && shown.length > 0 && (
         <div data-rows>
           <IdeaRowHead />
-          {rows.map((b) => <IdeaRow key={b.id} business={b} />)}
+          {shown.map((b) => <IdeaRow key={b.id} business={b} />)}
         </div>
       )}
     </main>

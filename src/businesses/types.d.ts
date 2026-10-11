@@ -115,7 +115,13 @@ export type Block =
    * the generated `<slug>.validation.mjs`; the component compares it with the
    * published estimate when the API serves one.
    */
-  | { type: "validation-launch" }
+  | {
+      type: "validation-launch";
+      /** Where the "First order" row links for each product's landed cost.
+       *  Default: the Margin breakdown's #landed-cost (its product tab when
+       *  split). A string for every product, or one per product id. */
+      landedHref?: string | Record<string, string>;
+    }
   /** The same test, explained, in the Advertising section's strategy container.
    *  Reading width, so it is not a wide exhibit like the block above. */
   | { type: "validation-strategy" }
@@ -184,6 +190,50 @@ export type Block =
         blended?: boolean;
         blocks: Block[];
       }>;
+    }
+  /**
+   * Per-product content behind the same tab bar as `product-margins`, for
+   * anything that is NOT a full margin breakdown — a product's supplier quotes
+   * when the margin itself is not split by product (KALOTOYS: the founders'
+   * margin leads, the Alibaba quotes are a per-product comparison). 🚨 Two or
+   * more supplier tables on a profile always go behind tabs, one per product
+   * (build-ecom-biz-page §2, check-profile.mjs).
+   */
+  | {
+      type: "product-tabs";
+      products: Array<{
+        /** Stable, url-safe: `?product=<id>` opens this tab. */
+        id: string;
+        label: string;
+        /** Share of the snapshot month's revenue, shown on the tab. */
+        sharePct?: number;
+        blocks: Block[];
+      }>;
+    }
+  /**
+   * A claimed cost-of-goods share against factory quotes for the same
+   * products: a hero pair with a computed verdict, then a dot per product on
+   * the claim's reference line (components/CostAgreement.tsx). For a profile
+   * whose margin rests on an owner's own figure (KALOTOYS' founders) — the
+   * exhibit that tells a reader whether that figure holds up.
+   */
+  | {
+      type: "cost-agreement";
+      claim: { label: string; pct: number; source: string };
+      quote: { label: string; pct: number; source: string };
+      /** One line under the verdict, saying what the agreement means. */
+      verdictNote: string;
+      ariaLabel: string;
+      products: Array<{
+        label: string;
+        price: number;
+        claimUsd: number;
+        makeUsd: number;
+        makePct: number;
+        landedUsd: number;
+        landedPct: number;
+      }>;
+      note?: string;
     }
   /** A plain table — supplier quotes, and anything else with columns. */
   | {

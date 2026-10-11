@@ -1,3 +1,4 @@
+import { CostAgreement } from "./CostAgreement";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { Block, MetricKey, Profile } from "@/businesses/types";
@@ -148,6 +149,8 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
     case "starting-cost":
     case "validation-launch":
     case "product-margins":
+    case "product-tabs":
+    case "cost-agreement":
       /* Hoisted out of the prose run by ProfileBlocks below, so these are
          unreachable — kept only because the switch is exhaustive over Block. */
       return null;
@@ -205,7 +208,9 @@ type Wide = Extract<
       | "selling"
       | "starting-cost"
       | "validation-launch"
-      | "product-margins";
+      | "product-margins"
+      | "product-tabs"
+      | "cost-agreement";
   }
 >;
 type Run = { kind: "prose"; blocks: Block[] } | { kind: "wide"; block: Wide; first: boolean };
@@ -245,7 +250,9 @@ function groupSections(blocks: Block[]): Section[] {
       block.type === "selling" ||
       block.type === "starting-cost" ||
       block.type === "validation-launch" ||
-      block.type === "product-margins"
+      block.type === "product-margins" ||
+      block.type === "product-tabs" ||
+      block.type === "cost-agreement"
     ) {
       section.runs.push({ kind: "wide", block, first: block.type === "chart" && !seenChart });
       if (block.type === "chart") seenChart = true;
@@ -363,10 +370,13 @@ function Exhibit({
          carries no data, so the page cannot disagree with the figure. */
       return <StartingCost business={business} products={block.products} />;
     case "validation-launch":
-      return <ValidationLaunch business={business} />;
+      return <ValidationLaunch business={business} landedHref={block.landedHref} />;
     case "margin":
       return <MarginBreakdown block={block} currency={business.currency} />;
+    case "cost-agreement":
+      return <CostAgreement block={block} />;
     case "product-margins":
+    case "product-tabs":
       return <ProductMargins block={block} business={business} metrics={metrics} series={series} profile={profile} />;
     case "table":
       return <BlockTable block={block} />;
@@ -392,7 +402,9 @@ function ProductMargins({
   series,
   profile,
 }: {
-  block: Extract<Block, { type: "product-margins" }>;
+  /* product-tabs shares the tab bar: it is product-margins without the margin
+     rules, so the same component renders both. */
+  block: Extract<Block, { type: "product-margins" | "product-tabs" }>;
   business: BusinessDetail;
   metrics: ChartPoint[];
   series: MetricsResponse | null;

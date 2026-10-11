@@ -63,8 +63,12 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
             business without a headline keeps its name as the title. */}
         <div data-row-name>{b.title || b.name}</div>
         {b.title ? (
+          /* The brand name leads, set apart from the subtitle by weight and an
+             em dash — it used to be one grey run joined by a small "·", and the
+             name was easy to miss. */
           <div data-row-subtitle>
-            {[b.name, b.subtitle || b.tagline].filter(Boolean).join(" · ")}
+            <span data-row-brand>{b.name}</span>
+            {(b.subtitle || b.tagline) && <> — {b.subtitle || b.tagline}</>}
           </div>
         ) : (
           (b.subtitle || b.tagline) && <div data-row-subtitle>{b.subtitle || b.tagline}</div>

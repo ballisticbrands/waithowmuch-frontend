@@ -158,7 +158,23 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
   );
 }
 
-export function ValidationLaunch({ business }: { business: BusinessDetail }) {
+/**
+ * Where each product's landed cost is worked out, for the "First order" row.
+ * Default: the Margin breakdown's landed-cost table — the product's own tab
+ * (`?product=<id>`) when the margin is split by product. A profile whose
+ * landed cost lives elsewhere passes `landedHref` on the block (KALOTOYS: its
+ * Alibaba comparison, since its margin rests on the founders' figures).
+ */
+type LandedHref = string | Record<string, string> | undefined;
+/** A unit cost keeps its cents: $9.06, not the $9 exactMoney rounds to. */
+const unitMoney = (v: number, currency: string) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+const landedLink = (slug: string, id: string, many: boolean, override: LandedHref) =>
+  typeof override === "string"
+    ? override
+    : override?.[id] ?? `/business/${slug}/margin/${many ? `?product=${encodeURIComponent(id)}` : ""}#landed-cost`;
+
+export function ValidationLaunch({ business, landedHref }: { business: BusinessDetail; landedHref?: LandedHref }) {
   const launch = business.startingCostEstimate?.breakdown?.validation;
   const [active, setActive] = useState(launch?.products[0]?.id);
   // No published test is a legitimate state, as for any "to start" estimate.
@@ -169,7 +185,7 @@ export function ValidationLaunch({ business }: { business: BusinessDetail }) {
       </section>
     );
   }
-  return <ValidationNumbers business={business} launch={launch} active={active} setActive={setActive} />;
+  return <ValidationNumbers business={business} launch={launch} active={active} setActive={setActive} landedHref={landedHref} />;
 }
 
 function ValidationNumbers({
@@ -177,11 +193,13 @@ function ValidationNumbers({
   launch,
   active,
   setActive,
+  landedHref,
 }: {
   business: BusinessDetail;
   launch: Launch;
   active: string | undefined;
   setActive: (id: string) => void;
+  landedHref?: LandedHref;
 }) {
   const currency = business.currency ?? "USD";
   const g = launch.gate;
@@ -415,30 +433,51 @@ function ValidationNumbers({
 
         <h3>Adding it up</h3>
         <div data-table-wrap="">
-          <table data-earnings-table="">
+          <table data-earnings-table="" data-adding-up="">
             <caption>What it costs to validate: {selection.length > 1 ? "both products together" : `the ${inSentence(selection[0]!.label)}`}</caption>
             <thead>
               <tr>
                 <th scope="col">Part</th>
                 <th scope="col">Cost</th>
+                <th scope="col" data-working="">How it is worked out</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th scope="row">First order</th>
                 <td data-figure="">{exactMoney(totals.inventory, currency)}</td>
+                {/* 🚨 The arithmetic and where the unit cost comes from — a
+                    figure here with no working was a reader's first question
+                    (owner, 2026-10-11). */}
+                <td data-note="">
+                  {selection.map((p, i) => (
+                    <span key={p.id}>
+                      {i > 0 && <br />}
+                      {/* Always named, even alone: the unit cost belongs to THIS product
+                          and the reader should not have to infer which (owner, 2026-10-11). */}
+                      <strong>{p.label}:</strong> {int(p.units)} units ({int(g.vineUnits)} for Vine, {int(g.paidUnits)} to sell) ×{" "}
+                      {unitMoney(p.landedUnitCost, currency)} — the landed cost of one, made and shipped to Amazon’s warehouse.{" "}
+                      <a href={landedLink(business.slug, p.id, many, landedHref)}>See the landed cost</a>
+                    </span>
+                  ))}
+                </td>
               </tr>
               <tr>
                 <th scope="row">Launch ads</th>
                 <td data-figure="">{exactMoney(totals.ads, currency)}</td>
+                <td data-note="">
+                  {int(selection.reduce((t, p) => t + p.clicks, 0))} clicks on the searches above, each at Amazon’s suggested bid — the most the test can spend
+                </td>
               </tr>
               <tr>
                 <th scope="row">Fixed costs</th>
                 <td data-figure="">{span(totals.setup, currency)}</td>
+                <td data-note="">Paid once, however many products: Seller Central’s first months, a trademark filing, samples, photos and listing content, and packaging design</td>
               </tr>
               <tr data-total="">
                 <th scope="row">To test</th>
                 <td data-figure="">{span({ low: totals.low, high: totals.high }, currency)}</td>
+                <td data-note="" />
               </tr>
             </tbody>
           </table>

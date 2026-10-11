@@ -357,6 +357,94 @@ h1, h2, h3, h4 {
   font-family: inherit; font-size: 0.9375rem;
 }
 
+/* "Adding it up" in the validation test: the working column reads as text. */
+[data-adding-up] th[data-working] { text-align: left; }
+[data-adding-up] tbody th { white-space: nowrap; }
+[data-adding-up] td[data-note] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+/* ─── Cost agreement (components/CostAgreement.tsx) ─────────────────────
+   A claim against quotes. The accent is the quote and nothing else; the claim
+   is ink, dashed; the add-on is the cost ramp's grey. */
+[data-cost-agreement] {
+  margin: 1.5rem 0; padding: 1.25rem 1.25rem 1rem;
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--card); box-shadow: var(--shadow);
+}
+[data-ca-hero] {
+  display: grid; grid-template-columns: auto auto auto 1fr; align-items: center;
+  gap: 0.5rem 1.5rem; margin-bottom: 1.5rem;
+}
+[data-ca-figure] { display: flex; flex-direction: column; gap: 0.2rem; max-width: 12rem; }
+[data-ca-label] { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted-foreground); }
+[data-ca-value] { font-size: 2.75rem; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--foreground); }
+[data-ca-quote] [data-ca-value] { color: var(--accent); }
+[data-ca-sub] { font-size: 0.8125rem; line-height: 1.4; color: var(--muted-foreground); }
+[data-ca-vs] { font-size: 0.875rem; color: var(--muted-foreground); }
+[data-ca-verdict] {
+  justify-self: end; max-width: 16rem;
+  padding: 0.75rem 0.95rem; border-radius: var(--radius); background: var(--accent-tint);
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+[data-ca-verdict] strong { font-size: 1.125rem; color: var(--foreground); }
+[data-ca-verdict] span { font-size: 0.8125rem; color: var(--muted-foreground); line-height: 1.4; }
+
+/* The plot: three columns — name, track, values — the track positioned in %. */
+[data-ca-plot] { padding-top: 1.25rem; }
+[data-ca-row], [data-ca-axis] {
+  display: grid; grid-template-columns: 12rem 1fr 12rem; align-items: center; gap: 1rem;
+}
+[data-ca-row] { padding: 0.55rem 0; }
+[data-ca-name] { display: flex; flex-direction: column; text-align: right; }
+[data-ca-name] strong { font-size: 0.875rem; color: var(--foreground); }
+[data-ca-name] span, [data-ca-values] span { font-size: 0.75rem; color: var(--muted-foreground); }
+[data-ca-values] { display: flex; flex-direction: column; }
+[data-ca-values] strong { font-size: 0.875rem; color: var(--foreground); font-variant-numeric: tabular-nums; }
+[data-ca-track] { position: relative; height: 2.25rem; }
+[data-ca-grid] { position: absolute; top: -0.55rem; bottom: -0.55rem; width: 1px; background: var(--border); }
+[data-ca-claim] { position: absolute; top: -0.55rem; bottom: -0.55rem; width: 0; border-left: 2px dashed var(--foreground); transform: translateX(-1px); }
+[data-ca-claimlabel] {
+  position: absolute; bottom: calc(100% + 0.15rem); left: 0; transform: translateX(-50%);
+  white-space: nowrap; font-size: 0.75rem; font-weight: 600; color: var(--foreground);
+}
+[data-ca-addon] { position: absolute; top: 50%; height: 6px; margin-top: -3px; border-radius: 3px; background: var(--slice-cost-2); opacity: 0.55; }
+[data-ca-dot] {
+  position: absolute; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 2px var(--card); cursor: help;
+}
+[data-ca-ticks] { position: relative; height: 1.25rem; }
+[data-ca-ticks] span { position: absolute; transform: translateX(-50%); font-size: 0.6875rem; color: var(--muted-foreground); }
+
+[data-ca-legend] { display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem; list-style: none; padding: 0; margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-ca-legend] li { display: flex; align-items: center; gap: 0.45rem; }
+[data-ca-key] { display: inline-block; flex: none; }
+[data-ca-key="dot"] { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+[data-ca-key="claim"] { width: 16px; height: 0; border-top: 2px dashed var(--foreground); }
+[data-ca-key="addon"] { width: 18px; height: 6px; border-radius: 3px; background: var(--slice-cost-2); opacity: 0.55; }
+[data-ca-note] { margin-top: 0.75rem; font-size: 0.8125rem; line-height: 1.5; color: var(--muted-foreground); max-width: 44rem; }
+
+@media (max-width: 760px) {
+  [data-ca-hero] { grid-template-columns: auto auto 1fr; }
+  [data-ca-vs] { display: none; }
+  [data-ca-verdict] { grid-column: 1 / -1; justify-self: stretch; max-width: none; }
+  [data-ca-value] { font-size: 2.25rem; }
+  /* Each row stacks: name and values on one line, the track full width under. */
+  [data-ca-row] { grid-template-columns: 1fr auto; gap: 0.35rem 0.75rem; padding: 0.7rem 0; }
+  [data-ca-name] { text-align: left; }
+  [data-ca-values] { text-align: right; }
+  [data-ca-track] { grid-column: 1 / -1; grid-row: 2; }
+  [data-ca-axis] { grid-template-columns: 1fr; }
+  [data-ca-axis] > [data-ca-name], [data-ca-axis] > [data-ca-values] { display: none; }
+  /* The legend names the dashed line; above a stacked row it would collide. */
+  [data-ca-claimlabel] { display: none; }
+}
+
+/* ─── Search ──────────────────────────────────────────────────────────── */
+
+[data-search] { margin-bottom: 0.75rem; max-width: 32rem; }
+[data-search-input] { padding-left: 2.1rem; background-repeat: no-repeat; background-position: 0.7rem 50%; background-size: 1rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"); }
+[data-sr-only] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
 /* ─── Filter bar ──────────────────────────────────────────────────────── */
 
 [data-filters] {
@@ -551,6 +639,9 @@ img[data-row-logo] {
 }
 
 [data-row-name] { font-weight: 600; font-size: 0.9688rem; letter-spacing: -0.01em; }
+/* The brand name, leading the subtitle line: the full text colour and weight,
+   so it reads as the name and not as the first words of the subtitle. */
+[data-row-brand] { color: var(--foreground); font-weight: 600; }
 /* The headline subtitle runs 25-45 words; two lines is enough for the point,
    which the copy rules put in its first 25. */
 [data-row-subtitle] {

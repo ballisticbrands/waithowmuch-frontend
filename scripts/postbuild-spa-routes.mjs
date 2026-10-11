@@ -585,6 +585,19 @@ for (const b of all) {
               ].filter(Boolean).join('');
             }
             case 'callout': return `<p>${esc(blk.text)}</p>`;
+            /* Tabs: the app shows one product at a time, but every tab is on
+               the page, so the crawler gets them all, each under its label.
+               Until 2026-10-11 these fell to `default` and shipped nothing. */
+            case 'cost-agreement': return [
+              `<h3>${esc(blk.claim.label)}: ${blk.claim.pct}% · ${esc(blk.quote.label)}: ${blk.quote.pct}%</h3>`,
+              `<p>${esc(blk.verdictNote)}</p>`,
+              `<ul>${blk.products.map((p) => `<li>${esc(p.label)}: founders $${p.claimUsd.toFixed(2)}, Alibaba $${p.makeUsd.toFixed(2)} (${p.makePct}%), landed $${p.landedUsd.toFixed(2)} (${p.landedPct}%)</li>`).join('')}</ul>`,
+              blk.note ? `<p>${esc(blk.note)}</p>` : '',
+            ].join('');
+            case 'product-margins':
+            case 'product-tabs': return blk.products
+              .map((p) => `<h3>${esc(p.label)}</h3>\n    ${flatten(p.blocks)}`)
+              .join('\n    ');
             case 'strategy': return `<h3>Advertising strategy: ${esc(blk.label)}</h3><ul>${blk.points.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
             /* The links row is the one block whose content comes from the DB
                record rather than from the authored profile. 🚨 Off `detail`,

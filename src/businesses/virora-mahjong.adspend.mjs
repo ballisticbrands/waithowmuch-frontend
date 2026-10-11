@@ -115,3 +115,45 @@ export const TOP_KEYWORDS = [
   ["luxury mahjong set","5,285","#7","None seen","—","$0"],
   ["orange mahjong tiles","5,147","#60","None seen","—","$0"],
 ];
+
+/** Every keyword an ad of theirs was seen on, biggest modelled spend first:
+ *  keyword, product, searches a month, their ads, cost per click, modelled
+ *  spend a month (to the cent, so the rows visibly add up to the total). */
+export const AD_KEYWORDS = [
+  ["virora mahjong tiles","160-tile 4-layer set","12,923","90% of ads","$0.35","$187.32"],
+  ["fall mahjong mat","3mm rubber mahjong mat","8,868","14% of ads","$0.72","$40.80"],
+  ["orange mahjong mat","3mm rubber mahjong mat","4,199","26% of ads","$0.54","$26.92"],
+  ["virora","160-tile 4-layer set","1,478","100% of ads","$0.35","$23.90"],
+  ["non-slip rubber mahjong mats","3mm rubber mahjong mat","450","39% of ads","$0.79","$6.33"],
+  ["american mahjong tile sets 160 pieces","160-tile 4-layer set","450","35% of ads","$0.69","$5.07"],
+  ["green and orange mahjong mat","3mm rubber mahjong mat","450","25% of ads","$0.70","$3.58"],
+  ["acrylic mahjong tile sets","160-tile 4-layer set","958","14% of ads","$0.52","$3.34"],
+  ["mahjielle mahjong mat","3mm rubber mahjong mat","450","26% of ads","$0.60","$3.19"],
+  ["blossom mahjong tiles","160-tile 4-layer set","450","42% of ads","$0.35","$3.09"],
+  ["red white and blue mahjong mat","3mm rubber mahjong mat","450","26% of ads","$0.56","$3.03"],
+  ["premium mahjong tiles","160-tile 4-layer set","665","10% of ads","$0.76","$2.42"],
+  ["virora christmas mahjong tiles","160-tile 4-layer set","677","18% of ads","$0.35","$1.95"],
+  ["4 layer acrylic mahjong tiles","160-tile 4-layer set","450","15% of ads","$0.40","$1.24"],
+  ["pumpkin mahjong mat","3mm rubber mahjong mat","1,773","2% of ads","$0.68","$1.06"],
+  ["coral mahjong mat","3mm rubber mahjong mat","450","6% of ads","$0.53","$0.69"],
+  ["luxury mahjong tiles","160-tile 4-layer set","3,077","1% of ads","$0.59","$0.67"],
+  ["red white blue mahjong mat","3mm rubber mahjong mat","450","5% of ads","$0.67","$0.64"],
+  ["veteb mahjong mat","3mm rubber mahjong mat","450","3% of ads","$0.68","$0.42"],
+  ["mah jong mat with rules","3mm rubber mahjong mat","1,127","1% of ads","$0.84","$0.25"],
+  ["american mah jongg tiles","160-tile 4-layer set","766","1% of ads","$0.59","$0.23"],
+  ["pink and orange mahjong mat","3mm rubber mahjong mat","450","1% of ads","$0.61","$0.18"],
+  ["rolled mahjong mat no creases","3mm rubber mahjong mat","1,694","under 1% of ads","$0.74","$0.16"],
+  ["peach mahjong mat","3mm rubber mahjong mat","450","1% of ads","$0.55","$0.15"],
+  ["americana mahjong mat","3mm rubber mahjong mat","450","1% of ads","$0.70","$0.11"],
+  ["oh my mahjong tiles","160-tile 4-layer set","5,980","under 1% of ads","$0.42","$0.03"],
+  ["viora mahjong tiles","160-tile 4-layer set","3,918","under 1% of ads","$0.41","$0.03"],
+  ["acrylic mahjong tiles","160-tile 4-layer set","2,986","under 1% of ads","$0.38","$0.03"],
+  ["atelier mahjong tiles","160-tile 4-layer set","2,445","under 1% of ads","$0.52","$0.03"],
+  ["neoprene mahjong playing mat table","3mm rubber mahjong mat","450","under 1% of ads","$0.71","$0.03"],
+  ["mahjong mat orange","3mm rubber mahjong mat","892","under 1% of ads","$0.48","$0.02"],
+  ["mahjong tiles green","160-tile 4-layer set","2,818","under 1% of ads","$0.58","$0.01"],
+  ["pretty mahjong mat","3mm rubber mahjong mat","450","under 1% of ads","$0.66","$0.01"],
+];
+
+/** What AD_KEYWORDS' spend column adds up to — the advertising line, unrounded. */
+export const AD_KEYWORDS_TOTAL = 316.93;
