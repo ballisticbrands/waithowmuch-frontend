@@ -1534,17 +1534,6 @@ export const PROFILES = {
           'One part of the cost-of-goods line is softer than the rest: the $1.26 prices a puzzle made in China, while White Mountain says every one of its puzzles is made in America — so the line is what the business would cost a new seller to run, not a read of White Mountain’s own books. Softer still: two of the three revenue lines these percentages are percentages OF are estimates rather than readings.',
       },
 
-      /* The least it costs to find out whether the puzzle sells: the validation
-         test, read off the published "to start" estimate, like Virora's. */
-      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
-      {
-        type: 'lede',
-        text:
-          'The least it costs to validate the product: to find out whether it sells before you commit to a bigger launch.',
-      },
-      { type: 'validation-strategy' },
-      { type: 'validation-launch' },
-
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
         type: 'lede',
@@ -1817,6 +1806,17 @@ export const PROFILES = {
         text:
           'Four answers are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers in the model, taken here from the public record, and the differentiation call alone is worth 0.55 of the multiple. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All four are the first things to put to the owner.',
       },
+
+      /* The least it costs to find out whether the puzzle sells: the validation
+         test, read off the published "to start" estimate, like Virora's. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The least you would spend to find out whether it sells, before you commit to a full launch.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
 
@@ -3894,19 +3894,6 @@ export const PROFILES = {
           'The set cost is the weakest figure on this profile and the one that moves it most. It stands in for a quote nobody has read — the first number to replace. Shipping and advertising are no longer placeholders: each product’s carton is priced at a read rate, and the ads are modelled from their actual sponsored footprint.',
       },
 
-      /* The least it costs to find out whether each product sells: the
-         validation test, read off the business's published "to start" estimate
-         (waithowmuch-research make-validation-launch.mjs --publish), so the
-         section and the headline figure are one record. */
-      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
-      {
-        type: 'lede',
-        text:
-          'The least it costs to validate each product: to find out whether it sells before you commit to a bigger launch.',
-      },
-      { type: 'validation-strategy' },
-      { type: 'validation-launch' },
-
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
         type: 'lede',
@@ -4101,6 +4088,19 @@ export const PROFILES = {
         text:
           'These details are resolved from the seller record behind the brand’s Amazon storefront and from the buy-box history of the brand’s other listings.',
       },
+
+      /* The least it costs to find out whether each product sells: the
+         validation test, read off the business's published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --publish), so the
+         section and the headline figure are one record. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The least you would spend to find out whether each product sells, before you commit to a full launch.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
 
@@ -7832,19 +7832,6 @@ export const PROFILES = {
           'The margin block and the profit series on the chart are one model, so they cannot disagree with each other. What neither can do is replace an invoice: nobody at Highmark Collective has shown us a supplier bill, a freight bill or an advertising bill, and only Amazon’s two fees here are read from Amazon.',
       },
 
-      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
-      {
-        type: 'lede',
-        text:
-          'The least it costs to validate each product: to find out whether it sells before you commit to a bigger launch.',
-      },
-      /* The validation test, read off the published "to start" estimate
-         (waithowmuch-research make-validation-launch.mjs --variants
-         "baptism=boy,boys:for boys;jar=jar" --products baptism,jar --publish),
-         so the section and the headline figure are one record. */
-      { type: 'validation-strategy' },
-      { type: 'validation-launch' },
-
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
         type: 'lede',
@@ -8093,6 +8080,19 @@ export const PROFILES = {
         text:
           'One name collision is worth recording rather than dismissing: a HIGHMARK COLLECTIVE LLC was formed in Tampa on 3 September 2026 by a different person, in a different structure, thirteen months after the Delaware corporation. Nothing links it to this brand and nothing rules it out. Highmark the Pittsburgh health insurer, which dominates every search for the name, is unrelated.',
       },
+
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The least you would spend to find out whether each product sells, before you commit to a full launch.',
+      },
+      /* The validation test, read off the published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --variants
+         "baptism=boy,boys:for boys;jar=jar" --products baptism,jar --publish),
+         so the section and the headline figure are one record. */
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
   'mount-cleverest': {
@@ -8810,19 +8810,6 @@ export const PROFILES = {
           'The margin block and the profit series on the chart are one model, so they cannot disagree with each other. What neither can do is replace an invoice: nobody at Poptacular has shown us a printing bill, a freight bill or an advertising bill, and only Amazon’s two fees here are read from Amazon.',
       },
 
-      { type: 'section', id: 'to-start', title: 'What it costs to start', group: 'What it earns', asOf: true },
-      {
-        type: 'lede',
-        text:
-          'The margin above is what this business keeps. This is the other half of the question, and on this one it has no answer yet.',
-      },
-      /* 🚨 No authored figures in this section: the block reads the published
-         estimate off the Business row. There is none here, because the
-         research has a production cost but no supplier quote and so no minimum
-         order, and §3a leaves the figure NULL rather than inventing an order
-         size. The block renders its own note saying so. */
-      { type: 'starting-cost' },
-
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
       {
         type: 'lede',
@@ -9079,6 +9066,19 @@ export const PROFILES = {
         text:
           'The whole figure rests on assumptions that are not the data’s. The production cost and tariff are put in, not read. Sourcing, catalogue shape and differentiation are questionnaire answers taken from the public record, and the differentiation level is probably the low side, because the question set is the company’s own content and nothing read says how hard it would be to copy. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
+
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text:
+          'What you would spend to find out whether it sells, before you commit to a full launch. On this one there is no answer yet.',
+      },
+      /* 🚨 No authored figures in this section: the block reads the published
+         estimate off the Business row. There is none here, because the
+         research has a production cost but no supplier quote and so no minimum
+         order, and §3a leaves the figure NULL rather than inventing an order
+         size. The block renders its own note saying so. */
+      { type: 'starting-cost' },
     ],
   },
 };

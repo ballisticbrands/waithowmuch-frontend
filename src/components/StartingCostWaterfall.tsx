@@ -110,7 +110,7 @@ export function StartingCostWaterfall({ estimate: e, currency }: { estimate: Wat
           {/* The sum, set apart by a rule and the accent. */}
           <line x1={16} y1={totalY - 12} x2={W - 16} y2={totalY - 12} data-sc-rule="" />
           <text x={LABEL_W} y={totalY + LANE + 4} textAnchor="end" data-sc-rowlabel="" data-strong="">
-            = To start
+            = To test
           </text>
           <rect x={x(0)} y={totalY} width={x(total.low) - x(0)} height={LANE} rx={2} data-sc-bar="" data-total="" data-shade="light" />
           <rect x={x(0)} y={totalY + LANE + 2} width={x(total.high) - x(0)} height={LANE} rx={2} data-sc-bar="" data-total="" />

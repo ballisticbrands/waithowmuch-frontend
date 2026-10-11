@@ -22,9 +22,9 @@ export const METRIC_INFO: Record<string, string[]> = {
     "Calculated across every month of available history.",
   ],
   toStart: [
-    "An estimate of what it would cost to launch a copy of this business today: the first inventory order, the ad spend to get it ranking, and setup.",
-    "The first order is the supplier's minimum, or what the launch is expected to sell if that is more. The ad budget comes from how many people search for the product on Amazon: a bigger keyword is a more crowded page, and a launch pays for clicks there that do not turn a profit. Setup is the seller account, barcodes, a trademark, samples, photos and packaging.",
-    "It is a range, shown at its low end. It is not what the founders spent, which nobody published, and it leaves out salaries, stock beyond the first order, and any money the launch sales bring back. Where the inputs are missing, it is shown as unknown rather than guessed.",
+    "What it would cost to test launching a competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells, before committing to a full launch.",
+    "It covers a first order of 50 units (30 of them go to Amazon Vine for the first reviews), the ads that test whether the rest sell, and setup — the seller account, a trademark, samples, photos and packaging.",
+    "It is an estimate, shown at its low end. It is not what the founders spent, which nobody published. Where the inputs are missing, it is shown as unknown rather than guessed. This business’s “Test it first” section works it out step by step.",
   ],
   listedSince: [
     "The year the business's earliest products first appeared, read from the public catalogue.",

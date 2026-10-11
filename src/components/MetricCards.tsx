@@ -457,7 +457,7 @@ export function TopMetrics({
             were cells in Additional metrics, where the figures the page is
             about had to be scrolled to. */}
         <AverageCard
-          label="To start"
+          label="To test"
           value={startingCost === null ? "—" : exactMoney(startingCost, b.currency)}
           basis={
             startingCostRangeNote ?? (startingCost === null ? "Not researched yet" : "Estimated")

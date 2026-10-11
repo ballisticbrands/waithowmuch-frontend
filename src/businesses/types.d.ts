@@ -47,6 +47,15 @@ export type Block =
        */
       group?: string;
       /**
+       * The one exception to the rule above: this group's name IS shown — as a
+       * rule and a label in the table of contents and an eyebrow over the
+       * heading — and the run is listed last, after Links & sources. Every
+       * other section is a reading of THEIR business; a labelled run speaks to
+       * the reader about THEIR OWN ("Build your own"), and that change of
+       * address is what a gap cannot say. Every section of the run sets it.
+       */
+      labelled?: true;
+      /**
        * Print the profile's date stamp under this section's heading — "Read
        * Sep 2026. Figures here are a reading taken then, not a live feed." The
        * date is always the business's snapshotMonth from the database, the same

@@ -224,7 +224,7 @@ function ValidationNumbers({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              <span data-product-share="">{money(p.low, currency)} to start</span>
+              <span data-product-share="">{money(p.low, currency)} to test</span>
             </button>
           ))}
           {many && (
@@ -238,7 +238,7 @@ function ValidationNumbers({
               onClick={() => setActive(TOGETHER)}
             >
               <span>Both together</span>
-              <span data-product-share="">{money(launch.together.low, currency)} to start</span>
+              <span data-product-share="">{money(launch.together.low, currency)} to test</span>
             </button>
           )}
         </div>
@@ -437,7 +437,7 @@ function ValidationNumbers({
                 <td data-figure="">{span(totals.setup, currency)}</td>
               </tr>
               <tr data-total="">
-                <th scope="row">To start</th>
+                <th scope="row">To test</th>
                 <td data-figure="">{span({ low: totals.low, high: totals.high }, currency)}</td>
               </tr>
             </tbody>

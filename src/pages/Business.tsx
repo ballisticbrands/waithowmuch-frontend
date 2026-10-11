@@ -163,10 +163,13 @@ export default function Business() {
         // Overview and Links & sources are rendered by this page rather than
         // declared in the .mjs, so they are added around the profile's own.
         { id: "overview", title: "Overview", group: "Overview", to: `${base}/` },
-        ...declared.map((d) => ({ ...d, to: `${base}/${d.id}/` })),
+        ...declared.filter((d) => !d.labelled).map((d) => ({ ...d, to: `${base}/${d.id}/` })),
         ...(b.links.length > 0 || b.sources.length > 0
           ? [{ id: "sources", title: "Links & sources", group: "Provenance", to: `${base}/sources/` }]
           : []),
+        // A labelled run ("Build your own") is addressed to the reader rather
+        // than about the business, so it closes the list, below its own rule.
+        ...declared.filter((d) => d.labelled).map((d) => ({ ...d, to: `${base}/${d.id}/` })),
       ]
     : [];
 

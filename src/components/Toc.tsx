@@ -1,6 +1,7 @@
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-export type TocItem = { id: string; title: string; to: string; group?: string };
+export type TocItem = { id: string; title: string; to: string; group?: string; labelled?: true };
 
 /**
  * The section list down the left of a profile.
@@ -22,25 +23,35 @@ export type TocItem = { id: string; title: string; to: string; group?: string };
 export function Toc({ items, active }: { items: TocItem[]; active: string }) {
   return (
     <nav data-toc="" aria-label="Sections">
-      <span data-toc-label="">Sections</span>
+      {/* Not "Sections": the list now has two parts, and this names the
+          first the way "Build your own" names the second. */}
+      <span data-toc-label="">The business</span>
       <ul>
-        {items.map((s, i) => (
+        {items.map((s, i) => {
           /* A group boundary is a GAP, not a heading. See the note on the
              `group` field in businesses/types.d.ts for why. The first item
-             never starts one — there is nothing above it to separate from. */
-          <li
-            key={s.id}
-            data-group-start={i > 0 && s.group !== items[i - 1]!.group ? "" : undefined}
-          >
-            <Link
-              to={s.to}
-              data-on={active === s.id ? "" : undefined}
-              aria-current={active === s.id ? "page" : undefined}
-            >
-              {s.title}
-            </Link>
-          </li>
-        ))}
+             never starts one — there is nothing above it to separate from.
+             A `labelled` group is the exception: a rule and its name. */
+          const starts = i > 0 && s.group !== items[i - 1]!.group;
+          return (
+            <Fragment key={s.id}>
+              {starts && s.labelled && s.group && (
+                <li data-toc-group="">
+                  {s.group}
+                </li>
+              )}
+              <li data-group-start={starts && !s.labelled ? "" : undefined}>
+                <Link
+                  to={s.to}
+                  data-on={active === s.id ? "" : undefined}
+                  aria-current={active === s.id ? "page" : undefined}
+                >
+                  {s.title}
+                </Link>
+              </li>
+            </Fragment>
+          );
+        })}
       </ul>
     </nav>
   );

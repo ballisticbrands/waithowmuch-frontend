@@ -995,10 +995,13 @@ img[data-row-logo] {
   max-height: calc(100vh - 6rem);
   overflow-y: auto;
 }
+/* "The business" — styled exactly as the "Build your own" label below
+   (li[data-toc-group]): same indent, size and accent, so the two read as the
+   two halves of one list. */
 [data-toc-label] {
-  display: block; margin-bottom: 0.6rem;
+  display: block; padding: 0 0.6rem 0.35rem;
   font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
-  color: var(--muted-foreground); font-weight: 600;
+  color: var(--accent); font-weight: 600;
 }
 [data-toc] ul { list-style: none; margin: 0; padding: 0; }
 [data-toc] li { margin: 0; }
@@ -1007,6 +1010,15 @@ img[data-row-logo] {
    group would add a line that does not navigate, and three of the groups hold
    one section each. A gap says the same thing for nothing. */
 [data-toc] li[data-group-start] { margin-top: 0.65rem; }
+/* The one named group ("Build your own"): the page turns from their business
+   to the reader's, so here the boundary is a rule and a label, in the accent
+   to say it is an invitation rather than one more reading. */
+[data-toc] li[data-toc-group] {
+  margin-top: 1rem; padding: 0.85rem 0.6rem 0.35rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.055em;
+  color: var(--accent); font-weight: 600;
+}
 [data-toc] a {
   display: block; padding: 0.3rem 0.6rem;
   border-left: 2px solid var(--border);
@@ -1033,6 +1045,12 @@ img[data-row-logo] {
   /* Horizontally, the same boundary is a wider gap — a top margin would just
      nudge one tab out of line with its neighbours. */
   [data-toc] li[data-group-start] { margin-top: 0; margin-left: 0.85rem; }
+  /* In the strip the label is a divider-plus-word between two tabs. */
+  [data-toc] li[data-toc-group] {
+    margin: 0 0 0 0.85rem; padding: 0.4rem 0.2rem 0.4rem 0.85rem;
+    border-top: 0; border-left: 1px solid var(--border);
+    align-self: center; white-space: nowrap;
+  }
   [data-toc] a {
     padding: 0.4rem 0.7rem; white-space: nowrap;
     border-left: 0; border-bottom: 2px solid transparent;
@@ -1987,6 +2005,13 @@ img[data-row-logo] {
 [data-prose] { max-width: 44rem; }
 [data-prose] p { margin: 0 0 0.875rem; }
 [data-prose] h2 { font-size: 1.25rem; font-weight: 650; margin: 2rem 0 0.75rem; }
+/* "Build your own" over "Test it first" — the same label as the nav, so a
+   reader who arrives from a link still sees the page is addressed to them. */
+[data-section-eyebrow] {
+  margin: 2rem 0 0; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.055em; color: var(--accent);
+}
+[data-section-eyebrow] + h2 { margin-top: 0.25rem; }
 [data-prose] h3 { font-size: 1.0625rem; font-weight: 650; margin: 1.5rem 0 0.5rem; }
 [data-prose] ul { margin: 0 0 0.875rem; padding-left: 1.15rem; list-style: disc; }
 [data-prose] ol { margin: 0 0 0.875rem; padding-left: 1.15rem; list-style: decimal; }

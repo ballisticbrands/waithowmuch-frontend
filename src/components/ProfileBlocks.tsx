@@ -52,6 +52,7 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
          of contents links to. */
       return (
         <>
+          {block.labelled && block.group && <p data-section-eyebrow="">{block.group}</p>}
           <h2>{block.title}</h2>
           {block.asOf && <SectionAsOf business={business} />}
         </>
@@ -171,10 +172,10 @@ function BlockView({ block, business }: { block: Block; business: BusinessDetail
 /** The sections a profile declares, in page order — the table of contents. */
 export function profileSections(
   profile: Profile,
-): Array<{ id: string; title: string; group?: string }> {
+): Array<{ id: string; title: string; group?: string; labelled?: true }> {
   return profile.blocks
     .filter((b): b is Extract<Block, { type: "section" }> => b.type === "section")
-    .map((b) => ({ id: b.id, title: b.title, group: b.group }));
+    .map((b) => ({ id: b.id, title: b.title, group: b.group, labelled: b.labelled }));
 }
 
 /** Which section holds the earnings chart, so "View the figures" on the

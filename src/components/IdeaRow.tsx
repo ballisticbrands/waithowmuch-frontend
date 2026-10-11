@@ -8,9 +8,9 @@ import { InfoTip } from "./InfoTip";
 
 /** What "To start" means, behind the ⓘ on the column heading. */
 const TO_START_INFO = [
-  "What it would cost to validate launching a competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells.",
+  "What it would cost to test launching a competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells.",
   "It covers a first order of 50 units (30 of them go to Amazon Vine for the first reviews), the ads that test whether the rest sell, and setup — the seller account, a trademark, samples, photos and packaging. It is an estimate, shown at its low end, not what the founders spent.",
-  "Each business’s “What it costs to start” section works it out step by step: follow the link under the figure.",
+  "Each business’s “Test it first” section works it out step by step: follow the link under the figure.",
 ];
 
 /** Column headings for the rows below. Hidden on narrow screens, where the
@@ -27,7 +27,7 @@ export function IdeaRowHead() {
       <span aria-hidden="true">Profit / mo</span>
       <span aria-hidden="true">Margin</span>
       <span data-row-head-info>
-        To start <InfoTip label="To start" paragraphs={TO_START_INFO} />
+        To test <InfoTip label="To test" paragraphs={TO_START_INFO} />
       </span>
       <span aria-hidden="true">Age</span>
     </div>
@@ -103,7 +103,7 @@ export function IdeaRow({ business: b }: { business: BusinessCard }) {
           )}
         </dl>
         <dl data-row-stat>
-          <dt>To start</dt>
+          <dt>To test</dt>
           <dd data-figure>{money(toStart, b.currency)}</dd>
           {toStart !== null && (
             <dd data-row-sub>
