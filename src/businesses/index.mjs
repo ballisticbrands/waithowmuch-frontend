@@ -62,6 +62,7 @@ import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD, AD_KEYWORDS as VIRORA_AD_KEYWORDS, AD_KEYWORDS_TOTAL as VIRORA_AD_KEYWORDS_TOTAL } from './virora-mahjong.adspend.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD, AD_KEYWORDS as MC_AD_KEYWORDS, AD_KEYWORDS_TOTAL as MC_AD_KEYWORDS_TOTAL } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD, AD_KEYWORDS as HM_AD_KEYWORDS, AD_KEYWORDS_TOTAL as HM_AD_KEYWORDS_TOTAL } from './highmark-collective.adspend.mjs';
+import { TOP_KEYWORDS as BZ_TOP_KEYWORDS, AD_KEYWORDS as BZ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as BZ_AD_KEYWORDS_TOTAL, AD_SPEND as BZ_AD } from './bizzikins.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
 
 /* Spite House's September 2026 unit economics — the one place the margin, the
@@ -98,6 +99,32 @@ const shgBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 const hmAd = (id) => HM_AD.products.find((p) => p.id === id);
 const HM_AD_ORDER = 28.6; // the Whole brand tab's average sale across the catalogue
 const hmBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+
+/* Bizzikins' four doll photos, by ASIN, from our bucket (products/bizzikins/).
+   Values are the content hashes the upload printed; keyed by ASIN so no row
+   types a 64-character hash. Bucket copies, never Amazon's CDN, never /public. */
+const BIZZIKINS_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/bizzikins/';
+const BIZZIKINS_PHOTOS = {
+  B0GSC67673: '3351dfacd7d13e4b1aee514df018b4ae67e0f088f6a3847ae4d2a82dadce2aef', // Poppy
+  B0GT6RNPNZ: '42439ee55b150bd4cd7def3f28ed07e9c468f9b63f2fab2956a6678b49241ae6', // Annie
+  B0GT793W2T: '7f0ce69fc6c73537424b8609b94dd70b1001ba667a607faaeb98cff0fb6744b0', // Rosie, the hero
+  B0GT7XBBDN: '56d615d2bda47544a04bb5a6402482f27219a85d50b8c73ba030863374438e3c', // Max
+};
+const bizzikinsPhoto = (asin) => `${BIZZIKINS_BUCKET}${BIZZIKINS_PHOTOS[asin]}.jpg`;
+
+/* Bizzikins' per-doll cost lines at the $37.50 price, in dollars (research/
+   bizzikins/pnl.json): factory from one relayed quote, tariff 12.5% of it,
+   freight from the carton, FBA pick and pack from Keepa, referral 15%.
+   🚨 Their shares of the price are the backend seed's COST_LINES (cogs 14.4,
+   tariff 1.8, freight 12.613, fba 20.347, referral 15); check-profile asserts
+   the margin block and the profit series agree. Advertising is BZ_AD, never typed. */
+const BZ_COST = { price: 37.5, factory: 5.4, tariff: 0.675, freight: 4.73, fba: 7.63, referral: 5.625 };
+const bzPct = (amount) => -+((amount / BZ_COST.price) * 100).toFixed(3);
+const bzBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+/* What the fifty Top keywords carry of the ad line, summed from their own rows
+   (the cells read "$18", "under $1" or "$0"; "under $1" counts as nothing here,
+   so this is a floor), never typed. */
+const BZ_TOP_SPEND = BZ_TOP_KEYWORDS.reduce((sum, row) => sum + (/^\$(\d+)$/.test(row[5]) ? Number(row[5].slice(1)) : 0), 0);
 
 /* Mount Cleverest's advertising, from amazon-adspend-spy (mount-cleverest.adspend.mjs).
    🚨 The margin's advertising lines, the channels row and the Ad spend table are all
@@ -9429,6 +9456,533 @@ export const PROFILES = {
          the same way. */
       { type: 'validation-strategy' },
       { type: 'validation-launch' },
+    ],
+  },
+
+  'bizzikins': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-bizzikins-headline.ts, from
+       waithowmuch-research research/bizzikins/headline.json — and the page
+       reads them from the row alone. This entry carries only the image beside
+       them.
+       🚨 The snapshot is SEPTEMBER 2026, the last whole month of a THREE-month
+       series (July to September). October's badge read is a partial month and
+       is not a point. Every "Read" stamp below is September's. */
+    headline: {
+      /* Rosie the Gardener: the best seller, 200 of September's 550 units,
+         tied with Annie. */
+      image: {
+        src: bizzikinsPhoto('B0GT793W2T'),
+        alt: 'Rosie the Gardener, the best-selling Bizzikins doll: a soft fabric doll with orange hair and a teal headband, her body opened like a book to show a garden scene with felt vegetables, a watering can and a snail',
+      },
+    },
+
+    /* 🚨 NO `valuation` entry, on purpose. Three months of series is under the
+       twelve the model needs (SKILL §0), so the page carries no valuation
+       section and no valuation.inputs. */
+
+    facts: [
+      /* Four dolls plus seven bundles and gift sets, the eleven ASINs of
+         adspend.inputs.json brandAsins. The parent listing is not a SKU. */
+      { label: 'SKUs', value: '11', note: 'Four dolls and seven bundles or gift sets; only the dolls carry a sold badge', info: 'skus' },
+      /* The hero's own breadcrumb (Keepa categoryTree, B0GT793W2T). */
+      {
+        label: 'Category',
+        value: 'Toys & Games › Stuffed Animals & Plush Toys › Plush Interactive Toy Figures',
+        note: 'The four dolls. The bundles sit under Dolls & Accessories › Playsets',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '87', note: 'On the hero listing', info: 'reviews' },
+      { label: 'Product rating', value: '4.5★', note: 'Hero listing', info: 'rating' },
+      { label: 'Seller feedback', value: '98%', note: 'Over 40 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own brand and characters on listings nobody else sells; who makes the dolls is not known — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 An inference, and the nearest of the six shapes rather than a clean
+         fit. All measured sales are four characters of one doll at one price,
+         with no single hero (the two best sellers take 36% each), which is what
+         "concentrated bets" describes; but they are four versions of one
+         product, not four products. */
+      { label: 'Catalogue', value: 'Concentrated bets, few SKUs', note: 'Four characters of one doll share all measured sales — an inference, and the nearest fit', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 2 and an inference. The doll that opens into a book is a
+         real design, but the only supplier quote read was for "this sort of
+         doll" from a general factory, which is what level 2 describes: a rival
+         asks the same kind of factory for a variant. Nothing read says the
+         design is protected. */
+      { label: 'Differentiation', value: 'Level 2', note: 'A distinctive doll, but quoted by a general factory and nothing read shows it is protected — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note:
+          'The only channel with a number behind it, and the whole of the revenue on this profile. The seller holds the whole buy box on all four dolls and Amazon sells none of them.',
+      },
+      /* 'unchecked', not 'no': the seller account exists on Canada with no
+         ratings, and nobody read a Canadian listing. */
+      'amazon-international': {
+        status: 'unchecked',
+        note:
+          'A seller account exists on Amazon Canada with no ratings, and none was found on the UK or Germany. Nobody read a Canadian listing, so a small Canadian trade would not show.',
+      },
+      'own-store': {
+        status: 'no',
+        note:
+          'alenibrands.com is the company’s own site and a brochure: it has no checkout, and Similarweb shows no measurable traffic. The Meta ads that began in October send people to Instagram, not to a shop.',
+      },
+      // 'tiktok-shop', 'other-marketplace' and 'wholesale-out' left unchecked:
+      // nobody looked. The doll ships in a retail-style box, which says nothing
+      // about a shelf.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'The seller record shows FBA, and the margin charges Amazon’s pick-and-pack fee on every doll.',
+      },
+      // 'fbm' left unchecked: nothing read splits the listings between FBA and
+      // FBM, though the dolls sit with a single seller on the buy box.
+      'vendor-1p': { status: 'no', note: 'Amazon does not sell the dolls itself.' },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note:
+          'Their own brand and characters on listings nobody else sells. That a factory makes them to their design is an inference: the one quote read was for a similar doll, not theirs.',
+      },
+      // 'manufacturer' left unchecked: the Amazon manufacturer string reads
+      // "Aleni Brands", which is a company name, not a factory.
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/Bizzikins, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'Aleni Brands, a Fort Lauderdale toy company, sells four soft dolls that open into busy books for toddlers, almost entirely on Amazon US. The brand launched in March 2026, so the record it leaves is short.',
+
+    blocks: [
+      { type: 'heading', text: 'A doll that opens into a busy book' },
+      {
+        type: 'prose',
+        text:
+          'Each Bizzikins is a 15-inch fabric doll whose body unzips into a soft activity book for ages one to four: Rosie the Gardener, Annie the Pet Sitter, Poppy the Forest Ranger and Max the Astronaut, each with its own scene of felt pieces, ribbons, snaps and buttons. The four sell at one price and, so far as anyone outside can tell, cost the same to make, which is why this profile has one margin rather than four.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The catalogue also carries a line of bundles and gift sets that combine the dolls. None of them has a sold badge, which means each sells under roughly fifty a month, so they add nothing measurable and are left out of the revenue below.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The four dolls' own listing photos, in
+         our bucket (products/bizzikins/). */
+      {
+        type: 'images',
+        items: [
+          {
+            src: bizzikinsPhoto('B0GT793W2T'),
+            alt: 'Rosie the Gardener: an orange-haired doll in a teal headband, opened to a garden scene with felt vegetables, a watering can, a wheelbarrow and a snail',
+          },
+          {
+            src: bizzikinsPhoto('B0GT6RNPNZ'),
+            alt: 'Annie the Pet Sitter: a brown-haired doll with a blue bow, opened to a scene of a window, a cat with yarn, a dog in a bath and a pet bed',
+          },
+          {
+            src: bizzikinsPhoto('B0GSC67673'),
+            alt: 'Poppy the Forest Ranger: a red-haired doll in pigtails, opened to a woodland scene with a red jeep, a hedgehog, a log and felt fish in a pond',
+          },
+          {
+            src: bizzikinsPhoto('B0GT7XBBDN'),
+            alt: 'Max the Astronaut: a brown-haired boy doll, opened to a navy space scene with a rocket, the Earth, a shooting star and a flying saucer',
+          },
+        ],
+        caption: 'The four characters as the brand’s own Amazon listings show them: Rosie, Annie, Poppy and Max.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text:
+          'A March launch, three prices in six months, a July peak and an October award that arrived after the volume had already fallen.',
+      },
+      {
+        type: 'timeline',
+        items: [
+          {
+            when: '12 Mar 2026',
+            tag: 'Amazon',
+            what: 'The first doll is listed',
+            detail: 'Poppy the Forest Ranger, by the listing date Keepa holds.',
+          },
+          {
+            when: '19 Mar 2026',
+            tag: 'Amazon',
+            what: 'Rosie, Annie and Max follow',
+            detail: 'The other three dolls carry one date, and so does the first bundle listing.',
+          },
+          {
+            when: '24 May 2026',
+            tag: 'Amazon',
+            what: 'The first price on record: $29.99',
+            detail: 'The first price Keepa has for the dolls, identical on all four, and the launch price the press release names as the MSRP.',
+          },
+          {
+            when: '11 Jun 2026',
+            tag: 'Brand',
+            what: 'The launch press release',
+            detail: 'Announces the dolls “on Amazon” at a $29.99 MSRP in four designs, quotes the CEO and promises more characters later in 2026. The copy read is a rewrite of the wire release.',
+          },
+          {
+            when: '4 Jul 2026',
+            tag: 'Amazon',
+            what: 'The price rises to about $35',
+            detail: '$34.99 to $35.00, on all four dolls at once.',
+          },
+          {
+            when: '31 Jul 2026',
+            tag: 'Amazon',
+            what: 'The first whole month of sold badges',
+            detail: 'Amazon prints “bought in past month” on all four dolls, which means each sells at least about fifty a month. Together they read 1,000 units, the highest month on record, and the series starts here.',
+          },
+          {
+            when: '9 Sep 2026',
+            tag: 'Amazon',
+            what: 'The price rises to $37.50',
+            detail: 'The third price the dolls have carried, again the same on all four.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '550 units, down from 1,000 in July',
+            detail: 'A fall of 45% in two months while the price rose 7%. Nothing read says what drove it.',
+          },
+          {
+            when: '1 Oct 2026',
+            tag: 'Brand',
+            what: 'A Good Housekeeping 2026 Toy Awards win',
+            detail: 'From a company-issued release, naming ages 18 months to 4 years. It lands after the decline above, so it cannot have caused it, and any lift it brings is not in the data yet.',
+          },
+          {
+            when: '2 Oct 2026',
+            tag: 'Advertising',
+            what: 'Meta ads begin',
+            detail: 'Three video ads, started on 2, 5 and 7 October and all pointing at the Instagram profile. Meta publishes the dates and never the spend.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'Three months is all the badge history there is, and it tells one story: 1,000 units in July, 900 in August and 550 in September, down 45% while the price crept up from about $35 to $37.50. The award came after the fall and the ads after the award, so neither explains it. It could be a launch spike fading, a stock-out or a quiet summer, and a sold badge alone cannot tell them apart. The reads of their advertising do not show a spend that was cut either, but they are single readings taken in October.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup only: the account exists
+           with no ratings, and no Canadian listing was read. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with no ratings; no listing was read' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further, so a small Canadian trade would not show here.',
+      },
+      {
+        /* September's badge floor × the $37.50 buy box, so the rows sum to the
+           2026-09 revenue row exactly (check-profile asserts it). Photos are
+           the bucket copies. The unbadged bundles are NOT itemised: they carry
+           no sales to show. */
+        type: 'breakdown',
+        intro:
+          'Four characters at one price. Rosie and Annie each take over a third of the month, Poppy half of that and Max under a tenth.',
+        items: [
+          { name: 'Rosie the Gardener', asin: 'B0GT793W2T', image: bizzikinsPhoto('B0GT793W2T'), listed: '2026-03-19', sold: 200, price: 37.5, revenue: 7500 },
+          { name: 'Annie the Pet Sitter', asin: 'B0GT6RNPNZ', image: bizzikinsPhoto('B0GT6RNPNZ'), listed: '2026-03-19', sold: 200, price: 37.5, revenue: 7500 },
+          { name: 'Poppy the Forest Ranger', asin: 'B0GSC67673', image: bizzikinsPhoto('B0GSC67673'), listed: '2026-03-12', sold: 100, price: 37.5, revenue: 3750 },
+          { name: 'Max the Astronaut', asin: 'B0GT7XBBDN', image: bizzikinsPhoto('B0GT7XBBDN'), listed: '2026-03-19', sold: 50, price: 37.5, revenue: 1875 },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times the price in effect, so every row is a floor. The bundles and gift sets carry no badge and are counted as zero, not itemised.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor, built from Amazon’s sold badge priced at each month’s end price: $35.00 in July and August and $37.50 in September. Pricing every month at the latest price would have overstated the first two by 7%.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Amazon is the business. The company’s own site is a brochure, and the paid social that began in October points at Instagram rather than at a shop.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Everything measurable here happens on one marketplace, through one seller account, on four listings that Amazon groups under a single parent. That is a thin base to read a business from: one account with 40 ratings, one price, one factory quote. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of a $37.50 doll, roughly a third is left once the factory, the tariff, the freight and Amazon’s two fees are paid, and the factory price behind that rests on a single quote.',
+      },
+      {
+        type: 'prose',
+        text:
+          'All four characters share a price and are assumed to share a cost, so there is one margin, built bottom up. The factory figure is one quote, relayed by the researcher for “this sort of doll”: $8.50 a piece at 100 and $5.40 at 500. The supplier is Dongguan Youmee Toys, a year-old Alibaba account rated 5.0 over 26 reviews, but the quote was for a generic plush doll, not Bizzikins’ own felt-and-snap design. It is the weakest figure on the page, and everything under it moves with it.',
+      },
+      {
+        /* Standard supplier columns. The supplier's profile came from a screenshot
+           (2026-10-11): no per-listing sold count was supplied, so that cell says so. */
+        type: 'table',
+        id: 'cogs-breakdown',
+        caption: 'COGS — what a doll costs to make',
+        attribution: 'alibaba',
+        columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+        rows: [
+          ['Dongguan Youmee Toys Co., Ltd.', '1 year on Alibaba · manufacturer and trading company · reorder rate 23% · Guangdong', '5.0 (26 reviews)', 'Not supplied', '100 pcs', '$8.50, or $5.40 at 500 pcs'],
+          ['Average lowest price — the cost to make used below', '', '', '', '', '$5.40'],
+        ],
+        note:
+          'One supplier and one quote, relayed by the researcher for a similar doll and not seen by us. The profile is read from a screenshot: a year on Alibaba, 5.0 over 26 reviews, a 23% reorder rate and a reply within two hours. Its size (1,000+ staff, over $100M a year) is its own claim, and the sold count and lead time were not supplied. No Verified badge was visible. The lowest price, at 500 pieces, is the cost to make used below; at the 100-piece price the doll would cost $3.10 more to make. The tariff and the freight are their own lines.',
+      },
+      {
+        /* The freight half of the landed cost, priced from the best seller's
+           own carton (Keepa packageLength/Width/Height, B0GT793W2T) at the same
+           dated LCL rate every profile uses — waithowmuch-research
+           calibration/freight-rates.json, CN-USWC low end, read 2026-09-28. */
+        type: 'table',
+        id: 'shipping-breakdown',
+        caption: 'Shipping — what it costs to move one doll from China',
+        attribution: 'freightos',
+        noteColumns: [2],
+        columns: ['Input', 'Figure', 'Where it comes from'],
+        rows: [
+          ['Carton', '40.9 × 23.3 × 10.0 cm, 0.49 kg', 'The best-selling doll’s own package size (B0GT793W2T, Rosie)'],
+          ['Volume', '0.00953 cbm', 'The carton, in cubic metres'],
+          ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+          ['Shipping, per doll', '$4.73', '0.00953 cbm × $497'],
+        ],
+        note:
+          'The rate is the low end of Freightos’ band, $497 to $4,241 a cbm; the top prices express services a first order would not buy. It is door to door, customs clearance and delivery included, and excludes the duty, which is its own line. The other three characters ship in slightly different cartons, and a different product would ship at a different figure.',
+      },
+      {
+        /* Derived from the two tables above and the tariff line below, so no
+           source logo. Id is the target of the "Test it first" first-order link. */
+        type: 'table',
+        id: 'landed-cost',
+        caption: 'Landed cost — production, duty and shipping, per doll',
+        noteColumns: [2],
+        columns: ['Line', 'Per doll', 'From'],
+        rows: [
+          ['Production', '$5.40', 'The one Alibaba quote, at 500 pieces — COGS table above'],
+          ['Tariff', '$0.68', '12.5% of the cost to make, assuming China origin — the tariff line below'],
+          ['Shipping', '$4.73', 'This doll’s carton at $497/cbm — shipping table above'],
+          ['Landed cost', '$10.81', 'What one doll costs in Amazon’s warehouse, before it sells'],
+        ],
+        note:
+          'The first three lines of the breakdown below, added up: $10.81 is 28.8% of the $37.50 price. It covers making the doll and getting it to the warehouse, not the Amazon fees on the sale, which are their own lines.',
+      },
+      {
+        type: 'margin',
+        basis: { label: 'Selling price', value: BZ_COST.price },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: bzPct(BZ_COST.factory),
+            amount: BZ_COST.factory,
+            emphasis: true,
+            detail: 'The factory price from the one relayed quote, at 500 pieces. A generic doll’s price, so a floor on what their own design costs.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+            ],
+          },
+          {
+            label: 'Tariff',
+            pct: bzPct(BZ_COST.tariff),
+            amount: BZ_COST.tariff,
+            detail: '12.5% of the cost to make: toys under HTS 9503.00 from China carry no base duty and a 12.5% Section 301 tariff, from a secondary summary. A second source says 20%, which would cost about a point more. Assumes China origin and the factory price as the customs value.',
+            links: [
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Shipping',
+            pct: bzPct(BZ_COST.freight),
+            amount: BZ_COST.freight,
+            detail: 'Priced from the best seller’s own carton at a read sea-freight rate, door to door.',
+            links: [
+              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            amount: BZ_COST.referral,
+            detail: 'Amazon’s published Toys & Games rate, a flat 15%, as Keepa records it on the listing.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+          },
+          {
+            /* Keepa on B0GT793W2T: 409 × 233 × 100 mm, 490 g (read 2026-10-06),
+               fbaFees.pickAndPackFee 763 cents. 16.1 × 9.2 × 3.9 in, 17.3 oz. */
+            label: 'FBA fulfilment',
+            pct: bzPct(BZ_COST.fba),
+            amount: BZ_COST.fba,
+            emphasis: true,
+            detail: 'Size tier: Large Standard. Measured on the best-selling doll (B0GT793W2T), a 16.1 × 9.2 × 3.9 in box at 17.3 oz: over 16 oz and over 15 in on the long side rules out Small Standard. Amazon’s pick-and-pack fee is $7.63, more than the factory charges for the doll.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+          },
+          {
+            label: 'Advertising',
+            pct: -BZ_AD.ratePct.central,
+            amount: BZ_AD.products[0].perUnit,
+            detail: `Modelled, not observed: about ${monthUsd(BZ_AD.monthlyUsd.central)} a month, ${linePct(BZ_AD.ratePct.central)} of September’s revenue, on small specific phrases and their own name. A floor: it cannot see ads on product pages or automatic campaigns.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/bizzikins/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/bizzikins/advertising/' },
+            ],
+          },
+        ],
+        note:
+          'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit. The profit series uses this September breakdown for every month. July and August sold at $35.00, where the same costs leave about 32.1%, so those two months’ profit is about 3.5 points too generous.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The shape is the reverse of most products: moving the doll costs more than making it. Amazon’s fee and the sea freight together are more than twice the factory price, because both charge by the size of the box rather than by what is in it. The same logic makes a higher price valuable: the fees move with the box, not the price, so most of the step to $37.50 went to margin.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Profit here is a modelled ceiling on one unconfirmed factory quote, and the tariff is read from a secondary summary. The two together can move the margin by several points in either direction, and returns are not in it at all.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-11, read at New York 10001. */
+        type: 'strategy',
+        label: BZ_AD.strategy,
+        points: [
+          'About 36% of the modelled ad spend sits on their own name, “bizzikins” and “bizzikins doll”, and the other 64% on small specific phrases such as “airplane toddler travel essentials” and “montessori busy book 1 year old”.',
+          'Of the fifteen biggest generic searches they pay on two. They do not buy “busy book for 1+ year old”, “travel toys for 1+ year old” or “soft dolls for toddlers 1-3”, where they rank between #30 and #59 without paying.',
+          'Ads of theirs were seen on 10 of the 129 keywords their listings show up on, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside.',
+          'Off Amazon, three Meta video ads began on 2, 5 and 7 October, after the snapshot month, and Google’s transparency centre shows none for alenibrands.com. Neither library publishes spend, so off-Amazon spend is unknown.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: BZ_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for the four dolls: exact-match monthly searches and the best organic position any of them held, among the fifty biggest keywords where a listing ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(BZ_TOP_SPEND)} of the ${monthUsd(BZ_AD.monthlyUsd.central)} a month; the rest is under a dollar a keyword or on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(BZ_AD_KEYWORDS, BZ_AD_KEYWORDS_TOTAL, BZ_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, they own the search on their own name and place within the first fifty on a scatter of doll and travel phrases, mostly between #30 and #59. The biggest searches in their field, such as “busy book for 1+ year old”, sit at the bottom of that range, and competitors such as Exorany, EooCoo and CloudLawn hold the sponsored share on them.',
+      },
+      {
+        type: 'prose',
+        text:
+          'A keyword read cannot say where the sales come from, only that it is not visibly this. Organic ranking, campaigns that target products or run automatically, the award and the reviews are all candidates, and the brand’s own Sponsored Products search-term report would settle it. The Meta ads are too new to have fed September.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(BZ_AD.monthlyUsd.central)} a month, ${linePct(BZ_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 10 of 129 keywords — Jungle Scout share of voice; a New York read of 17 searches',
+            flag: true,
+            note:
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because no row here was sponsored-dominant enough to measure one. It is a floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off.',
+          },
+          {
+            label: 'Meta (Facebook and Instagram)',
+            href: 'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=US&q=bizzikins&search_type=keyword_unordered&media_type=all',
+            value: 'Spend unknown',
+            counted: '3 active US video ads, started 2, 5 and 7 Oct 2026 · the page has 1,070 likes',
+            note:
+              'All three began after the September snapshot and after the 1 October award, so the margin carries none of it. They send people to the Instagram profile, not to a shop or to the Amazon listing. Meta publishes creative and dates, never the money.',
+          },
+          {
+            label: 'Google Ads',
+            href: 'https://adstransparency.google.com/?region=US&domain=alenibrands.com',
+            value: 'None seen',
+            counted: '0 ads for alenibrands.com in Google’s transparency centre',
+            note:
+              'The site is a brochure with no checkout and no measurable traffic, so a search ad would have nowhere to send anyone. TikTok’s ad library, YouTube and Amazon DSP were not read.',
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: only the existence and dates of the Meta ads could be read.',
+      },
+      {
+        /* The Margin breakdown's advertising line, row for row, built from
+           BZ_AD. check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...BZ_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${bzBand(p.monthlyUsd)}`]),
+          ['Total — the margin line', monthUsd(BZ_AD.monthlyUsd.central), linePct(BZ_AD.ratePct.central), lineUsd((BZ_COST.price * BZ_AD.ratePct.central) / 100), `Modelled: ${bzBand(BZ_AD.monthlyUsd)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of the $37.50 price. Meta’s spend is unpublished and none of it is here.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Aleni Brands, LLC', note: 'Fort Lauderdale, Florida' },
+          { label: 'Amazon seller', value: 'A3EKQYT9R67Q1S', note: 'Aleni Brands' },
+          { label: 'Address', value: '809 SE 5 Ct, Fort Lauderdale, FL', note: '33301, as Amazon’s seller record gives it' },
+          { label: 'Founder and CEO', value: 'Ricardo Venegas', note: 'Quoted in the launch release; named on LinkedIn' },
+          { label: 'Seller feedback', value: '98%', note: 'Over 40 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '12 Mar 2026' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Aleni Brands is a Florida company whose Bizzikins catalogue dates only from March 2026, and its own site says it is named after the founder’s children, Alexandra and Nicolas. It runs two other brands on its own site, Wobblies and Stackies, which were not looked for on Amazon. The launch release quotes Ricardo Venegas as CEO, and a LinkedIn result places him in Miami and Fort Lauderdale; that page was not opened, so nothing about his history is read here.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The seller account is 98% positive, but over only 40 ratings, against 87 reviews on a single doll. The same account exists on Canada with no ratings and does not appear on the UK or Germany. Nobody at the company has spoken to us, and every fact here comes from Keepa, a press release or the company’s own site.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. The published estimate is created by the
+         owner's session (make-validation-launch.mjs); these blocks carry no
+         data. landedHref points at the Margin breakdown's landed-cost table. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text:
+          'The least you would spend to find out whether it sells, before you commit to a full launch.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch', landedHref: '/business/bizzikins/margin/#landed-cost' },
     ],
   },
 };
