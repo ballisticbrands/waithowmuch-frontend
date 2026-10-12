@@ -285,7 +285,8 @@ export type ValidationLaunch = {
     keywords: Array<{
       keyword: string;
       monthlySearches: number;
-      organicRank: number;
+      /** Null for a category search the brand does not rank on (--category). */
+      organicRank: number | null;
       cpc: number;
       cpcFrom: string;
       clicks: number;

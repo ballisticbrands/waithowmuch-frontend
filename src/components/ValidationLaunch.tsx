@@ -62,6 +62,12 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
     v.kind === "version" ? "that version" : colour ? v.label : v.words.map((w) => `“${w}”`).join(" or ");
   const spread = launch.products.map((p) => p.adsDays);
   const days = Math.min(...spread) === Math.max(...spread) ? int(spread[0]!) : `${int(Math.min(...spread))}–${int(Math.max(...spread))}`;
+  /* --category (make-validation-launch): a brand too young to rank on anything
+     big is tested on its category's searches, which it does not rank on. Read off
+     the searches themselves, so no other field has to say it. */
+  const category = launch.products.some((p) =>
+    p.keywords.some((k) => k.organicRank == null || k.organicRank > launch.maxRank),
+  );
   return (
     <aside data-strategy="" data-validation-strategy="">
       <p data-strategy-eyebrow="">Validation</p>
@@ -109,8 +115,18 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
         <li>
           <strong>Pay for the clicks that test it.</strong> The test is whether the other {int(g.paidUnits)} units sell
           through ads. How many clicks that takes depends on how often shoppers buy this kind of product, and it is
-          never fewer than {int(g.minClicks)}. Use searches that name {named} and that the original brand’s listing
-          already ranks for in the top {launch.maxRank} results without paying for it, starting with the smaller ones.
+          never fewer than {int(g.minClicks)}.{" "}
+          {category ? (
+            <>
+              Use the category’s own searches that name {named}, starting with the smaller ones. The original brand is
+              too young to rank on them yet, so the test is whether a new listing can win sales there at all.
+            </>
+          ) : (
+            <>
+              Use searches that name {named} and that the original brand’s listing already ranks for in the top{" "}
+              {launch.maxRank} results without paying for it, starting with the smaller ones.
+            </>
+          )}{" "}
           Expect about {days} days of ads.
         </li>
         <li>
