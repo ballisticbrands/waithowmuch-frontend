@@ -62,6 +62,7 @@ import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD, AD_KEYWORDS as VIRORA_AD_KEYWORDS, AD_KEYWORDS_TOTAL as VIRORA_AD_KEYWORDS_TOTAL } from './virora-mahjong.adspend.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD, AD_KEYWORDS as MC_AD_KEYWORDS, AD_KEYWORDS_TOTAL as MC_AD_KEYWORDS_TOTAL } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD, AD_KEYWORDS as HM_AD_KEYWORDS, AD_KEYWORDS_TOTAL as HM_AD_KEYWORDS_TOTAL } from './highmark-collective.adspend.mjs';
+import { TOP_KEYWORDS as OT_TOP_KEYWORDS, AD_SPEND as OT_AD, AD_KEYWORDS as OT_AD_KEYWORDS, AD_KEYWORDS_TOTAL as OT_AD_KEYWORDS_TOTAL } from './ototo.adspend.mjs';
 import { TOP_KEYWORDS as BZ_TOP_KEYWORDS, AD_KEYWORDS as BZ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as BZ_AD_KEYWORDS_TOTAL, AD_SPEND as BZ_AD } from './bizzikins.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
 
@@ -7224,6 +7225,7 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s Kitchen rate, and 15% on every OTOTO listing that sold. Measured.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
@@ -7231,14 +7233,18 @@ export const PROFILES = {
             /* The largest line — the component labels the emphasised line
                "Biggest line". */
             emphasis: true,
+            /* Keepa product record for B07H7ZDBV4 (keepa/brand-catalogue.json,
+               read 2026-09-16): 234 × 60 × 24 mm, 60 g, pick-and-pack $3.86. */
             detail:
-              'About $4.20. Amazon’s pick-and-pack fee, read per listing on 16 September 2026 and applied to every month: $3.01–6.31 across the listings that sold. August’s sale prices make it a bigger share than usual. Measured.',
+              'Size tier: Large Standard. The best seller, the Splatypus spatula (B07H7ZDBV4), packs to 9.2 × 2.4 × 0.94 in at 2.1 oz: light enough for Small Standard, but 0.94 in deep against that tier’s 0.75 in limit. About $4.20 on average. Amazon’s pick-and-pack fee, read per listing on 16 September 2026 and applied to every month: $3.01–6.31 across the listings that sold. August’s sale prices make it a bigger share than usual. Measured.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -6,
             detail:
               'ASSUMED: a 6% placeholder. What was measured is the footprint: the top sponsored slots on the brand’s own name and one slot on eight generic searches. One logged-out read cannot see Sponsored Brands, Display, DSP or social spend, so it cannot show the bill.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' }],
           },
         ],
         note:
@@ -7284,19 +7290,32 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'Brand defence, plus one generic placement. They hold the top sponsored slots on their own name, and gift searches find them organically.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-12, read at
+           New York 10001, for the three best sellers (owner's call: a catalogue
+           brand is shown through its heroes, not the 80% set). */
+        type: 'strategy',
+        label: OT_AD.strategy,
+        points: [
+          `About ${monthUsd(OT_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(OT_AD.monthlyUsd.low)}–${monthUsd(OT_AD.monthlyUsd.high)}) on the three best sellers, ${linePct(OT_AD.ratePct.central)} of their August revenue. Jungle Scout saw their ads on 68 of the 1,849 searches those three listings show up on.`,
+          'About 27% of it, $46 a month, is on their own name (“ototo halloween”, “ototo gracula garlic crusher”). The rest is long, specific phrases: “cute halloween stuff”, “goth kitchen accessories”, “spooky basket stuffers for men”.',
+          'They buy none of the fifteen biggest generic searches they rank on (“kitchen gadgets”, “gothic decor”, “halloween kitchen”…). A New York read of all fifteen on 12 October found no OTOTO sponsored card; their cards turned up only on searches with their name in them.',
+          'Modelled from outside the account, and for three of 87 listings, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
       },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: OT_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for the three best sellers (Splatypus, Elizabat, Vino): exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(OT_AD.monthlyUsd.central)} in all. Read 12 October 2026.`,
+      },
+      adKeywordsTable(OT_AD_KEYWORDS, OT_AD_KEYWORDS_TOTAL, OT_AD.monthlyUsd.central),
       {
         type: 'prose',
         text:
-          'On “ototo”, 5 of 12 sponsored slots were theirs, including the top four. Other kitchen and Halloween brands bought the rest. On eight generic searches they held 1 of 96 sponsored slots: Splatypus at #4 on “jar spatula”. Organic rank does the work on gift searches: #5 on “halloween kitchen accessories”, #8 on both “cute kitchen gadgets” and “funny kitchen gifts”. On “garlic press” and “tea infuser”, the searches for what their two famous products actually do, they are not on the first page at all.',
-      },
-      {
-        type: 'prose',
-        text:
-          'Each search was read once, logged out, with delivery set to New York and checked on the page. That read cannot see Sponsored Brands or Display elsewhere on the page, Amazon’s DSP, or anything off Amazon. The brand’s site claims 500M+ social views, and that claim was not checked.',
+          'Organic rank does the work on gift searches, not ads. An earlier read on 16 September found them #5 on “halloween kitchen accessories” and #8 on both “cute kitchen gadgets” and “funny kitchen gifts” without paying, while on their own name they held 5 of 12 sponsored slots, the top four among them. Other kitchen and Halloween brands bought the other seven.',
       },
       {
         type: 'channels',
@@ -7304,16 +7323,16 @@ export const PROFILES = {
           {
             label: 'Amazon Sponsored Products',
             href: 'https://www.amazon.com/s?k=ototo',
-            value: '≈ 6% of revenue — assumed',
-            counted: '5 of 12 sponsored slots on “ototo”, positions 1–4 and 11 · 1 of 96 on eight generic searches — New York delivery, 16 Sep 2026',
+            value: `≈ ${monthUsd(OT_AD.monthlyUsd.central)} a month on the three best sellers, ${linePct(OT_AD.ratePct.central)} of their revenue — modelled`,
+            counted: 'Ads on 68 of 1,849 keywords the three listings rank on — Jungle Scout share of voice; no OTOTO card on fifteen generic searches read from New York, 12 Oct 2026',
             flag: true,
             note:
-              'The figure is a placeholder, the same 6% the margin deducts. The counts are the measured part.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. It covers the three best sellers only; the other 84 listings are not modelled.',
           },
           {
             label: 'Others on their name',
             value: '7 of 12',
-            counted: 'Sponsored slots on “ototo” held by other kitchen and Halloween brands',
+            counted: 'Sponsored slots on “ototo” held by other kitchen and Halloween brands, 16 Sep 2026',
             note: 'Competitors buy the brand’s name, which is why defending it is worth paying for.',
           },
           {
@@ -7323,24 +7342,9 @@ export const PROFILES = {
           },
         ],
       },
-      {
-        type: 'table',
-        caption: 'Nine Amazon searches, 16 September 2026',
-        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
-        rows: [
-          ['ototo', '12', '5 — positions 1–4, 11', '—'],
-          ['halloween kitchen accessories', '12', '0', '#5, #40, #44, #49'],
-          ['cute kitchen gadgets', '12', '0', '#8, #9, #25, #36, #37, #44, #58'],
-          ['funny kitchen gifts', '12', '0', '#8, #10, #17, #18, #25, #44, #54'],
-          ['soup ladle', '12', '0', '#30'],
-          ['jar spatula', '12', '1 — Splatypus at #4', '#38'],
-          ['spoon rest', '12', '0', '#54'],
-          ['garlic press', '12', '0', 'Not on page 1'],
-          ['tea infuser', '12', '0', 'Not on page 1'],
-        ],
-        note:
-          'Headless Chrome, logged out, delivery set to New York 10001 and checked on the page, one read per term, matched against every brand listing. Amazon localises and rotates results, so this is a reading on a day, not a rank that holds.',
-      },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         has its per-product tabs: it has to match their advertising lines row for
+         row, and those wait on the Alibaba quotes requested 2026-10-12. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {

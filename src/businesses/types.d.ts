@@ -181,6 +181,10 @@ export type Block =
       type: "product-margins";
       /** The month the shares were read from — the snapshot month, "2026-09". */
       period: string;
+      /** A catalogue brand's N best sellers as an overview, instead of the
+       *  products reaching 80% (build-ecom-biz-page §2, owner's call
+       *  2026-10-12). The tab bar says so. */
+      heroes?: number;
       products: Array<{
         /** Stable, url-safe: also prefixes the anchors inside the tab. */
         id: string;
