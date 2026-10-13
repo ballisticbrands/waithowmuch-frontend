@@ -62,6 +62,11 @@ import { VIRORA_BREAKDOWN, viroraPhoto } from './virora-mahjong.breakdown.mjs';
 import { TOP_KEYWORDS as VIRORA_TOP_KEYWORDS, AD_SPEND as VIRORA_AD, AD_KEYWORDS as VIRORA_AD_KEYWORDS, AD_KEYWORDS_TOTAL as VIRORA_AD_KEYWORDS_TOTAL } from './virora-mahjong.adspend.mjs';
 import { TOP_KEYWORDS as MC_TOP_KEYWORDS, AD_SPEND as MC_AD, AD_KEYWORDS as MC_AD_KEYWORDS, AD_KEYWORDS_TOTAL as MC_AD_KEYWORDS_TOTAL } from './mount-cleverest.adspend.mjs';
 import { TOP_KEYWORDS as HM_TOP_KEYWORDS, AD_SPEND as HM_AD, AD_KEYWORDS as HM_AD_KEYWORDS, AD_KEYWORDS_TOTAL as HM_AD_KEYWORDS_TOTAL } from './highmark-collective.adspend.mjs';
+import { TOP_KEYWORDS as MR_TOP_KEYWORDS, AD_SPEND as MR_AD, AD_KEYWORDS as MR_AD_KEYWORDS, AD_KEYWORDS_TOTAL as MR_AD_KEYWORDS_TOTAL } from './maryruth.adspend.mjs';
+import { TOP_KEYWORDS as KJ_TOP_KEYWORDS, AD_SPEND as KJ_AD, AD_KEYWORDS as KJ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as KJ_AD_KEYWORDS_TOTAL } from './kajun-loaded-tea.adspend.mjs';
+import { TOP_KEYWORDS as LL_TOP_KEYWORDS, AD_SPEND as LL_AD, AD_KEYWORDS as LL_AD_KEYWORDS, AD_KEYWORDS_TOTAL as LL_AD_KEYWORDS_TOTAL } from './lighten-life.adspend.mjs';
+import { TOP_KEYWORDS as RG_TOP_KEYWORDS, AD_SPEND as RG_AD, AD_KEYWORDS as RG_AD_KEYWORDS, AD_KEYWORDS_TOTAL as RG_AD_KEYWORDS_TOTAL } from './restoration-games.adspend.mjs';
+import { TOP_KEYWORDS as WN_TOP_KEYWORDS, AD_SPEND as WN_AD, AD_KEYWORDS as WN_AD_KEYWORDS, AD_KEYWORDS_TOTAL as WN_AD_KEYWORDS_TOTAL } from './wet-noses.adspend.mjs';
 import { TOP_KEYWORDS as OT_TOP_KEYWORDS, AD_SPEND as OT_AD, AD_KEYWORDS as OT_AD_KEYWORDS, AD_KEYWORDS_TOTAL as OT_AD_KEYWORDS_TOTAL } from './ototo.adspend.mjs';
 import { TOP_KEYWORDS as BZ_TOP_KEYWORDS, AD_KEYWORDS as BZ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as BZ_AD_KEYWORDS_TOTAL, AD_SPEND as BZ_AD } from './bizzikins.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
@@ -3315,19 +3320,24 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s published rate for Beauty, Health and Personal Care items above $10.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
             pct: -18,
             emphasis: true,
+            /* Keepa product record for B0CWS5QP8F, read 2026-10-13: 169 × 66 ×
+               64 mm, 520 g, pick-and-pack $5.22. */
             detail:
-              'About $4.50 a unit blended: liquid vitamins in 15oz glass are large-standard at $4.60–5.42, gummies small-standard at $3.45–3.78. Which band a listing falls in depends on dimensions nobody published.',
+              'Size tier: Large Standard. The best seller, Liquid Multivitamin + Hair Growth (B0CWS5QP8F), packs to 6.7 × 2.6 × 2.5 in at 18.3 oz: over Small Standard’s 0.75 in depth and its 16 oz weight, and Amazon charges it $5.22. About $4.50 a unit blended, because the gummies are lighter: small-standard at $3.45–3.78.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -8,
             detail:
               'Computed, not observed. A $1.10–1.40 Health & Household click at an 11–14% conversion rate is $7.86–12.73 per ad-attributed sale, a 32–51% ACoS; with an assumed 20–40% of units carried by ads, that is about 8% of revenue.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/maryruth/advertising/' }],
           },
         ],
         note:
@@ -3378,23 +3388,43 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'One channel is counted, one is arithmetic, and one is a disagreement — and the page shows the disagreement rather than choosing a side.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-13, read at
+           New York 10001, for the three best sellers (catalogue brand: heroes). */
+        type: 'strategy',
+        label: MR_AD.strategy,
+        points: [
+          `About ${monthUsd(MR_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(MR_AD.monthlyUsd.low)}–${monthUsd(MR_AD.monthlyUsd.high)}) on the three best sellers, ${linePct(MR_AD.ratePct.central)} of their September revenue. Jungle Scout saw their ads on 103 of the 1,627 searches those listings show up on.`,
+          'About 92% of it, roughly $28,500 a month, is on their own name: shoppers searching for MaryRuth’s, and the brand paying to keep competitors off those results.',
+          'Of the thirteen biggest generic searches they rank on, they buy one, “hair growth supplements” (about 232,000 searches a month). “Multivitamin for women”, “womens multivitamin” and “vitamins” go unbought.',
+          'Modelled from outside the account, and for three of 288 storefront listings, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
       },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: MR_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for the three best sellers (Liquid Multivitamin + Hair Growth in four sizes, Hair Growth Max, Liquid Morning Multivitamin): exact-match monthly searches and the best organic position any of them held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(MR_AD.monthlyUsd.central)} in all. Read 13 October 2026.`,
+      },
+      adKeywordsTable(MR_AD_KEYWORDS, MR_AD_KEYWORDS_TOTAL, MR_AD.monthlyUsd.central),
       {
         type: 'prose',
         text:
-          'Meta’s library gives an authoritative count of live ads on their own page. Amazon spend is computed from published category benchmarks, and it is the same model as the advertising line in Margin breakdown. On Google, Similarweb says paid search is their largest channel while Ubersuggest says they buy no paid keywords at all.',
+          'Amazon is not where this brand’s advertising money shows. Meta’s library counts about 390 live US ads on the brand page alone. On Google, Similarweb says paid search is their largest source of site traffic while Ubersuggest says they buy no paid keywords at all; the page shows both rather than choosing.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            value: '≈ $1.0M–2.6M / mo',
+            href: 'https://www.amazon.com/s?k=maryruths',
+            value: `≈ ${monthUsd(MR_AD.monthlyUsd.central)} a month on the three best sellers, ${linePct(MR_AD.ratePct.central)} of their revenue — modelled`,
+            counted: 'Ads on 103 of 1,627 keywords the three listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
+            flag: true,
             note:
-              'Computed, not observed. A $1.10–1.40 Health & Household click at an 11–14% conversion rate is $7.86–12.73 per ad-attributed sale, a 32–51% ACoS on a $24.87 order. Carrying 20–40% of the catalogue’s badge units that way lands the spend here, at 6–16% TACoS; the 20–40% is the one assumption. Amazon publishes nothing about a competitor’s spend.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. It covers the three best sellers only. The Margin breakdown’s advertising line is still the earlier benchmark estimate until the per-product margins are rebuilt.',
           },
           {
             label: 'Meta (Facebook and Instagram)',
@@ -3414,6 +3444,8 @@ export const PROFILES = {
           },
         ],
       },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         has per-product tabs; it must match their advertising lines. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -4815,19 +4847,23 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s published Grocery & Gourmet rate for a sale above $15.00.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
             pct: -21.6,
             emphasis: true,
+            /* Keepa product record B0FVBCBNYH: 189 × 149 × 17 mm, 60 g, pick-and-pack $3.54, read 2026-10-13. */
             detail:
-              '$3.54 per box of five and $4.35 per 10-pack, from Keepa’s per-listing fees. The largest line, and one the price does not move. The 6-pack’s fee was not read and is charged at $3.54.',
+              'Size tier: Small Standard. The best seller, a Crawdaddy Candy box of five (B0FVBCBNYH), packs to 7.4 × 5.9 × 0.67 in at 2.1 oz, inside Small Standard’s 0.75 in and 16 oz limits. $3.54 per box of five and $4.35 per 10-pack, from Keepa’s per-listing fees. The largest line, and one the price does not move. The 6-pack’s fee was not read and is charged at $3.54.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -10.9,
             detail:
               'Computed on a placeholder. A Food and Grocery click at $0.80–1.10 converting at 15–17% costs $4.71–7.33 per ad-attributed sale, $6.02 at the midpoint; taking 30% of units as ad-attributed is our placeholder, not a reading. The sponsored footprint under it is measured — see Advertising.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/kajun-loaded-tea/advertising/' }],
           },
         ],
         note:
@@ -4873,10 +4909,27 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'They pay to be seen on their own category and still sit below a rival who buys the top of it. The spend is arithmetic; the placements under it were counted.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-13, read at
+           New York 10001. */
+        type: 'strategy',
+        label: KJ_AD.strategy,
+        points: [
+          `About ${monthUsd(KJ_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(KJ_AD.monthlyUsd.low)}–${monthUsd(KJ_AD.monthlyUsd.high)}), ${linePct(KJ_AD.ratePct.central)} of September revenue. Jungle Scout saw their ads on 182 of the 689 searches those listings show up on.`,
+          'About 25% of it, roughly $471 a month, is on their own name; the rest is long, specific phrases.',
+          'Of the 14 biggest generic searches they rank on, they buy 3: “dunkin refresher packets”, “the loaded tea shop packets”, “loaded tea packets with caffeine”.',
+          'Modelled from outside the account, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
       },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: KJ_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for Loaded tea packets: exact-match monthly searches and the best organic position any of the listings held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(KJ_AD.monthlyUsd.central)} in all. Read 13 October 2026.`,
+      },
+      adKeywordsTable(KJ_AD_KEYWORDS, KJ_AD_KEYWORDS_TOTAL, KJ_AD.monthlyUsd.central),
       {
         type: 'prose',
         text:
@@ -4887,13 +4940,11 @@ export const PROFILES = {
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=loaded+tea+packets',
-            value: '≈ 10.9% of revenue',
-            counted:
-              '6 of 12 sponsored slots on “loaded tea packets”, 5 of 12 on “loaded tea”, 12 of 12 on “kajun loaded tea”, 0 of 12 on “energy drink packets sugar free” — read 15 Sep 2026',
+            value: `≈ ${monthUsd(KJ_AD.monthlyUsd.central)} a month, ${linePct(KJ_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 182 of 689 keywords their listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
             flag: true,
             note:
-              'Computed, not observed, and on a placeholder: $6.02 per ad-attributed sale from Food and Grocery benchmarks, times 30% of units — a share nobody published. Nobody publishes the bill.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is still the earlier estimate until the margin is rebuilt with supplier quotes.',
           },
           {
             label: 'Amazon Sponsored Brands',
@@ -4907,8 +4958,9 @@ export const PROFILES = {
             note: 'No ad library or paid-search history was read for this profile. Absent here means unexamined, not zero.',
           },
         ],
-        note: 'Search results are localised and change by the hour. These are one read each, first page only, with delivery set to Denham Springs (70726).',
       },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         is rebuilt with supplier quotes; it must match its advertising lines. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -5388,19 +5440,23 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s published Pet Products rate: 15%, with a $0.30 minimum.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
             pct: -29.13,
             emphasis: true,
+            /* Keepa product record B006M3Y5WS: 244 × 180 × 174 mm, 2,472 g, pick-and-pack $8.04, read 2026-10-13. */
             detail:
-              'Measured: each listing’s own pick-and-pack fee, $4.76 on a 14oz bag to $8.04 on a 5 lb box, times September’s badged units. The largest line here.',
+              'Size tier: Large Standard. The best seller, a 5 lb box (B006M3Y5WS), packs to 9.6 × 7.1 × 6.9 in at 5.45 lb. Measured: each listing’s own pick-and-pack fee, $4.76 on a 14oz bag to $8.04 on a 5 lb box, times September’s badged units. The largest line here.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -2,
             detail:
               'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/wet-noses/advertising/' }],
           },
         ],
         note: 'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit.',
@@ -5413,21 +5469,42 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-13, read at
+           New York 10001. */
+        type: 'strategy',
+        label: WN_AD.strategy,
+        points: [
+          `About ${monthUsd(WN_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(WN_AD.monthlyUsd.low)}–${monthUsd(WN_AD.monthlyUsd.high)}), ${linePct(WN_AD.ratePct.central)} of September revenue. Jungle Scout saw their ads on 33 of the 207 searches their listings show up on.`,
+          'About 13% of it, roughly $132 a month, is on their own name; the rest is long, specific phrases.',
+          'Of the 15 biggest generic searches they rank on, they buy 1: “training treats”.',
+          'Modelled from outside the account, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: WN_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for Baked dog treats: exact-match monthly searches and the best organic position any of the listings held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(WN_AD.monthlyUsd.central)} in all. Read 13 October 2026.`,
+      },
+      adKeywordsTable(WN_AD_KEYWORDS, WN_AD_KEYWORDS_TOTAL, WN_AD.monthlyUsd.central),
+      {
+        type: 'prose',
         text:
-          'One channel was read, and it shows defence: they buy their own name on Amazon and nothing else. The figure is arithmetic; the counted line under it is what was actually seen.',
+          'A hand read on 15 September, with a Monroe, Washington delivery address, saw the same shape: none of the 36 sponsored slots on “organic dog treats”, “grain free dog treats” and “human grade dog treats” was theirs, while on their own name they held positions 1, 2, 3, 4, 11 and 19.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=wet+noses+dog+treats',
-            value: '≈ 2% of revenue',
-            counted: '0 of 36 sponsored slots on three generic searches; 6 of 12 on “wet noses dog treats” — read 15 Sep 2026',
+            value: `≈ ${monthUsd(WN_AD.monthlyUsd.central)} a month, ${linePct(WN_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 33 of 207 keywords their listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
             flag: true,
             note:
-              'Modelled, not observed. On “organic dog treats”, “grain free dog treats” and “human grade dog treats” none of the twelve sponsored slots was theirs; on their own name they held positions 1, 2, 3, 4, 11 and 19. Brand-term clicks are cheap and few, so spend sits in the low single digits of revenue; 2% is the figure the margin uses. Read with a Monroe, Washington delivery address — an earlier read from another country showed no ads at all and was discarded.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is still the earlier estimate until the margin is rebuilt with supplier quotes.',
           },
           {
             label: 'Meta and Google',
@@ -5436,6 +5513,8 @@ export const PROFILES = {
           },
         ],
       },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         is rebuilt with supplier quotes; it must match its advertising lines. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -5906,17 +5985,21 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Measured per listing: 15%, the Toys & Games rate.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
             pct: -12.18,
-            detail: 'Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
+            /* Keepa product record B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g, pick-and-pack $9.88, read 2026-10-13. */
+            detail: 'Size tier: Large Standard. The best seller, Thunder Road: Vendetta Maximum Chrome (B0C6NR9ZC4), packs to 15 × 11.5 × 6.3 in at 10.05 lb. Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -2,
             detail:
               'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own name and none of 48 on generic searches, which puts spend in the low single digits of revenue.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' }],
           },
         ],
         note:
@@ -5957,21 +6040,42 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-13, read at
+           New York 10001. */
+        type: 'strategy',
+        label: RG_AD.strategy,
+        points: [
+          `About ${monthUsd(RG_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(RG_AD.monthlyUsd.low)}–${monthUsd(RG_AD.monthlyUsd.high)}), ${linePct(RG_AD.ratePct.central)} of September revenue on the 5 products in the margin. Jungle Scout saw their ads on 804 of the 1,646 searches those listings show up on.`,
+          'The model puts none of it on their own name, because Jungle Scout holds no share-of-voice reading for “restoration games”; the hand read below found them in positions 1 to 4 there, so that spend is real and missing from this figure.',
+          'Of the 15 biggest generic searches they rank on, they buy 6, led by the licensed names their Unmatched sets carry: “the witcher”, “unmatched board game”, “witcher”.',
+          'Modelled from outside the account, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: RG_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for Thunder Road: Vendetta — Maximum Chrome, Thunder Road: Vendetta, Unmatched: Battle of Legends Vol. 3, Unmatched: Cobble & Fog, Dinosaur Tea Party: exact-match monthly searches and the best organic position any of the listings held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(RG_AD.monthlyUsd.central)} in all. Read 13 October 2026.`,
+      },
+      adKeywordsTable(RG_AD_KEYWORDS, RG_AD_KEYWORDS_TOTAL, RG_AD.monthlyUsd.central),
+      {
+        type: 'prose',
         text:
-          'One channel was read, and it shows defence: they buy their own name and their own game’s name on Amazon, and nothing generic. The figure is arithmetic; the counted line under it is what was seen.',
+          'A hand read on 15 September, from New York, saw the same shape: none of the 48 sponsored slots on four generic searches (“board games for adults”, “strategy board games”, “family board games”, “2 player board games”) was theirs, while on their own name they held positions 1 to 4, and on “unmatched board game” positions 1, 52 and 55.',
       },
       {
         type: 'channels',
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=restoration+games',
-            value: '≈ 2% of revenue',
-            counted: '0 of 48 sponsored slots on four generic searches; 4 of 12 on “restoration games”; 3 of 11 on “unmatched board game” — read 15 Sep 2026',
+            value: `≈ ${monthUsd(RG_AD.monthlyUsd.central)} a month, ${linePct(RG_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 804 of 1,646 keywords their listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
             flag: true,
             note:
-              'Modelled, not observed. On “board games for adults”, “strategy board games”, “family board games” and “2 player board games” none of the twelve sponsored slots was theirs. On their own name they held positions 1 to 4; on “unmatched board game”, positions 1, 52 and 55. Brand-term clicks are cheap and few, so spend sits in the low single digits of revenue; 2% is the figure the margin uses. Sponsored Brands and video units were not counted. Read with a New York delivery address; an earlier read from another country was discarded.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is still the earlier estimate until the margin is rebuilt with supplier quotes.',
           },
           {
             label: 'Meta and Google',
@@ -5980,6 +6084,8 @@ export const PROFILES = {
           },
         ],
       },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         is rebuilt with supplier quotes; it must match its advertising lines. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -6503,6 +6609,7 @@ export const PROFILES = {
             label: 'Amazon referral fee',
             pct: -15,
             detail: 'Amazon’s Kitchen rate, and 15% on every LIGHTEN LIFE listing in Keepa. Measured.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
@@ -6510,14 +6617,17 @@ export const PROFILES = {
             /* The largest line — the component labels the emphasised line
                "Biggest line". */
             emphasis: true,
+            /* Keepa product record B08CXWGFQM: 276 × 137 × 133 mm, 1,339 g, pick-and-pack $6.90, read 2026-10-13. */
             detail:
-              'About $5.89. Amazon’s pick-and-pack fee, read per listing on 15 September 2026: $5.61 on a boxed whiskey glass, $6.90 on the bar kit, $8.56 on the decanter set. Measured.',
+              'Size tier: Large Standard. The best seller, the cocktail mixing set (B08CXWGFQM), packs to 10.9 × 5.4 × 5.2 in at 2.95 lb. About $5.89. Amazon’s pick-and-pack fee, read per listing on 15 September 2026: $5.61 on a boxed whiskey glass, $6.90 on the bar kit, $8.56 on the decanter set. Measured.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
           },
           {
             label: 'Advertising',
             pct: -4,
             detail:
               'ASSUMED: a 4% placeholder. What was measured is the footprint: sponsored slots on the brand’s own name and none on four generic searches. That suggests a small budget, and it cannot show the bill.',
+            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/lighten-life/advertising/' }],
           },
         ],
         note:
@@ -6563,10 +6673,27 @@ export const PROFILES = {
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
       {
-        type: 'lede',
-        text:
-          'Brand defence and nothing else. They buy the sponsored slots on their own name, and none on the generic gift and bar searches where their listings rank mid-page.',
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-13, read at
+           New York 10001. */
+        type: 'strategy',
+        label: LL_AD.strategy,
+        points: [
+          `About ${monthUsd(LL_AD.monthlyUsd.central)} a month of modelled Sponsored Products spend (${monthUsd(LL_AD.monthlyUsd.low)}–${monthUsd(LL_AD.monthlyUsd.high)}), ${linePct(LL_AD.ratePct.central)} of September revenue on the 3 products in the margin. Jungle Scout saw their ads on 96 of the 1,681 searches those listings show up on.`,
+          'The model puts none of it on their own name, because Jungle Scout holds no share-of-voice reading for “lighten life”. The New York read below did find them there: 8 of the 12 sponsored slots. So the brand spend is real and missing from this figure, which is all long, specific phrases.',
+          'Of the 15 biggest generic searches they rank on, they buy 1: “glass sippy cup”.',
+          'Modelled from outside the account, so a floor: automatic and product-targeting campaigns, Sponsored Brands, Display and Amazon’s DSP are invisible to it.',
+        ],
       },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: LL_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for Engraved whiskey glass in a wooden box, Birthday beer glass in a barrel box, Cocktail mixing glass set: exact-match monthly searches and the best organic position any of the listings held. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position; elsewhere, the best sponsored rank among them. Cost per click is Amazon’s own suggested exact bid. Ad spend a month is the modelled cost on that keyword, out of ${monthUsd(LL_AD.monthlyUsd.central)} in all. Read 13 October 2026.`,
+      },
+      adKeywordsTable(LL_AD_KEYWORDS, LL_AD_KEYWORDS_TOTAL, LL_AD.monthlyUsd.central),
       {
         type: 'prose',
         text:
@@ -6582,12 +6709,11 @@ export const PROFILES = {
         items: [
           {
             label: 'Amazon Sponsored Products',
-            href: 'https://www.amazon.com/s?k=lighten+life',
-            value: '≈ 4% of revenue — assumed',
-            counted: '8 of 12 sponsored slots on “lighten life” · 0 of 48 on four generic searches — New York delivery, 15 Sep 2026',
+            value: `≈ ${monthUsd(LL_AD.monthlyUsd.central)} a month, ${linePct(LL_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 96 of 1,681 keywords their listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
             flag: true,
             note:
-              'The figure is a placeholder, the same 4% the margin deducts. The count is the measured part. Defence alone usually costs low single digits, and one read cannot rule out other ad types.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is still the earlier estimate until the margin is rebuilt with supplier quotes.',
           },
           {
             label: 'Others on their name',
@@ -6602,20 +6728,8 @@ export const PROFILES = {
           },
         ],
       },
-      {
-        type: 'table',
-        caption: 'Five Amazon searches, 15 September 2026',
-        columns: ['Search', 'Sponsored slots', 'Theirs', 'Their organic positions'],
-        rows: [
-          ['whiskey decanter set', '12', '0', '#16, #27, #57'],
-          ['whiskey glasses gifts for men', '12', '0', '#47'],
-          ['50th birthday gifts for men', '12', '0', '#46'],
-          ['cocktail mixing glass', '12', '0', '#9, #55'],
-          ['lighten life', '12', '8 — positions 1–4, 11, 13, 19, 20', '—'],
-        ],
-        note:
-          'Headless Chrome, logged out, delivery set to New York 10001 and checked on the page, one read per term, matched against every brand listing. Amazon localises and rotates results, so this is a reading on a day, not a rank that holds.',
-      },
+      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
+         is rebuilt with supplier quotes; it must match its advertising lines. */
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
