@@ -6552,7 +6552,7 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Amazon’s fulfilment fee is the biggest cost on a $20 gift. After it, the glass, duty, freight, the referral fee and advertising, a little over a quarter of each sale is left. That figure is a ceiling.',
+          'Amazon’s fulfilment fee is the biggest cost on a $20 gift. After it come the glass and box, now priced from Alibaba suppliers, then duty, freight, the referral fee and advertising: about a quarter of each sale is left, a ceiling.',
       },
       {
         type: 'prose',
@@ -6560,78 +6560,618 @@ export const PROFILES = {
           'Two lines are measured: Amazon’s 15% referral fee and its pick-and-pack fee, read per listing. On a $16.99 boxed whiskey glass that fee is $5.61, a third of the price, because Amazon charges for the box’s size and weight, not its value. The goods are the weak part. No supplier quoted. Glass and wooden-box prices come from Made-in-China list prices, and no barrel box was priced at all. Every dollar of unit cost moves a 2,500-unit month by about $3,000 once duty is added.',
       },
       {
-        type: 'table',
-        caption: 'COGS — what a glass and a box cost to make and land',
-        columns: ['Line', 'What was read', 'Tier', 'Unit cost'],
-        rows: [
-          ['Whiskey glass in wooden box', 'Printed rocks glass $0.35–0.69 and wooden box $0.50–3.70 (Made-in-China list prices); ~$0.10 of printing assumed', 'Derived, weak', '$2.60'],
-          ['16oz beer glass in barrel box', 'Glass at the top of the rocks-glass range; wooden box $2.50. No barrel box priced', 'Derived, weak', '$3.20'],
-          ['Glass pair in barrel box', 'Two printed glasses and a wooden box; barrel shape and printing premium assumed', 'Derived, weak', '$4.50'],
-          ['Decanter with four glasses', '7-piece decanter set $7.50–8.50, MOQ 250', 'Derived, weak', '$8.00'],
-          ['Mixing glass kit', '20oz mixing glass $1.50–2.37; spoon, jigger, strainer, muddler and box assumed at $1.75', 'Derived, weak', '$4.00'],
-          ['29oz decanter, shot glasses — a placeholder, not a quote', 'No price read for either', 'ASSUMED', '$4.00 / $2.20'],
-          ['Tariff', 'HTSUS 7013.37 at 22.5%, Section 301 at 7.5%, plus the China duty in force two months before sale. Both the lag and China origin are assumed', 'Derived', '$0.99 a unit in Sep 2026'],
-          ['Freight and inbound', 'Package volume at the FBX01 container rate (Freightos), plus $0.35 a unit for drayage and placement — a placeholder, not a quote', 'Derived + ASSUMED', '$0.91 a unit in Sep 2026'],
-        ],
-        note:
-          'List prices describe the category, not this brand’s supplier. The glass and box costs carry most of the units, so they are the first thing to replace with a real quote. Freight uses today’s container rate for every month, which overstates 2024–25.',
-      },
-      {
-        /* 🚨 The margin row is computed as 100% less these lines — 27.63% — and
-           the backend seed builds the profit and ad-spend series from the SAME
-           six numbers (COST_LINES in seed-lighten-life.ts). Change one, change
-           both.
-           🚨 Two decimals on purpose: September 2026's pnl.json rates. Whole
-           percents sum to 72 and move the headline's $14.1k to $14.3k. */
-        type: 'margin',
-        basis: { label: 'Average selling price', value: 20.39 },
-        lines: [
+        "type": "product-margins",
+        "period": "2026-09",
+        "products": [
           {
-            label: 'Cost of goods',
-            key: 'cogs',
-            pct: -15.19,
-            detail:
-              'About $3.10 of a $20.39 sale: glass and box by product, on September’s mix. Derived from supplier list prices and weak. The 29oz decanter, the shot glasses and part of the bar kit are placeholders, not quotes.',
+            "id": "whiskey-glass",
+            "label": "Whiskey glass",
+            "sharePct": 44.1,
+            "blocks": [
+              {
+                "type": "table",
+                "id": "cogs-breakdown",
+                "caption": "COGS — what a engraved whiskey glass in a wooden box costs to make",
+                "attribution": "alibaba",
+                "columns": [
+                  "Supplier",
+                  "Track record",
+                  "Buyer rating",
+                  "Sold on Alibaba",
+                  "MOQ",
+                  "Unit price"
+                ],
+                "rows": [
+                  [
+                    "Wuhan Jingyueda Household Products Co., Ltd.",
+                    "Verified · 6 yrs",
+                    "—",
+                    "26",
+                    "24 pieces",
+                    "$2.80"
+                  ],
+                  [
+                    "Yiwu Showbox Technology Co., Ltd.",
+                    "Verified · 11 yrs",
+                    "—",
+                    "—",
+                    "100 sets",
+                    "$3–3.50"
+                  ],
+                  [
+                    "Wuhan Xinhuahang Household Goods Co., Ltd.",
+                    "Verified · 7 yrs",
+                    "4.8★ from 82",
+                    "—",
+                    "300 pieces",
+                    "$2.40–3.50"
+                  ],
+                  [
+                    "Yantai Landy Wood Arts and Crafts Co., Ltd.",
+                    "Verified · 11 yrs",
+                    "4.9★ from 11",
+                    "—",
+                    "300 pieces",
+                    "$5.30"
+                  ],
+                  [
+                    "Average lowest price — the cost to make used below",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "$3.38"
+                  ]
+                ],
+                "note": "Four Alibaba listings for an engraved crystal glass in a wooden box, all from China, rated 4.5 or better where rated. Two picture the glass in a box rather than pricing it as a set, so the box may be extra. The cost to make is each supplier’s lowest listed price, averaged ($2.80, $3.00, $2.40, $5.30). Left out: a $12 retail seller in India. Searched “custom engraved whiskey glass wooden box” with the 4.5+ supplier-rating filter, 13 Oct 2026."
+              },
+              {
+                "type": "table",
+                "id": "landed-cost",
+                "caption": "Landed cost — production, duty and freight, per whiskey glass",
+                "noteColumns": [
+                  2
+                ],
+                "columns": [
+                  "Line",
+                  "Per unit",
+                  "From"
+                ],
+                "rows": [
+                  [
+                    "Production",
+                    "$3.38",
+                    "The Alibaba suppliers’ lowest prices, averaged — COGS table above"
+                  ],
+                  [
+                    "Tariff",
+                    "$0.85",
+                    "25% of production"
+                  ],
+                  [
+                    "Freight and inbound",
+                    "$0.80",
+                    "The best seller’s carton at the container rate, plus $0.35"
+                  ],
+                  [
+                    "Landed",
+                    "$5.03",
+                    "What one costs at Amazon’s door"
+                  ]
+                ]
+              },
+              {
+                "type": "margin",
+                "basis": {
+                  "label": "Selling price, Sep 2026",
+                  "value": 17.3
+                },
+                "lines": [
+                  {
+                    "label": "Cost of goods",
+                    "key": "cogs",
+                    "pct": -19.54,
+                    "amount": 3.38,
+                    "emphasis": true,
+                    "detail": "The average of the Alibaba suppliers’ lowest prices above, $3.38 — one production price for this product, the low end an order bigger than one moves toward.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Tariff",
+                    "pct": -4.91,
+                    "amount": 0.85,
+                    "detail": "25% of the cost to make on September’s goods (imported in July): the US rate on glassware in this value band, 7.5%, plus Section 301’s 7.5% and the 10% China duty then in force. China origin and the two-month lag are assumed.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Freight and inbound",
+                    "pct": -4.62,
+                    "amount": 0.8,
+                    "detail": "$0.80 a unit: the best seller’s carton (159 × 144 × 129 mm, 621 g) at the FBX01 container rate, plus $0.35 for drayage and inbound placement (a placeholder, not a quote).",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Amazon referral fee",
+                    "pct": -15,
+                    "amount": 2.6,
+                    "detail": "Amazon’s Kitchen rate, 15%, on every LIGHTEN LIFE listing in Keepa. Measured.",
+                    "links": [
+                      {
+                        "label": "Amazon’s referral fees by category",
+                        "href": "https://sell.amazon.com/pricing"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "FBA fulfilment",
+                    "pct": -32.43,
+                    "amount": 5.61,
+                    "detail": "Size tier: Large Standard. Measured on B09XHSVV7T, a 159 × 144 × 129 mm, 621 g box: Amazon’s pick-and-pack fee, $5.61.",
+                    "links": [
+                      {
+                        "label": "All of Amazon’s size tiers, explained",
+                        "href": "https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Advertising",
+                    "pct": -1.565,
+                    "amount": 0.27,
+                    "detail": "MODELLED, not observed: this product’s share of the Sponsored Products spend amazon-adspend-spy models, $0.27 a sale.",
+                    "links": [
+                      {
+                        "label": "See the ad spend behind this line",
+                        "href": "/business/lighten-life/advertising/#ad-spend"
+                      }
+                    ]
+                  }
+                ],
+                "note": "Before storage, returns and breakage, coupons and overhead, none of which is modelled: a ceiling on profit, not profit."
+              }
+            ]
           },
           {
-            label: 'Tariff',
-            pct: -4.84,
-            detail:
-              'About $0.99. The 22.5% MFN rate on glasses under $3, Section 301’s 7.5% and the 10% China duty in force at an assumed import two months earlier. Derived from published rates. China origin is assumed from the sellers, and any IEEPA refund is left out.',
+            "id": "beer-glass",
+            "label": "Beer glass",
+            "sharePct": 23.5,
+            "blocks": [
+              {
+                "type": "table",
+                "id": "cogs-breakdown",
+                "caption": "COGS — what a birthday beer glass in a barrel box costs to make",
+                "attribution": "alibaba",
+                "columns": [
+                  "Supplier",
+                  "Track record",
+                  "Buyer rating",
+                  "Sold on Alibaba",
+                  "MOQ",
+                  "Unit price"
+                ],
+                "rows": [
+                  [
+                    "Xuzhou Taibo Glass Products Co., Ltd.",
+                    "Not verified · 8 yrs",
+                    "5★ from 3",
+                    "—",
+                    "300 pieces",
+                    "$7.25–7.42"
+                  ],
+                  [
+                    "Wuhan Jingyueda Household Products Co., Ltd.",
+                    "Verified · 6 yrs",
+                    "4.7★ from 86",
+                    "—",
+                    "100 pieces",
+                    "$5.50–7.50"
+                  ],
+                  [
+                    "Wuhan Xinhuahang Household Goods Co., Ltd.",
+                    "Verified · 7 yrs",
+                    "4.8★ from 82",
+                    "—",
+                    "500 pieces",
+                    "$3.20–5"
+                  ],
+                  [
+                    "Average lowest price — the cost to make used below",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "$5.32"
+                  ]
+                ],
+                "note": "Three listings for a glass sold in a wooden barrel or gift box. Wuhan Jingyueda’s is a whiskey glass in the same barrel box; the box is the costly part, so it counts. Xuzhou Taibo is not Verified. Left out: glasses with no box, two shot glasses, and a $0.85 “glass in wooden box” too cheap to include the barrel. Searched “beer glass custom” and the barrel-box listings it led to, 13 Oct 2026."
+              },
+              {
+                "type": "table",
+                "id": "landed-cost",
+                "caption": "Landed cost — production, duty and freight, per beer glass",
+                "noteColumns": [
+                  2
+                ],
+                "columns": [
+                  "Line",
+                  "Per unit",
+                  "From"
+                ],
+                "rows": [
+                  [
+                    "Production",
+                    "$5.32",
+                    "The Alibaba suppliers’ lowest prices, averaged — COGS table above"
+                  ],
+                  [
+                    "Tariff",
+                    "$1.20",
+                    "22.5% of production"
+                  ],
+                  [
+                    "Freight and inbound",
+                    "$0.96",
+                    "The best seller’s carton at the container rate, plus $0.35"
+                  ],
+                  [
+                    "Landed",
+                    "$7.48",
+                    "What one costs at Amazon’s door"
+                  ]
+                ]
+              },
+              {
+                "type": "margin",
+                "basis": {
+                  "label": "Selling price, Sep 2026",
+                  "value": 19.99
+                },
+                "lines": [
+                  {
+                    "label": "Cost of goods",
+                    "key": "cogs",
+                    "pct": -26.61,
+                    "amount": 5.32,
+                    "emphasis": true,
+                    "detail": "The average of the Alibaba suppliers’ lowest prices above, $5.32 — one production price for this product, the low end an order bigger than one moves toward.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Tariff",
+                    "pct": -6.0,
+                    "amount": 1.2,
+                    "detail": "22.5% of the cost to make on September’s goods (imported in July): the US rate on glassware in this value band, 5%, plus Section 301’s 7.5% and the 10% China duty then in force. China origin and the two-month lag are assumed.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Freight and inbound",
+                    "pct": -4.8,
+                    "amount": 0.96,
+                    "detail": "$0.96 a unit: the best seller’s carton (193 × 145 × 141 mm, 750 g) at the FBX01 container rate, plus $0.35 for drayage and inbound placement (a placeholder, not a quote).",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Amazon referral fee",
+                    "pct": -15,
+                    "amount": 3.0,
+                    "detail": "Amazon’s Kitchen rate, 15%, on every LIGHTEN LIFE listing in Keepa. Measured.",
+                    "links": [
+                      {
+                        "label": "Amazon’s referral fees by category",
+                        "href": "https://sell.amazon.com/pricing"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "FBA fulfilment",
+                    "pct": -28.81,
+                    "amount": 5.76,
+                    "detail": "Size tier: Large Standard. Measured on B0CPPWVPGS, a 193 × 145 × 141 mm, 750 g box: Amazon’s pick-and-pack fee, $5.76.",
+                    "links": [
+                      {
+                        "label": "All of Amazon’s size tiers, explained",
+                        "href": "https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Advertising",
+                    "pct": -0.042,
+                    "amount": 0.01,
+                    "detail": "MODELLED, not observed: this product’s share of the Sponsored Products spend amazon-adspend-spy models, $0.01 a sale.",
+                    "links": [
+                      {
+                        "label": "See the ad spend behind this line",
+                        "href": "/business/lighten-life/advertising/#ad-spend"
+                      }
+                    ]
+                  }
+                ],
+                "note": "Before storage, returns and breakage, coupons and overhead, none of which is modelled: a ceiling on profit, not profit."
+              }
+            ]
           },
           {
-            label: 'Freight and inbound',
-            pct: -4.47,
-            detail:
-              'About $0.91. Ocean freight from package volume at the FBX01 rate, plus $0.35 a unit for drayage, brokerage and placement — a placeholder, not a quote.',
+            "id": "cocktail-set",
+            "label": "Cocktail set",
+            "sharePct": 17.1,
+            "blocks": [
+              {
+                "type": "table",
+                "id": "cogs-breakdown",
+                "caption": "COGS — what a cocktail mixing glass set costs to make",
+                "attribution": "alibaba",
+                "columns": [
+                  "Supplier",
+                  "Track record",
+                  "Buyer rating",
+                  "Sold on Alibaba",
+                  "MOQ",
+                  "Unit price"
+                ],
+                "rows": [
+                  [
+                    "Wingshung Industrial (Shanghai) Co., Ltd.",
+                    "Not verified · 18 yrs",
+                    "5★ from 1",
+                    "—",
+                    "500 sets",
+                    "$3.50–4.60"
+                  ],
+                  [
+                    "Average lowest price — the cost to make used below",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "$3.50"
+                  ]
+                ],
+                "note": "One exact match: a 5-piece set (mixing glass, spoon, muddler, jigger, strainer) in a gift box, from a supplier that is not Verified and has one review; the owner chose it as the set price. Left out: two listings for the glass alone, a 7-piece premium kit at $10.66, and a $0.36 “set” too cheap to be one. Searched “cocktail mixing glass set” and “bar tool set mixing glass jigger strainer muddler”, 13 Oct 2026."
+              },
+              {
+                "type": "table",
+                "id": "landed-cost",
+                "caption": "Landed cost — production, duty and freight, per cocktail set",
+                "noteColumns": [
+                  2
+                ],
+                "columns": [
+                  "Line",
+                  "Per unit",
+                  "From"
+                ],
+                "rows": [
+                  [
+                    "Production",
+                    "$3.50",
+                    "The Alibaba suppliers’ lowest prices, averaged — COGS table above"
+                  ],
+                  [
+                    "Tariff",
+                    "$0.88",
+                    "25% of production"
+                  ],
+                  [
+                    "Freight and inbound",
+                    "$1.12",
+                    "The best seller’s carton at the container rate, plus $0.35"
+                  ],
+                  [
+                    "Landed",
+                    "$5.50",
+                    "What one costs at Amazon’s door"
+                  ]
+                ]
+              },
+              {
+                "type": "margin",
+                "basis": {
+                  "label": "Selling price, Sep 2026",
+                  "value": 28.99
+                },
+                "lines": [
+                  {
+                    "label": "Cost of goods",
+                    "key": "cogs",
+                    "pct": -12.07,
+                    "amount": 3.5,
+                    "emphasis": true,
+                    "detail": "The average of the Alibaba suppliers’ lowest prices above, $3.50 — one production price for this product, the low end an order bigger than one moves toward.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Tariff",
+                    "pct": -3.04,
+                    "amount": 0.88,
+                    "detail": "25% of the cost to make on September’s goods (imported in July): the US rate on glassware in this value band, 7.5%, plus Section 301’s 7.5% and the 10% China duty then in force. China origin and the two-month lag are assumed.",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Freight and inbound",
+                    "pct": -3.86,
+                    "amount": 1.12,
+                    "detail": "$1.12 a unit: the best seller’s carton (276 × 137 × 133 mm, 1,338 g) at the FBX01 container rate, plus $0.35 for drayage and inbound placement (a placeholder, not a quote).",
+                    "links": [
+                      {
+                        "label": "See COGS breakdown above",
+                        "href": "#cogs-breakdown"
+                      },
+                      {
+                        "label": "See landed cost above",
+                        "href": "#landed-cost"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Amazon referral fee",
+                    "pct": -15,
+                    "amount": 4.35,
+                    "detail": "Amazon’s Kitchen rate, 15%, on every LIGHTEN LIFE listing in Keepa. Measured.",
+                    "links": [
+                      {
+                        "label": "Amazon’s referral fees by category",
+                        "href": "https://sell.amazon.com/pricing"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "FBA fulfilment",
+                    "pct": -23.8,
+                    "amount": 6.9,
+                    "detail": "Size tier: Large Standard. Measured on B08CXWGFQM, a 276 × 137 × 133 mm, 1,338 g box: Amazon’s pick-and-pack fee, $6.90.",
+                    "links": [
+                      {
+                        "label": "All of Amazon’s size tiers, explained",
+                        "href": "https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Advertising",
+                    "pct": -0.287,
+                    "amount": 0.08,
+                    "detail": "MODELLED, not observed: this product’s share of the Sponsored Products spend amazon-adspend-spy models, $0.08 a sale.",
+                    "links": [
+                      {
+                        "label": "See the ad spend behind this line",
+                        "href": "/business/lighten-life/advertising/#ad-spend"
+                      }
+                    ]
+                  }
+                ],
+                "note": "Before storage, returns and breakage, coupons and overhead, none of which is modelled: a ceiling on profit, not profit."
+              }
+            ]
           },
           {
-            label: 'Amazon referral fee',
-            pct: -15,
-            detail: 'Amazon’s Kitchen rate, and 15% on every LIGHTEN LIFE listing in Keepa. Measured.',
-            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
-          },
-          {
-            label: 'FBA fulfilment',
-            pct: -28.87,
-            /* The largest line — the component labels the emphasised line
-               "Biggest line". */
-            emphasis: true,
-            /* Keepa product record B08CXWGFQM: 276 × 137 × 133 mm, 1,339 g, pick-and-pack $6.90, read 2026-10-13. */
-            detail:
-              'Size tier: Large Standard. The best seller, the cocktail mixing set (B08CXWGFQM), packs to 10.9 × 5.4 × 5.2 in at 2.95 lb. About $5.89. Amazon’s pick-and-pack fee, read per listing on 15 September 2026: $5.61 on a boxed whiskey glass, $6.90 on the bar kit, $8.56 on the decanter set. Measured.',
-            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
-          },
-          {
-            label: 'Advertising',
-            pct: -4,
-            detail:
-              'ASSUMED: a 4% placeholder. What was measured is the footprint: sponsored slots on the brand’s own name and none on four generic searches. That suggests a small budget, and it cannot show the bill.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/lighten-life/advertising/' }],
-          },
-        ],
-        note:
-          'September 2026’s rates, and every month on the chart carries them, although tariffs, freight and the product mix all differed in earlier months. Storage, returns, glass breakage, coupons and overhead are not modelled, so this is a ceiling on profit rather than profit.',
+            "id": "all",
+            "label": "Whole brand",
+            "blended": true,
+            "blocks": [
+              {
+                "type": "margin",
+                "basis": {
+                  "label": "Average selling price, Sep 2026",
+                  "value": 20.39
+                },
+                "lines": [
+                  {
+                    "label": "Cost of goods",
+                    "key": "cogs",
+                    "pct": -20,
+                    "emphasis": true,
+                    "detail": "The three products’ Alibaba prices on September’s mix: 20.0% of revenue. See each product’s tab for its suppliers."
+                  },
+                  {
+                    "label": "Tariff",
+                    "pct": -5,
+                    "detail": "22.5–25% of the cost to make on September’s goods: 4.8% of revenue."
+                  },
+                  {
+                    "label": "Freight and inbound",
+                    "pct": -5,
+                    "detail": "Each product’s own carton at the container rate, plus $0.35: 4.5% of revenue."
+                  },
+                  {
+                    "label": "Amazon referral fee",
+                    "pct": -15,
+                    "detail": "Amazon’s Kitchen rate, 15%.",
+                    "links": [
+                      {
+                        "label": "Amazon’s referral fees by category",
+                        "href": "https://sell.amazon.com/pricing"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "FBA fulfilment",
+                    "pct": -30,
+                    "detail": "Size tier: Large Standard. Measured per listing, $5.61–6.90 on the three products: 29.7% of revenue.",
+                    "links": [
+                      {
+                        "label": "All of Amazon’s size tiers, explained",
+                        "href": "https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US"
+                      }
+                    ]
+                  },
+                  {
+                    "label": "Advertising",
+                    "pct": -0.885,
+                    "detail": "MODELLED, not observed: amazon-adspend-spy’s Sponsored Products spend, about $382 a month. Their own-name spend is real and missing (no Jungle Scout reading for it).",
+                    "links": [
+                      {
+                        "label": "See the ad spend behind this line",
+                        "href": "/business/lighten-life/advertising/#ad-spend"
+                      }
+                    ]
+                  }
+                ],
+                "note": "The three products are 85% of September’s revenue; the rest of the catalogue is assumed to cost the same mix. Before storage, returns, coupons and overhead: a ceiling on profit, not profit."
+              }
+            ]
+          }
+        ]
       },
       {
         type: 'prose',
@@ -6641,7 +7181,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The glass and box costs move this profile most. They stand in for a quote nobody has read, with advertising and part of freight as placeholders beside them. Those are the first three numbers to replace.',
+          'The glass and box costs move this profile most, and they now rest on Alibaba quotes: four suppliers for the whiskey glass, three for the beer glass, and one exact match for the cocktail set. Freight’s $0.35 handling is still a placeholder.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -6728,8 +7268,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         is rebuilt with supplier quotes; it must match its advertising lines. */
+      {
+        /* The Margin breakdown's advertising lines, row for row, from LL_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...LL_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]),
+          ['Total — the Whole brand line', monthUsd(Math.round((50975 * LL_AD.ratePct.central) / 100)), linePct(LL_AD.ratePct.central), lineUsd((20.39 * LL_AD.ratePct.central) / 100), `Modelled: ${monthUsd(LL_AD.monthlyUsd.low)}–${monthUsd(LL_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising, line for line: each product’s tab uses its own row, and the Whole brand tab the last. Per sale is the share of that product’s price, or of the $20.39 average sale. The total applies the modelled rate to the whole brand’s September revenue, $50,975, since the model reads only the three products.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -6878,6 +7431,17 @@ export const PROFILES = {
         text:
           'The whole figure rests on one inference: that Mili World and EVERHOME CRAFT INC are one operation, so the months before the handoff are this business’s record. Nothing read establishes it. The trademark belongs to a third company, so the model does not score it. Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and the feedback figure blends the two accounts. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
+      /* The validation test, read off the published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --variants
+         "whiskey-glass=dad;beer-glass=birthday;cocktail-set=mixing"), so the
+         section and the headline figure are one record. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether each product sells, before you commit to a full launch.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
 
