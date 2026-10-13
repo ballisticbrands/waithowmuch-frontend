@@ -9948,6 +9948,20 @@ export const PROFILES = {
           'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of the $37.50 price. Meta’s spend is unpublished and none of it is here.',
       },
 
+      /* Owner's call, 2026-10-13: include the Instagram account and say no more
+         than was read. Its follower count was not read, so it is not here. */
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text: 'One Instagram account, and a company site that is a brochure.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'The brand’s own release for its Good Housekeeping award points to Instagram, @bizzikins, and to alenibrands.com. The site has no checkout and no measurable traffic on Similarweb; the dolls sell on Amazon. The three Meta video ads that began in October send people to the Instagram profile, not to a shop.',
+      },
+
       { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
       {
         type: 'facts',

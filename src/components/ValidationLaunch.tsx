@@ -65,6 +65,11 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
   /* --category (make-validation-launch): a brand too young to rank on anything
      big is tested on its category's searches, which it does not rank on. Read off
      the searches themselves, so no other field has to say it. */
+  /* The first order: the gate's 50, or the suppliers' lowest minimum when it is
+     more (owner's call, 2026-10-13). One figure when the products agree. */
+  const unitCounts = [...new Set(launch.products.map((p) => p.units))];
+  const firstUnits = unitCounts.length === 1 ? int(unitCounts[0]!) : `${int(Math.min(...unitCounts))}–${int(Math.max(...unitCounts))}`;
+  const minimum = launch.products.find((p) => p.moq && p.units > g.firstOrderUnits)?.moq ?? null;
   const category = launch.products.some((p) =>
     p.keywords.some((k) => k.organicRank == null || k.organicRank > launch.maxRank),
   );
@@ -108,9 +113,16 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
         </li>
         <li>
           <strong>Send the Vine units first, and wait for reviews.</strong> {int(g.vineUnits)} of your first{" "}
-          {int(g.firstOrderUnits)} units go to Amazon Vine, a free programme that brings in your first reviews. Do not
+          {firstUnits} units go to Amazon Vine, a free programme that brings in your first reviews. Do not
           start the ads until about {int(g.reviewsBeforeAds)} reviews are in, which usually takes a few weeks. Shoppers
           buy far less from a listing with no reviews, so testing it then would fail a good product.
+          {minimum ? (
+            <>
+              {" "}
+              The factory’s minimum order is {int(minimum)}, so that is the first order: the units the test does not use
+              are stock for when it passes.
+            </>
+          ) : null}
         </li>
         <li>
           <strong>Pay for the clicks that test it.</strong> The test is whether the other {int(g.paidUnits)} units sell
@@ -471,7 +483,8 @@ function ValidationNumbers({
                       {i > 0 && <br />}
                       {/* Always named, even alone: the unit cost belongs to THIS product
                           and the reader should not have to infer which (owner, 2026-10-11). */}
-                      <strong>{p.label}:</strong> {int(p.units)} units ({int(g.vineUnits)} for Vine, {int(g.paidUnits)} to sell) ×{" "}
+                      <strong>{p.label}:</strong> {int(p.units)} units ({int(g.vineUnits)} for Vine, {int(g.paidUnits)} to sell
+                      {p.units > g.firstOrderUnits ? `, ${int(p.units - g.firstOrderUnits)} more to meet the factory’s minimum` : ""}) ×{" "}
                       {unitMoney(p.landedUnitCost, currency)} — the landed cost of one, made and shipped to Amazon’s warehouse.{" "}
                       <a href={landedLink(business.slug, p.id, many, landedHref)}>See the landed cost</a>
                     </span>

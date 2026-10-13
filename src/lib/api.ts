@@ -254,6 +254,9 @@ export type ValidationLaunch = {
     sellingPrice: number;
     landedUnitCost: number;
     units: number;
+    /** The suppliers' lowest minimum order, when one sized the first order
+     *  above the gate's 50 (owner's call, 2026-10-13). */
+    moq?: number | null;
     inventory: number;
     conversion: {
       /** The median of competing listings on this product's searches. */

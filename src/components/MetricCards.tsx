@@ -1,4 +1,4 @@
-import type { BusinessDetail, ChartPoint, MetricsResponse } from "@/lib/api";
+import type { BusinessDetail, ChartPoint, MetricsResponse, ValidationLaunch } from "@/lib/api";
 
 type Dec = string | number;
 import { rowsOfType } from "@/lib/api";
@@ -222,6 +222,13 @@ const READING_SOURCE: Record<string, string> = {
 };
 
 /** This business's "to start" working, in the order the formula adds it up. */
+/** The test's first order in units: one figure when the products agree, else
+ *  the range — the gate's 50, or more where a factory's minimum asks for it. */
+const firstOrderUnits = (v: ValidationLaunch) => {
+  const u = [...new Set(v.products.map((p) => p.units))];
+  return u.length === 1 ? String(u[0]) : `${Math.min(...u)}–${Math.max(...u)}`;
+};
+
 function startingCostWorking(b: BusinessDetail): string[] | undefined {
   const e = b.startingCostEstimate;
   if (!e) return undefined;
@@ -236,7 +243,7 @@ function startingCostWorking(b: BusinessDetail): string[] | undefined {
     const products = v.products.length === 1 ? "the product" : `each of its ${v.products.length} products`;
     return [
       `For this business it is the validation test: what it costs to find out whether it sells — ${span(e)}, shown at its low end.`,
-      `First order ${exactMoney(t.inventory, b.currency)} — ${v.gate.firstOrderUnits} units of ${products}, ${v.gate.vineUnits} of them to Amazon Vine for the first reviews.`,
+      `First order ${exactMoney(t.inventory, b.currency)} — ${firstOrderUnits(v)} units of ${products}, ${v.gate.vineUnits} of them to Amazon Vine for the first reviews${v.products.some((p) => p.units > v.gate.firstOrderUnits) ? ", and more where the factory's minimum asks for it" : ""}.`,
       `Test ads ${exactMoney(t.ads, b.currency)} at most — enough clicks on searches naming ${v.variant.kind === "version" ? "each product’s version" : v.variant.label} to show whether the other ${v.gate.paidUnits} sell.`,
       `Setup ${span(breakdown.parts.setup)}. If the test passes, the units the ads sell pay back about ${exactMoney(t.moneyBack, b.currency)} after Amazon’s fees.`,
     ];
