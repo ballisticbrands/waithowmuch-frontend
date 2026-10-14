@@ -6157,7 +6157,7 @@ export const PROFILES = {
        2026-09-16) — and the page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/lighten-life/0e2a393abc754deb19c1d36629635d9fd3450fca1e4c63262d205e34173f1a05.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/lighten-life/81c1e9e89af0f81f22239cdcd88d68fcd57cd4a7c020d20f527e19a3214e35a0.png',
       /* Not the revenue leader, deliberately. That is the mixing-glass bar kit,
          whose buy box Mili World happened to hold at the moment of the read.
          This one sold the most units in the month, and it is the object the
