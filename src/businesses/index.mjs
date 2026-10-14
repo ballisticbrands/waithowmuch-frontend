@@ -1373,7 +1373,8 @@ export const PROFILES = {
               'The store now carries 601 products at a median of $19.99 — the same price the best sellers carry on Amazon.',
           },
           {
-            when: '2018',
+            /* The showcase was held on 23 Jul 2018 (CNBC carried it live that day). */
+            when: '23 Jul 2018',
             tag: 'Brand',
             what: 'Invited to the White House Made in America Showcase',
             detail: 'One company from each state; this one represented New Hampshire, by its own About page.',
@@ -3162,10 +3163,11 @@ export const PROFILES = {
               'From TikTok’s own createTime, corroborated by the timestamp inside the user id. It now carries 624,900 followers and 1,691 videos — the brand’s largest owned channel.',
           },
           {
-            when: 'Aug 2021',
+            /* Butterfly's press release, Business Wire, 5 Aug 2021. */
+            when: '5 Aug 2021',
             tag: 'Brand',
             what: 'Butterfly Equity buys in',
-            detail: 'A private-equity stake, in a year Forbes reports the company’s revenue at $135M.',
+            detail: 'A private-equity stake, announced 5 August 2021, in a year Forbes reports the company’s revenue at $135M.',
           },
           {
             when: '27 Sep 2022',
