@@ -2935,7 +2935,7 @@ export const PROFILES = {
        2026-09-15). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/maryruth/2eabf68a2ca351cb8a4be1842f39e2ad05e6a51df1bbd577fb957ff41b65decd.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/maryruth/decb70154773dd495269c7b1ebaa03c0f8bde9ffc8570675365919681036a18f.png',
       image: {
         src: MARYRUTH_PHOTOS.hero,
         alt: 'MaryRuth’s Liquid Morning Multivitamin + Hair Growth in Peach Mango — an amber 15.22 fl oz bottle standing beside its orange-and-white box. The best-selling listing in the catalogue',
@@ -3334,10 +3334,13 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -8,
-            detail:
-              'Computed, not observed. A $1.10–1.40 Health & Household click at an 11–14% conversion rate is $7.86–12.73 per ad-attributed sale, a 32–51% ACoS; with an assumed 20–40% of units carried by ads, that is about 8% of revenue.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/maryruth/advertising/' }],
+            pct: -0.76,
+            amount: 0.19,
+            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(MR_AD.monthlyUsd.central)} a month on the three best sellers, ${linePct(MR_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/maryruth/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/maryruth/advertising/' },
+            ],
           },
         ],
         note:
@@ -3444,8 +3447,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         has per-product tabs; it must match their advertising lines. */
+      {
+        /* The Margin breakdown's advertising line, built from MR_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...(MR_AD.products.length > 1 ? MR_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          ['Total — the margin line', monthUsd(Math.round((15033070 * MR_AD.ratePct.central) / 100)), linePct(MR_AD.ratePct.central), lineUsd((25.15 * MR_AD.ratePct.central) / 100), `Modelled: ${monthUsd(MR_AD.monthlyUsd.low)}–${monthUsd(MR_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $15,033,070, since the model reads the three best sellers; per sale is that share of the $25.15 average sale.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -4509,7 +4525,7 @@ export const PROFILES = {
        2026-09-15) — and the page reads them from the row alone. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/130dcb1d5126676ed1b7580dc4f96e6fd37103391b02ce143d5b17d46c746e12.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/kajun-loaded-tea/55b0be03bd6a9df75dc69338867ef1f58fb5cca320d85504d3bd7f5d3bc2b6e7.png',
       /* The best seller, the Louisiana Legends 10-pack — though at 6.8% of the
          month it leads by very little, which is the point of the subtitle. */
       image: {
@@ -4860,10 +4876,13 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -10.9,
-            detail:
-              'Computed on a placeholder. A Food and Grocery click at $0.80–1.10 converting at 15–17% costs $4.71–7.33 per ad-attributed sale, $6.02 at the midpoint; taking 30% of units as ad-attributed is our placeholder, not a reading. The sponsored footprint under it is measured — see Advertising.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/kajun-loaded-tea/advertising/' }],
+            pct: -0.403,
+            amount: 0.07,
+            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(KJ_AD.monthlyUsd.central)} a month on the ten biggest listings, ${linePct(KJ_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/kajun-loaded-tea/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/kajun-loaded-tea/advertising/' },
+            ],
           },
         ],
         note:
@@ -4959,8 +4978,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         is rebuilt with supplier quotes; it must match its advertising lines. */
+      {
+        /* The Margin breakdown's advertising line, built from KJ_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...(KJ_AD.products.length > 1 ? KJ_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          ['Total — the margin line', monthUsd(Math.round((470206 * KJ_AD.ratePct.central) / 100)), linePct(KJ_AD.ratePct.central), lineUsd((16.56 * KJ_AD.ratePct.central) / 100), `Modelled: ${monthUsd(KJ_AD.monthlyUsd.low)}–${monthUsd(KJ_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $470,206, since the model reads the ten biggest listings; per sale is that share of the $16.56 average sale.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -5085,7 +5117,7 @@ export const PROFILES = {
        2026-09-15). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/wet-noses/028369a24d66cf44f8e92897cd548999714ab7ea42bc99c4b949222d88dead91.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/wet-noses/1217ff080fbe8c443ca09d25bb483d0c0b77f39ae10a0a1c38d6e6affd6ed19c.png',
       /* The best seller by revenue, and only just: the 5 lb box and its
          two-bag sibling are within a dollar of each other. */
       image: {
@@ -5453,10 +5485,13 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -2,
-            detail:
-              'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own brand name and none on generic searches, which puts spend in the low single digits of revenue.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/wet-noses/advertising/' }],
+            pct: -5.25,
+            amount: 1.23,
+            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(WN_AD.monthlyUsd.central)} a month on the ten biggest listings, ${linePct(WN_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/wet-noses/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/wet-noses/advertising/' },
+            ],
           },
         ],
         note: 'Before returns and overhead, both set to zero, so this is a ceiling on profit rather than profit.',
@@ -5513,8 +5548,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         is rebuilt with supplier quotes; it must match its advertising lines. */
+      {
+        /* The Margin breakdown's advertising line, built from WN_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...(WN_AD.products.length > 1 ? WN_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          ['Total — the margin line', monthUsd(Math.round((19942 * WN_AD.ratePct.central) / 100)), linePct(WN_AD.ratePct.central), lineUsd((23.46 * WN_AD.ratePct.central) / 100), `Modelled: ${monthUsd(WN_AD.monthlyUsd.low)}–${monthUsd(WN_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $19,942, since the model reads the ten biggest listings; per sale is that share of the $23.46 average sale.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -5582,7 +5630,7 @@ export const PROFILES = {
        2026-09-16). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/4699814e0ff5d6a1b39149353deafa0f435cfb23367268066d17924b25fe5ef7.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/1ae6d995b429949df1ebfc27f03662b66a327d86229d9c9e064473a7a33b1c4b.png',
       /* The best seller by revenue: 46% of the own account's September on 100
          units. */
       image: {
@@ -5953,11 +6001,11 @@ export const PROFILES = {
           'Only the first column’s manufacturing figure comes from the publisher; the other two are the same 12.5% of price. The tariff rate is a secondary summary (tariffstool.com), not a customs ruling.',
       },
       {
-        /* 🚨 The margin row is computed as 100% less these lines — 53.22% — and
+        /* 🚨 The margin row is computed as 100% less these lines — 42.80% since
+           2026-10-14, when advertising became amazon-adspend-spy's 12.416% — and
            the backend seed builds the profit and ad-spend series from the SAME
            six numbers (COST_LINES). Change one, change both. Two decimals, at
-           September's rates: whole percents give $18,009 for September, which
-           renders $18k and no longer matches the approved title's $18.4K. */
+           September's rates, so the title's $14.8K and the series agree. */
         type: 'margin',
         basis: { label: 'Average selling price', value: 57.72 },
         lines: [
@@ -5996,10 +6044,13 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -2,
-            detail:
-              'Modelled, not observed — a placeholder, not a quote. They buy sponsored slots on their own name and none of 48 on generic searches, which puts spend in the low single digits of revenue.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' }],
+            pct: -12.416,
+            amount: 7.17,
+            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(RG_AD.monthlyUsd.central)} a month on the five games in the margin, ${linePct(RG_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
+            ],
           },
         ],
         note:
@@ -6084,8 +6135,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         is rebuilt with supplier quotes; it must match its advertising lines. */
+      {
+        /* The Margin breakdown's advertising line, built from RG_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...(RG_AD.products.length > 1 ? RG_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          ['Total — the margin line', monthUsd(Math.round((34633 * RG_AD.ratePct.central) / 100)), linePct(RG_AD.ratePct.central), lineUsd((57.72 * RG_AD.ratePct.central) / 100), `Modelled: ${monthUsd(RG_AD.monthlyUsd.low)}–${monthUsd(RG_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $34,633, since the model reads the five games in the margin; per sale is that share of the $57.72 average sale.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
@@ -7454,7 +7518,7 @@ export const PROFILES = {
        September read. Every "Read" stamp below is August's. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/b0da45608912347a232bb806b126a8f1ce05bbc0786fe5e87ca2ba4e8ebaad24.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/1bb5d370da64f9afa76409f0484f62eb6b9e1e78932bcc543c0e21be76c68193.png',
       /* August's revenue leader, and it is 5.5% of the month. Not the Nessie
          ladle: that is the brand's best-known shape and its biggest review
          count, but Nessie listings were under 5% of August. */
@@ -7919,10 +7983,13 @@ export const PROFILES = {
           },
           {
             label: 'Advertising',
-            pct: -6,
-            detail:
-              'ASSUMED: a 6% placeholder. What was measured is the footprint: the top sponsored slots on the brand’s own name and one slot on eight generic searches. One logged-out read cannot see Sponsored Brands, Display, DSP or social spend, so it cannot show the bill.',
-            links: [{ label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' }],
+            pct: -0.66,
+            amount: 0.1,
+            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(OT_AD.monthlyUsd.central)} a month on the three best sellers, ${linePct(OT_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+            ],
           },
         ],
         note:
@@ -8020,9 +8087,21 @@ export const PROFILES = {
           },
         ],
       },
-      /* The "Ad spend" table (id: 'ad-spend') follows once the Margin breakdown
-         has its per-product tabs: it has to match their advertising lines row for
-         row, and those wait on the Alibaba quotes requested 2026-10-12. */
+      {
+        /* The Margin breakdown's advertising line, built from OT_AD.
+           check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...(OT_AD.products.length > 1 ? OT_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          ['Total — the margin line', monthUsd(Math.round((211372 * OT_AD.ratePct.central) / 100)), linePct(OT_AD.ratePct.central), lineUsd((14.94 * OT_AD.ratePct.central) / 100), `Modelled: ${monthUsd(OT_AD.monthlyUsd.low)}–${monthUsd(OT_AD.monthlyUsd.high)}`],
+        ],
+        note:
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $211,372, since the model reads the three best sellers; per sale is that share of the $14.94 average sale.',
+      },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
       {
