@@ -113,7 +113,43 @@ const readingStamp = (month) => (month ? `Read ${monthLabel(month)}. ${READING_N
  * 🚨 These have to be in the static HTML: no link-preview crawler runs
  * JavaScript, so a tag React sets is never seen.
  */
-function render({ path, title, description, body, bootstrap, share }) {
+/**
+ * JSON-LD: machine-readable facts about the page.
+ *
+ * 🚨 Emitted by the PRERENDER, not injected by React. Google executes JS but
+ * most AI crawlers and every plain fetch do not, so schema added client-side is
+ * invisible to exactly the consumers we most want reading it.
+ *
+ * `<` is escaped for the same reason as the bootstrap payload: a name
+ * containing `</script>` would close the tag early.
+ */
+function jsonLd(nodes) {
+  const graph = [ORG, ...(Array.isArray(nodes) ? nodes : [nodes])].filter(Boolean);
+  const json = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+  return `<script type="application/ld+json">${json}</script>`;
+}
+
+const ORG = {
+  '@type': 'Organization',
+  '@id': `${SITE}/#org`,
+  name: BRAND_NAME,
+  url: SITE,
+  logo: `${SITE}/logo-512.png`,
+  description:
+    'Researched case studies of small businesses: what they sell, what they earn, and how every figure was reached.',
+};
+
+/** Breadcrumb trail — drives the SERP breadcrumb and gives entity context. */
+function crumbs(items) {
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem', position: i + 1, name: it.name, item: `${SITE}${it.path}`,
+    })),
+  };
+}
+
+function render({ path, title, description, body, bootstrap, share, schema }) {
   let html = shell
     .replace(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`)
     .replace(/<meta name="description" content="[^"]*"\s*\/>/, `<meta name="description" content="${esc(description)}" />`);
@@ -147,6 +183,7 @@ function render({ path, title, description, body, bootstrap, share }) {
           `<meta name="twitter:card" content="${image.width / image.height >= 1.5 ? 'summary_large_image' : 'summary'}" />`,
         ]
       : [`<meta name="twitter:card" content="summary" />`]),
+    jsonLd(schema),
   ].join('\n    ');
   html = insertIntoHead(html, `  ${head}\n  `);
 
@@ -662,6 +699,20 @@ for (const b of all) {
     : undefined;
 
   const html = render({
+    schema: [
+      {
+        '@type': 'Article',
+        '@id': `${SITE}${businessPath(b.slug)}#article`,
+        headline: `${b.name} Revenue — How Much It Makes`,
+        // `about`, not `mainEntity`: we are a third party reporting ON this
+        // company, and conflating the two would claim to be its own page.
+        about: { '@type': 'Organization', name: b.name },
+        isAccessibleForFree: true,
+        publisher: { '@id': `${SITE}/#org` },
+        ...(b.publishedAt ? { datePublished: String(b.publishedAt).slice(0, 10) } : {}),
+      },
+      crumbs([{ name: 'Ideas', path: '/data/' }, { name: b.name, path: businessPath(b.slug) }]),
+    ],
     path: businessPath(b.slug),
     title: `${b.name}${rev ? ` — ${rev}/mo` : ''} | ${BRAND_NAME}`,
     description: `${b.name}: ${rev ?? 'revenue'} per month${margin ? `, ${margin} margin` : ''}. ${method}, with sources.`,
@@ -719,6 +770,11 @@ if (posts.length) {
   }));
   for (const post of posts) {
     const html = render({
+      schema: [
+        { '@type': 'Article', '@id': `${SITE}${postPath(post.slug)}#article`,
+          headline: post.title, publisher: { '@id': `${SITE}/#org` }, isAccessibleForFree: true },
+        crumbs([{ name: 'Blog', path: '/blog/' }, { name: post.title, path: postPath(post.slug) }]),
+      ],
       path: postPath(post.slug),
       title: `${post.title} — ${BRAND_NAME}`,
       description: post.angle.slice(0, 155),
@@ -738,6 +794,12 @@ if (terms.length) {
   }));
   for (const t of terms) {
     write(termPath(t.slug), render({
+      schema: [
+        { '@type': 'DefinedTerm', '@id': `${SITE}${termPath(t.slug)}#term`, name: t.term,
+          inDefinedTermSet: { '@type': 'DefinedTermSet', '@id': `${SITE}/glossary/#set`,
+                              name: `${BRAND_NAME} Glossary`, url: `${SITE}/glossary/` } },
+        crumbs([{ name: 'Glossary', path: '/glossary/' }, { name: t.term, path: termPath(t.slug) }]),
+      ],
       path: termPath(t.slug), title: `${t.term} — ${BRAND_NAME}`,
       description: `What ${t.term} means for an Amazon seller.`,
       body: `<h1>${esc(t.term)}</h1>\n${t.body ?? ''}\n${FOOTER}`,
@@ -905,6 +967,7 @@ const homeList = homeRows.map((b) => {
 }).join('\n      ');
 
 write('', render({
+  schema: { '@type': 'WebSite', '@id': `${SITE}/#website`, url: SITE, name: BRAND_NAME, publisher: { '@id': `${SITE}/#org` } },
   path: '/',
   title: `${BRAND_NAME} — what businesses actually make`,
   description: 'Researched case studies of small businesses: what they sell, what they earn, and how every figure was reached.',
