@@ -7,6 +7,7 @@ import Business from "@/pages/Business";
 import Login, { Signup } from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import { About, Privacy, Terms, HowWeResearch, NotFound } from "@/pages/Static";
+import { BlogIndex, BlogPost, GlossaryIndex, GlossaryTerm } from "@/pages/Blog";
 import BusinessAttributes from "@/pages/BusinessAttributes";
 
 /** Every content route is registered with AND without a trailing slash: the
@@ -29,6 +30,14 @@ export default function App() {
         <Route path="/" element={<Home />} />
         {/* The default collection IS /data/ — Ideas falls back to all-ideas
             when there is no :collection param. */}
+        <Route path="/blog" element={<BlogIndex />} />
+        <Route path="/blog/" element={<BlogIndex />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/blog/:slug/" element={<BlogPost />} />
+        <Route path="/glossary" element={<GlossaryIndex />} />
+        <Route path="/glossary/" element={<GlossaryIndex />} />
+        <Route path="/glossary/:slug" element={<GlossaryTerm />} />
+        <Route path="/glossary/:slug/" element={<GlossaryTerm />} />
         <Route path="/data" element={<Ideas />} />
         <Route path="/data/" element={<Ideas />} />
         {/* The old URL, kept so existing links and any indexed copy land on

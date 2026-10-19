@@ -3,6 +3,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, collectionPath } from '../src/data/collections.mjs';
+import { publishedPosts, publishedTerms, postPath, termPath } from '../src/data/content.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
@@ -19,6 +20,12 @@ const urls = [
   ...COLLECTIONS.map((c) => ({ loc: `${SITE}${collectionPath(c.slug)}`, priority: '0.9' })),
   { loc: `${SITE}${collectionPath(MORE.slug)}`, priority: '0.6' },
   { loc: `${SITE}/how-we-research/`, priority: '0.6' },
+  // Drafts never enter the sitemap — submitting an empty URL to Google is
+  // actively worse than not submitting it.
+  ...(publishedPosts().length ? [{ loc: `${SITE}/blog/`, priority: '0.7' }] : []),
+  ...publishedPosts().map((p) => ({ loc: `${SITE}${postPath(p.slug)}`, priority: '0.7' })),
+  ...(publishedTerms().length ? [{ loc: `${SITE}/glossary/`, priority: '0.5' }] : []),
+  ...publishedTerms().map((x) => ({ loc: `${SITE}${termPath(x.slug)}`, priority: '0.4' })),
   { loc: `${SITE}/business-attributes/`, priority: '0.6' },
   { loc: `${SITE}/about/`, priority: '0.5' },
   { loc: `${SITE}/privacy/`, priority: '0.2' },

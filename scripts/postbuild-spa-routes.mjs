@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url';
 import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, DESCRIPTIONS, DEFAULT_SORT, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
+import { publishedPosts, publishedTerms, postPath, termPath } from '../src/data/content.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
 import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
 
@@ -699,6 +700,52 @@ for (const b of all) {
     write(`${businessPath(b.slug)}${part.id}/`, sectionHtml);
   }
 }
+
+// ── Blog + glossary (PUBLISHED only) ─────────────────────────────────
+//
+// 🚨 Drafts are deliberately absent. An empty placeholder that Google crawls is
+// thin content, and thin content at scale is the one SEO mistake that is slow
+// to undo — the page has to be re-crawled and re-assessed before it recovers.
+// A route appears here the moment its body is written, never to reserve a slot.
+const posts = publishedPosts();
+const terms = publishedTerms();
+
+if (posts.length) {
+  const list = posts.map((p) => `<li><a href="${postPath(p.slug)}">${esc(p.title)}</a></li>`).join('\n      ');
+  write('/blog/', render({
+    path: '/blog/', title: `Blog — ${BRAND_NAME}`,
+    description: `What the numbers across every business ${BRAND_NAME} has researched add up to.`,
+    body: `<h1>Blog</h1>\n    <ul>\n      ${list}\n    </ul>\n    ${FOOTER}`,
+  }));
+  for (const post of posts) {
+    const html = render({
+      path: postPath(post.slug),
+      title: `${post.title} — ${BRAND_NAME}`,
+      description: post.angle.slice(0, 155),
+      body: `<h1>${esc(post.title)}</h1>\n${post.body ?? ''}\n${FOOTER}`,
+    });
+    guard(postPath(post.slug), html);   // same 120-word floor as every other SEO route
+    write(postPath(post.slug), html);
+  }
+}
+
+if (terms.length) {
+  const list = terms.map((t) => `<li><a href="${termPath(t.slug)}">${esc(t.term)}</a></li>`).join('\n      ');
+  write('/glossary/', render({
+    path: '/glossary/', title: `Glossary — ${BRAND_NAME}`,
+    description: 'Amazon seller terms, defined plainly, as used across our case studies.',
+    body: `<h1>Glossary</h1>\n    <ul>\n      ${list}\n    </ul>\n    ${FOOTER}`,
+  }));
+  for (const t of terms) {
+    write(termPath(t.slug), render({
+      path: termPath(t.slug), title: `${t.term} — ${BRAND_NAME}`,
+      description: `What ${t.term} means for an Amazon seller.`,
+      body: `<h1>${esc(t.term)}</h1>\n${t.body ?? ''}\n${FOOTER}`,
+    }));
+  }
+}
+
+console.log(`postbuild: blog ${posts.length} published, glossary ${terms.length} published (drafts excluded by design)`);
 
 // ── Static routes ─────────────────────────────────────────────────────
 const STATIC = [
