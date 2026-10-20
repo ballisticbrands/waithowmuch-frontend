@@ -137,6 +137,15 @@ export function trackBusinessView(slug: string, name?: string): void {
 }
 
 /**
+ * A click on a signup call-to-action — the step between reading and
+ * `sign_up`, and the only way to see how many readers are offered the
+ * signup and decline. Same name every Dragon product uses for this.
+ */
+export function trackCtaClick(location: string, target = "/signup"): void {
+  gaEvent("cta_click", { cta_location: location, cta_target: target });
+}
+
+/**
  * A NEW account. Fired once per user, ever — `isNew` comes from the API,
  * which is the only place that actually knows.
  *
