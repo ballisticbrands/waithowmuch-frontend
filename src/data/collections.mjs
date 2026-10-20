@@ -57,10 +57,10 @@ export const MORE = {
  *  "what the search result says" is how a page ends up serving copy to
  *  crawlers that no visitor ever sees. */
 export const DESCRIPTIONS = {
-  'all-ideas': 'Revenue, profit, margin and starting cost for businesses you have never heard of. Researched from public data, with sources on every profile.',
-  'amazon-fba': 'Amazon FBA businesses with their monthly revenue, margin and an estimate of what it costs to start. Researched from public data.',
-  shopify: 'Shopify businesses with their monthly revenue, margin and an estimate of what it costs to start. Researched from public data.',
-  'more-ideas': 'Browse researched businesses by niche, business model, platform and growth channel.',
+  'all-ideas': 'A filterable database of profitable ecommerce businesses, mostly Amazon FBA. Revenue, profit, margin and starting cost on every one, with sources.',
+  'amazon-fba': 'Profitable Amazon FBA businesses, filterable by niche, model, growth channel and margin. Monthly revenue, profit and starting cost on every one.',
+  shopify: 'Profitable businesses selling on Shopify, filterable by niche, model, growth channel and margin. Monthly revenue, profit and starting cost on every one.',
+  'more-ideas': 'Every way to filter the database — by niche, business model, platform, growth channel and margin.',
 };
 
 export function collectionBySlug(slug) {

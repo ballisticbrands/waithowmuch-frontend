@@ -57,8 +57,16 @@ export function About() {
   return (
     <Page title={`About ${BRAND_NAME}`}>
       <p>
-        {BRAND_NAME} publishes what businesses actually make — revenue, profit and
-        margin for companies most people have never heard of.
+        {BRAND_NAME} is a database of ecommerce businesses that make real money —
+        mostly Amazon FBA — with the numbers on every one: monthly revenue, profit,
+        margin, and what it cost to start.
+      </p>
+      <p>
+        It is curated rather than exhaustive. We research businesses that are
+        genuinely profitable and worth learning from, instead of listing everything
+        with a storefront. Everything is filterable — by niche, business model,
+        platform, growth channel and margin — so you can narrow to the kind of
+        business you are actually considering.
       </p>
       <p>
         Most of these figures are estimates, built from public information rather

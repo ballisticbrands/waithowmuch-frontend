@@ -26,10 +26,10 @@ export default function Home() {
 
   return (
     <main data-main>
-      <h1 style={{ marginBottom: "0.5rem" }}>What these businesses actually make</h1>
+      <h1 style={{ marginBottom: "0.5rem" }}>Profitable ecommerce businesses, and what they actually make</h1>
       <p data-home-lede>
-        Researched case studies of small businesses — what they sell, what they
-        earn, and how the figures were reached.
+        A filterable database of businesses that make real money — mostly Amazon
+        FBA — with revenue, profit, margin and starting cost on every one.
       </p>
 
       {/* The way into the database: the home page is the newest case studies,
