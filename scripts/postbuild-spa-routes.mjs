@@ -900,8 +900,13 @@ const STATIC = [
   { path: '/about/', title: `About ${BRAND_NAME}`, guard: true,
     description: `What ${BRAND_NAME} is and how seriously to take its figures.`,
     body: `<h1>About ${BRAND_NAME}</h1>
-    <p>${BRAND_NAME} publishes what businesses actually make — revenue, profit and margin for
-       companies most people have never heard of.</p>
+    <p>${BRAND_NAME} is a database of ecommerce businesses that make real money — mostly
+       Amazon FBA — with the numbers on every one: monthly revenue, profit, margin, and what
+       it cost to start.</p>
+    <p>It is curated rather than exhaustive. We research businesses that are genuinely
+       profitable and worth learning from, instead of listing everything with a storefront.
+       Everything is filterable — by niche, business model, platform, growth channel and
+       margin — so you can narrow to the kind of business you are actually considering.</p>
     <p>Most of these figures are estimates, built from public information rather than the
        company's accounts, and we do not pretend otherwise. Every profile says how its numbers
        were reached and links to the sources behind them, so you can judge them rather than
@@ -969,11 +974,13 @@ const homeList = homeRows.map((b) => {
 write('', render({
   schema: { '@type': 'WebSite', '@id': `${SITE}/#website`, url: SITE, name: BRAND_NAME, publisher: { '@id': `${SITE}/#org` } },
   path: '/',
-  title: `${BRAND_NAME} — what businesses actually make`,
-  description: 'Researched case studies of small businesses: what they sell, what they earn, and how every figure was reached.',
-  body: `<h1>What these businesses actually make</h1>
-    <p>Researched case studies of small businesses — what they sell, what they earn, and how the
-       figures were reached.</p>
+  title: `${BRAND_NAME} — profitable ecommerce businesses, and what they make`,
+  description: 'A filterable database of profitable ecommerce businesses, mostly Amazon FBA. Revenue, profit, margin and starting cost on every one.',
+  body: `<h1>Profitable ecommerce businesses, and what they actually make</h1>
+    <p>A filterable database of businesses that make real money — mostly Amazon FBA — with revenue, profit, margin and starting cost on every one.</p>
+    <p>Curated rather than exhaustive: entries are businesses that are genuinely profitable and
+       worth learning from, not every storefront that exists. Filter by niche, business model,
+       platform, growth channel and margin.</p>
     <ul>
       ${homeList || '<li>No case studies published yet.</li>'}
     </ul>
@@ -986,7 +993,7 @@ write('', render({
 // SPA fallback.
 writeFileSync(join(dist, '404.html'), render({
   path: '/', title: BRAND_NAME,
-  description: 'Revenue and profit for businesses you have never heard of.',
+  description: 'A filterable database of profitable ecommerce businesses, mostly Amazon FBA.',
   body: `<h1>${BRAND_NAME}</h1><p><a href="${collectionPath('all-ideas')}">Browse all case studies</a></p>`,
 }));
 

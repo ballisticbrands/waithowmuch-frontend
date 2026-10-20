@@ -18,7 +18,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <footer data-footer>
               <div data-footer-inner>
                 <p style={{ maxWidth: "44rem", margin: 0 }}>
-                  {BRAND_NAME} publishes revenue and profit for real businesses. Unless a
+                  {BRAND_NAME} is a database of profitable ecommerce businesses, mostly Amazon FBA —
+                  revenue, profit, margin and starting cost on every one. Unless a
                   profile says otherwise, the figures are{" "}
                   <strong style={{ color: "var(--foreground)" }}>estimates built from public information</strong>{" "}
                   — not the company's accounts. Every profile shows how its numbers were reached.
