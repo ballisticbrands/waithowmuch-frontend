@@ -15,6 +15,11 @@
  * 2,637 merged keywords). `comp` is Keyword Planner's own competition rating.
  */
 
+import b0 from './posts/how-much-does-amazon-take-from-sellers.mjs';
+import b1 from './posts/is-amazon-fba-still-profitable.mjs';
+import b2 from './posts/how-much-does-amazon-fba-cost-to-start.mjs';
+import b3 from './posts/how-much-do-amazon-sellers-make.mjs';
+
 /** @type {import('./content').Post[]} */
 export const POSTS = [
   // ── Tier 1: real volume, LOW competition, answerable from existing research ──
@@ -22,7 +27,8 @@ export const POSTS = [
     slug: 'how-much-does-amazon-take-from-sellers',
     title: 'How Much Does Amazon Take From Sellers?',
     kw: 'how much does amazon take from sellers', vol: 480, comp: 'Low',
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published',
+    body: b0,
     angle:
       'Referral fee + FBA fulfilment + storage, worked through on real unit economics ' +
       'rather than the fee table everyone else republishes. Lead with a single ASIN: ' +
@@ -33,7 +39,8 @@ export const POSTS = [
     slug: 'is-amazon-fba-still-profitable',
     title: 'Is Amazon FBA Still Profitable in 2026?',
     kw: 'amazon profitable', vol: 1000, comp: 'Low',
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published',
+    body: b1,
     angle:
       'Highest-volume low-competition term in the whole set. Answer with the margin ' +
       'distribution across every business researched, not an opinion. State the spread ' +
@@ -44,7 +51,8 @@ export const POSTS = [
     slug: 'how-much-does-amazon-fba-cost-to-start',
     title: 'How Much Does Amazon FBA Cost to Start?',
     kw: 'how much does amazon fba cost', vol: 110, comp: 'Low',
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published',
+    body: b2,
     angle:
       'Startup cost actually observed per business, not a budget template. Where ' +
       'startingCost is unknown, say so — the honesty is the differentiator.',
@@ -54,7 +62,8 @@ export const POSTS = [
     slug: 'how-much-do-amazon-sellers-make',
     title: 'How Much Do Amazon Sellers Actually Make?',
     kw: 'how much do amazon sellers make', vol: 90, comp: 'Low',
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published',
+    body: b3,
     angle:
       'The whole 44-keyword cluster ("average amazon seller", "per month", "beginner") ' +
       'is one intent. Cover them in one page with sub-headings rather than four thin posts.',
