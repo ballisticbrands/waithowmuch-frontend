@@ -6,6 +6,7 @@ import { useSession, signOut } from "@/lib/session";
 import { useRailCollapsed } from "@/lib/rail";
 import { COLLECTIONS, MORE, collectionPath } from "@/data/collections.mjs";
 import { BRAND_NAME } from "@/data/site";
+import { trackCtaClick } from "@/lib/track";
 
 /** The thin strip across the top: mark, the breadcrumb trail beside it, and
  *  auth pinned to the right. Deliberately shallow — the real navigation is the
