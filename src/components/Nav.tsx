@@ -6,6 +6,7 @@ import { useSession, signOut } from "@/lib/session";
 import { useRailCollapsed } from "@/lib/rail";
 import { COLLECTIONS, MORE, collectionPath } from "@/data/collections.mjs";
 import { BRAND_NAME } from "@/data/site";
+import { trackCtaClick } from "@/lib/track";
 
 /** The thin strip across the top: mark, the breadcrumb trail beside it, and
  *  auth pinned to the right. Deliberately shallow — the real navigation is the
@@ -30,7 +31,7 @@ export function TopBar() {
         ) : (
           /* The short label is for phone widths, where the full one would
              crowd the breadcrumbs out of the bar. */
-          <Link data-btn to="/signup">
+          <Link data-btn to="/signup" onClick={() => trackCtaClick("nav")}>
             <svg
               width={16} height={16} viewBox="0 0 24 24" fill="none"
               stroke="currentColor" strokeWidth={1.9}
