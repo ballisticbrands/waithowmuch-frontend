@@ -33,4 +33,8 @@ export const config = {
   // A real ID returns ~300KB of config; a bogus one ~30KB. This one measured
   // 316,245 bytes on 2026-09-10.
   metaPixelId: "1079875758342522",
+
+  // Reddit pixel, for paid Reddit traffic. Same deferred-loader rules as Meta.
+  // Reddit pixel IDs are `t2_…` (or `a2_…` for an account-level pixel).
+  redditPixelId: "t2_owanf",
 };

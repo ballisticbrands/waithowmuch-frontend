@@ -32,7 +32,7 @@ export default function AuthCallback() {
         const intent = takeIntent();
         // Fired here rather than on the login form: requesting a link is not
         // signing up, and a good share of requested links are never opened.
-        if (r.isNew) trackSignUp("magic_link", intent);
+        if (r.isNew) trackSignUp("magic_link", intent, r.user.id);
         else trackLogin("magic_link");
         navigate(intent?.next ?? "/", { replace: true });
       })
