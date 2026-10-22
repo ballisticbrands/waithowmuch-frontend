@@ -69,6 +69,11 @@ import { TOP_KEYWORDS as RG_TOP_KEYWORDS, AD_SPEND as RG_AD, AD_KEYWORDS as RG_A
 import { TOP_KEYWORDS as WN_TOP_KEYWORDS, AD_SPEND as WN_AD, AD_KEYWORDS as WN_AD_KEYWORDS, AD_KEYWORDS_TOTAL as WN_AD_KEYWORDS_TOTAL } from './wet-noses.adspend.mjs';
 import { TOP_KEYWORDS as OT_TOP_KEYWORDS, AD_SPEND as OT_AD, AD_KEYWORDS as OT_AD_KEYWORDS, AD_KEYWORDS_TOTAL as OT_AD_KEYWORDS_TOTAL } from './ototo.adspend.mjs';
 import { TOP_KEYWORDS as BZ_TOP_KEYWORDS, AD_KEYWORDS as BZ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as BZ_AD_KEYWORDS_TOTAL, AD_SPEND as BZ_AD } from './bizzikins.adspend.mjs';
+import { TOP_KEYWORDS as GG_TOP_KEYWORDS, AD_KEYWORDS as GG_AD_KEYWORDS, AD_KEYWORDS_TOTAL as GG_AD_KEYWORDS_TOTAL, AD_SPEND as GG_AD } from './gamblin-golf.adspend.mjs';
+import { TOP_KEYWORDS as DT_TOP_KEYWORDS, AD_KEYWORDS as DT_AD_KEYWORDS, AD_KEYWORDS_TOTAL as DT_AD_KEYWORDS_TOTAL, AD_SPEND as DT_AD } from './draft-top.adspend.mjs';
+import { TOP_KEYWORDS as DJ_TOP_KEYWORDS, AD_KEYWORDS as DJ_AD_KEYWORDS, AD_KEYWORDS_TOTAL as DJ_AD_KEYWORDS_TOTAL, AD_SPEND as DJ_AD } from './doctor-jupiter.adspend.mjs';
+import { TOP_KEYWORDS as WL_TOP_KEYWORDS, AD_KEYWORDS as WL_AD_KEYWORDS, AD_KEYWORDS_TOTAL as WL_AD_KEYWORDS_TOTAL, AD_SPEND as WL_AD } from './woodlands-usa.adspend.mjs';
+import { TOP_KEYWORDS as SB_TOP_KEYWORDS, AD_KEYWORDS as SB_AD_KEYWORDS, AD_KEYWORDS_TOTAL as SB_AD_KEYWORDS_TOTAL, AD_SPEND as SB_AD } from './songbird-specialties.adspend.mjs';
 import { linePct, lineUsd, monthUsd } from '../lib/pct.mjs';
 
 /* Spite House's September 2026 unit economics — the one place the margin, the
@@ -132,6 +137,219 @@ const bzBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
    so this is a floor), never typed. */
 const BZ_TOP_SPEND = BZ_TOP_KEYWORDS.reduce((sum, row) => sum + (/^\$(\d+)$/.test(row[5]) ? Number(row[5].slice(1)) : 0), 0);
 
+/* Gamblin' Golf's listing photos, by ASIN, from our bucket (products/gamblin-golf/).
+   Values are the content hashes the upload prints; keyed by ASIN so no row types
+   a 64-character hash. Bucket copies, never Amazon's CDN, never /public. */
+const GAMBLIN_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/gamblin-golf/';
+const GAMBLIN_PHOTOS = {
+  B0GNWNXFY1: '5af1cd2d458438f936d8de1b4aa3b356a6ca9cda8dcb67d902f18caa9e5683c2', // Scratch & Swing, the hero
+  B0CFJXGS67: 'de1079574b24bf9144ef94f02045f38be24527a7008f7a3e15732633cf13786f', // Roll and Play ball game
+  B0GP9SM3HF: 'e6044dc3df8c96f9da61b337cd214fbcb8ecde5e0b6bb89ec1dd4829b6ce3f85', // dollar balls, 12
+  B0GP9XYPHS: '2113e404a6f25bcb706437db1be1981de3474b2d2786fed95e7fde77c78d390c', // dollar balls, 3
+  B0GP9B5L3Q: '26279c471f114d64d40d0cb5cba83c74700f372cc5f3929890e65a1f728a8391', // women's balls, 12
+  B0GP9F7ZB5: '901463cea4d0881504509aa4f0d8a8d8e66556f8c6c4b6fe165fc18b7c202bcf', // women's balls, 3
+  B0GP98MJRW: 'daffe37f5c97dfc8b0f8494f45d22153a7531d619080e128809048703781bcea', // tee pack, 20
+  B0GP91M8ZV: '76a81a40cfaadfbbe36f3f04c09de91193e47155d8173c22757029ed3d889335', // tee carton, 100
+};
+const gamblinPhoto = (asin) => `${GAMBLIN_BUCKET}${GAMBLIN_PHOTOS[asin]}.jpg`;
+
+/* Scratch & Swing's per-box cost lines at the $24 price, in dollars (research/
+   gamblin-golf/pnl.json). 🚨 make, tariff and freight are ASSUMED until the
+   Accio quote lands (accio/gamblin-golf/scratch-swing-deck); postage is theirs
+   because the listing is merchant-fulfilled with free delivery. Their shares of
+   the price are the backend seed's COST_LINES (cogs 10.417, tariff 2.083,
+   freight 1.125, postage 27.083, referral 15); check-profile asserts the margin
+   block and the profit series agree. Advertising is GG_AD, never typed. */
+const GG_COST = { price: 24, factory: 2.5, tariff: 0.5, freight: 0.27, postage: 6.5, referral: 3.6 };
+const ggPct = (amount) => -+((amount / GG_COST.price) * 100).toFixed(3);
+const ggBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+const GG_TOP_SPEND = GG_TOP_KEYWORDS.reduce((sum, row) => sum + (/^\$(\d+)$/.test(row[5]) ? Number(row[5].slice(1)) : 0), 0);
+
+/* Draft Top's listing photos, by ASIN, from our bucket (products/draft-top/).
+   Values are the content hashes the upload printed; keyed by ASIN (the hero's
+   gallery shots as 'hero-PT0n') so no row types a 64-character hash. Bucket
+   copies, never Amazon's CDN, never /public. */
+const DRAFT_TOP_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/draft-top/';
+const DRAFT_TOP_PHOTOS = {
+  B0FS8PXTX3: '66f64d5b62fe761a3485fb647c407944bd7c08de0769e59c229b2dba0ac59364', // black, the hero
+  B0D8B3NBY5: '9b7654a72b1a3cce626d8e7da36c121962653a56c7156de7ee4fade725340116', // red, white & blue
+  B0DS268SBC: '84329bb4fc4827175278e51812e1279bc047d1e0fb0479afddbb91febcc67e54', // forest green
+  B0D89Y4YVM: 'c855dc5973dc6169bb7ebef13331b6559c83e5b512cf89016e800e09b3497f6e', // blue
+  B0DS23PTB2: '3b371e4d56f06eb1a685770a4d365dd63ec30066eb9bca7c37b7e623154af979', // ghost white
+  B0DZ74PTVW: '7e6188b0a042fc49711afa58544293521fab09672af23b9bcbafe8b8f546bd3a', // red
+  B0DFR7WTF7: '73cd58ee59c1a613104b80fbafbdbacbeec2daa54a18f963948e4b1bb2f552bb', // Clara Peirce edition
+  'hero-PT01': '11f5e1033519878313325cea27ff60aedf25a6f02f4b01180a5ef1e35f7d392d', // the back, mechanism showing
+  'hero-PT02': '6b59f091cf8a6a2e04e140be72f6388b368d0c30bdb4ee48952a2f5c093f7d80', // cans from mini to tall boy
+  'hero-PT03': '9d981524b89aa82d83a0307784106588e6535800d83edc99ccd5cb7922d4cc30', // topless cans as drinks
+  'hero-PT04': 'be629022e3c9a991385e94464b6b9c9ec1b3b3896df0d5c970c44abdc183d3e8',
+  'hero-PT05': 'd79aedc95e2918dc4dd504542b8db7d9238f1161c8a89162125120c3961b4a23',
+};
+const draftTopPhoto = (asin) => `${DRAFT_TOP_BUCKET}${DRAFT_TOP_PHOTOS[asin]}.jpg`;
+
+/* The Lift's September 2026 unit economics at the blended $26.76 (3,900 units,
+   seven listings), in dollars — research/draft-top/pnl.json. 🚨 make is the
+   FOUNDERS' OWN self-reported $4.13 (Shark Tank, 2021), for the Draft Top 3.0,
+   not a quote. 🚨 The tariff ASSUMES China origin (owner's call, 2026-10-15):
+   20% of the cost to make, though they say it is made in the USA and one
+   listing's title says "Made In china". Freight on the China lane. The percentages are pnl.json's and are the
+   backend seed's COST_LINES (seed-draft-top.ts, generated from the same file);
+   check-profile asserts the margin block and the profit series agree.
+   Advertising is DT_AD, never typed. */
+const DT_COST = {
+  price: 26.76, // blended September sale: $104,361 / 3,900
+  make: 4.13, makePct: 15.434,
+  tariff: 0.83, tariffPct: 3.087, // 20% of $4.13, ASSUMED China origin
+  freight: 0.19, freightPct: 0.723, // 0.00039 cbm × $496.67 (freight-rates.json, read 2026-09-28)
+  fba: 3.9, fbaPct: 14.569,
+  referral: 4.01,
+  landed: 5.15, // make + tariff + freight; also what "Test it first" prices on (starting-cost.lift.inputs.json)
+};
+const dtBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+const DT_AD_PER_SALE = +((DT_COST.price * DT_AD.ratePct.central) / 100).toFixed(2);
+
+/* Doctor Jupiter's listing photos, by ASIN, from our bucket (products/doctor-jupiter/).
+   Values are the content hashes the upload printed; keyed by ASIN so no row types
+   a 64-character hash. Bucket copies, never Amazon's CDN, never /public. */
+const DOCTOR_JUPITER_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/doctor-jupiter/';
+const DOCTOR_JUPITER_PHOTOS = {
+  B09XGMHGJ3: 'b3eee32f8727456372ab8b3d080dfe9a3035d8131c7b1e2faf467a8a09395b0d',
+  B0C23WZ3BV: '3080006b9d15c28fcba7cf3cbe89579f96a43a9b026c6a18d01256a229a1238b',
+  B0C248WX35: 'd07d21ef46a6a1548dd7b1fc496e7f691b0c788d31db3d42d9867472e65d6a24',
+  B0C4YDZQMS: 'd95427add81c78a181a1d9344de537432b93afb84491bd158e1259d76a2569be',
+  B0CG9QG2SF: 'e075693bddbe35d1cb5410b47bec582371969bc269ebb8d30fdb101bcfe0b2b9',
+  B0D17X5QNF: '19d5193e6a1a427bddcb290146a9c08ff90e0e2e8af448447f4e56e73a048595',
+  B0D17YL839: '7d46633e0fe6c05b917d2e4505bd4d211ec987eaea59bf43b0d02b1ea5d20578',
+  B0D1MPNSS6: '7f0b87a9f6c6a916e6576c660bf0281291821ff46fde35c064a4c31b771669df',
+  B0D1MR35P2: '5eb9a5a692b8a566a87e113adefb652fe5e33ae66ea6fd3f4905b27a52c3457b',
+  B0D8BK7D7M: '9e7c56d4fb6cdc374b893fc17216ef34b4f78023fbdf16ed1b0a2ec29130f243',
+  B0DTYWCFND: 'd7aaca75063a4bdeb3181bdf85409480c29d21f7cb3387451fcc555a2dde2741',
+  B0DWFJ6YWV: 'fed317268b99e7e352d73358d27f62fbc28144e9f7a2575597c2d96b45194d9c',
+  B0DZCWRLBR: '64e8911fd0e0d520cdbdebfecdb3f5d57547362d01b7d3c98c5d908e3d427590',
+  B0FBMFTTB6: '9cecb45756207b46cbb236dd44a3e2ae91d1f4cfd6da2a6bf8fb7ddf362b4aa0',
+  B0FBMG6PJ3: '77bd06e563de5193fe668aa34dcd12a44e9c94bdf6528967324e020e89122d78',
+  B0FN3KPZVH: '6e216622dda68aaae5505e4d278b11eb49efe1949d0ff8f9ba299a8a8a197ca9',
+  B0FN3MC4CY: '775d47ffe2a2520633c964f97d2dc7a0d0b85ee2f9bb6d3cd2afb8cb45ee074a',
+  B0FW4JPS2J: '677dca2dc525b3677c27e459f2e7ff82d63ab1d20d4633cfdffc7484d280e33f',
+};
+const doctorJupiterPhoto = (asin) => `${DOCTOR_JUPITER_BUCKET}${DOCTOR_JUPITER_PHOTOS[asin]}.jpg`;
+
+/* Each main product's September 2026 unit economics, in dollars — research/
+   doctor-jupiter/pnl.json products.*.perUnit. Make is the Accio listing price
+   (suppliers.json cogsAverage, search mode); 🚨 three of the four rest on ONE
+   listing each (owner's call, 2026-10-18). Tariff 20% of make, ASSUMED China;
+   freight is the units-weighted carton × Freightos CN-USWC $496.67/cbm; FBA is
+   Keepa's pick-and-pack, units-weighted. Advertising is DJ_AD, never typed. */
+const DJ_COST = {
+  'my-first-science': { price: 27.18, make: 3.86, tariff: 0.77, freight: 2.08, fba: 6.14, referral: 4.08, landed: 6.71 },
+  'ultimate-science': { price: 26.86, make: 6.9, tariff: 1.38, freight: 2.07, fba: 5.97, referral: 4.03, landed: 10.35 },
+  'preschool-science': { price: 26.99, make: 3.25, tariff: 0.65, freight: 1.93, fba: 5.76, referral: 4.05, landed: 5.83 },
+  'paper-airplane-launcher': { price: 24.99, make: 2.59, tariff: 0.52, freight: 1.47, fba: 5.62, referral: 3.75, landed: 4.58 },
+};
+const djPct = (id, amount) => -+((amount / DJ_COST[id].price) * 100).toFixed(3);
+const djAd = (id) => DJ_AD.products.find((p) => p.id === id);
+const djBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+/* The Whole brand tab: pnl.json blendedCostSharesPct, the four products'
+   September lines revenue-weighted and applied to the whole catalogue — the
+   SAME numbers as the backend seed's COST_LINES (seed-doctor-jupiter.ts,
+   generated from pnl.json). Advertising is DJ_AD's rate on the four products,
+   applied to the whole brand, as OTOTO's is. */
+const DJ_BLEND = { cogs: 15.064, tariff: 3.008, freight: 7.498, fba: 22.445 };
+const DJ_REVENUE = 461097; // September 2026, the snapshot month — the Business row
+const DJ_AVG_SALE = 26.65; // $461,097 / 17,300 units
+const DJ_AD_MONTH = (DJ_REVENUE * DJ_AD.ratePct.central) / 100;
+/* The other 40-odd listings (17% of September: $79,488.50 over 3,150 units,
+   $25.23 a sale) carry the same rate, so the Ad spend table adds up to the line. */
+const DJ_REST = { month: DJ_AD_MONTH - DJ_AD.monthlyUsd.central, avgSale: 25.23 };
+
+/* WOODLANDS USA's listing photos, by ASIN, from our bucket (products/woodlands-usa/).
+   Values are the content hashes the upload printed; keyed by ASIN so no row types
+   a 64-character hash. Bucket copies, never Amazon's CDN, never /public. The walnut
+   and teak tongs (B0FRFCDK74, B0FD7RGYWG) share one listing image, so one hash.
+   🚨 NEVER add the three franchise-titled sets (B0D5NFN2YG, B0D5NHG5K6,
+   B0D5NQJ3VZ): their listing images carry franchise art, and the owner's call
+   (2026-10-15) is that no franchise art is shown on this page. Their breakdown
+   rows stay without a photo, on purpose, and the helper refuses them. */
+const WOODLANDS_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/woodlands-usa/';
+const WOODLANDS_PHOTOS = {
+  B0D5NLZSZS: 'bb28dff9ba045d2de94aced27df8529cbfcf43bf97a035c8052ee5a5bbab7bf9',
+  B0FD7F9MSK: 'c29f7cfdd3bd40111ec79efe67cbb73de58441296a646777be0cff95a1059065',
+  B0FD7G48D4: 'e69021a428b1ea66fa067473183793cc87615eb5ddb2a8b46cdbdc3ddded5d3e',
+  B0FD7HK25C: '981a9450e78be1161968da12426b5562fc87a9c233005a14f7b03261d34095a9',
+  B0FD7KZYLV: 'f6006bd97a7b2dcc8b91c01ade84496db048b3b98a57310aa7951a81a2dce0c9',
+  B0FD7LZW9B: 'a389a01f025f31b614564aa8b48163d05214f7c7d7ee7d7f2828e334fddc0db7',
+  B0FD7NT7GH: 'f4a35e6b5d2421fd22271d8eabda20f9daecdb315b9f8b52f765aa95d78782a8',
+  B0FD7PVQTG: '3b15e1b098df99b8557b95369fcd4d32647cf7399b455b4e4c1161a36ce0a316',
+  B0FD7QXJS6: 'd03ff8732b3c9100873aad228e4341586c717c4f82c490c773a6faab17b49f5d',
+  B0FD7RGYWG: 'fdb1fddd7373a30bc5ff768b19b0df4faac4654a5eccfbd49198fa9e1589de10',
+  B0FD7RVW83: '537f145615883c88c7a91eed34f289d0d088cb636b944588a00450016345d1b3',
+  B0FD7S11QM: '9c2eb12b08d9e2afd9aaa2f279c9d2647b8484e64952bf9786d7f27557341507',
+  B0FD7T6VVF: '9bd6498eafff6ab5e32fbf803d20e9fd18a43ae914a84864e35c8e9ddfd462c9',
+  B0FD86K3FY: '10a95af177a95682903d81260100a32901711e4787017c01ea99a2395cf3ed5a',
+  B0FRFCDK74: 'fdb1fddd7373a30bc5ff768b19b0df4faac4654a5eccfbd49198fa9e1589de10',
+  B0FSKQ3WB9: '5ec695e6327c71c0c0a92550ffe941d405359bf3005570ae7cf9832584c08560',
+};
+const WOODLANDS_FRANCHISE = new Set(['B0D5NFN2YG', 'B0D5NHG5K6', 'B0D5NQJ3VZ']);
+const woodlandsPhoto = (asin) => {
+  if (WOODLANDS_FRANCHISE.has(asin)) throw new Error(`woodlands-usa: no franchise-set photo on this page (${asin})`);
+  return `${WOODLANDS_BUCKET}${WOODLANDS_PHOTOS[asin]}.jpg`;
+};
+
+/* Each main product's September 2026 unit economics, in dollars — research/
+   woodlands-usa/pnl.json products[].lines.*.perUnit. Make is the Accio listing
+   price (suppliers.json cogsAverage, search mode), one price for every
+   variation of the product; 🚨 the teak set's two listings are a 9- and a
+   10-piece set scaled to 8 pieces by piece count (owner's call, 2026-10-18).
+   Tariff 20% of make, ASSUMED China; freight the units-weighted carton ×
+   Freightos CN-USWC $496.67/cbm; FBA Keepa's pick-and-pack, units-weighted.
+   Advertising is WL_AD, never typed. */
+const WL_COST = {
+  'bamboo-set': { price: 11.43, make: 1.67, tariff: 0.33, freight: 0.72, fba: 3.59, referral: 1.71, landed: 2.72 },
+  'teak-utensil-set': { price: 30.39, make: 8.84, tariff: 1.77, freight: 2.15, fba: 6.04, referral: 4.56, landed: 12.76 },
+  'teak-spatula': { price: 7.87, make: 1.37, tariff: 0.27, freight: 0.32, fba: 2.98, referral: 1.18, landed: 1.96 },
+};
+const wlPct = (id, amount) => -+((amount / WL_COST[id].price) * 100).toFixed(3);
+const wlAd = (id) => WL_AD.products.find((p) => p.id === id);
+const wlBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+/* The Whole brand tab: pnl.json blendedCostSharesPct = the backend seed's
+   COST_LINES (seed-woodlands-usa.ts, generated from pnl.json). Advertising is
+   WL_AD's rate on the three products, applied to the whole brand. */
+const WL_BLEND = { cogs: 16.563, tariff: 3.281, freight: 6.174, fba: 30.689 };
+const WL_REVENUE = 77682.5; // September 2026, the snapshot month — the Business row
+const WL_AVG_SALE = 11.86; // $77,682.50 / 6,550 units
+const WL_AD_MONTH = (WL_REVENUE * WL_AD.ratePct.central) / 100;
+/* The rest of the catalogue (15.9% of September: $12,338 over 1,000 units,
+   $12.34 a sale — dough whisks, ladles, tongs, spoons with rests) at the same rate. */
+const WL_REST = { month: WL_AD_MONTH - WL_AD.monthlyUsd.central, avgSale: 12.34 };
+
+/* Songbird Specialties' listing photos, by ASIN, from our bucket
+   (products/songbird-specialties/). Values are the content hashes the upload
+   printed; keyed by ASIN. Bucket copies, never Amazon's CDN, never /public. */
+const SONGBIRD_BUCKET = 'https://storage.googleapis.com/verifiedmargins/products/songbird-specialties/';
+const SONGBIRD_PHOTOS = {
+  B0F1GWKYHG: '8dbc1ead1159fdb6d6ade134a4c01dc5c1d806430c8718ec80ec170ca2c6dba1',
+  B0F1H6B5VJ: 'bf5e19759741f72a15f9877314fbd6a3e21b851c0dd206ed6ec2e91bbe56ed8c',
+  B0F1H8J8RW: '814f9aa326a686ba738f90aca7f5ff0c93ef48a553c44fb410c338f0ed279043',
+  B0F1HFM4WP: '7c358016ab57b4139607082b2ab249e065c599962d41997a79c014f7fae0aa55',
+};
+const songbirdPhoto = (asin) => `${SONGBIRD_BUCKET}${SONGBIRD_PHOTOS[asin]}.jpg`;
+
+/* The pourer's per-unit lines at $29.99 — research/songbird-specialties/
+   pnl.json lines. 🚨 make is OUR $4.00 PLACEHOLDER: no supplier has quoted it
+   (accio/songbird-specialties/singing-bird-pourer). Tariff 20% of it, ASSUMED
+   China. The percentages are pnl.json's and the backend seed's COST_LINES
+   (seed-songbird-specialties.ts, generated from the same file); check-profile
+   asserts the margin block and the profit series agree. Advertising is SB_AD. */
+const SB_COST = {
+  price: 29.99,
+  make: 4, makePct: 13.338,
+  tariff: 0.8, tariffPct: 2.668,
+  freight: 0.65, freightPct: 2.153, // 0.0013003 cbm × $496.67 = $0.646
+  fba: 4.35, fbaPct: 14.505,
+  referral: 4.5,
+  landed: 5.45,
+};
+const sbBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+
 /* Mount Cleverest's advertising, from amazon-adspend-spy (mount-cleverest.adspend.mjs).
    🚨 The margin's advertising lines, the channels row and the Ad spend table are all
    built from MC_AD, never typed. Only Amazon Sponsored Products is modelled in it;
@@ -160,13 +378,21 @@ const topSpend = (rows) => rows.reduce((t, r) => t + (/^under/.test(r[5]) ? 0 : 
    (build-ecom-biz-page §2). One product → no Product column. */
 const adKeywordsTable = (rows, total, line) => {
   const single = new Set(rows.map((r) => r[1])).size <= 1;
+  /* Rows starting "+ " are the keywords a sample stands for (adspend-spy.mjs
+     HEAD + SAMPLE, 2026-10-18), one per product; the note says so. */
+  const sampled = rows.filter((r) => r[0].startsWith('+ '));
+  const readCount = rows.length - sampled.length;
+  const standFor = sampled.reduce((n, r) => n + Number(r[0].match(/^\+ ([\d,]+)/)?.[1].replace(/,/g, '') ?? 0), 0);
+  const which = sampled.length
+    ? `The ${readCount} keywords read one by one where an ad of theirs was seen, biggest modelled spend first, and ${standFor.toLocaleString('en-US')} smaller ones estimated from a sample of them`
+    : `Every keyword where an ad of theirs was seen, ${rows.length} of them, biggest modelled spend first`;
   return {
     type: 'table',
     caption: 'Keywords they pay for',
     columns: ['Keyword', ...(single ? [] : ['Product']), 'Searches a month', 'Their ads', 'Cost per click', 'Ad spend a month'],
     rows: single ? rows.map(([k, , ...rest]) => [k, ...rest]) : rows,
     visibleRows: 10,
-    note: `Every keyword where an ad of theirs was seen, ${rows.length} of them, biggest modelled spend first. They add up to $${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} a month — the ${monthUsd(line)} of Amazon ads in the Ad spend table below, before rounding. “Their ads” is their share of Jungle Scout’s sponsored results, weighted by position, or their best sponsored position in the New York read. Where neither Amazon nor Jungle Scout gives a bid, the keyword is listed but not priced.`,
+    note: `${which}. They add up to $${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} a month — the ${monthUsd(line)} of Amazon ads in the Ad spend table below, before rounding. “Their ads” is their share of Jungle Scout’s sponsored results, weighted by position, or their best sponsored position in the New York read. Where neither Amazon nor Jungle Scout gives a bid, the keyword is listed but not priced.`,
   };
 };
 
@@ -192,6 +418,28 @@ import { WET_NOSES_BREAKDOWN, wetNosesPhoto } from './wet-noses.breakdown.mjs';
 import { RESTORATION_BREAKDOWN, restorationPhoto } from './restoration-games.breakdown.mjs';
 import { LIGHTEN_LIFE_BREAKDOWN, lightenLifePhoto } from './lighten-life.breakdown.mjs';
 import { OTOTO_BREAKDOWN, ototoPhoto } from './ototo.breakdown.mjs';
+/* OTOTO's three heroes (a catalogue brand, SKILL §2: its best sellers, not
+   80%), August 2026 unit economics in dollars — waithowmuch-research research/
+   ototo/pnl.json products.*.perUnit. Make is the Accio production price
+   (suppliers.json cogsAverage, verified against the screenshots, 2026-10-18);
+   🚨 the scissors rest on ONE supplier (owner's call). Tariff keeps OTOTO's
+   duty-class model (owner's call): plastic 3.4% + 10% China; metal 3.7% + 25%
+   Section 301 + 10% China — scissors and corkscrew are metal. Freight is the
+   Keepa package × Freightos CN-USWC $496.67/cbm; FBA is Keepa's pick-and-pack.
+   Advertising is OT_AD, never typed. */
+const OT_COST = {
+  scissors: { price: 9.99, make: 1.79, tariff: 0.69, freight: 0.29, landed: 2.77, fba: 4.09, referral: 1.5 },
+  spatula: { price: 9.95, make: 1.4, tariff: 0.19, freight: 0.17, landed: 1.76, fba: 3.86, referral: 1.49 },
+  opener: { price: 19.95, make: 5.54, tariff: 2.14, freight: 0.63, landed: 8.31, fba: 4.35, referral: 2.99 },
+};
+const otPct = (id, amount) => -+((amount / OT_COST[id].price) * 100).toFixed(3);
+const otAd = (id) => OT_AD.products.find((p) => p.id === id);
+const otBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
+/* The Whole brand tab: pnl.json blendedCostSharesPct — August's amounts over
+   its revenue, the heroes at the costs above and every other listing at its
+   type cost — the SAME numbers as the backend seed's COST_LINES
+   (seed-ototo.ts). */
+const OT_BLEND = { cogs: 13.536, tariff: 2.895, freight: 3.294, fba: 28.093 };
 import { HIGHMARK_BREAKDOWN, highmarkPhoto } from './highmark-collective.breakdown.mjs';
 import { MOUNT_CLEVEREST_BREAKDOWN, mountCleverestPhoto } from './mount-cleverest.breakdown.mjs';
 
@@ -7908,104 +8156,491 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'On a $15 gadget, Amazon’s fulfilment fee costs twice as much as making it. After that fee, the goods, duty, freight, the referral fee and advertising, about three dollars in ten are left, and that is a ceiling.',
+          'On a $15 gadget, Amazon’s fulfilment fee costs twice as much as making it. After that fee, the goods, duty, freight, the referral fee and advertising, a little over a third is left, and that is a ceiling.',
       },
       {
         type: 'prose',
         text:
-          'Two lines are measured: Amazon’s 15% referral fee and its pick-and-pack fee, read per listing. The crab spoon rest pays $4.35 to Amazon’s warehouses on a $12.95 August price, because the fee follows size and weight, not value. The goods are the weak part. Nobody quoted a cost. The table prices OTOTO’s custom shapes from commodity list prices on Made-in-China.com, plus an assumed premium for moulds and boxes, and several product types are placeholders. Each dollar of unit cost moves the twelve months’ profit by about $454,000 once duty is added.',
+          'Two lines are measured: Amazon’s 15% referral fee and its pick-and-pack fee, read per listing. The goods are the weak part, and for three products they are now quoted. Alibaba factories priced the Elizabat scissors, the Splatypus spatula and the Vino bat corkscrew to OTOTO’s own designs, so each has a tab below with its suppliers, freight, landed cost and margin. Together they were about an eighth of August. The other 84 listings still carry commodity list prices plus an assumed premium for moulds and boxes, and the Whole brand tab, last, is the brand at August’s mix. Each dollar of unit cost moves the twelve months’ profit by about $454,000 once duty is added.',
       },
       {
-        type: 'table',
-        caption: 'COGS — what a gadget costs to make and land',
-        /* 🚨 Only the first column wraps (globals.css keeps block-table cells
-           on one line), so what was read lives in the row name and the other
-           columns stay short. */
-        columns: ['Product type — what was read', 'Tier', 'Unit cost'],
-        rows: [
-          ['Small silicone or plastic gadget, 105 of the 185 listings that ever sold. Made-in-China list prices: jar spatulas $0.30–1.10, nylon ladles $0.48–1.69, character tea infusers $1.35–2.00, spoon rests $0.19–2.94. Taken at $1.20 for a custom-moulded piece, plus a ~$0.40 printed box — the box a placeholder, not a quote', 'Derived, weak', '$1.60'],
-          ['Garlic press. Plastic $0.55, aluminium $1.33–1.75. Gracula is glass-fibre polypropylene, made in China by one listing; the ~$0.40 box is assumed', 'Derived, weak', '$1.80'],
-          ['Metal gadget — scissors, openers, peelers. Kitchen scissors $0.22–0.95, corkscrews $0.16–1.03, steel gadgets $0.40–2.00, plus ~$1 for the character handle, tooling and box — a placeholder, not a quote', 'Derived, weak', '$2.20'],
-          ['Three-piece bundle. Three small gadgets and a ~$0.20 shared box (assumed)', 'Derived, weak', '$5.00'],
-          ['Cutting board / oven mitts. Bamboo boards $1.80–4.85; custom-print cotton mitts $1.67–2.00 a piece, double mitts $7.22–8.66', 'Derived, weak', '$3.50 each'],
-          ['Tongs / larger moulded items / umbrella / bookmarks / unclassified — a placeholder, not a quote. No price read for any of them', 'ASSUMED', '$1.50 / $2.50 / $4.00 / $0.60 / $2.00'],
-          ['Tariff. Plastic kitchenware 3924.10.40 at 3.4% (CBP N331924); metal implements 8205.51.30 at 3.7% plus 25% Section 301 (CBP N309532); textile, wood and umbrella rates assumed. Plus the 10% China duty in force at an assumed import two months before sale. China origin is read for Gracula only and assumed for the rest', 'Derived + ASSUMED', '$0.42 a unit, Aug 2026'],
-          ['Freight and inbound. Package volume at the FBX01 container rate ($7,765 a box, Freightos, read 16 Sep 2026), with container fill and 15% carton overhead assumed, plus $0.35 a unit for drayage and placement — a placeholder, not a quote', 'Derived + ASSUMED', '$0.52 a unit, Aug 2026'],
-        ],
-        note:
-          'List prices describe the category, not OTOTO’s supplier, and these are the company’s own shapes. August’s mix averages $1.99 a unit; the twelve months average $1.93. Doubling the unit cost takes the dossier’s twelve-month profit from $2.20M to $1.33M. Freight uses today’s container rate for every month, which overstates 2024–25.',
-      },
-      {
-        /* 🚨 The margin row is computed as 100% less these lines — 31.294% —
-           and the backend seed builds the profit and ad-spend series from the
-           SAME six numbers (COST_LINES in seed-ototo.ts). Change one, change
-           both.
-           🚨 THREE decimals on purpose: August 2026's pnl.json rates. Two
-           decimals sum to 68.70 and move the headline's $66.1k to $66.2k; one
-           decimal gives $65.9k. */
-        type: 'margin',
-        basis: { label: 'Average selling price', value: 14.94 },
-        lines: [
+        /* 🚨 A catalogue brand (SKILL §2, "A catalogue brand: its best sellers,
+           not 80%", owner's call 2026-10-12, built 2026-10-18): 87 storefront
+           listings, so `heroes: 3` — Elizabat 4.73%, Splatypus 4.71%, Vino
+           2.83% of August, largest share first (check-profile). The owner's
+           three; the crab spoon rest ($11,655) and Gracula ($9,980) also sold
+           more than the Splatypus in August. Tab ids are AD_SPEND's product
+           ids, so the Ad spend rows and any "Test it first" links match.
+           Per-unit figures are OT_COST (pnl.json products); the `all` tab is
+           OT_BLEND = the seed's COST_LINES. */
+        type: 'product-margins',
+        period: '2026-08',
+        heroes: 3,
+        products: [
           {
-            label: 'Cost of goods',
-            key: 'cogs',
-            pct: -13.351,
-            detail:
-              'About $1.99 of a $14.94 sale, by product type on August’s mix. Derived from commodity list prices and weak. The moulds-and-box premiums and several whole product types are placeholders, not quotes.',
+            id: 'scissors',
+            label: 'Elizabat kitchen scissors',
+            sharePct: 4.73,
+            blocks: [
+              {
+                /* waithowmuch-research research/ototo/suppliers.json, Accio run
+                   accio/scissors/2026-10-17T2337, verified against its
+                   screenshots. 🚨 ONE supplier priced (owner's call,
+                   2026-10-18): Luban quoted its stock item 0487, flagged
+                   different-unit and excluded from the price. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a pair of Elizabat scissors costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Yangjiang Yangdong Zhuopeng Industrial & Trade Co., Ltd.', 'Verified · 18 yrs', '4.7★ from 522 (store)', '—', '3,000 pieces', '$1.79–1.82'],
+                  ['Average — the cost to make used below', '', '', '', '', lineUsd(OT_COST.scissors.make)],
+                ],
+                note:
+                  'One supplier, and the cost to make rests on it alone, by the owner’s decision. Zhuopeng quoted the custom bat handle itself, black and grey, boxed without a logo, EXW: $1.82 from 3,000 and $1.79 from 5,000, the tier nearest the brand’s yearly sales of about 12,000. It refused 1,000 as too small, so its minimum is 3,000. Tooling, not in the unit price: a mould of about $2,800, not refundable as stated, though the supplier offered to find a way round it on an order. A second factory, Luban, quoted only its own stock scissors, a different design, and is not in the price; two more did not quote. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies. Verified suppliers rated 4.5 or better.',
+              },
+              {
+                /* Freightos CN-USWC low end, waithowmuch-research calibration/
+                   freight-rates.json, read 2026-09-28; Keepa package for
+                   B0C6MMDCT2 (keepa/brand-catalogue.json). */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one pair from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '24.4 × 12.1 × 2.0 cm, 0.15 kg', 'Keepa’s package for B0C6MMDCT2, the Elizabat listing'],
+                  ['Volume', '0.00059 cbm', 'The package in cubic metres'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per pair', lineUsd(OT_COST.scissors.freight), '0.00059 cbm × $497'],
+                ],
+                note:
+                  'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. Another of the brand’s products ships at its own figure.',
+              },
+              {
+                /* Derived from the two tables above and the tariff line, so no
+                   source logo. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per pair',
+                noteColumns: [2],
+                columns: ['Line', 'Per pair', 'From'],
+                rows: [
+                  ['Production', lineUsd(OT_COST.scissors.make), 'One Alibaba supplier’s quote — COGS table above'],
+                  ['Tariff', lineUsd(OT_COST.scissors.tariff), 'Metal-implement duty, Section 301 and the China duty — the tariff line below'],
+                  ['Shipping', lineUsd(OT_COST.scissors.freight), 'The package at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(OT_COST.scissors.landed), 'What one pair costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 27.7% of the $9.99 August price. Amazon’s fees on the sale are their own lines. The mould is not in it.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: OT_COST.scissors.price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: otPct('scissors', OT_COST.scissors.make),
+                    amount: OT_COST.scissors.make,
+                    detail: 'One Alibaba factory’s quote for the custom bat-handle scissors at 5,000 pieces, EXW. The roughly $2,800 mould is on top.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: otPct('scissors', OT_COST.scissors.tariff),
+                    amount: OT_COST.scissors.tariff,
+                    detail: 'Metal class, 38.7% of the cost to make: metal kitchen implements, 8205.51.30, at 3.7% plus 25% Section 301 (CBP N309532), plus the 10% China duty for a June import. The steel blades put the scissors in the metal class, as the type model already assumed; China origin is assumed.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: otPct('scissors', OT_COST.scissors.freight),
+                    amount: OT_COST.scissors.freight,
+                    detail: 'The listing’s own package at a read sea-freight rate from China, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: OT_COST.scissors.referral,
+                    detail: 'Amazon’s Kitchen rate, 15%, read on the listing. Measured.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa product record for B0C6MMDCT2 (keepa/brand-catalogue.json,
+                       read 2026-09-16): 244 × 121 × 20 mm, 150 g, pick-and-pack $4.09. */
+                    label: 'FBA fulfilment',
+                    pct: otPct('scissors', OT_COST.scissors.fba),
+                    amount: OT_COST.scissors.fba,
+                    emphasis: true,
+                    detail: 'Size tier: Large Standard. The Elizabat box (B0C6MMDCT2) is 9.6 × 4.8 × 0.79 in at 5.3 oz: light enough for Small Standard, but 0.79 in deep against that tier’s 0.75 in limit. Amazon charges $4.09 to pick and pack it, more than twice the cost to make. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -otAd('scissors').ratePct.central,
+                    amount: otAd('scissors').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(otAd('scissors').monthlyUsd.central)} a month on this listing’s keywords, ${linePct(otAd('scissors').ratePct.central)} of its August revenue (band ${otBand(otAd('scissors').monthlyUsd)}). A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'At August’s $9.99 sale price; the listing was $14.95 on 16 September. Before the mould, storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
           },
           {
-            label: 'Tariff',
-            pct: -2.8,
-            detail:
-              'About $0.42. Published duty rates for plastic and metal kitchenware, plus the 10% China duty in force two months before sale. The import lag, China origin for all but Gracula, and the textile, wood and umbrella rates are assumed. Any IEEPA refund is left out.',
+            id: 'spatula',
+            label: 'Splatypus jar spatula',
+            sharePct: 4.71,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/spatula/2026-10-17T2337,
+                   verified against its screenshots. Both quotes carry the
+                   printed retail box (a correction to Accio's spatula-only
+                   figures), so they are like for like. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a Splatypus spatula costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Kangde Silicone Co., Ltd.', 'Verified · 17 yrs', '4.8★ from 11 (store)', '—', '500 pieces', '$2.07–2.37'],
+                  ['Sheng Jie (Dongguan) Silicone Rubber Product Factory', 'Verified · 16 yrs', '4.9★ from 84 (store)', '—', '1,000 pieces', '$0.72–0.88'],
+                  ['Average — the cost to make used below', '', '', '', '', lineUsd(OT_COST.spatula.make)],
+                ],
+                note:
+                  'Two silicone factories quoted the two-colour platypus spatula, each with its printed retail box added so the two compare like for like. Kangde: about $1.89, $1.79, $1.69 and $1.59 at 500, 1,000, 3,000 and 5,000, plus a $0.48 box, and it says a precise price needs the 3D design file. Sheng Jie: $0.58, $0.53 and $0.50 at 1,000, 3,000 and 5,000, plus a $0.30, $0.26 and $0.22 box. Each at the tier nearest the brand’s yearly sales of about 12,000 — $2.07 and $0.72 — and averaged; the two are nearly three times apart. Tooling, not in the unit price: Sheng Jie’s mould is $2,424, refunded once orders reach $40,000 (about 80,000 pieces); Kangde’s is about $1,680, refunded only past 100,000 pieces and only if Kangde may sell the design to others. Production takes 20–26 working days at Kangde and 10–25 days at Sheng Jie, by quantity. Kangde’s store has 11 reviews, a thin record. Three more factories did not quote and two declined. EXW. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies. Verified suppliers rated 4.5 or better.',
+              },
+              {
+                /* Freightos CN-USWC low end, read 2026-09-28; Keepa package
+                   for B07H7ZDBV4. */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one spatula from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '23.4 × 6.0 × 2.4 cm, 0.06 kg', 'Keepa’s package for B07H7ZDBV4, the Splatypus listing'],
+                  ['Volume', '0.00034 cbm', 'The package in cubic metres'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per spatula', lineUsd(OT_COST.spatula.freight), '0.00034 cbm × $497'],
+                ],
+                note:
+                  'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. Another of the brand’s products ships at its own figure.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per spatula',
+                noteColumns: [2],
+                columns: ['Line', 'Per spatula', 'From'],
+                rows: [
+                  ['Production', lineUsd(OT_COST.spatula.make), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+                  ['Tariff', lineUsd(OT_COST.spatula.tariff), 'Plastic-kitchenware duty and the China duty — the tariff line below'],
+                  ['Shipping', lineUsd(OT_COST.spatula.freight), 'The package at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(OT_COST.spatula.landed), 'What one spatula costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 17.7% of the $9.95 August price. Amazon’s fees on the sale are their own lines. The mould is not in it.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: OT_COST.spatula.price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: otPct('spatula', OT_COST.spatula.make),
+                    amount: OT_COST.spatula.make,
+                    detail: 'Two Alibaba factories’ quotes for the custom two-colour spatula with its retail box, at 5,000 pieces, averaged. A mould of $1,680–2,424 is on top.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: otPct('spatula', OT_COST.spatula.tariff),
+                    amount: OT_COST.spatula.tariff,
+                    detail: 'Plastic class, 13.4% of the cost to make: plastic and silicone kitchenware, 3924.10.40, at 3.4% with no Section 301 duty (CBP N331924), plus the 10% China duty for a June import. China origin is assumed.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: otPct('spatula', OT_COST.spatula.freight),
+                    amount: OT_COST.spatula.freight,
+                    detail: 'The listing’s own package at a read sea-freight rate from China, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: OT_COST.spatula.referral,
+                    detail: 'Amazon’s Kitchen rate, 15%, read on the listing. Measured.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa product record for B07H7ZDBV4 (keepa/brand-catalogue.json,
+                       read 2026-09-16): 234 × 60 × 24 mm, 59 g, pick-and-pack $3.86. */
+                    label: 'FBA fulfilment',
+                    pct: otPct('spatula', OT_COST.spatula.fba),
+                    amount: OT_COST.spatula.fba,
+                    emphasis: true,
+                    detail: 'Size tier: Large Standard. The Splatypus box (B07H7ZDBV4) is 9.2 × 2.4 × 0.94 in at 2.1 oz: light enough for Small Standard, but 0.94 in deep against that tier’s 0.75 in limit. Amazon charges $3.86 to pick and pack it, nearly three times the cost to make. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -otAd('spatula').ratePct.central,
+                    amount: otAd('spatula').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(otAd('spatula').monthlyUsd.central)} a month on this listing’s keywords, ${linePct(otAd('spatula').ratePct.central)} of its August revenue (band ${otBand(otAd('spatula').monthlyUsd)}), including the one generic slot the brand was seen buying, “jar spatula”. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'At August’s $9.95 sale price; the listing was $14.95 on 16 September. Before the mould, storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
           },
           {
-            label: 'Freight and inbound',
-            pct: -3.462,
-            detail:
-              'About $0.52. Ocean freight from package volume at the FBX01 rate, with container fill, carton overhead and $0.35 a unit for drayage, brokerage and placement assumed — a placeholder, not a quote.',
+            id: 'opener',
+            label: 'Vino bat corkscrew',
+            sharePct: 2.83,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/opener/2026-10-17T2337,
+                   verified against its screenshots (BYF's prices on
+                   reply-4c/4d.png). Both EXW with a box. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a Vino bat corkscrew costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Dongguan City Kingtop Metal Product Co., Ltd.', 'Verified · 14 yrs', '4.6★ from 38 (store)', '—', '1,000 pieces', '$5.26'],
+                  ['Shenzhen BYF Precision Mould Co., Ltd.', 'Verified · 9 yrs', '4.8★ from 66 (store)', '—', '500 pieces', '$5.82–6.20'],
+                  ['Average — the cost to make used below', '', '', '', '', lineUsd(OT_COST.opener.make)],
+                ],
+                note:
+                  'Two die-casting factories quoted the bat-wing corkscrew, both from a mould they already have, so neither charges tooling. Kingtop: $5.26 with its packaging box ($5.12 without), the same price up to 5,000. BYF: $6.20, $6.00 and $5.82 at 1,000, 3,000 and 5,000 in a custom colour box, zinc alloy and silicone. Both EXW, and each at the tier nearest the brand’s yearly sales of about 5,000, averaged. It is more than twice the $2.20 the type model assumed for a metal gadget. Samples cost $50 and $10; production takes about 25 days at Kingtop and 18–25 working days at BYF. A third factory has not quoted and two declined. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies. Verified suppliers rated 4.5 or better.',
+              },
+              {
+                /* Freightos CN-USWC low end, read 2026-09-28; Keepa package
+                   for B08J4GMWBR. */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one corkscrew from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '19.7 × 15.4 × 4.2 cm, 0.26 kg', 'Keepa’s package for B08J4GMWBR, the Vino listing'],
+                  ['Volume', '0.00127 cbm', 'The package in cubic metres'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per corkscrew', lineUsd(OT_COST.opener.freight), '0.00127 cbm × $497'],
+                ],
+                note:
+                  'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. It is the bulkiest of the three to ship.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per corkscrew',
+                noteColumns: [2],
+                columns: ['Line', 'Per corkscrew', 'From'],
+                rows: [
+                  ['Production', lineUsd(OT_COST.opener.make), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+                  ['Tariff', lineUsd(OT_COST.opener.tariff), 'Metal-implement duty, Section 301 and the China duty — the tariff line below'],
+                  ['Shipping', lineUsd(OT_COST.opener.freight), 'The package at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(OT_COST.opener.landed), 'What one corkscrew costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 41.7% of the $19.95 August price. Amazon’s fees on the sale are their own lines.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: OT_COST.opener.price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: otPct('opener', OT_COST.opener.make),
+                    amount: OT_COST.opener.make,
+                    detail: 'Two Alibaba factories’ quotes for the bat-wing corkscrew with a box, at 5,000 pieces, averaged. No tooling: both have the mould.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: otPct('opener', OT_COST.opener.tariff),
+                    amount: OT_COST.opener.tariff,
+                    detail: 'Metal class, 38.7% of the cost to make: metal kitchen implements, 8205.51.30, at 3.7% plus 25% Section 301 (CBP N309532), plus the 10% China duty for a June import. A zinc-alloy corkscrew sits in the metal class, as the type model assumed; China origin is assumed. On this product the tariff costs more than the freight and the advertising together.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: otPct('opener', OT_COST.opener.freight),
+                    amount: OT_COST.opener.freight,
+                    detail: 'The listing’s own package at a read sea-freight rate from China, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: OT_COST.opener.referral,
+                    detail: 'Amazon’s Kitchen rate, 15%, read on the listing. Measured.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa product record for B08J4GMWBR (keepa/brand-catalogue.json,
+                       read 2026-09-16): 197 × 154 × 42 mm, 260 g, pick-and-pack $4.35. */
+                    label: 'FBA fulfilment',
+                    pct: otPct('opener', OT_COST.opener.fba),
+                    amount: OT_COST.opener.fba,
+                    detail: 'Size tier: Large Standard. The Vino box (B08J4GMWBR) is 7.8 × 6.1 × 1.65 in at 9.2 oz, over twice Small Standard’s 0.75 in depth. Amazon charges $4.35 to pick and pack it. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -otAd('opener').ratePct.central,
+                    amount: otAd('opener').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(otAd('opener').monthlyUsd.central)} a month on this listing’s keywords, ${linePct(otAd('opener').ratePct.central)} of its August revenue (band ${otBand(otAd('opener').monthlyUsd)}). A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'At August’s $19.95 price. Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
           },
           {
-            label: 'Amazon referral fee',
-            pct: -15,
-            detail: 'Amazon’s Kitchen rate, and 15% on every OTOTO listing that sold. Measured.',
-            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
-          },
-          {
-            label: 'FBA fulfilment',
-            pct: -28.093,
-            /* The largest line — the component labels the emphasised line
-               "Biggest line". */
-            emphasis: true,
-            /* Keepa product record for B07H7ZDBV4 (keepa/brand-catalogue.json,
-               read 2026-09-16): 234 × 60 × 24 mm, 60 g, pick-and-pack $3.86. */
-            detail:
-              'Size tier: Large Standard. The best seller, the Splatypus spatula (B07H7ZDBV4), packs to 9.2 × 2.4 × 0.94 in at 2.1 oz: light enough for Small Standard, but 0.94 in deep against that tier’s 0.75 in limit. About $4.20 on average. Amazon’s pick-and-pack fee, read per listing on 16 September 2026 and applied to every month: $3.01–6.31 across the listings that sold. August’s sale prices make it a bigger share than usual. Measured.',
-            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
-          },
-          {
-            label: 'Advertising',
-            pct: -0.66,
-            amount: 0.1,
-            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(OT_AD.monthlyUsd.central)} a month on the three best sellers, ${linePct(OT_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
-            links: [
-              { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
-              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* The other 84 listings keep the dossier's type costs (pnl.json
+                   lines.unitCost.types). Not a COGS table — no suppliers — so
+                   it is not held to the supplier columns, and the heroes' own
+                   tables are in their tabs. */
+                type: 'table',
+                id: 'type-costs',
+                caption: 'Assumed cost to make, by product type — every listing but the three heroes',
+                columns: ['Product type — what was read', 'Tier', 'Unit cost'],
+                rows: [
+                  ['Small silicone or plastic gadget — spoon rests, tea infusers, ladles and the rest. Made-in-China list prices: jar spatulas $0.30–1.10, nylon ladles $0.48–1.69, character tea infusers $1.35–2.00, spoon rests $0.19–2.94. Taken at $1.20 for a custom-moulded piece, plus a ~$0.40 printed box — the box a placeholder, not a quote', 'Derived, weak', '$1.60'],
+                  ['Garlic press. Plastic $0.55, aluminium $1.33–1.75. Gracula is glass-fibre polypropylene, made in China by one listing; the ~$0.40 box is assumed', 'Derived, weak', '$1.80'],
+                  ['Metal gadget — other scissors, openers, peelers. Kitchen scissors $0.22–0.95, corkscrews $0.16–1.03, steel gadgets $0.40–2.00, plus ~$1 for the character handle, tooling and box — a placeholder, not a quote. Quoted, the Vino corkscrew came to $5.54', 'Derived, weak', '$2.20'],
+                  ['Three-piece bundle. Three small gadgets and a ~$0.20 shared box (assumed)', 'Derived, weak', '$5.00'],
+                  ['Cutting board / oven mitts. Bamboo boards $1.80–4.85; custom-print cotton mitts $1.67–2.00 a piece, double mitts $7.22–8.66', 'Derived, weak', '$3.50 each'],
+                  ['Tongs / larger moulded items / umbrella / bookmarks / unclassified — a placeholder, not a quote. No price read for any of them', 'ASSUMED', '$1.50 / $2.50 / $4.00 / $0.60 / $2.00'],
+                ],
+                note:
+                  'List prices describe the category, not OTOTO’s supplier, and these are the company’s own shapes. The quotes for the three heroes landed below the type cost for the spatula and scissors and well above it for the corkscrew, so the error runs both ways. Freight for these listings is their package volume at the FBX01 container rate with assumed container fill, 15% carton overhead and $0.35 a unit for drayage and placement.',
+              },
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series from
+                   the SAME numbers (seed-ototo.ts COST_LINES): OT_BLEND + 15%
+                   referral + OT_AD's rate = pnl.json blendedCostSharesPct.
+                   63.478% off leaves 36.522% → August's $77,197, the title's
+                   $77.2K. THREE decimals on purpose. Until 2026-10-18 the
+                   heroes carried type costs: cogs 13.351, tariff 2.8, freight
+                   3.462 → 36.634%. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: 14.94 },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -OT_BLEND.cogs,
+                    detail: 'About $2.02 of a $14.94 sale on August’s mix. The three heroes at their quoted cost to make — $1.79 for the Elizabat, $1.40 for the Splatypus, $5.54 for the Vino — and every other listing at its product type’s assumed cost, derived from commodity list prices and weak.',
+                    links: [{ label: 'See the assumed costs above', href: '#type-costs' }],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -OT_BLEND.tariff,
+                    detail: 'About $0.43. By duty class: plastic and silicone kitchenware at 3.4% (the Splatypus among them); metal implements at 3.7% plus 25% Section 301 (the Elizabat and the Vino among them); textile, wood and umbrella rates assumed. Plus the 10% China duty in force two months before sale. China origin is read for Gracula only and assumed for the rest. Any IEEPA refund is left out.',
+                  },
+                  {
+                    label: 'Freight and inbound',
+                    pct: -OT_BLEND.freight,
+                    detail: 'About $0.49. The three heroes at their own package and a Freightos sea-freight rate; the rest at the FBX01 container rate with fill, carton overhead and $0.35 a unit for drayage and placement assumed — a placeholder, not a quote.',
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s Kitchen rate, and 15% on every OTOTO listing that sold. Measured.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -OT_BLEND.fba,
+                    /* The largest line — the component labels the emphasised
+                       line "Biggest line". Keepa product records
+                       (keepa/brand-catalogue.json, read 2026-09-16). */
+                    emphasis: true,
+                    detail:
+                      'Size tier: Large Standard. All three heroes pack light enough for Small Standard but too deep for its 0.75 in limit — the Splatypus at 9.2 × 2.4 × 0.94 in and 2.1 oz, the Elizabat at 0.79 in, the Vino at 1.65 in. About $4.20 on average. Amazon’s pick-and-pack fee, read per listing on 16 September 2026 and applied to every month: $3.01–6.31 across the listings that sold. August’s sale prices make it a bigger share than usual. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -OT_AD.ratePct.central,
+                    amount: 0.1,
+                    detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(OT_AD.monthlyUsd.central)} a month on the three heroes, ${linePct(OT_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/ototo/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/ototo/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'August 2026’s rates, and every month on the chart carries them, although prices, tariffs, freight and the product mix all differed in earlier months. Storage, returns, coupons, social and influencer spend, the moulds, any founder earn-out and Essor’s overhead are not modelled, so this is a ceiling on profit rather than profit.',
+              },
             ],
           },
         ],
-        note:
-          'August 2026’s rates, and every month on the chart carries them, although prices, tariffs, freight and the product mix all differed in earlier months. Storage, returns, coupons, social and influencer spend, any founder earn-out and Essor’s overhead are not modelled, so this is a ceiling on profit rather than profit.',
       },
       {
         type: 'prose',
         text:
-          'One set of rates understates the rest of the year. August ended on sale prices, so Amazon’s fixed fee took a bigger share of each dollar than usual. The dossier’s month-by-month model uses each month’s own prices, duty and freight. It keeps 37% over the twelve months to August 2026, about $2.20M, where this chart’s August rates give about $1.86M.',
+          'The quotes cut both ways. The spatula and the scissors cost less to make than the type model assumed, and the scissors’ margin nearly doubles, but on a $10 sale Amazon’s pick-and-pack fee is still the biggest cost. The corkscrew is the opposite: at more than twice the assumed cost, with a 38.7% duty on top, its landed cost is over two-fifths of its price and it keeps about a fifth. One set of rates also understates the rest of the year. August ended on sale prices, so Amazon’s fixed fee took a bigger share of each dollar than usual. The dossier’s month-by-month model uses each month’s own prices, duty and freight, and keeps 42% over the twelve months to August 2026, about $2.51M, where this chart’s August rates give about $2.17M.',
       },
       {
         type: 'callout',
         text:
-          'Unit cost moves this profile most, and it is commodity list prices standing in for a quote on custom shapes. Advertising, part of freight and several duty classes are placeholders beside it. Those are the numbers to replace first.',
+          'The three quotes are for OTOTO’s own bat and platypus designs, from factories that would need, or already have, the moulds; the scissors rest on one factory, by the owner’s decision. The other 84 listings, nearly nine-tenths of August, are still commodity list prices standing in for a quote, and freight and several duty classes are placeholders beside them. Those are the numbers to replace next.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -10760,6 +11395,3488 @@ export const PROFILES = {
       },
       { type: 'validation-strategy' },
       { type: 'validation-launch', landedHref: '/business/bizzikins/margin/#landed-cost' },
+    ],
+  },
+
+  'gamblin-golf': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-gamblin-golf-headline.ts, from
+       waithowmuch-research research/gamblin-golf/headline.json — and the page
+       reads them from the row alone. This entry carries only the image beside
+       them.
+       🚨 The snapshot is SEPTEMBER 2026. The series runs from December 2023, but
+       the product the margin describes, Scratch & Swing, has badges only from
+       June 2026; the months before are the Roll and Play ball game. October's
+       badge read is a partial month and is not a point. */
+    headline: {
+      /* Scratch & Swing: the best seller, and all of September's sales. */
+      image: {
+        src: gamblinPhoto('B0GNWNXFY1'),
+        alt: 'The Scratch & Swing golf game: a dark green box printed with a gold "Scratch & Swing" wordmark and a cartoon gopher, beside three silver foil packs of scratch-off cards',
+      },
+    },
+
+    /* 🚨 NO `valuation` entry, on purpose. The series has more than twelve
+       months, but the trailing year is mostly months below Amazon's badge
+       threshold for a product they have stopped pushing, plus four months of
+       Scratch & Swing. A multiple on that would describe neither product. */
+
+    facts: [
+      /* The eight storefront ASINs (Keepa seller A3C12G0C3DENHY, storefront=1).
+         Two more carry the brand string with no offer and are left out. */
+      { label: 'SKUs', value: '8', note: 'One scratch-off game, one ball game, four ball packs and two tee packs; only the scratch-off game carries a sold badge now', info: 'skus' },
+      /* The hero's own breadcrumb (Keepa categoryTree, B0GNWNXFY1). */
+      {
+        label: 'Category',
+        value: 'Sports & Outdoors › Sports › Golf › Gift Sets',
+        note: 'Both games. The ball packs sit under Golf Balls › Trick & Novelty Balls and the tees under On-Course Accessories',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '15', note: 'On the hero listing; the older ball game has 82', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'Hero listing; the ball game reads 4.7', info: 'rating' },
+      { label: 'Seller feedback', value: '83%', note: 'Over 6 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own brand and games on listings nobody else holds the buy box on; who prints them is not known — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 An inference. All measured sales are one listing, with balls and tees
+         beside it that sell under the badge threshold: a flagship with
+         complements, not a set of concentrated bets. */
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'One game carries every measured sale; balls and tees sit beside it — an inference', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 2 and an inference. The game is their own idea and its name is
+         marked ™, but it is printed cards in foil packs and a box, which any
+         card printer makes to order; nothing read says the format is protected. */
+      { label: 'Differentiation', value: 'Level 2', note: 'Their own game and name, but printed cards any card printer can make — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, retail', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note: 'The only channel with a number behind it, and the whole of the revenue on this profile. The seller holds the buy box on Scratch & Swing alone and Amazon sells none of the catalogue.',
+      },
+      /* 'unchecked', not 'no': the seller account exists on Canada with no
+         ratings, and nobody read a Canadian listing. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'A seller account exists on Amazon Canada with no ratings, and none was found on the UK or Germany. Nobody read a Canadian listing, so a small Canadian trade would not show.',
+      },
+      'own-store': {
+        status: 'yes',
+        note: 'gamblingolf.com is a Shopify store with a checkout: the game in 3, 6 and 9 rounds, single packs, balls, tees, caps and bundles. Its sales are not counted here.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        note: 'Golf Galaxy lists Scratch & Swing, and the ball packs are offered to shops on Faire. Neither publishes what it sells, so none of it is in the revenue.',
+      },
+      // 'tiktok-shop' and 'other-marketplace' left unchecked: a TikTok account
+      // exists, and nobody looked for a shop on it. The Loop & Tie gifting
+      // catalogue carries the game; it is a corporate-gift service, not a
+      // marketplace, and goes in the prose only.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fbm: {
+        status: 'yes',
+        note: 'Scratch & Swing “ships from and is sold by Gamblin Golf”, with free delivery, so they post every order themselves. The margin charges their postage, not an FBA fee.',
+      },
+      fba: {
+        status: 'yes',
+        note: 'The older ball game sold through FBA in 2023 and 2024, and an FBA offer of theirs still sits on it. The product the margin describes does not use it.',
+      },
+      'vendor-1p': { status: 'no', note: 'Amazon sells none of the catalogue itself.' },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand and games, on listings no other seller holds the buy box on. Who prints them is not known.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/GamblinGolf, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'Gamblin Golf, a South Carolina company, makes betting games to play during a round of golf: a scratch-off card deck, and golf balls printed with dollar values to bet on. It sells on Amazon, from its own store and through golf retail.',
+
+    blocks: [
+      { type: 'heading', text: 'A scratch card for every hole' },
+      {
+        type: 'prose',
+        text:
+          'Scratch & Swing is a box of three foil packs, one per round, each holding nineteen scratch-off cards: one challenge for every hole and a bonus card for the nineteenth. A player scratches before teeing off and has to play the shot the card names, and the winner of the hole takes whatever was bet on it. It is the brand’s second game. The first, Roll and Play, is a dozen golf balls printed with $1 and $2, sold as a game: the winner of each hole takes the pot.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Around the two games sit packs of the dollar-printed balls, for men and women, and wooden tees in a box styled like a cigarette carton. None of those listings carries a sold badge, which means each sells under roughly fifty a month on Amazon, so they add nothing measurable to the revenue below.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The brand's own listing photos, in our
+         bucket (products/gamblin-golf/). */
+      {
+        type: 'images',
+        items: [
+          {
+            src: gamblinPhoto('B0GNWNXFY1'),
+            alt: 'Scratch & Swing: a dark green box with a gold wordmark and a cartoon gopher, and three silver foil packs of scratch-off cards',
+          },
+          {
+            src: gamblinPhoto('B0CFJXGS67'),
+            alt: 'The Roll and Play game: a green box reading “Gamblin’ Golf — Stroke ’Til You’re Broke” with a gopher, and two golf balls printed with $1 and $2',
+          },
+          {
+            src: gamblinPhoto('B0GP98MJRW'),
+            alt: 'The Gentleman’s Tee Pack: a green and cream box styled like a cigarette carton, reading “Bet on your game” and “20 bamboo golf tees”',
+          },
+        ],
+        caption: 'The scratch-off game, the ball game and the tee pack, as the brand’s own Amazon listings show them.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text: 'A ball game that sold at Christmas, nine quiet months, and a second game launched in February 2026 that sells in summer.',
+      },
+      {
+        type: 'timeline',
+        items: [
+          {
+            when: '13 Aug 2023',
+            tag: 'Amazon',
+            what: 'The first listing: the Roll and Play ball game',
+            detail: 'A dozen balls printed with $1 and $2 and the rules for betting on them, sold through FBA at $37 to $43.',
+          },
+          {
+            when: '31 Dec 2023',
+            tag: 'Amazon',
+            what: '700 sold in the first December',
+            detail: 'The badge climbed from 50 in late November to 700 by 20 December, at about $37 a box.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '1,000 sold in the second December',
+            detail: 'The highest month on record. Between the two Decembers the game sold under the badge threshold, or about fifty a month.',
+          },
+          {
+            when: '5 Feb 2025',
+            tag: 'Amazon',
+            what: 'The badge disappears for nine months',
+            detail: 'From February to October 2025 no listing reached Amazon’s badge, so each sold under roughly fifty a month. The ball game’s price fell to $26.99 that May.',
+          },
+          {
+            when: '17 Feb 2026',
+            tag: 'Amazon',
+            what: 'Scratch & Swing is listed',
+            detail: 'A scratch-off card game at $24, posted by the seller rather than through FBA.',
+          },
+          {
+            when: '19 Feb 2026',
+            tag: 'Amazon',
+            what: 'Six more listings: balls and tees',
+            detail: 'Dollar-printed balls in packs of 3 and 12, for men and for women, and wooden tees in cigarette-style boxes of 20 and 100.',
+          },
+          {
+            when: '9 Jun 2026',
+            tag: 'Web',
+            what: 'Caps arrive on their own store',
+            detail: 'Three pinstripe caps on gamblingolf.com, which Amazon does not carry.',
+          },
+          {
+            when: '30 Jun 2026',
+            tag: 'Amazon',
+            what: 'Scratch & Swing’s first sold badge',
+            detail: '200 bought in June: the first month the new game crossed Amazon’s threshold.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '500 sold in September',
+            detail: 'Up from 100 in July and 300 in August, outside the holiday season the first game depended on.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The chart is two businesses in a row. Until early 2025 it is the ball game, selling hundreds in December and close to nothing in between; the zero months are months below Amazon’s badge, not months without a sale. From June 2026 it is Scratch & Swing, rising from 100 boxes in July to 500 in September. Of each of those months a modelled two fifths is kept, after postage, Amazon’s fee and a cost to make that no printer has quoted yet.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup only: the account exists
+           with no ratings, and no Canadian listing was read. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with no ratings; no listing was read' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further, so a small Canadian trade would not show here.',
+      },
+      {
+        /* September's badge floor × the $24 buy box, so the row sums to the
+           2026-09 revenue row exactly (check-profile asserts it). The unbadged
+           listings are NOT itemised: they carry no sales to show. */
+        type: 'breakdown',
+        intro: 'One listing carries the month. The ball game and the six ball and tee packs sell under the badge threshold.',
+        items: [
+          { name: 'Scratch & Swing scratch-off golf game', asin: 'B0GNWNXFY1', image: gamblinPhoto('B0GNWNXFY1'), listed: '2026-02-17', sold: 500, price: 24, revenue: 12000 },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times the price in effect, so the row is a floor. The other seven listings carry no badge and are counted as zero, not itemised.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor, built from Amazon’s sold badge priced at each month’s end price: about $37 for the ball game in 2023 and 2024, $26.99 in late 2025 and $24 for Scratch & Swing. Pricing every month at today’s $24 would have understated the first Christmas by a third. Their own store, Golf Galaxy and Faire are not in it.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text: 'Amazon is the measured part. A Shopify store, a golf retailer and a wholesale marketplace sell the same games, and none of them publishes a number.',
+      },
+      {
+        type: 'prose',
+        text:
+          'They post Amazon orders themselves rather than sending stock to Amazon’s warehouses, so every sale carries their postage instead of an FBA fee, and the listing carries no Prime badge. Off Amazon, gamblingolf.com sells the game in three sizes alongside caps and bundles Amazon does not carry, Golf Galaxy sells it online, the ball packs are offered to shops on Faire, and the Loop & Tie corporate-gift catalogue includes the game. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of a $24 box, a little over two fifths is left once postage, Amazon’s fee and the cost of making it are paid. Postage is the biggest cost, and the cost to make is a placeholder until a printer quotes it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'There is one product to cost, because Scratch & Swing is every measured sale in September. A box is fifty-seven printed scratch-off cards, three heat-sealed foil packs and a printed box, which card printers make to order, but no quote has been read yet: the request is with Alibaba’s sourcing agent. Until it comes back the cost to make is our placeholder, and the tariff and the freight lean on it, so everything under it moves when the quote lands.',
+      },
+      {
+        /* Standard supplier columns, no attribution: nothing here comes from
+           Alibaba yet. The quote request is accio/gamblin-golf/scratch-swing-deck
+           (waithowmuch-research); replace the first row with the offers, ordered
+           by track record, when process-accio-quotes files them. */
+        type: 'table',
+        id: 'cogs-breakdown',
+        caption: 'COGS — what a box costs to make',
+        columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+        rows: [
+          ['No quote yet — requested from Alibaba suppliers', '', '', '', '', ''],
+          ['Average lowest price — the cost to make used below — our figure, not a quote', '', '', '', '', '$2.50'],
+        ],
+        note:
+          'A request for 57 custom scratch-off cards, three printed foil packs and a printed box went to Alibaba’s sourcing agent, asking for prices at 500 to 10,000 boxes; the brand sells about 6,000 a year at September’s pace. Until it is answered the $2.50 is a placeholder with no quote behind it.',
+      },
+      {
+        /* The freight half of the landed cost at the same dated LCL rate every
+           profile uses — waithowmuch-research calibration/freight-rates.json,
+           CN-USWC low end, read 2026-09-28. 🚨 Keepa has no package dimensions
+           for B0GNWNXFY1 and the listing gives only 8 oz, so the box is assumed. */
+        type: 'table',
+        id: 'shipping-breakdown',
+        caption: 'Shipping — what it costs to move one box from China',
+        attribution: 'freightos',
+        noteColumns: [2],
+        columns: ['Input', 'Figure', 'Where it comes from'],
+        rows: [
+          ['Carton', '15 × 9 × 4 cm, 0.23 kg', 'Our assumption: no package size is published for B0GNWNXFY1, and the listing gives 8 oz'],
+          ['Volume', '0.00054 cbm', 'The carton, in cubic metres'],
+          ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+          ['Shipping, per box', '$0.27', '0.00054 cbm × $497'],
+        ],
+        note:
+          'The rate is the low end of Freightos’ band, $497 to $4,241 a cbm; the top prices express services a first order would not buy. It is door to door, customs clearance and delivery included, and excludes the duty, which is its own line. The box size is a placeholder until it is measured; a box twice the size would add 27 cents.',
+      },
+      {
+        /* Derived from the two tables above and the tariff line below, so no
+           source logo. Id is the target of the "Test it first" first-order link. */
+        type: 'table',
+        id: 'landed-cost',
+        caption: 'Landed cost — production, duty and shipping, per box',
+        noteColumns: [2],
+        columns: ['Line', 'Per box', 'From'],
+        rows: [
+          ['Production', '$2.50', 'Our placeholder until a printer quotes — COGS table above'],
+          ['Tariff', '$0.50', '20% of the cost to make, assuming China origin — the tariff line below'],
+          ['Shipping', '$0.27', 'An assumed box at $497/cbm — shipping table above'],
+          ['Landed cost', '$3.27', 'What one box costs to get to their door, before it sells'],
+        ],
+        note:
+          'The first three lines of the breakdown below, added up: $3.27 is 13.6% of the $24 price. It covers making the box and bringing it in, not posting it to the buyer or Amazon’s fee, which are their own lines.',
+      },
+      {
+        type: 'margin',
+        basis: { label: 'Selling price', value: GG_COST.price },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: ggPct(GG_COST.factory),
+            amount: GG_COST.factory,
+            emphasis: true,
+            detail: 'A placeholder, not a quote: what 57 printed scratch-off cards, three foil packs and a box might cost a printer to make. The quote that replaces it has been requested.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+            ],
+          },
+          {
+            label: 'Tariff',
+            pct: ggPct(GG_COST.tariff),
+            amount: GG_COST.tariff,
+            detail: '20% of the cost to make, the rate this site uses for games made in China: Section 301 plus the reciprocal tariff, over a base near zero. Where the game is printed is not known; printed in the US, this line is zero.',
+            links: [
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Shipping',
+            pct: ggPct(GG_COST.freight),
+            amount: GG_COST.freight,
+            detail: 'An assumed box at a read sea-freight rate, door to door. A placeholder for the size, not for the rate.',
+            links: [
+              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            amount: GG_COST.referral,
+            detail: 'Amazon’s published Sports & Outdoors rate, a flat 15%.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+          },
+          {
+            /* 🚨 Not an FBA line, and not labelled as one: the listing reads
+               "Ships from and sold by Gamblin Golf" with free delivery (read
+               2026-10-15; Keepa isFBA false, shipping 0). 8 oz item weight. */
+            label: 'Postage — they ship it themselves',
+            pct: ggPct(GG_COST.postage),
+            amount: GG_COST.postage,
+            emphasis: true,
+            detail: 'The listing is merchant-fulfilled with free delivery, so the seller pays to post each box: USPS Ground Advantage at commercial prices runs $5.50 to $8.40 for a parcel under a pound, and an 8 oz box to a middle zone is about $6.25, plus a mailer. More than twice the placeholder cost to make the game.',
+            links: [{ label: 'USPS Ground Advantage commercial prices, 2026', href: 'https://onlineshippingcalculator.com/guides/ground-advantage-retail-vs-commercial-guide' }],
+          },
+          {
+            label: 'Advertising',
+            pct: -GG_AD.ratePct.central,
+            amount: GG_AD.products[0].perUnit,
+            detail: `Modelled, not observed: about ${monthUsd(GG_AD.monthlyUsd.central)} a month, ${linePct(GG_AD.ratePct.central)} of September’s revenue, most of it on scratch-off searches and their own name. A floor: it cannot see ads on product pages or automatic campaigns.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/gamblin-golf/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/gamblin-golf/advertising/' },
+            ],
+          },
+        ],
+        note:
+          'Before returns, packing labour and overhead, none of which is modelled: a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–2025 months of the ball game, which sold at $27 to $40 through FBA with costs of its own; those months show the shape of the series, not that product’s profit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Posting it themselves is the decision that shapes the margin: postage is the largest line, bigger than Amazon’s fee and more than twice the placeholder cost to make. In exchange the stock stays with them, sold from the same shelf as their own store’s orders. What it gives up is the Prime badge, on a listing that competes with Prime games on every golf search.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Profit here is a modelled ceiling on a placeholder cost to make, an assumed origin for the tariff and an assumed box for the freight. The make cost is the one that matters: every dollar it moves is four points of margin. The quote that replaces it has been requested.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-15, read at New York 10001. */
+        type: 'strategy',
+        label: GG_AD.strategy,
+        points: [
+          'About 42% of the modelled ad spend sits on their own names, “gambling golf scratch off cards”, “gamblin golf scratch off game” and “scratch and swing”, and most of the rest on scratch-off phrases where theirs are most of the ads, such as “scratch off golf cards” and “golf scratch off cards”.',
+          'Of the eleven biggest generic searches they show ads on five: “golf games”, “golf card game”, “golf games for adults” and “golf cards”, low on the page in the New York read, and “golf scratch off cards” at the top. They do not buy “golf game”, the biggest at 8,659 a month, “play nine golf card game” or “uno golf”.',
+          'Ads of theirs were seen on 18 of the 293 keywords their listings show up on, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside.',
+          'Off Amazon, the Meta, Google and TikTok ad libraries were not read, so their spend there is unknown.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: GG_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for Scratch & Swing: exact-match monthly searches and the best organic position the listing held, among the fifty biggest keywords where it ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(GG_TOP_SPEND)} of the ${monthUsd(GG_AD.monthlyUsd.central)} a month; the rest is on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(GG_AD_KEYWORDS, GG_AD_KEYWORDS_TOTAL, GG_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, Scratch & Swing is the first result on its own name and on the scratch-off searches, and it ranks #4 on “golf card game” and #19 on “golf games” without paying. The searches they buy low on the page are the ones where it already ranks, so the ads add a second place on the page rather than a first.',
+      },
+      {
+        type: 'prose',
+        text:
+          'A keyword read cannot say where the sales come from. The ranks above, the scratch-off searches nobody else contests and campaigns invisible from outside are all candidates, and the brand’s own Sponsored Products search-term report would settle it.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(GG_AD.monthlyUsd.central)} a month, ${linePct(GG_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 18 of 293 keywords — Jungle Scout share of voice; a New York read of 20 searches',
+            flag: true,
+            note:
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because no row here was sponsored-dominant enough to measure one. It is a floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. One keyword with an ad of theirs, “crokinole golf”, has no bid and is not priced. The Ad spend table below is exactly what the margin takes off.',
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: no ad library was read.',
+      },
+      {
+        /* The Margin breakdown's advertising line, row for row, built from
+           GG_AD. check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...GG_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${ggBand(p.monthlyUsd)}`]),
+          ['Total — the margin line', monthUsd(GG_AD.monthlyUsd.central), linePct(GG_AD.ratePct.central), lineUsd((GG_COST.price * GG_AD.ratePct.central) / 100), `Modelled: ${ggBand(GG_AD.monthlyUsd)}`],
+        ],
+        note: 'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of the $24 price.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text: 'A Shopify store and three social accounts, none of which was measured.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'gamblingolf.com links to Instagram, TikTok and YouTube, all as @gamblingolf or @GamblinGolf, and the Instagram reels sell the game the way the listing does: “18 holes. 18 scratch-offs. Zero boring rounds.” Follower counts and site traffic were not read, so this section says where they are, not how many people they reach.',
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Gamblin Golf LLC.', note: 'Six Mile, South Carolina' },
+          { label: 'Amazon seller', value: 'A3C12G0C3DENHY', note: 'Gamblin Golf' },
+          { label: 'Address', value: '1066 Cliffs Vista Pkwy, Six Mile, SC', note: '29682, as Amazon’s seller record gives it' },
+          { label: 'Seller feedback', value: '83%', note: 'Over 6 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '13 Aug 2023' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Gamblin Golf is a South Carolina company whose own site tells its story without names: golfers who printed $1 and $2 on tour-grade balls because nobody had built a betting game that was simple to play on the course. No founder is named on the site, the listings or anything a search for their costs turned up. The seller account is 83% positive over only 6 ratings, against 97 reviews across its two games. Nobody at the company has spoken to us, and every fact here comes from Keepa, Amazon or the company’s own site.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. The published estimate is created by
+         make-validation-launch.mjs; these blocks carry no data. landedHref points
+         at the Margin breakdown's landed-cost table. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether it sells, before you commit to a full launch.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch', landedHref: '/business/gamblin-golf/margin/#landed-cost' },
+    ],
+  },
+  'draft-top': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-draft-top-headline.ts, generated
+       from waithowmuch-research research/draft-top/headline.json (approved by
+       the owner 2026-10-15) — and the page reads them from the row alone.
+       The image is the black Lift, B0FS8PXTX3, the hero listing. */
+    headline: {
+      image: {
+        src: draftTopPhoto('B0FS8PXTX3'),
+        alt: 'The Draft Top Lift topless can opener in black: an oval plastic body with a ringed opening in the middle and a curved handle on one side',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand, their own
+             design and listings nobody else holds the buy box on; who makes it,
+             and where, is not settled, so private label is the nearest
+             answer that describes what transfers. */
+          primaryMethod: 'private_label',
+          /* Flagship. One tool, the Lift, is every dollar of September across
+             seven colours; the can clips beside it sell under the badge. Not
+             dominance: it is #10 in Manual Can Openers, with rival topless
+             openers on its own searches. */
+          catalogStructure: 'flagship',
+          /* Level 3, an inference. The cutting mechanism is their own design,
+             re-engineered once already, which is a real change of function.
+             🚨 The case for level 4 is custom moulds and the founders' on-air
+             "the only patent bar tool on the market" (2021, for the 3.0).
+             Neither the moulds nor a patent record were read — as on OTOTO,
+             tooling stays "no" until the owner shows them. */
+          diffTooling: 'no',
+          diffCustom: 'yes',
+          /* A READ: the Brand Store at /stores/DraftTop is gated behind
+             Brand Registry enrolment. */
+          brandRegistry: 'yes',
+        },
+        derived: {
+          /* RULE 1: the Draft Top 3.0, B08DJ9475L, listed 2020-07-23 — the
+             catalogue's first listing, and in the series to May 2024. */
+          sellingSince: '2020-07-23',
+          /* The hero listing B0FS8PXTX3; the colours share one review pool. */
+          reviewTotal: 3458,
+          ratingWeighted: 4.4,
+          sellerFeedbackPct: 84,
+          /* Every badged listing ships from Amazon. */
+          channels: 'fba',
+          /* RULE 2. The seller exists on Amazon Canada with 44 ratings, not
+             measured; Amazon US is all of the measured revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* From score-valuation.mjs, never typed. */
+          peakMonthSharePct: 15.32,
+          /* RULE 3: offAmazonSharePct unset. The Shopify store, Cork Pops,
+             True Brands and Cook's Warehouse are real and none is sized. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. Draft Top on Amazon US only — their own store, wholesale through distributors and retail are excluded.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      /* Keepa seller A2E9SUNZRZAWXH, storefront=1. The brand string finds 80
+         more, of which 12 carried badges in the past (all in the series) and
+         68 are merch, apparel and listings with no offer. */
+      { label: 'SKUs', value: '14', note: 'Twelve Lift colours and prints and two can-clip packs on the storefront; eight carry a sold badge now', info: 'skus' },
+      /* The hero's own breadcrumb (Keepa categoryTree, B0FS8PXTX3). */
+      {
+        label: 'Category',
+        value: 'Home & Kitchen › Kitchen & Dining › Kitchen Utensils & Gadgets › Can Openers › Manual',
+        note: '#10 in Manual Can Openers for the hero listing',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '3,458', note: 'On the hero listing; the colours share one pool', info: 'reviews' },
+      { label: 'Product rating', value: '4.4★', note: 'Hero listing', info: 'rating' },
+      { label: 'Seller feedback', value: '84%', note: 'Over 399 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own design, made in the USA by their own account; the maker is not named — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'One tool in many colours carries every measured sale; can clips sit beside it — an inference', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 3 and an inference — see valuation.answers for the case for 4. */
+      { label: 'Differentiation', value: 'Level 3', note: 'A cutting mechanism of their own design; a claimed patent was not checked — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, wholesale', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note: 'The only channel with a number behind it, and the whole of the revenue on this profile. The seller holds the buy box on its listings and Amazon sells none of them.',
+      },
+      /* 'unchecked', not 'yes': the account exists on Canada with 44 ratings,
+         and no Canadian listing was read for a badge. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'A seller account exists on Amazon Canada with 44 ratings, so something sells there, but no Canadian listing was measured. None was found on the UK or Germany.',
+      },
+      'own-store': {
+        status: 'yes',
+        note: 'drafttop.com is a Shopify store: about 35 Lift colours and prints at $24.99, licensed beer-brand editions at $29.99, can clips, a wall-mounted DT PRO, rim salts and merch. Its sales are not counted here.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        note: 'Through True Brands from March 2022 and Cork Pops from October 2022, which says it reaches 12,000+ retail accounts; Cook’s Warehouse is one shop that stocks it. None of it is in the revenue.',
+      },
+      // 'tiktok-shop' and 'other-marketplace' left unchecked: a TikTok account
+      // exists and nobody looked for a shop on it. 'licensing' left unchecked:
+      // they SELL licensed Miller Lite, Blue Moon and Coors editions, which is
+      // licensing in, not out.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Every badged listing ships from Amazon, sold by Draft Top LLC: the margin charges Amazon’s pick-and-pack fee.',
+      },
+      'vendor-1p': { status: 'no', note: 'Amazon sells none of the listings itself.' },
+      // fbm left unchecked: nobody looked for a merchant-fulfilled offer.
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand and design, on listings nobody else holds the buy box on. They say it is made in the USA; who makes it is not named.',
+      },
+      arbitrage: { status: 'no' },
+      // manufacturer left unchecked: "Built in USA" does not say whose factory.
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/DraftTop, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'Draft Top, a New Jersey company, makes a hand tool that takes the whole lid off a drink can and leaves a smooth rim, so the can drinks like a cup. It sells on Amazon, from its own store and through retail distributors.',
+
+    blocks: [
+      { type: 'heading', text: 'The lid comes off, the can becomes a cup' },
+      {
+        type: 'prose',
+        text:
+          'The Lift is a plastic body with a stainless blade inside. Set on a can and squeezed round, it cuts away the whole top, leaving a rim smooth enough to drink from, and fits cans from 7.5 to 25 ounces. They sell it for beer, cocktails and garnishes, and it comes in a dozen colours and prints on Amazon, from black and red, white and blue to camouflage and a Viva México edition.',
+      },
+      {
+        type: 'prose',
+        text:
+          'It is the second design. The first, the Draft Top 3.0, went on Shark Tank in February 2021, where most of the Sharks could not get it to work. The Lift followed in October 2022, described by the company as completely re-engineered, and every dollar measured since mid-2024 is the Lift. Beside it the storefront carries two packs of can clips, which hold a miniature bottle upside down in an open can; neither carries a sold badge now.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The brand's own listing photos, in our
+         bucket (products/draft-top/). */
+      {
+        type: 'images',
+        items: [
+          { src: draftTopPhoto('B0FS8PXTX3'), alt: 'The Draft Top Lift in black: an oval plastic body with a ringed opening in the middle, “Draft Top Lift” moulded at the top and a curved handle on one side' },
+          { src: draftTopPhoto('hero-PT02'), alt: 'Eight opened cans in a row on a kitchen counter, from a small espresso can to a tall iced-tea can, each with its whole top removed and a smooth rim' },
+          { src: draftTopPhoto('hero-PT03'), alt: 'Three topless cans served as drinks: a beer with an orange slice, an orange soda over ice with a straw, and a cola with a miniature whiskey bottle upended in it' },
+        ],
+        caption: 'The Lift, the cans it opens and what they are opened for, as the brand’s own Amazon listing shows them.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text: 'Three Kickstarters, a can opener the Sharks could not work, a redesign, and an Amazon business that peaks twice a year.',
+      },
+      {
+        /* Oldest first. 🚨 The About page gives only the MONTH of the 2015 and
+           2019 Kickstarters; they are dated the 1st (owner's call, 2026-10-15)
+           so they are chart dots. */
+        type: 'timeline',
+        items: [
+          {
+            when: '1 Aug 2015',
+            tag: 'Brand',
+            what: 'The first Kickstarter raises $214,083',
+            detail: 'By the co-founder’s account on a podcast, with nothing spent on marketing.',
+          },
+          {
+            when: '1 Jan 2019',
+            tag: 'Brand',
+            what: 'A second Kickstarter',
+            detail: 'With a third in December 2020, the two raised $834,828 between them, by the company’s own count.',
+          },
+          {
+            when: '23 Jul 2020',
+            tag: 'Amazon',
+            what: 'The Draft Top 3.0 is listed on Amazon',
+            detail: 'The squeeze-style opener that went on television. The first listing in the catalogue, and in the series until May 2024.',
+          },
+          {
+            when: '12 Feb 2021',
+            tag: 'Brand',
+            what: 'Shark Tank: $300K for 10% asked, $300K for 20% accepted on air',
+            detail: 'Daymond John’s offer, Season 12. Most of the Sharks could not open a can with it, and one went out saying so. Whether the deal closed is not confirmed. On air the founders said it cost $4.13 to make, all in the USA.',
+          },
+          {
+            when: '26 Mar 2022',
+            tag: 'Brand',
+            what: 'Into retail through True Brands',
+            detail: 'A Seattle distributor selling to 30,000+ retailers, by the company’s release.',
+          },
+          {
+            when: '21 Oct 2022',
+            tag: 'Amazon',
+            what: 'The Lift is listed',
+            detail: 'B0BCHBB39B, the first Lift listing. Its badge reached 9,000+ in 2024, and it carried the brand until the end of that year.',
+          },
+          {
+            when: '25 Oct 2022',
+            tag: 'Brand',
+            what: 'Cork Pops takes the Lift to retail',
+            detail: 'Distribution in the US and 14 other countries for “their completely reengineered product, the DT Lift”, made in the USA, by the release.',
+          },
+          {
+            when: '31 May 2024',
+            tag: 'Amazon',
+            what: 'The Draft Top 3.0’s last badged month',
+            detail: 'It was never more than 13% of a month in the series; from June 2024 every measured sale is a Lift.',
+          },
+          {
+            when: '30 Jun 2024',
+            tag: 'Amazon',
+            what: '$202,704 — the best month on record',
+            detail: '9,600 sold in June, the summer peak. Each year since has had two: summer and Christmas.',
+          },
+          {
+            when: '23 Sep 2025',
+            tag: 'Amazon',
+            what: 'The black Lift that is now the hero listing',
+            detail: 'B0FS8PXTX3, listed alongside colours that went up from July 2024.',
+          },
+          {
+            when: '4 Aug 2026',
+            tag: 'Amazon',
+            what: 'Four new prints',
+            detail: 'Wood and three camouflage Lifts, followed by a Viva México edition on 8 September.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '3,900 sold in September',
+            detail: 'Revenue twice September 2025’s, across seven Lift listings.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The year has two peaks: summer, when June 2024 and June 2026 each sold over 7,000, and November to December, with January to March falling to a fraction of either. A little under half of each month is kept, after Amazon’s two fees, the cost to make the founders gave, an assumed tariff and modelled advertising. September 2026 was twice September 2025, and the badges read in October were running higher again.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts every listing this seller has sold under the brand, not only today’s storefront: the 2022 Lift listing, the Draft Top 3.0 and a Clara Peirce edition no longer have an offer, but carried the badge with the buy box held by Draft Top. Measured off the storefront alone the series would start in August 2024 and miss its best month.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup: the account has 44 ratings,
+           so it sells there, but no Canadian listing was measured. The largest
+           share is valuation derived.topMarketplaceSharePct. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with 44 ratings; no Canadian listing was measured' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further, so its sales are not counted here.',
+      },
+      {
+        /* September's badges × each listing's own month-end buy box
+           (revenue-corrected.json), so the rows sum to the 2026-09 revenue row
+           exactly (check-profile asserts it). */
+        type: 'breakdown',
+        intro: 'Seven colours of one tool are the whole month. Red, white and blue sells at $3 more than the rest.',
+        items: [
+          { name: 'Draft Top Lift — Red, White & Blue', asin: 'B0D8B3NBY5', listed: '2024-07-04', sold: 1000, price: 28.99, revenue: 28990, image: draftTopPhoto('B0D8B3NBY5') },
+          { name: 'Draft Top Lift — Black', asin: 'B0FS8PXTX3', listed: '2025-09-23', sold: 1000, price: 25.99, revenue: 25990, image: draftTopPhoto('B0FS8PXTX3') },
+          { name: 'Draft Top Lift — Forest Green', asin: 'B0DS268SBC', listed: '2025-01-02', sold: 700, price: 25.99, revenue: 18193, image: draftTopPhoto('B0DS268SBC') },
+          { name: 'Draft Top Lift — Blue', asin: 'B0D89Y4YVM', listed: '2024-07-06', sold: 600, price: 25.99, revenue: 15594, image: draftTopPhoto('B0D89Y4YVM') },
+          { name: 'Draft Top Lift — Ghost White', asin: 'B0DS23PTB2', listed: '2025-01-02', sold: 400, price: 25.99, revenue: 10396, image: draftTopPhoto('B0DS23PTB2') },
+          { name: 'Draft Top Lift — Red', asin: 'B0DZ74PTVW', listed: '2025-03-04', sold: 100, price: 25.99, revenue: 2599, image: draftTopPhoto('B0DZ74PTVW') },
+          /* Out of stock at month end: priced at its last in-stock buy box that month. */
+          { name: 'Draft Top Lift — Clara Peirce edition', asin: 'B0DFR7WTF7', listed: '2024-08-30', sold: 100, price: 25.99, revenue: 2599, image: draftTopPhoto('B0DFR7WTF7') },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times each listing’s buy box at the month’s end, so every row is a floor. The other storefront listings — newer prints and the can clips — carry no badge and count as zero; the Clara Peirce edition sits off the storefront.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is the founders’ own figure from 2021, for the design before the Lift — Margin breakdown says what that means. Their own store, the distributors and retail are not in either.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text: 'Amazon is the measured part. Their own store, two distributors and the shops behind them sell the same tool, and none of them publishes a number.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon every badged listing ships from Amazon’s warehouses, sold by Draft Top LLC, with Prime. Off it, drafttop.com sells three times as many Lift colours as Amazon carries, licensed Miller Lite, Blue Moon and Coors editions, a wall-mounted DT PRO, rim salts and merch. In 2022 they turned to retail: True Brands, then Cork Pops, which says it reaches 12,000+ retail accounts in 15 countries. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of a $26.76 average sale, a little under half is left once Amazon’s two fees, the cost to make it, a tariff and advertising are paid — on a cost to make the founders gave on television five years ago, for the design before this one, and a tariff that assumes it is made in China.',
+      },
+      {
+        type: 'prose',
+        text:
+          'There is one product to cost, because the Lift is every measured sale in September: seven colours of one tool from one factory. Amazon’s fees and the advertising are read or modelled for the Lift itself. The cost to make is not. It is the founders’ own answer on Shark Tank in February 2021 — “$4.13 to make it. It’s 100% American made” — self-reported, and given for the Draft Top 3.0, the design the Lift replaced. Nobody has priced the Lift since, so the figure is used as they said it, five years on, and labelled as theirs. The tariff is an assumption the other way: they say it is made in America, but this page assumes China, as one of their own listing titles does.',
+      },
+      {
+        /* 🚨 Owner's call, 2026-10-15: the margin cites the FOUNDERS' OWN cost
+           of goods (payload.json founderStatements[0]), labelled self-reported,
+           as kalotoys leads with its founders' shares. This table is what the
+           cost lines link back to. It is NOT a supplier table — its caption
+           does not start "COGS" and it has no alibaba attribution — so it is
+           held to no supplier columns.
+           🚨 TODO when the Accio quotes land (accio/draft-top/lift-can-opener/,
+           filed by process-accio-quotes): add, ABOVE the margin block and below
+           this table, a `cost-agreement` exhibit (the founders' 15.4% against
+           the quotes' make cost), a founders-against-quotes table (make only,
+           + 20% tariff, landed) and the supplier table in the standard columns
+           (`product-tabs` only if more than one product is quoted) — the
+           kalotoys pattern. The margin keeps the founders' $4.13; the quote's
+           landed cost is the comparison "Test it first" is re-published on. */
+        type: 'table',
+        id: 'cogs-breakdown',
+        caption: 'Cost of goods — what the founders said it costs to make',
+        noteColumns: [3],
+        columns: ['Line', 'Said on Shark Tank (Feb 2021)', 'Used here', 'Basis'],
+        rows: [
+          ['Cost to make, per unit', '“$4.13 to make it”', '$4.13 · 15.4% of $26.76', 'Self-reported, for the Draft Top 3.0 — the design before the Lift — and five years old. Make cost only; freight not stated'],
+          ['Where it is made', '“100% American made”', 'Not used: a 20% China tariff is assumed', 'What they say, and drafttop.com says “Built in USA” today; but the Ghost White listing’s title reads “Made In china”, and nothing read settles it. This page assumes China'],
+          ['Price then', '$24.99', '$26.76, September’s average sale', 'At the price they gave, $4.13 was 16.5% of a sale'],
+          ['Net margin', '“50% net margin”', 'Not used', 'A margin for the whole company, Kickstarter and their own store included, not a cost'],
+        ],
+        note:
+          'The founders’ words, from the Season 12 episode as a reaction video replays it; the original ABC clip was not found. No supplier quote has been read for the Lift: a request for one is with Alibaba’s sourcing agent, and it will be set beside this figure as a comparison when it comes back.',
+      },
+      {
+        /* The freight half at the same dated LCL rate every profile uses —
+           waithowmuch-research calibration/freight-rates.json, CN-USWC low end,
+           read 2026-09-28. Keepa B0FS8PXTX3: 164 × 88 × 27 mm, 91 g. */
+        type: 'table',
+        id: 'shipping-breakdown',
+        caption: 'Shipping — what it costs to move one opener',
+        attribution: 'freightos',
+        noteColumns: [2],
+        columns: ['Input', 'Figure', 'Where it comes from'],
+        rows: [
+          ['Carton', '16.4 × 8.8 × 2.7 cm, 0.09 kg', 'Keepa’s package for B0FS8PXTX3, the black Lift; the other colours pack within a few millimetres of it'],
+          ['Volume', '0.00039 cbm', 'The carton, in cubic metres'],
+          ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+          ['Shipping, per unit', '$0.19', '0.00039 cbm × $497'],
+        ],
+        note:
+          'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. The lane follows the China origin this page assumes. If the Lift is made in the USA, as Draft Top says, its inbound is a truck, not a ship, and at 19 cents the difference cannot move the margin.',
+      },
+      {
+        /* Derived from the two tables above, so no source logo. The brand's own
+           landed cost — "Test it first" links to the new seller's one below. */
+        type: 'table',
+        id: 'landed-cost',
+        caption: 'Landed cost — production, duty and shipping, per opener',
+        noteColumns: [2],
+        columns: ['Line', 'Per unit', 'From'],
+        rows: [
+          ['Production', '$4.13', 'The founders’ own figure, self-reported — the table above'],
+          ['Tariff', '$0.83', '20% of the cost to make, assuming China origin — the tariff line below'],
+          ['Shipping', '$0.19', 'The hero’s carton at $497/cbm — shipping table above'],
+          ['Landed cost', `$${DT_COST.landed.toFixed(2)}`, 'What one opener costs to reach Amazon’s door, before it sells'],
+        ],
+        note:
+          'The first three cost lines of the breakdown below, added up: $5.15 is 19.2% of the $26.76 average sale. It covers making the tool and bringing it in, not Amazon’s fees, which are their own lines. “Test it first” prices its first order on this same figure.',
+      },
+      {
+        /* 🚨 The profit series is 100% less these lines — 46.3% — and the
+           backend seed (seed-draft-top.ts, generated from pnl.json) builds it
+           from the SAME percentages. Change one, regenerate the other. */
+        type: 'margin',
+        basis: { label: 'Average selling price', value: DT_COST.price },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -DT_COST.makePct,
+            amount: DT_COST.make,
+            detail:
+              'Self-reported: the founders’ own “$4.13 to make it”, said on Shark Tank in February 2021 for the Draft Top 3.0, the design before the Lift. Five years old and for an earlier tool, so it is a stated figure, not a measured one; a supplier quote has been requested to set beside it.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See what the founders said above', href: '#cogs-breakdown' },
+            ],
+          },
+          {
+            label: 'Tariff',
+            pct: -DT_COST.tariffPct,
+            amount: DT_COST.tariff,
+            /* 🚨 ASSUMED China origin, owner's call 2026-10-15 ("assume it's all
+               made in China"). Keepa's title for B0DS23PTB2 (Ghost White) reads
+               "Made In china"; B0DFDWRVPN's reads "Made In The USA". */
+            detail:
+              'Assumed: 20% of the cost to make, the rate this site uses for goods made in China — Section 301 plus the reciprocal tariff. What they say is different: “100% American made” on air, “Built in USA” on their site. But the Ghost White listing’s own title reads “Made In china”, so this page assumes China. Made in the USA, this line would be zero.',
+            links: [
+              { label: 'See what the founders said above', href: '#cogs-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Shipping',
+            pct: -DT_COST.freightPct,
+            amount: DT_COST.freight,
+            detail: 'The hero’s own carton at a read sea-freight rate from China, door to door, on the same assumed origin as the tariff.',
+            links: [
+              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            amount: DT_COST.referral,
+            detail: 'Amazon’s published Home & Kitchen rate, a flat 15%; 15% in Keepa for the hero listing.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+          },
+          {
+            /* Keepa product record for B0FS8PXTX3, read 2026-10-15: package
+               164 × 88 × 27 mm, 91 g; fbaFees.pickAndPackFee 386 cents. $4.11
+               on B0D89Y4YVM (Blue) and B0DFDWRVPN; weighted by September's
+               units, $3.90. sources.json carries the same. */
+            label: 'FBA fulfilment',
+            pct: -DT_COST.fbaPct,
+            amount: DT_COST.fba,
+            emphasis: true,
+            detail:
+              'Size tier: Large Standard. The best seller’s box, the black Lift B0FS8PXTX3, is 6.46 × 3.46 × 1.06 in and 3.2 oz — the 1.06 in is over Small Standard’s 0.75 in limit — and Amazon charges $3.86 to pick and pack it. The blue Lift pays $4.11; weighted by September’s units the fee is $3.90.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+          },
+          {
+            label: 'Advertising',
+            pct: -DT_AD.ratePct.central,
+            amount: DT_AD_PER_SALE,
+            detail: `Modelled, not observed: about ${monthUsd(DT_AD.monthlyUsd.central)} a month, ${linePct(DT_AD.ratePct.central)} of September’s revenue (band ${dtBand(DT_AD.monthlyUsd)}), almost all of it on their own name. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/draft-top/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/draft-top/advertising/' },
+            ],
+          },
+        ],
+        note:
+          'Self-reported cost basis: the cost to make is the founders’ 2021 figure for the Draft Top 3.0, applied to the Lift, and the tariff assumes China origin. Returns, payroll, warehousing and overhead are not modelled, so this is a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–24 months of the 3.0 and of older Lift listings at $19.99 to $24.99; those months show the shape of the series, not their own margins.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon takes more of a sale than making it does: the referral fee and the pick-and-pack fee together are about twice the stated cost to make. That is the shape of a $27 tool in a Large Standard box. The founders also told the Sharks they ran a 50% net margin — a figure for the whole company in 2021, mostly direct and Kickstarter sales, which this page does not use, though it lands near what the lines above leave before any overhead.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The one line that could move this margin is the cost to make. It is the founders’ own and five years old, and a factory quote for the Lift has been requested to set beside it: every dollar it is off moves the margin by almost four points.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-15, read at New York 10001. */
+        type: 'strategy',
+        label: DT_AD.strategy,
+        points: [
+          'About 96% of the modelled ad spend sits on their own name — “draft top beer can opener”, “draft top”, “draft top lift” and the like — where an ad of theirs held the first sponsored slot in most of the New York reads.',
+          'Of the thirteen biggest generic searches their listings rank on, they buy one, “beer can opener smooth edge” (4,052 a month), first sponsored in the New York read. They do not buy “soda can opener”, the biggest at 27,646, “beer can opener” or “can opener smooth edge”.',
+          'Ads of theirs were seen on 20 of the 442 keywords their listings rank on, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside.',
+          'Off Amazon, the Meta, Google and TikTok ad libraries were not read, so their spend there is unknown.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: DT_TOP_KEYWORDS,
+        visibleRows: 10,
+        note:
+          `Jungle Scout, for the Lift’s listings: exact-match monthly searches and the best organic position any of them held, among the fifty biggest keywords where one ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(topSpend(DT_TOP_KEYWORDS))} of the ${monthUsd(DT_AD.monthlyUsd.central)} a month; the rest is on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(DT_AD_KEYWORDS, DT_AD_KEYWORDS_TOTAL, DT_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, a Lift is the first organic result on “beer can opener”, “topless can opener”, “can top remover” and “aluminum can opener” in Jungle Scout’s reading, and fifth on “beer can opener” from New York. The generic searches they do not buy are ones they already rank on, or ones like “soda can opener”, where the first results in the New York read were tab lifters rather than lid removers.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The money goes on their own name, and the name is contested: on “draft top” their ad held the first of twelve sponsored slots in the New York read, and the other eleven were other listings. Amazon’s suggested bid there is $11 to $12, about five times the bid on the generic searches: what keeping a contested name costs.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(DT_AD.monthlyUsd.central)} a month, ${linePct(DT_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 20 of 442 keywords — Jungle Scout share of voice; a New York read of 43 searches',
+            flag: true,
+            note:
+              `amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid; band ${dtBand(DT_AD.monthlyUsd)}. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because only one row here was sponsored-dominant enough to measure one. One keyword with their ads is over Jungle Scout’s 50-character limit and is not modelled. A floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off.`,
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: no ad library was read.',
+      },
+      {
+        /* The Margin breakdown's advertising line, row for row, built from
+           DT_AD. check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...DT_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd((DT_COST.price * p.ratePct.central) / 100), `Modelled: ${dtBand(p.monthlyUsd)}`]),
+          ['Total — the margin line', monthUsd(DT_AD.monthlyUsd.central), linePct(DT_AD.ratePct.central), lineUsd(DT_AD_PER_SALE), `Modelled: ${dtBand(DT_AD.monthlyUsd)}`],
+        ],
+        note: 'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of the $26.76 average sale.',
+      },
+
+      { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
+      {
+        type: 'lede',
+        text: 'A Shopify store and four social accounts, none of them measured, and a crowd that funded the product three times before it reached Amazon.',
+      },
+      { type: 'links' },
+      {
+        type: 'prose',
+        text:
+          'drafttop.com links to Instagram and TikTok as @drafttop, Facebook as TheDraftTop and YouTube as @TheDraftTop. Follower counts and site traffic were not read, so this section says where they are, not how many people they reach. The site itself claims over a million sold, which counts every channel and is not checked here.',
+      },
+      {
+        type: 'channels',
+        caption: 'Off-Amazon presence',
+        items: [
+          {
+            label: 'Own store — drafttop.com',
+            href: 'https://www.drafttop.com/',
+            value: 'Not measured',
+            note: 'Shopify: the Lift in about 35 colours and prints at $24.99 with free shipping, licensed beer-brand editions at $29.99, can clips, the DT PRO and merch.',
+          },
+          {
+            label: 'Kickstarter',
+            value: '$1.05M over three campaigns',
+            note: '$214,083 in August 2015, and $834,828 across January 2019 and December 2020, by the company’s own count.',
+          },
+          {
+            label: 'Distributors — True Brands and Cork Pops',
+            href: 'https://drafttop.com/blogs/news/latest-news-october-25th-2022',
+            value: 'Not measured',
+            note: 'True Brands from March 2022, Cork Pops from October 2022 in the US and 14 other countries. Cook’s Warehouse is one shop that stocks the Lift, at $24.95.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'Draft Top, Inc.', note: 'Trading on Amazon as Draft Top LLC' },
+          { label: 'Amazon seller', value: 'A2E9SUNZRZAWXH', note: 'Draft Top LLC' },
+          { label: 'Address', value: 'PO Box 134, Stewartsville, NJ', note: '08886, as Amazon’s seller record gives it; press releases are dated Ewing, NJ' },
+          { label: 'Founders', value: 'Armand Ferranti, Sean Kelly', note: 'President and Founder, and Co-Founder, on their About page' },
+          { label: 'Seller feedback', value: '84%', note: 'Over 399 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '23 Jul 2020' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Draft Top is a New Jersey company. Its About page names Armand Ferranti as President and Founder and Sean Kelly as Co-Founder; on Shark Tank Ferranti pitched with Patrick Parizo, and a 2022 release quotes Paul Tuhy as CEO. Daymond John’s offer was accepted on air, and the company’s site presents it, but whether the deal closed has never been confirmed. Nobody at the company has spoken to us: every fact here comes from Keepa, Amazon, the company’s own site and releases, and the episode.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model — a base multiple moved by what the public record supports — applied to trailing-twelve profit, and it prices Draft Top on Amazon US alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Their own store, the distributors and retail are excluded: all real, none sized from outside. The profit being multiplied rests on the founders’ own 2021 cost to make, for the design before the Lift, and an assumed China tariff, and deducts no overhead, so on that basis this figure is an upper bound.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are what has lasted: a catalogue on Amazon since 2020, a tool redesigned once and on sale as the Lift since 2022, a review pool in the thousands at 4.4 stars and an enrolled brand store. The negatives are concentration and service: one tool carries every dollar, all of it on Amazon US, and seller feedback of 84% sits just under the line the model rewards.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Four inputs are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken from the public record — a patent claimed on air and the moulds behind the Lift could put it a level higher, and neither was read — and fulfilment is read from the listings’ fees. Brand Registry is firmer: Amazon gates the brand store behind enrolment. All of them are the first things to put to the owner.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. The published estimate is created by
+         make-validation-launch.mjs (--variants "lift=opener"); these blocks
+         carry no data. Its landed cost, $5.15, is the Margin breakdown's —
+         the founders' $4.13 + the assumed 20% China tariff + freight — so
+         landedHref is the margin's landed-cost table. 🚨 Re-publish when the
+         Accio quotes land. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether a copy of the Lift sells, before you commit to a full launch — priced, for now, on the founders’ own cost to make plus the assumed China tariff, a placeholder until factory quotes come back. The moulds and blade die a copy would need are a one-time cost not in it.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch', landedHref: '/business/draft-top/margin/#landed-cost' },
+    ],
+  },
+  'doctor-jupiter': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-doctor-jupiter-headline.ts,
+       generated from waithowmuch-research research/doctor-jupiter/headline.json
+       (wording approved by the owner; the figure and one subtitle clause were
+       revised 2026-10-18 and await re-approval) — and the page reads them from
+       the row alone. The image is the hero kit, B09XGMHGJ3. */
+    headline: {
+      image: {
+        src: doctorJupiterPhoto('B09XGMHGJ3'),
+        alt: 'The Doctor Jupiter My First Science Kit box: red and navy, with flasks, a measuring cylinder and a funnel of coloured, fizzing liquids, a “4+ yr olds” badge and “100+ experiments” across the bottom',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand on every listing,
+             the buy box theirs on every top kit, Amazon selling none. The
+             manufacturer string is Metis Learning Solutions Pvt. Ltd., an Indian
+             company form sharing the seller's name, which may be their own
+             factory; private label is the nearest answer that describes what
+             transfers. */
+          primaryMethod: 'private_label',
+          /* Flagship: one kit, in boys' and girls' boxes and three editions, is
+             61% of September; the 80-odd other listings sit beside it. */
+          catalogStructure: 'flagship',
+          /* Level 2, an inference. Their own kit contents, manuals and box art,
+             but an Alibaba supplier lists an unbranded kit whose contents match
+             the girls' Ultimate kit reagent for reagent, and another listing
+             carries Doctor Jupiter's own box art: a factory can already make it. */
+          diffTooling: 'no',
+          diffCustom: 'no',
+          diffVisible: 'yes',
+          /* A READ: the Brand Store at /stores/DoctorJupiter is gated behind
+             Brand Registry enrolment. */
+          brandRegistry: 'yes',
+        },
+        derived: {
+          /* RULE 1: the Doctor Jupiter brand's first listing, My First Science
+             B09XGMHGJ3, 2022-04-26 — the lead kit, in the whole series. 🚨 The
+             storefront's two Learnabee board books list from July 2021, but
+             Learnabee is a second brand whose tie to this seller before Keepa
+             tracked it (November 2023) is not established; dating the catalogue
+             from them would add 0.2 to the multiple (owner's call). */
+          sellingSince: '2022-04-26',
+          /* Summed over the 20 largest listings (Keepa, each its own pool); the
+             other 72 are left out, so it is a floor. */
+          reviewTotal: 10280,
+          /* Weighted by September revenue over those listings (93% of it). */
+          ratingWeighted: 4.6,
+          sellerFeedbackPct: 100,
+          /* Every top listing ships from Amazon. */
+          channels: 'fba',
+          /* RULE 2. A seller account exists on Amazon Canada with no ratings;
+             Amazon US is all of the measured revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* From score-valuation.mjs, never typed. */
+          peakMonthSharePct: 38.17,
+          /* RULE 3: offAmazonSharePct unset. doctorjupiter.com sits behind a
+             bot check and nothing was sized. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple. Doctor Jupiter on Amazon US only — their own site is excluded, unread.',
+      note: 'Base 2.6, adjusted by what the public record supports.',
+    },
+
+    facts: [
+      /* Keepa seller A3ACVJQV2VBG6P, storefront=1: 92 ASINs, 86 priced, 43
+         badged on 15 Oct; two brand strings, Doctor Jupiter (87) and Learnabee. */
+      { label: 'SKUs', value: '92', note: 'Science, engineering and craft kits, gift sets and Learnabee toddler board books; about half carry a sold badge', info: 'skus' },
+      /* The hero's own breadcrumb (Keepa categoryTree, B09XGMHGJ3). */
+      {
+        label: 'Category',
+        value: 'Toys & Games › Learning & Education › Science Kits & Toys',
+        note: '#929 in Toys & Games for the hero kit',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '10,280', note: 'Across the 20 largest listings; the hero kit alone has 3,791', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'Weighted by the latest month’s sales', info: 'rating' },
+      { label: 'Seller feedback', value: '100%', note: 'Over 533 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own brand; the listings name an Indian company as manufacturer — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + range', note: 'One kit for four-year-olds carries most of the revenue, with a wide range of kits beside it — an inference', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 2 and an inference — see valuation.answers. */
+      { label: 'Differentiation', value: 'Level 2', note: 'Their own contents and boxes, but factories already list near-identical kits — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note: 'The only channel with a number behind it, and the whole of the revenue on this profile. The seller holds the buy box on every top listing and Amazon sells none of them.',
+      },
+      /* 'unchecked', not 'no': the account exists on Canada with no ratings,
+         and UK listings of the kits exist under some other seller. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'A seller account exists on Amazon Canada with no ratings. Listings of the kits exist on Amazon UK, but not under this seller, and who sells them was not read.',
+      },
+      /* own-store left unchecked: doctorjupiter.com answers with a bot check,
+         so whether it sells anything was not read. tiktok-shop, wholesale-out
+         and other-marketplace left unchecked: nobody looked. */
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Every top listing ships from Amazon, sold by Doctor Jupiter_USA: the margin charges Amazon’s pick-and-pack fee.',
+      },
+      'vendor-1p': { status: 'no', note: 'Amazon sells none of the listings itself.' },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand on listings nobody else holds the buy box on. The manufacturer named on every listing is Metis Learning Solutions Pvt. Ltd.',
+      },
+      arbitrage: { status: 'no' },
+      // manufacturer left unchecked: the shared "Metis" name suggests their own
+      // factory, but nothing read says whose it is.
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/DoctorJupiter, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'Doctor Jupiter sells boxed science-experiment kits for children from three up on Amazon, from a Dubai-registered company whose listings name an Indian manufacturer. One kit for four-year-olds, in boys’ and girls’ boxes, carries most of it.',
+
+    blocks: [
+      { type: 'heading', text: 'A hundred experiments in a box, for a fourth birthday' },
+      {
+        type: 'prose',
+        text:
+          'My First Science Kit is a box of plastic labware — test tubes, beakers, a funnel, a measuring cylinder — with reagent sachets and a printed manual of experiments for children from four, sold in a boys’ and a girls’ box and in editions of 50 and 100-plus experiments. Its siblings follow the same pattern for other ages: an Ultimate kit with 135 experiments for eight and up, and a Preschool kit for three to five. Nearly every kit’s title names an age, and many end in “Birthday Gift”.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Around the science kits sit engineering kits, a robotic hand, a paper-airplane launcher, craft and make-up kits, gift sets bundling several kits, and ten toddler board books under a second brand, Learnabee. About half of the 92 listings carry a sold badge; the rest each sell under roughly fifty a month on Amazon.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The brand's own listing photos, in our
+         bucket. */
+      {
+        type: 'images',
+        items: [
+          { src: doctorJupiterPhoto('B09XGMHGJ3'), alt: 'The My First Science Kit box, red and navy, with flasks of coloured liquid, a “4+ yr olds” badge and “100+ experiments”' },
+          { src: doctorJupiterPhoto('B0C248WX35'), alt: 'The Ultimate Science Kit box, with test tubes and a mushroom-cloud illustration, an “8+ yr olds” badge and “135+ experiments”' },
+          { src: doctorJupiterPhoto('B0DWFJ6YWV'), alt: 'The Paper Airplane Launcher Kit box: an orange launcher on a runway firing a yellow paper plane, and “with 50+ paper planes”' },
+        ],
+        caption: 'The first science kit, the Ultimate kit and the paper-airplane launcher, as the brand’s own Amazon listings show them.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text: 'A first science kit in 2022, an edition for every age and both boxes since, and a business that does most of its year in December.',
+      },
+      {
+        /* Oldest first. Month-end revenue events date to the last day of the
+           month so the dot sits on that month's point. */
+        type: 'timeline',
+        items: [
+          {
+            when: '12 Jul 2021',
+            tag: 'Amazon',
+            what: 'The storefront’s oldest listing: a Learnabee board book',
+            detail: 'Learnabee is the storefront’s second brand, toddler board books and games. Whether this seller sold it then is not established; the seller is first tracked in November 2023.',
+          },
+          {
+            when: '26 Apr 2022',
+            tag: 'Amazon',
+            what: 'My First Science Experiments Kit is listed',
+            detail: 'B09XGMHGJ3, for ages four and up: the kit that still carries most of the brand.',
+          },
+          {
+            when: '30 Sep 2022',
+            tag: 'Amazon',
+            what: 'The Ultimate Science Kit, for eight and up',
+            detail: '135-plus experiments, the older child’s edition.',
+          },
+          {
+            when: '14 Jul 2023',
+            tag: 'Amazon',
+            what: 'Girls’ boxes',
+            detail: 'Girls’ First Science Kit, with Girls’ Ultimate following on 22 August: the same kits in a second box.',
+          },
+          {
+            when: '31 Dec 2023',
+            tag: 'Amazon',
+            what: '43,100 sold in the first December measured',
+            detail: 'About $1.5M, against 5,800 kits in the January after it.',
+          },
+          {
+            when: '31 May 2024',
+            tag: 'Amazon',
+            what: 'Starter editions at $24.99',
+            detail: 'My First and Girls’ First with 50-plus experiments, five dollars under the full kit. Both are now among the three best sellers.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '56,700 sold in December 2024',
+            detail: 'About $1.7M.',
+          },
+          {
+            when: '7 Feb 2025',
+            tag: 'Amazon',
+            what: 'The paper-airplane launcher',
+            detail: 'One of 51 listings added in 2025, the year the catalogue more than doubled: engineering kits, a robotic hand, craft kits and gift sets.',
+          },
+          {
+            when: '20 Aug 2025',
+            tag: 'Amazon',
+            what: 'A Preschool Science Kit, for three to five',
+            detail: 'In a boys’ and a girls’ box from the start.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '98,000 sold — the biggest month on record',
+            detail: 'About $2.9M, nine times the January after it.',
+          },
+          {
+            when: '31 May 2026',
+            tag: 'Amazon',
+            what: '5,100 sold, the low point',
+            detail: 'The spring trough, about $145K.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '17,300 sold in September',
+            detail: 'Climbing into the fourth Christmas: October’s badges were running higher again.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'Christmas is most of the year. Each December sells more than the one before, and the January after it falls to between a sixth and a ninth of it, then build slowly through a birthday-present year to October. About a third of every month is kept, after Amazon’s two fees, the cost to make the kits, an assumed tariff, freight and modelled advertising — and Amazon’s pick-and-pack fee takes more of a sale than making the kit does.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts every listing on the storefront and three bundles off it that carried a badge in past months, each at its own month-end price. A badge is a floor: the half of the catalogue without one counts as zero.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup: the account has no ratings.
+           The largest share is valuation derived.topMarketplaceSharePct. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with no ratings' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No account under this seller; UK listings of the kits exist under another' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further.',
+      },
+      {
+        /* September's badges × each listing's own month-end price
+           (revenue-corrected.json). 🚨 PARTIAL: the 18 largest of the 40 badged
+           listings; the page draws the rest as "Not itemised". */
+        type: 'breakdown',
+        partial: { of: 'the 40 listings with a sold badge' },
+        intro: 'The first science kit, in four boxes, is the top four rows. The launcher and the Preschool kit come next.',
+        items: [
+          { name: 'My First Science Experiments Kit, 100+ experiments', asin: 'B09XGMHGJ3', listed: '2022-04-26', sold: 4000, price: 29.99, revenue: 119960, image: doctorJupiterPhoto('B09XGMHGJ3') },
+          { name: 'Girls’ First Science Experiments Kit, Starter', asin: 'B0D17YL839', listed: '2024-05-31', sold: 3000, price: 24.99, revenue: 74970, image: doctorJupiterPhoto('B0D17YL839') },
+          { name: 'My First Science Experiments Kit, Starter 50+', asin: 'B0D17X5QNF', listed: '2024-05-22', sold: 2000, price: 24.99, revenue: 49980, image: doctorJupiterPhoto('B0D17X5QNF') },
+          { name: 'Girls’ First Science Experiments Kit', asin: 'B0C4YDZQMS', listed: '2023-07-14', sold: 1000, price: 26.99, revenue: 26990, image: doctorJupiterPhoto('B0C4YDZQMS') },
+          { name: 'Paper Airplane Launcher Kit', asin: 'B0DWFJ6YWV', listed: '2025-02-07', sold: 1000, price: 24.99, revenue: 24990, image: doctorJupiterPhoto('B0DWFJ6YWV') },
+          { name: 'Preschool Science Kit, ages 3–5', asin: 'B0FN3MC4CY', listed: '2025-08-20', sold: 900, price: 26.99, revenue: 24291, image: doctorJupiterPhoto('B0FN3MC4CY') },
+          { name: 'Ultimate Science Experiments Kit, 135+', asin: 'B0C248WX35', listed: '2022-09-30', sold: 600, price: 29.99, revenue: 17994, image: doctorJupiterPhoto('B0C248WX35') },
+          { name: 'Girls’ Ultimate Science Experiments Kit', asin: 'B0CG9QG2SF', listed: '2023-08-22', sold: 500, price: 29.99, revenue: 14995, image: doctorJupiterPhoto('B0CG9QG2SF') },
+          { name: 'Girls’ Engineering Kit', asin: 'B0FBMFTTB6', listed: '2025-06-02', sold: 600, price: 23.69, revenue: 14214, image: doctorJupiterPhoto('B0FBMFTTB6') },
+          { name: 'Ultimate Engineering Kit', asin: 'B0FBMG6PJ3', listed: '2025-06-02', sold: 400, price: 22.49, revenue: 8996, image: doctorJupiterPhoto('B0FBMG6PJ3') },
+          { name: 'Robotic Hand STEM Toy', asin: 'B0DZCWRLBR', listed: '2025-03-05', sold: 300, price: 26.99, revenue: 8097, image: doctorJupiterPhoto('B0DZCWRLBR') },
+          { name: 'Ultimate Science Experiments Kit, 50+', asin: 'B0D8BK7D7M', listed: '2024-06-28', sold: 400, price: 19.99, revenue: 7996, image: doctorJupiterPhoto('B0D8BK7D7M') },
+          { name: 'My First Amazing Science Experiments Kit', asin: 'B0D1MPNSS6', listed: '2024-04-13', sold: 200, price: 26.99, revenue: 5398, image: doctorJupiterPhoto('B0D1MPNSS6') },
+          { name: 'Girls’ First Amazing Science Experiments Kit', asin: 'B0D1MR35P2', listed: '2024-04-13', sold: 200, price: 26.99, revenue: 5398, image: doctorJupiterPhoto('B0D1MR35P2') },
+          { name: 'Preschool Science Kit for Girls', asin: 'B0FN3KPZVH', listed: '2025-08-20', sold: 200, price: 26.99, revenue: 5398, image: doctorJupiterPhoto('B0FN3KPZVH') },
+          { name: 'Paper Airplane Book Kit', asin: 'B0FW4JPS2J', listed: '2025-10-14', sold: 300, price: 16.99, revenue: 5097, image: doctorJupiterPhoto('B0FW4JPS2J') },
+          { name: 'Ultimate Gift Set of Learning, ages 4–6', asin: 'B0C23WZ3BV', listed: '2023-07-14', sold: 100, price: 49.99, revenue: 4999, image: doctorJupiterPhoto('B0C23WZ3BV') },
+          { name: 'Glam Science make-up craft kit', asin: 'B0DTYWCFND', listed: '2025-01-24', sold: 200, price: 19.99, revenue: 3998, image: doctorJupiterPhoto('B0DTYWCFND') },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times each listing’s price at the month’s end, so every row is a floor. Of the 92 listings, 40 carried a badge; the 18 largest are itemised and the other 22, mostly gift sets and small kits, are one remainder. The rest count as zero.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is Alibaba listing prices, three of the four resting on a single listing, and the tariff assumes the kits are made in China, which their listings do not say.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text: 'Amazon US, through Amazon’s warehouses, is the whole of what can be measured. Their own site exists and could not be read.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Every top listing ships from Amazon, sold by Doctor Jupiter_USA with the buy box all of the time, and Amazon sells none of them itself. The seller has an account on Amazon Canada with no ratings; the kits are listed on Amazon UK, but not by this seller. doctorjupiter.com answers with a bot check, so whether it sells anything is not known. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of a $26.65 average sale, about a third is left once Amazon’s two fees, the cost to make, a tariff, freight and advertising are paid — and Amazon’s fulfilment fee is a bigger cost than making the kit.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Four products carry the brand. In September the first science kit was 61% of revenue, the Ultimate kit 9%, the Preschool kit and the paper-airplane launcher 6% each: together the first set to reach 80%, so each has its own breakdown below and the whole brand, at September’s mix, comes last. Every cost to make is a price listed on Alibaba, read by Alibaba’s own sourcing agent rather than quoted back to a request, and for the Ultimate kit, the Preschool kit and the launcher it rests on a single listing — the one that matched the product.',
+      },
+      {
+        /* 🚨 One breakdown per main product (SKILL §2, "Products"): 61.3%,
+           9.3%, 6.4% and 5.7% of September, the first set to reach 80%. Tab
+           ids are the "Test it first" product ids, so its first-order links
+           land on each tab's #landed-cost. Per-unit figures are DJ_COST
+           (pnl.json); the `all` tab is DJ_BLEND = the seed's COST_LINES. */
+        type: 'product-margins',
+        period: '2026-09',
+        products: [
+          {
+            id: 'my-first-science',
+            label: 'My First Science Kit',
+            sharePct: 61.3,
+            blocks: [
+              {
+                /* Standard supplier columns. waithowmuch-research research/
+                   doctor-jupiter/suppliers.json (Accio run accio/my-first-science/
+                   2026-10-17T2225, verified against its screenshots): the two
+                   suppliers priced, ordered by track record. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a first science kit costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Sam Toys Industrial Co., Ltd.', 'Verified · 19 yrs', '4.9★ from 1,798 (store)', '—', '216 sets', '$2.38–2.55'],
+                  ['Shantou Capable Toys Co., Ltd.', 'Verified · 12 yrs', '4.7★ from 363 (store)', '—', '48 sets', '$5.34–5.52'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(DJ_COST['my-first-science'].make)],
+                ],
+                note:
+                  'Two boxed kits from suppliers in China: Sam Toys’ has 78 experiments, between the brand’s 50-plus Starter and its 100-plus edition, and Shantou Capable’s 125, the closest to the full kit. Each is priced at the tier nearest the brand’s own yearly sales of this kit, about 125,000 — $2.38 from 7,200 sets and $5.34 from 240, Shantou Capable’s top tier — and the two averaged. They are listed prices, read by Alibaba’s sourcing agent (Accio) in a search, not quotes negotiated for an order. Two more listings were read and not priced: one shows Doctor Jupiter’s own Ultimate Girls box art and prices that kit instead (see its tab), the other is a 13-activity kit. A third supplier, using the brand’s product names word for word, was left out as a copy. Searched “kids science experiment kit OEM” and “custom STEM science kit for kids manufacturer”, Verified suppliers rated 4.5 or better.',
+              },
+              {
+                /* Freightos CN-USWC low end, waithowmuch-research calibration/
+                   freight-rates.json, read 2026-09-28. The volume is the six
+                   listings' units-weighted Keepa package (pnl.json cbmPerUnit). */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one kit from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '34.1 × 25.4 × 5.2 cm, 0.75 kg', 'Keepa’s package for B09XGMHGJ3, the 100-plus kit; the Starter boxes are a few centimetres shorter'],
+                  ['Volume', '0.00419 cbm', 'The six listings’ boxes, weighted by September’s units; the hero’s alone is 0.0045'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per kit', '$2.08', '0.00419 cbm × $497'],
+                ],
+                note:
+                  'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. A flat box of air and plastic ships by volume, which is why moving a kit costs over half of what making it does.',
+              },
+              {
+                /* Derived from the two tables above and the tariff line, so no
+                   source logo. "Test it first" links its first order here. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per kit',
+                noteColumns: [2],
+                columns: ['Line', 'Per kit', 'From'],
+                rows: [
+                  ['Production', lineUsd(DJ_COST['my-first-science'].make), 'Two Alibaba suppliers’ listed prices, averaged — COGS table above'],
+                  ['Tariff', lineUsd(DJ_COST['my-first-science'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(DJ_COST['my-first-science'].freight), 'The kit’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(DJ_COST['my-first-science'].landed), 'What one kit costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 24.7% of the $27.18 average sale. Amazon’s fees on the sale are their own lines. “Test it first” prices its first order on this same figure.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average selling price', value: DJ_COST['my-first-science'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: djPct('my-first-science', DJ_COST['my-first-science'].make),
+                    amount: DJ_COST['my-first-science'].make,
+                    detail: 'Two Alibaba suppliers’ listed prices for a comparable kit, averaged: listing prices, not a negotiated quote.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: djPct('my-first-science', DJ_COST['my-first-science'].tariff),
+                    amount: DJ_COST['my-first-science'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, the rate this site uses for toys made in China — Section 301 plus the reciprocal tariff, over a toys base of zero. Their own listings name an Indian manufacturer; made in India, the rate would differ.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: djPct('my-first-science', DJ_COST['my-first-science'].freight),
+                    amount: DJ_COST['my-first-science'].freight,
+                    detail: 'The kit’s own carton at a read sea-freight rate from China, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: DJ_COST['my-first-science'].referral,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15% on items over $10.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa product record for B09XGMHGJ3, read 2026-10-15:
+                       package 341 × 254 × 52 mm, 750 g; pickAndPackFee 637
+                       cents. Units-weighted over the six listings, $6.14.
+                       sources.json carries the same. */
+                    label: 'FBA fulfilment',
+                    pct: djPct('my-first-science', DJ_COST['my-first-science'].fba),
+                    amount: DJ_COST['my-first-science'].fba,
+                    emphasis: true,
+                    detail:
+                      'Size tier: Large Standard. The best seller’s box, B09XGMHGJ3, is 13.4 × 10.0 × 2.0 in and 1.65 lb — over Small Standard’s 0.75 in and 16 oz — and Amazon charges $6.37 to pick and pack it. The Starter boxes pay $5.76 to $6.10; weighted by September’s units the fee is $6.14, more than the kit costs to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -djAd('my-first-science').ratePct.central,
+                    amount: djAd('my-first-science').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(djAd('my-first-science').monthlyUsd.central)} a month on this kit’s keywords, ${linePct(djAd('my-first-science').ratePct.central)} of its September revenue (band ${djBand(djAd('my-first-science').monthlyUsd)}), most of it on science-kit searches by age. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/doctor-jupiter/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/doctor-jupiter/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'ultimate-science',
+            label: 'Ultimate Science Kit',
+            sharePct: 9.3,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/ultimate-science/2026-10-17T2228.
+                   🚨 ONE supplier priced (owner's call, 2026-10-18). */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what an Ultimate kit costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Anhui Xingxue Material Technology Co., Ltd.', 'Verified · 6 yrs', '4.7★ from 471 (store)', '—', '50 pieces', '$6.90–7.60'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(DJ_COST['ultimate-science'].make)],
+                ],
+                note:
+                  'One listing, and the cost to make rests on it alone. Its photo is Doctor Jupiter’s own Ultimate Girls box art, and the contents it lists match the girls’ 135-plus kit reagent for reagent — food colours, essences, glow powder, citric acid, crystal powder, glycerin flakes — so it is an unbranded version of this kit. Priced at $6.90, its top tier from 500 pieces, the nearest to the brand’s yearly sales of the kit (about 19,000). A listed price read by Alibaba’s sourcing agent (Accio) in a search, not a quote negotiated for an order. Two more listings were read and not priced: a range of about 25 kits with no tiers, and a crystal-growing kit. Searched “science kit for kids 8-12 OEM” and “kids chemistry experiment set crystal growing”, Verified suppliers rated 4.5 or better.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one kit from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '33.8 × 25.2 × 4.8 cm, 0.86 kg', 'Keepa’s package for B0C248WX35, the 135-plus kit'],
+                  ['Volume', '0.00416 cbm', 'The four listings’ boxes, weighted by September’s units'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per kit', '$2.07', '0.00416 cbm × $497'],
+                ],
+                note: 'The same Freightos reading as the first kit: the low end of the door-to-door band, duty excluded.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per kit',
+                noteColumns: [2],
+                columns: ['Line', 'Per kit', 'From'],
+                rows: [
+                  ['Production', lineUsd(DJ_COST['ultimate-science'].make), 'One Alibaba listing’s price — COGS table above'],
+                  ['Tariff', lineUsd(DJ_COST['ultimate-science'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(DJ_COST['ultimate-science'].freight), 'The kit’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(DJ_COST['ultimate-science'].landed), 'What one kit costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 38.5% of the $26.86 average sale, the dearest of the four products to make.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average selling price', value: DJ_COST['ultimate-science'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: djPct('ultimate-science', DJ_COST['ultimate-science'].make),
+                    amount: DJ_COST['ultimate-science'].make,
+                    emphasis: true,
+                    detail: 'One Alibaba listing’s price for an unbranded version of this kit: a single listed price, not a negotiated quote, so it moves when more suppliers are read.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: djPct('ultimate-science', DJ_COST['ultimate-science'].tariff),
+                    amount: DJ_COST['ultimate-science'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, on the same China basis as the first kit.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: djPct('ultimate-science', DJ_COST['ultimate-science'].freight),
+                    amount: DJ_COST['ultimate-science'].freight,
+                    detail: 'The kit’s own carton at the same sea-freight rate.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: DJ_COST['ultimate-science'].referral,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa B0C248WX35: 338 × 252 × 48 mm, 862 g, pickAndPackFee
+                       602 cents; units-weighted over four listings $5.97. */
+                    label: 'FBA fulfilment',
+                    pct: djPct('ultimate-science', DJ_COST['ultimate-science'].fba),
+                    amount: DJ_COST['ultimate-science'].fba,
+                    detail: 'Size tier: Large Standard. The best seller’s box, B0C248WX35, is 13.3 × 9.9 × 1.9 in and 1.90 lb — over Small Standard’s 0.75 in and 16 oz — and Amazon charges $6.02 to pick and pack it; weighted across the four listings, $5.97.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -djAd('ultimate-science').ratePct.central,
+                    amount: djAd('ultimate-science').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(djAd('ultimate-science').monthlyUsd.central)} a month on this kit’s keywords, ${linePct(djAd('ultimate-science').ratePct.central)} of its September revenue. The shared age searches, such as “science kits for kids age 8-12”, are counted under the first kit. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/doctor-jupiter/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/doctor-jupiter/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'preschool-science',
+            label: 'Preschool Science Kit',
+            sharePct: 6.4,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/preschool-science/2026-10-17T2228.
+                   🚨 ONE supplier priced (owner's call, 2026-10-18). */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a preschool kit costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Shantou Liansheng Toys Co., Ltd.', 'Verified · 18 yrs', '4.7★ from 12 (store)', '—', '36 pieces', '$3.25–3.85'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(DJ_COST['preschool-science'].make)],
+                ],
+                note:
+                  'One listing, and the cost to make rests on it alone: a 60-experiment boxed kit of test tubes, a rack, reagent sachets and colour bottles, from a supplier with only 12 store reviews. Priced at $3.25, its top tier from 2,000 pieces, the nearest to the brand’s yearly sales of the kit (about 13,000). A listed price read by Alibaba’s sourcing agent (Accio) in a search, not a negotiated quote. Two more listings were read and not priced: a seven-experiment box and a chemistry kit marked for six and up. Searched “preschool science kit OEM” and “toddler STEM science experiment kit”, Verified suppliers rated 4.5 or better.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one kit from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '29.3 × 25.2 × 5.3 cm, 0.69 kg', 'Keepa’s package for B0FN3MC4CY, the boys’ box; the girls’ is within a few millimetres'],
+                  ['Volume', '0.00389 cbm', 'The two listings’ boxes, weighted by September’s units'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per kit', '$1.93', '0.00389 cbm × $497'],
+                ],
+                note: 'The same Freightos reading as the first kit: the low end of the door-to-door band, duty excluded.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per kit',
+                noteColumns: [2],
+                columns: ['Line', 'Per kit', 'From'],
+                rows: [
+                  ['Production', lineUsd(DJ_COST['preschool-science'].make), 'One Alibaba listing’s price — COGS table above'],
+                  ['Tariff', lineUsd(DJ_COST['preschool-science'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(DJ_COST['preschool-science'].freight), 'The kit’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(DJ_COST['preschool-science'].landed), 'What one kit costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 21.6% of the $26.99 price.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: DJ_COST['preschool-science'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: djPct('preschool-science', DJ_COST['preschool-science'].make),
+                    amount: DJ_COST['preschool-science'].make,
+                    detail: 'One Alibaba listing’s price for a comparable boxed kit: a single listed price, not a negotiated quote.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: djPct('preschool-science', DJ_COST['preschool-science'].tariff),
+                    amount: DJ_COST['preschool-science'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, on the same China basis as the first kit.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: djPct('preschool-science', DJ_COST['preschool-science'].freight),
+                    amount: DJ_COST['preschool-science'].freight,
+                    detail: 'The kit’s own carton at the same sea-freight rate.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: DJ_COST['preschool-science'].referral,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa B0FN3MC4CY: 293 × 252 × 53 mm, 689 g, pickAndPackFee
+                       576 cents; the girls' box the same fee. */
+                    label: 'FBA fulfilment',
+                    pct: djPct('preschool-science', DJ_COST['preschool-science'].fba),
+                    amount: DJ_COST['preschool-science'].fba,
+                    emphasis: true,
+                    detail: 'Size tier: Large Standard. The best seller’s box, B0FN3MC4CY, is 11.5 × 9.9 × 2.1 in and 1.52 lb — over Small Standard’s 0.75 in and 16 oz — and Amazon charges $5.76 to pick and pack it, as it does the girls’ box: almost twice what the kit costs to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -djAd('preschool-science').ratePct.central,
+                    amount: djAd('preschool-science').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(djAd('preschool-science').monthlyUsd.central)} a month on this kit’s keywords, ${linePct(djAd('preschool-science').ratePct.central)} of its September revenue: almost nothing seen. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/doctor-jupiter/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/doctor-jupiter/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'paper-airplane-launcher',
+            label: 'Paper-airplane launcher',
+            sharePct: 5.7,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/paper-airplane-launcher/
+                   2026-10-17T2228. 🚨 ONE supplier priced (owner's call, 2026-10-18). */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a launcher kit costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Xinxiang Alpha Manufacturing Ltd.', 'Verified · 9 yrs', '5.0★ from 310 (store)', '—', '1,000 sets', '$2.59–3.25'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(DJ_COST['paper-airplane-launcher'].make)],
+                ],
+                note:
+                  'One listing, and the cost to make rests on it alone: a wooden launcher kit with paper planes, pulled by an elastic band like Doctor Jupiter’s, from a manufacturer that lists ASTM F963 and CPC certificates. Priced at $2.59, its top tier from 10,000 sets, the nearest to the brand’s yearly sales of the launcher (about 12,600). Its minimum is 1,000 sets, so a first order is 1,000 — “Test it first” explains. A listed price read by Alibaba’s sourcing agent (Accio) in a search, not a negotiated quote. Two more listings were read and not priced: both are radio-controlled motor modules that fly a paper plane, a different product. Searched “paper airplane launcher kit” and “electric paper airplane launcher STEM kit”, Verified suppliers rated 4.5 or better.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one launcher from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '34.3 × 25.5 × 3.4 cm, 0.62 kg', 'Keepa’s package for B0DWFJ6YWV, the launcher'],
+                  ['Volume', '0.00296 cbm', 'The two listings’ boxes, weighted by September’s units'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per kit', '$1.47', '0.00296 cbm × $497'],
+                ],
+                note: 'The same Freightos reading as the science kits: the low end of the door-to-door band, duty excluded. The launcher’s box is the flattest of the four.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per launcher',
+                noteColumns: [2],
+                columns: ['Line', 'Per kit', 'From'],
+                rows: [
+                  ['Production', lineUsd(DJ_COST['paper-airplane-launcher'].make), 'One Alibaba listing’s price — COGS table above'],
+                  ['Tariff', lineUsd(DJ_COST['paper-airplane-launcher'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(DJ_COST['paper-airplane-launcher'].freight), 'The launcher’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(DJ_COST['paper-airplane-launcher'].landed), 'What one launcher costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 18.3% of the $24.99 price, the cheapest of the four to make.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Selling price', value: DJ_COST['paper-airplane-launcher'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: djPct('paper-airplane-launcher', DJ_COST['paper-airplane-launcher'].make),
+                    amount: DJ_COST['paper-airplane-launcher'].make,
+                    detail: 'One Alibaba listing’s price for a launcher kit with the same mechanism: a single listed price, not a negotiated quote.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: djPct('paper-airplane-launcher', DJ_COST['paper-airplane-launcher'].tariff),
+                    amount: DJ_COST['paper-airplane-launcher'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, on the same China basis as the science kits.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: djPct('paper-airplane-launcher', DJ_COST['paper-airplane-launcher'].freight),
+                    amount: DJ_COST['paper-airplane-launcher'].freight,
+                    detail: 'The launcher’s own carton at the same sea-freight rate.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: DJ_COST['paper-airplane-launcher'].referral,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa B0DWFJ6YWV: 343 × 255 × 34 mm, 621 g, pickAndPackFee
+                       561 cents; B0GCSL7KRX $5.76; weighted $5.62. */
+                    label: 'FBA fulfilment',
+                    pct: djPct('paper-airplane-launcher', DJ_COST['paper-airplane-launcher'].fba),
+                    amount: DJ_COST['paper-airplane-launcher'].fba,
+                    detail: 'Size tier: Large Standard. The best seller’s box, B0DWFJ6YWV, is 13.5 × 10.0 × 1.3 in and 1.37 lb — over Small Standard’s 0.75 in and 16 oz — and Amazon charges $5.61 to pick and pack it; with the second listing, $5.62.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -djAd('paper-airplane-launcher').ratePct.central,
+                    amount: djAd('paper-airplane-launcher').perUnit,
+                    emphasis: true,
+                    detail: `Modelled, not observed: about ${monthUsd(djAd('paper-airplane-launcher').monthlyUsd.central)} a month on the launcher’s keywords, ${linePct(djAd('paper-airplane-launcher').ratePct.central)} of its September revenue (band ${djBand(djAd('paper-airplane-launcher').monthlyUsd)}) — the heaviest of the four, nearly all of it on “gifts for 8 year old boys”. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/doctor-jupiter/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/doctor-jupiter/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series from
+                   the SAME numbers (seed-doctor-jupiter.ts COST_LINES, generated
+                   from pnl.json): DJ_BLEND + 15% referral + DJ_AD's rate.
+                   66.124% off leaves 33.876%. Until 2026-10-18 the cost to make
+                   was a $3.00–4.00 placeholder and ads an assumed 5%. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: DJ_AVG_SALE },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -DJ_BLEND.cogs,
+                    emphasis: true,
+                    detail: 'Each product’s Alibaba cost to make, on September’s mix — $3.86 for the first kit, $6.90 for the Ultimate, $3.25 for the Preschool kit, $2.59 for the launcher — with the rest of the catalogue at the same share. See each product’s tab for its suppliers.',
+                  },
+                  { label: 'Tariff', pct: -DJ_BLEND.tariff, detail: 'Assumed: 20% of the cost to make, on a China origin.' },
+                  { label: 'Shipping', pct: -DJ_BLEND.freight, detail: 'Each product’s carton at the same Freightos sea-freight rate, on September’s mix.' },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s published Toys & Games rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -DJ_BLEND.fba,
+                    detail: 'Size tier: Large Standard. Every product’s best seller is a flat box of 1.3 to 2.1 in and well over a pound — the hero, B09XGMHGJ3, is 13.4 × 10.0 × 2.0 in and 1.65 lb — and the pick-and-pack fees run $5.61 to $6.37. On September’s mix, the largest cost line.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -DJ_AD.ratePct.central,
+                    detail: `Modelled, not observed: ${linePct(DJ_AD.ratePct.central)} of revenue — amazon-adspend-spy’s rate on the four products (about ${monthUsd(DJ_AD.monthlyUsd.central)} a month on them, band ${djBand(DJ_AD.monthlyUsd)}), applied here to the whole brand. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/doctor-jupiter/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/doctor-jupiter/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit. The profit series uses this September breakdown for every month; earlier months had a different mix of kits, so they show the shape of the series, not their own margins.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon is paid more than the factory. The referral fee and the pick-and-pack fee together take well over a third of every sale, against about a sixth for making the kit, because a box of labware is light, flat and wide — the shape that sits just inside Large Standard. The Ultimate kit is the exception that shows how much the cost to make matters: on its single listing it costs twice what the first kit does and keeps about a quarter of its price, not a third.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The line that could move this margin most is the cost to make, and for three of the four products it rests on one Alibaba listing each. Every dollar it moves on the first kit moves the whole brand’s margin by more than two points. The tariff assumes China; their own manufacturer is Indian.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-17, read at New York 10001. */
+        type: 'strategy',
+        label: DJ_AD.strategy,
+        points: [
+          'Almost none of the modelled spend is on their own name. It sits on searches that name an age: science-kit ones such as “science kits for kids age 5-7”, where theirs are nearly all the ads, and “age 8-12”, and gift ones such as “gifts for 8 year old boys” for the launcher and “gifts for 4 year old boys”.',
+          'Of the fifteen biggest generic searches their listings rank on, they buy two: “science kits for kids age 8-12”, and “4 year old girl birthday gifts”, where an ad of theirs was second in the New York read. They do not buy “5 year old girl birthday gift”, “toys for 4 year old boys”, “stem toys” or “national geographic kit”.',
+          'Ads of theirs were seen on 48 keywords read one by one and on about 130 smaller ones estimated from a sample, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside.',
+          'Off Amazon, the Meta, Google and TikTok ad libraries were not read, so their spend there is unknown.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: DJ_TOP_KEYWORDS,
+        visibleRows: 10,
+        note: `Jungle Scout, for the four products’ listings: exact-match monthly searches and the best organic position any of them held, among the fifty biggest keywords where one ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(topSpend(DJ_TOP_KEYWORDS))} of the ${monthUsd(DJ_AD.monthlyUsd.central)} a month on the four products; the rest is on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(DJ_AD_KEYWORDS, DJ_AD_KEYWORDS_TOTAL, DJ_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, the first kit ranks in the top five on “science kit”, “kids science kit” and “science kits for kids age 5-7”, and between the late teens and the forties on the big birthday-gift searches by age. Their largest science-kit ad keyword, “science kits for kids age 5-7”, is one it already ranks fifth on, and nearly every sponsored result there is theirs: the ads add a second place on a page they already hold, while the biggest gift pages go unbought.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The launcher is bought differently. Nearly all of its modelled spend is on one gift search, “gifts for 8 year old boys”, where it ranks only 81st on its own — the one place on this page where the ads buy a position the listing has not earned.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(DJ_AD.monthlyUsd.central)} a month on the four products, ${linePct(DJ_AD.ratePct.central)} of their revenue — modelled`,
+            counted: 'Ads on 48 keywords read and about 130 estimated — Jungle Scout share of voice; a New York read of 16 searches',
+            flag: true,
+            note: `amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid; band ${djBand(DJ_AD.monthlyUsd)}. The 100 largest keywords with an ad of theirs were read one by one and the smaller ones estimated from a stratified sample. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because no row here was sponsored-dominant enough to measure one. A floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The margin applies the same rate to the rest of the catalogue; the Ad spend table below is exactly what it takes off.`,
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: no ad library was read.',
+      },
+      {
+        /* The Margin breakdown's advertising lines, row for row, built from
+           DJ_AD: one row per product tab, the rest of the catalogue at the same
+           rate, and the Whole brand line. check-profile fails if they drift. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...DJ_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${djBand(p.monthlyUsd)}`]),
+          ['The rest of the catalogue', monthUsd(DJ_REST.month), linePct(DJ_AD.ratePct.central), lineUsd((DJ_REST.avgSale * DJ_AD.ratePct.central) / 100), 'The four products’ rate, applied: not modelled keyword by keyword'],
+          ['Total — the margin line', monthUsd(DJ_AD_MONTH), linePct(DJ_AD.ratePct.central), lineUsd((DJ_AVG_SALE * DJ_AD.ratePct.central) / 100), `Modelled: ${djBand(DJ_AD.monthlyUsd)} on the four products`],
+        ],
+        note: 'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of each product’s average sale, and of the $26.65 brand average on the last row.',
+      },
+
+      /* Socials and traffic OMITTED: doctorjupiter.com answers with a bot check,
+         and no social account, press or retail listing was found. An empty
+         section would read as "looked and found nothing". */
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'METIS INTERNATIONAL DMCC', note: 'Trading on Amazon as Doctor Jupiter_USA' },
+          { label: 'Amazon seller', value: 'A3ACVJQV2VBG6P', note: 'Doctor Jupiter_USA' },
+          { label: 'Address', value: 'Unit 309, Gold Crest Executive, JLT, Dubai', note: 'Jumeirah Lakes Towers, as Amazon’s seller record gives it' },
+          { label: 'Manufacturer on the listings', value: 'Metis Learning Solutions Pvt. Ltd.', note: 'An Indian company form' },
+          { label: 'Seller feedback', value: '100%', note: 'Over 533 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '26 Apr 2022', note: 'The first Doctor Jupiter kit' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'The seller is a company in Dubai’s free zone, and the manufacturer on every listing is Metis Learning Solutions Pvt. Ltd., a name that shares the seller’s and takes an Indian company form; one third-party listing elsewhere says the kits are made in India. No founder, press coverage, social account or retailer was found. The storefront’s second brand, Learnabee, shares its name with a Malaysian company, Learnabee International Sdn Bhd, and how the two connect is not established. Nobody at the company has spoken to us: every fact here comes from Keepa, Amazon and the public web.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model — a base multiple moved by what the public record supports — applied to trailing-twelve profit, and it prices Doctor Jupiter on Amazon US alone.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Their own site is excluded: it exists and could not be read. The profit being multiplied rests on Alibaba listing prices for the cost to make and an assumed China tariff, and deducts no overhead, so on that basis this figure is an upper bound.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The positives are what has been built: over 10,000 reviews at 4.6 stars across the largest listings, a spotless seller record, an enrolled brand store and three measured Christmases, each bigger than the last. The negatives are the shape of the year and of the catalogue: December carries well over a third of the trailing year, all of it on Amazon US, and one kit carries most of the revenue — a kit that factories already list near-identical versions of.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Four inputs are inferences rather than reads. Sourcing, catalogue shape and the differentiation level are questionnaire answers taken from the public record, and fulfilment is read from the listings’ fees; Brand Registry is firmer, since Amazon gates the brand store behind it. The age is dated from the first Doctor Jupiter kit in April 2022, not the two Learnabee board books listed in 2021. All of them are the first things to put to the owner.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. The published estimate is created by
+         make-validation-launch.mjs (--variants: the girls' edition of the first
+         kit, the Ultimate on ages-8-to-12 searches, the launcher on airplane
+         searches; --products leaves out the Preschool kit, whose searches have
+         no competing listing with enough modelled clicks to set a pass line).
+         These blocks carry no data; each first order links to its product tab's
+         #landed-cost by default. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether a copy sells, before you commit to a full launch — tested on the first kit, the Ultimate kit and the launcher. The Preschool kit is left out: its searches had too few competing listings measured to set a pass line.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
+    ],
+  },
+  'woodlands-usa': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-woodlands-usa-headline.ts,
+       generated from waithowmuch-research research/woodlands-usa/headline.json
+       (RE-DRAFTED 2026-10-18, awaiting the owner's approval) — and the page
+       reads them from the row alone. The image is the plain 6-piece bamboo set,
+       B0D5NLZSZS, the best seller. 🚨 Never a franchise set. */
+    headline: {
+      image: {
+        src: woodlandsPhoto('B0D5NLZSZS'),
+        alt: 'Six bamboo cooking utensils — spatulas, a slotted spoon, a fork and spoons — held in a green card sleeve printed “Woodlands Bamboo Utensil Set, 6 piece set”',
+      },
+    },
+
+    valuation: {
+      inputs: {
+        answers: {
+          /* INFERENCES from the public record. Their own brand on the plain and
+             teak listings and the buy box theirs on almost all of it; who makes
+             the goods is not named. */
+          primaryMethod: 'private_label',
+          /* Flagship: one bamboo set, in seven variations, is two thirds of
+             September; a teak line sits beside it. */
+          catalogStructure: 'flagship',
+          /* Level 1, an inference. The best seller is a plain six-piece bamboo
+             set that Alibaba suppliers list as a stock item from $0.95; the
+             visible differences in the range are the franchise engravings,
+             which are not theirs to differentiate with. */
+          diffTooling: 'no',
+          diffCustom: 'no',
+          diffVisible: 'no',
+          /* A READ: the Brand Store at /stores/WOODLANDSUSA is gated behind
+             Brand Registry enrolment. */
+          brandRegistry: 'yes',
+          /* 🚨 The IP risk, through the model's own input (owner's call,
+             2026-10-15: show it in the valuation, through the model). The model
+             has no "unlicensed third-party IP" answer; `issues: 'open'`
+             ("Unresolved account or IP issue", −0.8) is the existing input for
+             an open IP exposure, so it is used here. It is an INFERENCE from
+             what the listings show — three sets titled for film franchises with
+             no licence shown — not a known complaint: none is on the public
+             record. The Valuation prose says so. */
+          issues: 'open',
+        },
+        derived: {
+          /* RULE 1: the plain 6-piece set B0D5NLZSZS, listed 2024-11-09 — the
+             catalogue's first listing, in the whole series. */
+          sellingSince: '2024-11-09',
+          /* Distinct review pools across the storefront (Keepa): the bamboo
+             set family 1,771, teak spoons and sets 438, dough whisk 280,
+             spatulas 161 + 90 + 83, ladles 108, tongs 105 + 32. */
+          reviewTotal: 3068,
+          ratingWeighted: 4.6,
+          sellerFeedbackPct: 93,
+          /* Every listing ships from Amazon. */
+          channels: 'fba',
+          /* RULE 2. A seller account exists on Amazon Canada with no ratings;
+             Amazon US is all of the measured revenue. */
+          topMarketplaceSharePct: 100,
+          marketplaces: ['US', 'CA'],
+          /* From score-valuation.mjs, never typed. */
+          peakMonthSharePct: 28.02,
+          /* RULE 3: offAmazonSharePct unset — no channel off Amazon was found. */
+        },
+      },
+      basis:
+        'Trailing-twelve net profit at a modelled multiple, with the franchise-titled sets scored as an open IP issue. WOODLANDS USA on Amazon US only.',
+      note: 'Base 2.6, adjusted by what the public record supports — including an open IP issue for the franchise-titled sets.',
+    },
+
+    facts: [
+      /* Keepa seller AJ7EHD6HZ4QZ2, storefront=1: 27 ASINs, 26 priced, 20 badged. */
+      { label: 'SKUs', value: '27', note: 'Bamboo utensil sets, a teak line of sets, spatulas, ladles, spoons with rests, tongs, a dough whisk and a bread lame', info: 'skus' },
+      /* The best seller's own breadcrumb (Keepa categoryTree, B0D5NLZSZS). */
+      {
+        label: 'Category',
+        value: 'Home & Kitchen › Kitchen & Dining › Kitchen Utensils & Gadgets › Cooking Utensils › Utensil Sets',
+        note: '#531 in Home & Kitchen for the best seller',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '3,068', note: 'Across the storefront’s review pools; the bamboo sets share 1,771', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'The bamboo sets; the teak line reads 4.2 to 4.7', info: 'rating' },
+      { label: 'Seller feedback', value: '93%', note: 'Over 247 ratings', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own brand on stock bamboo and teak utensils; the maker is not named — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Flagship + complementary', note: 'One bamboo set carries most of the revenue, a teak line beside it — an inference', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 1 and an inference — see valuation.answers. */
+      { label: 'Differentiation', value: 'Level 1', note: 'A standard bamboo set factories list as stock; the engraved designs that set some apart are franchise ones — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note: 'The only channel found, and the whole of the revenue on this profile. The seller holds the buy box on nearly all of it; a second account holds a little of it on the themed sets.',
+      },
+      /* 'unchecked', not 'no': the account exists on Canada with no ratings. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'A seller account exists on Amazon Canada with no ratings, and none was found on the UK or Germany.',
+      },
+      'own-store': {
+        status: 'no',
+        note: 'No website was found for the brand. A closed Shopify store at woodlandsamerica.com is not confirmed as theirs.',
+      },
+      /* tiktok-shop, wholesale-out, other-marketplace left unchecked: one eBay
+         listing of the bamboo set comes from a Miami seller, which may be a
+         reseller; nobody looked further. */
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Every listing ships from Amazon: the margin charges Amazon’s pick-and-pack fee.',
+      },
+      'vendor-1p': { status: 'no', note: 'Amazon sells none of the listings itself.' },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own brand on bamboo and teak utensils. Who makes them is not named; the brand string also carries dead listings for “Indonesian Handcrafted” shelves.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/WOODLANDSUSA, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'WOODLANDS USA sells bamboo and teak cooking utensils on Amazon, from a Wyoming company registered at an agent’s address. A plain bamboo set carries most of it — and three of its sets are titled for film franchises with no licence shown.',
+
+    blocks: [
+      { type: 'heading', text: 'Six bamboo spoons in a card sleeve' },
+      {
+        type: 'prose',
+        text:
+          'The best seller is a six-piece bamboo set — spatulas, spoons and a slotted spoon in a printed sleeve — sold beside three- and seven-piece versions of the same set. In September 2025 a teak line followed: utensil sets from seven to thirty pieces in holders, spatulas and spurtles, ladles, spoons with rests, tongs, a Danish dough whisk and a bread lame.',
+      },
+      {
+        /* 🚨 Owner's call, 2026-10-15: say it clearly, as an observed fact —
+           what the listings show and what they do not — never as an accusation. */
+        type: 'callout',
+        text:
+          'Three of the bamboo sets are titled for film franchises: “Harry Gifts for All Potter Fans”, “Star Warz gifts … for Space Wars Fans” and “Nightmare … Before Christmas”. One carries the Harry Potter name and franchise imagery on its listing images. No licence is shown on any of the three listings, and nothing on them names a licence holder. Those three sets made more than half of December 2025 and a fifth of September 2026. This page shows none of their images.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The brand's own listing photos, in our
+         bucket. Plain bamboo and teak only. */
+      {
+        type: 'images',
+        items: [
+          { src: woodlandsPhoto('B0D5NLZSZS'), alt: 'Six bamboo utensils standing in a green card sleeve printed “Woodlands Bamboo Utensil Set, 6 piece set”' },
+          { src: woodlandsPhoto('B0FD7KZYLV'), alt: 'A teak utensil set laid out: a whisk, spoons, a ladle, slotted and solid spatulas and a spoon rest' },
+          { src: woodlandsPhoto('B0FD7RVW83'), alt: 'Two flat teak spatulas with a dark green two-piece box' },
+        ],
+        caption: 'The plain bamboo set, the teak utensil set and the teak spatulas, as the brand’s own Amazon listings show them.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text: 'A bamboo set and its franchise-titled siblings in late 2024, a quiet 2025, a teak line, and a December more than half made by the franchise sets.',
+      },
+      {
+        /* Oldest first. Month-end revenue events date to the last day of the month. */
+        type: 'timeline',
+        items: [
+          {
+            when: '26 Apr 2024',
+            tag: 'Amazon',
+            what: 'The seller account is first seen',
+            detail: 'WOODLANDS AMERICA LLC, registered at an agent’s address in Casper, Wyoming.',
+          },
+          {
+            when: '9 Nov 2024',
+            tag: 'Amazon',
+            what: 'The plain six-piece bamboo set is listed',
+            detail: 'B0D5NLZSZS: the first listing in the catalogue, and the best seller today.',
+          },
+          {
+            when: '12 Nov 2024',
+            tag: 'Amazon',
+            what: 'Themed versions of the set: three titled for film franchises',
+            detail: 'Listed with a Christmas set and a seven-piece set. No licence is shown on the three franchise-titled listings.',
+          },
+          {
+            when: '31 Dec 2024',
+            tag: 'Amazon',
+            what: '6,100 sold in the first December',
+            detail: 'About $109K, 57% of it from the franchise-titled sets.',
+          },
+          {
+            when: '28 Feb 2025',
+            tag: 'Amazon',
+            what: 'Nine months on one listing',
+            detail: 'From February to October 2025 the themed sets carried no sold badge, and the plain six-piece sold 500 to 2,000 a month on its own.',
+          },
+          {
+            when: '21 Sep 2025',
+            tag: 'Amazon',
+            what: 'The teak line',
+            detail: 'A dough whisk on 2 September, teak utensil sets and spoons on the 3rd, spatulas and ladles on the 21st.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '14,050 sold — the biggest month on record',
+            detail: 'About $307K, 56% of it from the three franchise-titled sets.',
+          },
+          {
+            when: '1 May 2026',
+            tag: 'Amazon',
+            what: 'Twenty- and thirty-piece teak sets',
+            detail: 'The largest sets in the range, at $69.99 for twenty pieces.',
+          },
+          {
+            when: '14 Jun 2026',
+            tag: 'Amazon',
+            what: 'A three-piece bamboo set at $10.99',
+            detail: 'By September the second-best seller.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '6,550 sold in September',
+            detail: 'The plain six-piece set, down to $8.99, was the best seller; the franchise-titled sets were a fifth of the month.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'The year turns on December. The first December sold more than the ten months after it put together; the second, with the teak line on sale, was nearly three times the first, and the months since have held well above anything before it. Something under a quarter of each month is kept, after Amazon’s two fees, the cost to make, an assumed tariff, freight and modelled advertising: on a set that now sells for $8.99, Amazon’s pick-and-pack fee is the largest cost.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Prices have fallen hard. The plain six-piece went from $14.99 in December 2024 to $13.99 a year later and $8.99 in September 2026, and the themed sets from $24.99 to $14.99. The series prices every month at its own month-end buy box, so the Christmas months are not marked down to today’s prices.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Owner's call: the franchise point where the franchise sets appear. */
+        type: 'callout',
+        text:
+          'The franchise-titled sets, with no licence shown, made 56% of December 2025 and 21% of September 2026 — about a third of the trailing year. Amazon removes a listing that uses another company’s marks when that company complains, and their share of the business is what would go with them.',
+      },
+      {
+        /* 🚨 Canada is in at 0% on a seller lookup: the account has no ratings.
+           The largest share is valuation derived.topMarketplaceSharePct. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Seller account with no ratings' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada was checked for a seller account and no further.',
+      },
+      {
+        /* September's badges × each listing's own month-end buy box
+           (revenue-corrected.json): every badged listing, so the rows sum to
+           the 2026-09 revenue row exactly (check-profile asserts it).
+           🚨 The three franchise-titled rows carry NO image, on purpose (owner's
+           call, 2026-10-15: no franchise art on the page); check-profile warns. */
+        type: 'breakdown',
+        intro: 'The plain sets lead. The three franchise-titled sets are rows three, eight and nine.',
+        items: [
+          { name: 'Bamboo utensil set, 6 pieces', asin: 'B0D5NLZSZS', listed: '2024-11-09', sold: 2000, price: 8.99, revenue: 17980, image: woodlandsPhoto('B0D5NLZSZS') },
+          { name: 'Bamboo utensil set, 3 pieces', asin: 'B0FD7F9MSK', listed: '2026-06-14', sold: 1000, price: 10.99, revenue: 10990, image: woodlandsPhoto('B0FD7F9MSK') },
+          { name: 'Bamboo set titled “Harry Gifts for All Potter Fans” — no licence shown', asin: 'B0D5NFN2YG', listed: '2024-11-12', sold: 700, price: 14.99, revenue: 10493 },
+          { name: 'Bamboo utensil set, 7 pieces', asin: 'B0FD7G48D4', listed: '2024-11-12', sold: 400, price: 14.99, revenue: 5996, image: woodlandsPhoto('B0FD7G48D4') },
+          { name: 'Teak utensil set, 8 pieces', asin: 'B0FD7KZYLV', listed: '2025-09-03', sold: 200, price: 27.99, revenue: 5598, image: woodlandsPhoto('B0FD7KZYLV') },
+          { name: 'Danish dough whisk', asin: 'B0FD7S11QM', listed: '2025-09-02', sold: 400, price: 8.99, revenue: 3596, image: woodlandsPhoto('B0FD7S11QM') },
+          { name: 'Teak spatulas, 2 pieces', asin: 'B0FD7RVW83', listed: '2025-09-21', sold: 400, price: 7.99, revenue: 3196, image: woodlandsPhoto('B0FD7RVW83') },
+          { name: 'Bamboo set titled “Nightmare … Before Christmas” — no licence shown', asin: 'B0D5NHG5K6', listed: '2024-11-12', sold: 200, price: 14.99, revenue: 2998 },
+          { name: 'Bamboo set titled “Star Warz gifts … for Space Wars Fans” — no licence shown', asin: 'B0D5NQJ3VZ', listed: '2024-11-12', sold: 200, price: 14.99, revenue: 2998 },
+          { name: 'Teak ladle set with spoon rest, large', asin: 'B0FD7PVQTG', listed: '2025-09-21', sold: 100, price: 24.99, revenue: 2499, image: woodlandsPhoto('B0FD7PVQTG') },
+          { name: 'Teak spatula, long handle', asin: 'B0FD7QXJS6', listed: '2025-09-21', sold: 300, price: 7.99, revenue: 2397, image: woodlandsPhoto('B0FD7QXJS6') },
+          { name: 'Teak utensil set, 12 pieces', asin: 'B0FD7LZW9B', listed: '2025-09-03', sold: 50, price: 39.99, revenue: 1999.5, image: woodlandsPhoto('B0FD7LZW9B') },
+          { name: 'Teak ladle with spoon rest', asin: 'B0FD7NT7GH', listed: '2025-09-21', sold: 100, price: 14.99, revenue: 1499, image: woodlandsPhoto('B0FD7NT7GH') },
+          { name: 'Walnut tongs', asin: 'B0FRFCDK74', listed: '2025-11-05', sold: 50, price: 19.99, revenue: 999.5, image: woodlandsPhoto('B0FRFCDK74') },
+          { name: 'Danish dough whisk with bread lame', asin: 'B0FSKQ3WB9', listed: '2025-09-02', sold: 100, price: 9.99, revenue: 999, image: woodlandsPhoto('B0FSKQ3WB9') },
+          { name: 'Teak tongs', asin: 'B0FD7RGYWG', listed: '2025-11-05', sold: 50, price: 18.99, revenue: 949.5, image: woodlandsPhoto('B0FD7RGYWG') },
+          { name: 'Teak corner spoon with spoon rest', asin: 'B0FD7HK25C', listed: '2025-09-03', sold: 100, price: 8.98, revenue: 898, image: woodlandsPhoto('B0FD7HK25C') },
+          { name: 'Teak spoon with spoon rest', asin: 'B0FD86K3FY', listed: '2025-09-03', sold: 100, price: 8.98, revenue: 898, image: woodlandsPhoto('B0FD86K3FY') },
+          { name: 'Teak spurtle, 12 in', asin: 'B0FD7T6VVF', listed: '2025-09-21', sold: 100, price: 6.99, revenue: 699, image: woodlandsPhoto('B0FD7T6VVF') },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times each listing’s buy box at the month’s end, so every row is a floor. The other storefront listings carry no badge and count as zero. The revenue is everyone selling on these listings: a second account held some of the buy box on the themed sets, and this seller’s own share of the month is 97%. The franchise-titled rows are shown without their images.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is Alibaba listing prices, and the tariff assumes the goods are made in China, which the listings do not say.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text: 'Amazon US, through Amazon’s warehouses, is the only channel found — and on the themed sets a second seller account shares the listing.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Every listing ships from Amazon, and Amazon sells none of them itself. No brand website or social account was found. On the three franchise-titled sets and two of the plain ones a second account, TroVolt (SOUNDLY LLC), held between 2% and 12% of the buy box over the last 90 days; its own storefront lists only two of the themed sets, and it gives the same Casper registered-agent address — one thousands of companies share, so it proves nothing about who runs it. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of an $11.86 average sale, a little under a quarter is left once Amazon’s two fees, the cost to make, a tariff, freight and advertising are paid — and Amazon’s pick-and-pack fee costs about twice what making the set does.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Three products carry the brand. In September the bamboo set, in all its versions, was 66% of revenue, the teak utensil set 10% and the teak spatulas 8%: together the first set to reach 80%, so each has its own breakdown below and the whole brand, at September’s mix, comes last. Every cost to make is a price listed on Alibaba, read by Alibaba’s own sourcing agent rather than quoted back to a request, and one price covers every version of a product.',
+      },
+      {
+        /* 🚨 One breakdown per main product (SKILL §2, "Products"): 66.2%, 9.8%
+           and 8.1% of September, the first set to reach 80%. Tab ids are the
+           "Test it first" product ids. Per-unit figures are WL_COST (pnl.json);
+           the `all` tab is WL_BLEND = the seed's COST_LINES. */
+        type: 'product-margins',
+        period: '2026-09',
+        products: [
+          {
+            id: 'bamboo-set',
+            label: 'Bamboo utensil set',
+            sharePct: 66.2,
+            blocks: [
+              {
+                /* 🚨 Owner's call: the franchise point where the franchise sets appear. */
+                type: 'callout',
+                text:
+                  'This product includes the three franchise-titled sets — no licence shown — at $14.99 in September, a third of the bamboo set’s revenue. The cost to make below prices a plain set; the margin is the same for the themed ones only if their engraving costs nothing extra.',
+              },
+              {
+                /* Standard supplier columns. suppliers.json (Accio run
+                   accio/bamboo-set/2026-10-17T2225, verified against its
+                   screenshots): the three suppliers priced, by track record. The
+                   request was for plain and generic-engraved sets only, never
+                   franchise art. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a six-piece bamboo set costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Yiwu Zuqa Craft Co., Ltd.', 'Verified · 10 yrs', '4.7★ from 855 (store)', '—', '10 sets', '$2.50'],
+                  ['Nanping Jianyang District Hejiale Bamboo Wood Household Supplies Co., Ltd.', 'Verified · 8 yrs', '4.6★ from 41 (store)', '—', '50 sets', '$1.55–2.29'],
+                  ['Yiwu Nice Daily Necessities Co., Limited', 'Not verified · 8 yrs', '4.5★ from 322 (store)', '—', '50 sets', '$0.95–1.29'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(WL_COST['bamboo-set'].make)],
+                ],
+                note:
+                  'Three six-piece bamboo sets from suppliers in China, each priced at the tier nearest the brand’s own yearly sales of the set, about 54,000 — $2.50 (Yiwu Zuqa lists one price), $1.55 from 10,000 sets and $0.95 from 2,000 — and averaged. They are listed prices, read by Alibaba’s sourcing agent (Accio) in a search, not quotes negotiated for an order, and none includes a logo or a box: Nanping Jianyang lists a logo from $0.20 a set and packaging from $0.50. A fourth listing was read and not priced, a five-piece set kept as the engraving reference (a graphic from $0.20 a set, from 1,000). Searched “bamboo cooking utensil set 6 pieces” and “custom laser engraved bamboo spoon set”, suppliers rated 4.5 or better with five years or more on Alibaba.',
+              },
+              {
+                /* Freightos CN-USWC low end, calibration/freight-rates.json, read
+                   2026-09-28. Volume: the six listings' units-weighted Keepa
+                   package (starting-cost.bamboo-set.inputs.json cbmPerUnit). */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one set from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '30.6 × 25.5 × 2.4 cm, 0.28 kg', 'Keepa’s package for B0D5NLZSZS, the plain six-piece'],
+                  ['Volume', '0.00145 cbm', 'The six listings’ boxes, weighted by September’s units; the six-piece alone is 0.00187'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per set', '$0.72', '0.00145 cbm × $497'],
+                ],
+                note: 'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per set',
+                noteColumns: [2],
+                columns: ['Line', 'Per set', 'From'],
+                rows: [
+                  ['Production', lineUsd(WL_COST['bamboo-set'].make), 'Three Alibaba suppliers’ listed prices, averaged — COGS table above'],
+                  ['Tariff', lineUsd(WL_COST['bamboo-set'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(WL_COST['bamboo-set'].freight), 'The set’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(WL_COST['bamboo-set'].landed), 'What one set costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 23.8% of the $11.43 average sale. “Test it first” prices its first order on this same figure.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average selling price', value: WL_COST['bamboo-set'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: wlPct('bamboo-set', WL_COST['bamboo-set'].make),
+                    amount: WL_COST['bamboo-set'].make,
+                    detail: 'Three Alibaba suppliers’ listed prices for a plain six-piece set, averaged: listing prices, not a negotiated quote, and no logo or box in them.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: wlPct('bamboo-set', WL_COST['bamboo-set'].tariff),
+                    amount: WL_COST['bamboo-set'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, the rate this site uses for goods made in China. The listings do not say where the sets are made.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: wlPct('bamboo-set', WL_COST['bamboo-set'].freight),
+                    amount: WL_COST['bamboo-set'].freight,
+                    detail: 'The set’s own carton at a read sea-freight rate from China, door to door.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: WL_COST['bamboo-set'].referral,
+                    detail: 'Amazon’s published Home & Kitchen rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa product record for B0D5NLZSZS, read 2026-10-15: package
+                       306 × 255 × 24 mm, 281 g; pickAndPackFee 383 cents. The
+                       themed and 7-piece boxes are 14–16 mm thick (Small
+                       Standard by thickness) at $2.86–4.76; units-weighted $3.59. */
+                    label: 'FBA fulfilment',
+                    pct: wlPct('bamboo-set', WL_COST['bamboo-set'].fba),
+                    amount: WL_COST['bamboo-set'].fba,
+                    emphasis: true,
+                    detail:
+                      'Size tier: Large Standard. The best seller’s box, B0D5NLZSZS, is 12.0 × 10.0 × 0.94 in and 9.9 oz — the 0.94 in is over Small Standard’s 0.75 in — and Amazon charges $3.83 to pick and pack it. The thinner themed boxes sit inside Small Standard at $2.86; weighted by September’s units the fee is $3.59, more than twice what the set costs to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -wlAd('bamboo-set').ratePct.central,
+                    amount: wlAd('bamboo-set').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(wlAd('bamboo-set').monthlyUsd.central)} a month on the set’s keywords, ${linePct(wlAd('bamboo-set').ratePct.central)} of its September revenue (band ${wlBand(wlAd('bamboo-set').monthlyUsd)}), half of it on “wooden utensil set”. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/woodlands-usa/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/woodlands-usa/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'teak-utensil-set',
+            label: 'Teak utensil set',
+            sharePct: 9.8,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/teak-utensil-set/2026-10-17T2227.
+                   🚨 Both listings scaled to 8 pieces by piece count (owner's call,
+                   2026-10-18): $11.79 × 8/9 and $8.99 × 8/10. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what an eight-piece teak set costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Guangzhou Raybin Homewares Co., Ltd.', 'Verified · 9 yrs', '4.9★ from 901 (store)', '—', '50 sets', '$6.40–8.04'],
+                  ['Caoxian Huashen Arts And Crafts Co., Ltd.', 'Not verified · 8 yrs', '4.8★ from 4,564 (store)', '—', '100 sets', '$10.48–10.66'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(WL_COST['teak-utensil-set'].make)],
+                ],
+                note:
+                  'Two teak utensil sets with a holder and a spoon rest, from suppliers in China. Neither is eight pieces: Caoxian Huashen’s is nine and Guangzhou Raybin’s ten, so each listed price is scaled to the brand’s eight-piece set by piece count — $11.79 × 8/9 and $8.99 × 8/10 — and the prices above are the scaled ones. Each is taken at the tier nearest the brand’s yearly sales of the set, about 3,000: $10.48 from 300 sets and $7.19 from 2,000, then averaged. Listed prices read by Alibaba’s sourcing agent (Accio) in a search, not quotes negotiated for an order, with no logo or box in them. Two more listings were read and not priced: an “acacia teak” set whose wood is not confirmed as teak, and one with no quantity tiers. Searched “teak wood kitchen utensil set 8 pieces” and “teak cooking utensils set with spoon rest”, suppliers rated 4.5 or better with five years or more on Alibaba.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one teak set from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '35.1 × 11.6 × 10.2 cm, 0.72 kg', 'Keepa’s package for B0FD7KZYLV, the eight-piece set'],
+                  ['Volume', '0.00433 cbm', 'The two listings’ boxes, weighted by September’s units'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per set', '$2.15', '0.00433 cbm × $497'],
+                ],
+                note: 'The same Freightos reading as the bamboo set: the low end of the door-to-door band, duty excluded. A set standing in its holder ships a box three times the bamboo set’s volume.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per set',
+                noteColumns: [2],
+                columns: ['Line', 'Per set', 'From'],
+                rows: [
+                  ['Production', lineUsd(WL_COST['teak-utensil-set'].make), 'Two Alibaba suppliers’ listed prices, scaled to eight pieces and averaged — COGS table above'],
+                  ['Tariff', lineUsd(WL_COST['teak-utensil-set'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(WL_COST['teak-utensil-set'].freight), 'The set’s carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(WL_COST['teak-utensil-set'].landed), 'What one set costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 42.0% of the $30.39 average sale, the dearest of the three to make.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average selling price', value: WL_COST['teak-utensil-set'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: wlPct('teak-utensil-set', WL_COST['teak-utensil-set'].make),
+                    amount: WL_COST['teak-utensil-set'].make,
+                    emphasis: true,
+                    detail: 'Two Alibaba suppliers’ listed prices for nine- and ten-piece teak sets, each scaled to eight pieces by piece count and averaged: a listing price, not a negotiated quote.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: wlPct('teak-utensil-set', WL_COST['teak-utensil-set'].tariff),
+                    amount: WL_COST['teak-utensil-set'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, on a China origin. The teak may be Indonesian — dead listings under the brand are “Indonesian Handcrafted” shelves — where the reciprocal rate is about 19%, so the line would barely move.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: wlPct('teak-utensil-set', WL_COST['teak-utensil-set'].freight),
+                    amount: WL_COST['teak-utensil-set'].freight,
+                    detail: 'The set’s own carton at the same sea-freight rate.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: WL_COST['teak-utensil-set'].referral,
+                    detail: 'Amazon’s published Home & Kitchen rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa B0FD7KZYLV: 351 × 116 × 102 mm, 721 g, pickAndPackFee
+                       602 cents; B0FD7LZW9B $6.13; weighted $6.04. */
+                    label: 'FBA fulfilment',
+                    pct: wlPct('teak-utensil-set', WL_COST['teak-utensil-set'].fba),
+                    amount: WL_COST['teak-utensil-set'].fba,
+                    detail: 'Size tier: Large Standard. The best seller’s box, B0FD7KZYLV, is 13.8 × 4.6 × 4.0 in and 1.59 lb — over Small Standard’s 0.75 in and 16 oz — and Amazon charges $6.02 to pick and pack it; with the twelve-piece set, $6.04.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -wlAd('teak-utensil-set').ratePct.central,
+                    amount: wlAd('teak-utensil-set').perUnit,
+                    detail: `Modelled, not observed: about ${monthUsd(wlAd('teak-utensil-set').monthlyUsd.central)} a month on the teak set’s keywords, ${linePct(wlAd('teak-utensil-set').ratePct.central)} of its September revenue: almost nothing seen. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/woodlands-usa/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/woodlands-usa/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit.',
+              },
+            ],
+          },
+          {
+            id: 'teak-spatula',
+            label: 'Teak spatulas',
+            sharePct: 8.1,
+            blocks: [
+              {
+                /* suppliers.json, Accio run accio/teak-spatula/2026-10-17T2225. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a teak spatula costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Jiangmen Expands Handicraft Co.,Ltd', 'Verified · 8 yrs', '4.9★ from 267 (store)', '—', '500 sets', '$0.75–0.95'],
+                  ['Hunan Yoshine Houseware Co., Ltd.', 'Not verified · 7 yrs', '4.9★ from 234 (store)', '—', '50 pieces', '$1.98–2.39'],
+                  ['Average lowest price — the cost to make used below', '', '', '', '', lineUsd(WL_COST['teak-spatula'].make)],
+                ],
+                note:
+                  'Two 12-inch teak spatulas from suppliers in China, each priced at the tier nearest the brand’s yearly sales of its spatulas, about 9,600 — $0.75 from 3,000 and $1.98 from 500, Hunan Yoshine’s top tier — and averaged. Listed prices read by Alibaba’s sourcing agent (Accio) in a search, not negotiated quotes; a printed box adds from $0.50. Two more listings were read and not priced: one titled teak whose material reads pine, and a range with no price per model. Searched “teak wood spatula 12 inch” and “teak wooden spatula custom logo”, suppliers rated 4.5 or better with five years or more on Alibaba.',
+              },
+              {
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one spatula from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '30.6 × 6.0 × 1.5 cm, 0.11 kg', 'Keepa’s package for B0FD7RVW83, the two-piece set'],
+                  ['Volume', '0.00065 cbm', 'The three listings’ boxes, weighted by September’s units'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per unit', '$0.32', '0.00065 cbm × $497'],
+                ],
+                note: 'The same Freightos reading as the sets: the low end of the door-to-door band, duty excluded.',
+              },
+              {
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — production, duty and shipping, per spatula listing',
+                noteColumns: [2],
+                columns: ['Line', 'Per unit', 'From'],
+                rows: [
+                  ['Production', lineUsd(WL_COST['teak-spatula'].make), 'Two Alibaba suppliers’ listed prices, averaged — COGS table above'],
+                  ['Tariff', lineUsd(WL_COST['teak-spatula'].tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+                  ['Shipping', lineUsd(WL_COST['teak-spatula'].freight), 'The carton at $497/cbm — shipping table above'],
+                  ['Landed cost', lineUsd(WL_COST['teak-spatula'].landed), 'What one costs to reach Amazon’s door, before it sells'],
+                ],
+                note: 'The first three cost lines of the breakdown below, added up: 24.9% of the $7.87 average sale.',
+              },
+              {
+                type: 'margin',
+                basis: { label: 'Average selling price', value: WL_COST['teak-spatula'].price },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: wlPct('teak-spatula', WL_COST['teak-spatula'].make),
+                    amount: WL_COST['teak-spatula'].make,
+                    detail: 'Two Alibaba suppliers’ listed prices for a 12-inch teak spatula, averaged: listing prices, not a negotiated quote.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: wlPct('teak-spatula', WL_COST['teak-spatula'].tariff),
+                    amount: WL_COST['teak-spatula'].tariff,
+                    detail: 'Assumed: 20% of the cost to make, on the same China basis as the sets.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: wlPct('teak-spatula', WL_COST['teak-spatula'].freight),
+                    amount: WL_COST['teak-spatula'].freight,
+                    detail: 'The carton at the same sea-freight rate.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: WL_COST['teak-spatula'].referral,
+                    detail: 'Amazon’s published Home & Kitchen rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    /* Keepa B0FD7RVW83: 306 × 60 × 15 mm, 109 g, pickAndPackFee
+                       258 cents. B0FD7QXJS6 is 45 mm thick (Large Standard), $3.50. */
+                    label: 'FBA fulfilment',
+                    pct: wlPct('teak-spatula', WL_COST['teak-spatula'].fba),
+                    amount: WL_COST['teak-spatula'].fba,
+                    emphasis: true,
+                    detail: 'Size tier: Small Standard. The best seller’s box, the two-piece B0FD7RVW83, is 12.0 × 2.4 × 0.59 in and 3.8 oz — inside Small Standard’s 15 × 12 × 0.75 in and 16 oz — and Amazon charges $2.58. The single long-handled spatula ships thicker, at 1.77 in, so it is Large Standard at $3.50; weighted by September’s units the fee is $2.98, twice the cost to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    /* 0 is the model's central rate, not a rounding: no ad of theirs
+                       was seen on the spatulas' keywords (adspend.json). */
+                    label: 'Advertising',
+                    pct: -wlAd('teak-spatula').ratePct.central,
+                    amount: wlAd('teak-spatula').perUnit,
+                    detail: 'Modelled at nothing: no ad of theirs was seen on the spatulas’ keywords. A floor — ads on product pages, automatic campaigns, Sponsored Brands and Display are invisible to the model.',
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/woodlands-usa/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/woodlands-usa/advertising/' },
+                    ],
+                  },
+                ],
+                note: 'Before storage, returns and overhead, none of which is modelled: a ceiling on profit, not profit. At this price Amazon’s two fees are over half of a sale, so 20% on ads would leave under 5%.',
+              },
+            ],
+          },
+          {
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
+            blocks: [
+              {
+                /* 🚨 The backend seed builds the profit and ad-spend series from
+                   the SAME numbers (seed-woodlands-usa.ts COST_LINES, generated
+                   from pnl.json): WL_BLEND + 15% referral + WL_AD's rate.
+                   76.246% off leaves 23.754%. Until 2026-10-18 the cost to make
+                   was a placeholder and there was no ad line. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: WL_AVG_SALE },
+                lines: [
+                  {
+                    label: 'Cost of goods',
+                    key: 'cogs',
+                    pct: -WL_BLEND.cogs,
+                    detail: 'Each product’s Alibaba cost to make, on September’s mix — $1.67 a bamboo set, $8.84 a teak set, $1.37 a spatula — with the rest of the catalogue at the same share. See each product’s tab for its suppliers.',
+                  },
+                  { label: 'Tariff', pct: -WL_BLEND.tariff, detail: 'Assumed: 20% of the cost to make, on a China origin.' },
+                  { label: 'Shipping', pct: -WL_BLEND.freight, detail: 'Each product’s carton at the same Freightos sea-freight rate, on September’s mix.' },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    detail: 'Amazon’s published Home & Kitchen rate, a flat 15%.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -WL_BLEND.fba,
+                    emphasis: true,
+                    detail: 'Size tier: Large Standard. The best seller, the plain six-piece B0D5NLZSZS, is 12.0 × 10.0 × 0.94 in and 9.9 oz — just over Small Standard’s 0.75 in — at $3.83 to pick and pack, on a set now sold at $8.99. On September’s mix the largest cost line, nearly twice the cost to make.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -WL_AD.ratePct.central,
+                    detail: `Modelled, not observed: ${linePct(WL_AD.ratePct.central)} of revenue — amazon-adspend-spy’s rate on the three products (about ${monthUsd(WL_AD.monthlyUsd.central)} a month on them, band ${wlBand(WL_AD.monthlyUsd)}), applied here to the whole brand. A floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/woodlands-usa/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/woodlands-usa/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'Before storage, returns, removals and overhead, none of which is modelled: a ceiling on profit, not profit. The profit series uses this September breakdown for every month; the 2024–25 months were the bamboo sets alone at higher prices, so they show the shape of the series, not their own margins.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Amazon is paid more than the factory, by a wide margin. On a set that sells for $8.99 to $14.99, the pick-and-pack fee alone is about twice the cost to make, and the referral fee is about the same again as making it. That is what the price cuts have done: the fees are fixed in dollars, so each dollar off the price comes out of what is left.',
+      },
+      {
+        type: 'callout',
+        text:
+          'The margin is the same whatever the set is engraved with, but the revenue it applies to is not: a third of the trailing year came from the franchise-titled sets, with no licence shown. The cost lines here would not change if those listings went; the business they are a share of would.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-17, read at New York 10001. */
+        type: 'strategy',
+        label: WL_AD.strategy,
+        points: [
+          'Half of the modelled spend is on one search, “wooden utensil set”, the biggest generic one their listings rank on, where theirs are about a quarter of the sponsored results. None is on their own name.',
+          'Of the fifteen biggest generic searches they rank on, they buy three: “wooden utensil set”, “wooden spoons” and “nightmare before christmas gifts”. They do not buy “wooden spoons for cooking”, “cooking utensils”, “wooden spatula” or “harry potter gifts”.',
+          'About a tenth of the modelled spend sits on franchise searches — “nightmare before christmas gifts” and Harry Potter ones — for the sets titled for them.',
+          'Ads of theirs were seen on 39 keywords read one by one and on about 670 smaller ones estimated from a sample, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside. No ad library off Amazon was read.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: WL_TOP_KEYWORDS,
+        visibleRows: 10,
+        note: `Jungle Scout, for the three products’ listings: exact-match monthly searches and the best organic position any of them held, among the fifty biggest keywords where one ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(topSpend(WL_TOP_KEYWORDS))} of the ${monthUsd(WL_AD.monthlyUsd.central)} a month on the three products; the rest is on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(WL_AD_KEYWORDS, WL_AD_KEYWORDS_TOTAL, WL_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, the bamboo sets rank fifth on “wooden spoons” and “wooden spoons for cooking” and ninth on “wooden utensil set”. On the biggest of them they also buy ads; on “wooden spoons for cooking”, nearly as big, they rely on the organic rank alone.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The teak line is barely advertised: under $20 a month was modelled on the teak set and nothing on the spatulas, though the teak set ranks tenth unpaid on “teak wooden utensil set”.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(WL_AD.monthlyUsd.central)} a month on the three products, ${linePct(WL_AD.ratePct.central)} of their revenue — modelled`,
+            counted: 'Ads on 39 keywords read and about 670 estimated — Jungle Scout share of voice; a New York read of 15 searches',
+            flag: true,
+            note: `amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid; band ${wlBand(WL_AD.monthlyUsd)}. The largest keywords with an ad of theirs were read one by one and the smaller ones estimated from a stratified sample. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because no row here was sponsored-dominant enough to measure one. Six keywords over Jungle Scout’s 50-character limit and one with no bid are not modelled. A floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The margin applies the same rate to the rest of the catalogue; the Ad spend table below is exactly what it takes off.`,
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: no ad library was read, and no site or social account was found.',
+      },
+      {
+        /* The Margin breakdown's advertising lines, row for row, built from
+           WL_AD: one row per product tab, the rest of the catalogue at the same
+           rate, and the Whole brand line. check-profile fails if they drift. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...WL_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${wlBand(p.monthlyUsd)}`]),
+          ['The rest of the catalogue', monthUsd(WL_REST.month), linePct(WL_AD.ratePct.central), lineUsd((WL_REST.avgSale * WL_AD.ratePct.central) / 100), 'The three products’ rate, applied: not modelled keyword by keyword'],
+          ['Total — the margin line', monthUsd(WL_AD_MONTH), linePct(WL_AD.ratePct.central), lineUsd((WL_AVG_SALE * WL_AD.ratePct.central) / 100), `Modelled: ${wlBand(WL_AD.monthlyUsd)} on the three products`],
+        ],
+        note: 'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of each product’s average sale, and of the $11.86 brand average on the last row.',
+      },
+
+      /* Socials and traffic OMITTED: no website, social account or press was
+         found for the brand (woodlandsamerica.com is a closed Shopify store not
+         confirmed as theirs). An empty section would read as "looked and found
+         nothing" — which is what the How it sells prose already says. */
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Legal name', value: 'WOODLANDS AMERICA LLC', note: 'Trading on Amazon as WOODLANDS AMERICA' },
+          { label: 'Amazon seller', value: 'AJ7EHD6HZ4QZ2', note: 'WOODLANDS AMERICA' },
+          { label: 'Address', value: '5830 E 2nd St Ste 7000, Casper, WY', note: '82609 — a registered agent’s address, not where they operate' },
+          { label: 'Seller feedback', value: '93%', note: 'Over 247 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '9 Nov 2024' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'WOODLANDS AMERICA LLC is a Wyoming company whose only address on record belongs to a registered agent, so where it actually operates is not known. No founder, website, press or social account was found, and a search for the brand’s own figures turned up nothing. The brand name also sits on twenty dead listings, among them “Indonesian Handcrafted” floating shelves, which may point to where the teak comes from. Nobody at the company has spoken to us: every fact here comes from Keepa, Amazon and the public web.',
+      },
+
+      { type: 'section', id: 'valuation', title: 'Valuation', group: "What it's worth" },
+      {
+        type: 'lede',
+        text:
+          'Nobody has priced this business. What follows is a model — a base multiple moved by what the public record supports — applied to trailing-twelve profit, and the franchise-titled sets take the largest single deduction on it.',
+      },
+      { type: 'valuation' },
+      {
+        type: 'valuation-board',
+        note:
+          'Amazon US is the whole of what is valued; no other channel was found. The profit being multiplied rests on Alibaba listing prices and an assumed China tariff, and deducts no overhead. The open IP issue is an inference from the listings, not a known complaint.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The IP risk enters through the model’s own input for it: an unresolved account or IP issue, which takes 0.8 off the multiple — more than any other single factor on the board. Three of the bamboo sets are titled for film franchises and one carries franchise imagery, with no licence shown on any of them; no complaint against them is on the public record, so this is a reading of the listings, not of a dispute. It matters because of how much rests on them: 56% of December 2025, 21% of September 2026 and about a third of the trailing year’s revenue — the year this multiple is applied to. Without that input the same profit would be valued at well over half as much again.',
+      },
+      {
+        type: 'prose',
+        text:
+          'Past the IP question the record is thin and young: under two years of trading, a standard bamboo set factories list as stock, all of it on Amazon US, more than a quarter of the trailing year in one December, and seller feedback just under the line the model rewards. Against that, the review pools and the 4.6-star rating are real, and the brand store is enrolled in Brand Registry. Sourcing, catalogue shape, the differentiation level and the IP issue itself are inferences from the public record, and they are the first things to put to the owner — the licence question above all.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. The published estimate is created by
+         make-validation-launch.mjs (--variants "bamboo-set=bamboo;teak-utensil-
+         set=teak", --exclude the franchise terms — 🚨 never a franchise
+         version, owner's call — and competitor brands; --products leaves out
+         the spatulas, whose searches have no competing listing with enough
+         modelled clicks to set a pass line). These blocks carry no data. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether a copy sells, before you commit to a full launch — tested on a plain bamboo set and the teak set, never a franchise design. The spatulas are left out: their searches had too few competing listings measured to set a pass line.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
+    ],
+  },
+  'songbird-specialties': {
+    /* 🚨 No headline copy here. The title, subtitle and snapshot month live on
+       the Business row — backend prisma/seed-songbird-specialties-headline.ts,
+       generated from waithowmuch-research research/songbird-specialties/
+       headline.json (a DRAFT awaiting the owner's approval) — and the page
+       reads them from the row alone. The image is the red pourer, B0F1H6B5VJ,
+       the best seller. */
+    headline: {
+      image: {
+        src: songbirdPhoto('B0F1H6B5VJ'),
+        alt: 'The Songbird Specialties wine pourer in red: a small bird carved from acacia wood with a red silicone wing and a brass beak, on a black stopper with a steel pour tube',
+      },
+    },
+
+    /* 🚨 NO `valuation` entry, on purpose: the series has 11 whole months
+       (November 2025 to September 2026), one short of the twelve a
+       trailing-twelve profit needs, and the model would multiply a year that
+       has not happened. Revisit when October 2026 closes the twelfth. */
+
+    facts: [
+      /* Keepa product finder, brand "SONGBIRD SPECIALTIES": 7 ASINs, one product. */
+      { label: 'SKUs', value: '7', note: 'One pourer in seven colours; four carry a sold badge, three were listed in October 2026', info: 'skus' },
+      /* The hero's own breadcrumb (Keepa categoryTree, B0F1H6B5VJ). */
+      {
+        label: 'Category',
+        value: 'Home & Kitchen › Kitchen & Dining › Kitchen Utensils & Gadgets › Bar & Wine Tools › Wine Stoppers & Pourers › Wine Pourers',
+        note: '#6 in Wine Pourers for the red pourer',
+        info: 'category',
+        wide: true,
+      },
+      { label: 'Product reviews', value: '172', note: 'On the red pourer', info: 'reviews' },
+      { label: 'Product rating', value: '4.6★', note: 'Red pourer', info: 'rating' },
+      { label: 'Seller feedback', value: '99%', note: 'Over 12,180 ratings — the parent company’s whole account', info: 'sellerFeedback' },
+      { label: 'Sourcing', value: 'Private label', note: 'Their own design, “patent pending”; where it is made is not stated — an inference', info: 'sourcing', text: true, learnMore: '/business-attributes/' },
+      { label: 'Catalogue', value: 'Single product', note: 'One pourer in several colours is the whole brand — an inference', info: 'catalogue', text: true, learnMore: '/business-attributes/' },
+      /* 🚨 Level 3 and an inference: a carved wood body, silicone wings and a
+         whistle in the pour tube is a change of function, not a colourway. The
+         case for level 4 is the moulds and the "patent pending" — neither was
+         read, and a rival (GurglePot's ChirpyTop) sells the same idea. */
+      { label: 'Differentiation', value: 'Level 3', note: 'A pourer that whistles as it pours, their own design; a claimed patent was not checked and a rival sells the same idea — an inference', info: 'differentiation', text: true, learnMore: '/business-attributes/' },
+      { label: 'Channels', value: 'Amazon US, own store, wholesale', info: 'channels' },
+    ],
+
+    selling: {
+      // ── Channels ──────────────────────────────────────────────────────
+      'amazon-domestic': {
+        status: 'yes',
+        note: 'The only channel with a number behind it, and the whole of the revenue on this profile. The seller holds the buy box all of the time.',
+      },
+      /* 'unchecked': listed on Canada, no badge, so nothing measurable. */
+      'amazon-international': {
+        status: 'unchecked',
+        note: 'The pourer is listed on Amazon Canada at C$62.99 under the same seller, with no sold badge; none was found on the UK or Germany.',
+      },
+      'own-store': {
+        status: 'yes',
+        note: 'totallybamboo.com, the parent company’s Shopify store, sells all four colours at $29.99. Its sales are not counted here.',
+      },
+      'wholesale-out': {
+        status: 'yes',
+        note: 'The parent company sells wholesale on Faire, and museum and gift shops stock the pourer — the Denver Art Museum shop at $40. None of it is in the revenue.',
+      },
+      // 'tiktok-shop' and 'other-marketplace' left unchecked: nobody looked.
+
+      // ── Fulfilment ────────────────────────────────────────────────────
+      fba: {
+        status: 'yes',
+        note: 'Every badged colour ships from Amazon, sold by Totally Bamboo: the margin charges Amazon’s pick-and-pack fee.',
+      },
+      fbm: {
+        status: 'yes',
+        note: 'A merchant-fulfilled offer from the same seller also appears on the listing, last seen early in 2026.',
+      },
+      'vendor-1p': { status: 'no', note: 'Amazon sells none of the colours itself.' },
+
+      // ── Supply ────────────────────────────────────────────────────────
+      'private-label': {
+        status: 'yes',
+        note: 'Their own design and a registered brand name, on listings nobody else holds the buy box on. Where it is made is not stated.',
+      },
+      arbitrage: { status: 'no' },
+
+      // ── Programmes ────────────────────────────────────────────────────
+      'brand-registry': {
+        status: 'yes',
+        note: 'A Brand Store at /stores/SongbirdSpecialties, which Amazon gates behind Brand Registry enrolment.',
+      },
+    },
+
+    intro:
+      'Songbird Specialties is one product: a wine-bottle pourer shaped like a small wooden bird that whistles as the wine pours. It is a brand line of Totally Bamboo, a California bamboo cutting-board company, and sells from that company’s long-established Amazon account.',
+
+    blocks: [
+      { type: 'heading', text: 'A bird that sings when the wine pours' },
+      {
+        type: 'prose',
+        text:
+          'The pourer is a small bird carved from acacia wood, with silicone wings in red, turquoise, blue or black, a stainless pour tube and a beak the wine runs out of; air drawn through the tube whistles as it pours. It sits in a bottle like any pourer, at $29.99, the only price it has sold at on Amazon. Three more colours — rainbow, pink and all black — were listed in October 2026.',
+      },
+      {
+        type: 'prose',
+        text:
+          'It is the one product of a brand, not a business of its own: the seller is Totally Bamboo, whose Amazon account carries over five hundred bamboo kitchen products and 12,180 ratings. A new seller copying the pourer would start without that account’s history behind it, and this page cannot say how much of the pourer’s sales it brings.',
+      },
+      /* 🚨 NO FIGURES IN THE CAPTION. The brand's own listing photos, in our
+         bucket. */
+      {
+        type: 'images',
+        items: [
+          { src: songbirdPhoto('B0F1H6B5VJ'), alt: 'The red pourer: an acacia-wood bird with a red silicone wing and a brass beak on a black stopper' },
+          { src: songbirdPhoto('B0F1HFM4WP'), alt: 'The turquoise pourer, the same wooden bird with a turquoise wing' },
+          { src: songbirdPhoto('B0F1GWKYHG'), alt: 'The blue pourer, the same wooden bird with a blue wing' },
+        ],
+        caption: 'The pourer in three of its colours, as the brand’s own Amazon listings show it.',
+      },
+
+      { type: 'section', id: 'timeline', title: 'Timeline', group: 'Overview' },
+      {
+        type: 'lede',
+        text: 'Eight months under Amazon’s sold badge, then a first Christmas, an empty January, and a spring and a September that both beat it.',
+      },
+      {
+        /* Oldest first. Month-end revenue events date to the last day of the month. */
+        type: 'timeline',
+        items: [
+          {
+            when: '21 Feb 2025',
+            tag: 'Amazon',
+            what: 'The pourer is listed in four colours',
+            detail: 'Red, turquoise, blue and black, under the new brand name.',
+          },
+          {
+            when: '26 Mar 2025',
+            tag: 'Web',
+            what: 'On Totally Bamboo’s own store',
+            detail: 'At $29.99, the same price as Amazon.',
+          },
+          {
+            when: '26 Oct 2025',
+            tag: 'Amazon',
+            what: 'The first sold badge',
+            detail: 'Eight months after listing, the black pourer crosses Amazon’s threshold of about fifty a month.',
+          },
+          {
+            when: '31 Dec 2025',
+            tag: 'Amazon',
+            what: '600 sold in the first December',
+            detail: 'About $18,000.',
+          },
+          {
+            when: '31 Jan 2026',
+            tag: 'Amazon',
+            what: 'Under the badge in January',
+            detail: 'No colour reached the threshold, so January counts as zero: each sold under about fifty.',
+          },
+          {
+            when: '30 Apr 2026',
+            tag: 'Amazon',
+            what: '1,000 sold in April',
+            detail: 'Over half again December’s count, outside the holiday season.',
+          },
+          {
+            when: '30 Sep 2026',
+            tag: 'Amazon',
+            what: '1,100 sold in September',
+            detail: 'The best month so far: red 500, turquoise 300, blue 200, black 100.',
+          },
+          {
+            when: '2 Oct 2026',
+            tag: 'Amazon',
+            what: 'Three more colours',
+            detail: 'Rainbow, pink and all black, with no badge yet.',
+          },
+        ],
+      },
+
+      { type: 'section', id: 'revenue', title: 'Revenue', group: 'What it earns' },
+      {
+        type: 'prose',
+        text:
+          'This is not a Christmas-only gift. December sold 600, January fell under the badge, and then April and September both sold more than December did. About half of each month is kept, after Amazon’s two fees, the cost to make it, an assumed tariff, freight and a modest modelled ad line — a margin a $29.99 price with a light box allows.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The series counts the brand’s own seven listings, not the parent seller’s other five hundred, at $29.99 every month. It starts in November 2025 because the pourer sold under the badge for the eight months before; the zero January is the same floor, not a month without a sale.',
+      },
+      { type: 'chart' },
+      {
+        /* 🚨 Canada at 0%: listed with no badge, so not measured. The largest
+           share is the US; no valuation reads it on this profile. */
+        type: 'marketplaces',
+        title: 'Which Amazon marketplaces it sells in',
+        intro: 'Everything measured is Amazon US.',
+        items: [
+          { label: 'Amazon United States', short: 'US', share: 100 },
+          { label: 'Amazon Canada', short: 'CA', share: 0, note: 'Listed at C$62.99 with no sold badge' },
+          { label: 'Amazon UK and Germany', short: 'UK, DE', share: 0, note: 'No seller account' },
+        ],
+        note: 'Shares of the latest month’s Amazon revenue. Canada sells below the badge threshold, so nothing there is counted.',
+      },
+      {
+        /* September's badges × $29.99 (revenue-corrected.json): every badged
+           colour, so the rows sum to the 2026-09 revenue row exactly. */
+        type: 'breakdown',
+        intro: 'Four colours of one pourer. Red is close to half the month.',
+        items: [
+          { name: 'Singing bird wine pourer — Red', asin: 'B0F1H6B5VJ', listed: '2025-02-21', sold: 500, price: 29.99, revenue: 14995, image: songbirdPhoto('B0F1H6B5VJ') },
+          { name: 'Singing bird wine pourer — Turquoise', asin: 'B0F1HFM4WP', listed: '2025-02-21', sold: 300, price: 29.99, revenue: 8997, image: songbirdPhoto('B0F1HFM4WP') },
+          { name: 'Singing bird wine pourer — Blue', asin: 'B0F1GWKYHG', listed: '2025-02-21', sold: 200, price: 29.99, revenue: 5998, image: songbirdPhoto('B0F1GWKYHG') },
+          { name: 'Singing bird wine pourer — Black', asin: 'B0F1H8J8RW', listed: '2025-02-21', sold: 100, price: 29.99, revenue: 2999, image: songbirdPhoto('B0F1H8J8RW') },
+        ],
+        note:
+          '“Sold / mo” is Amazon’s own badge, a band, hence n+. Revenue is that band times the $29.99 price, so every row is a floor. The three colours listed in October carry no badge yet.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is a placeholder, not a quote — Margin breakdown says so — and the parent company’s own store, its wholesale and the gift shops are in neither.',
+      },
+
+      { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text: 'Amazon is the measured part. The parent company’s own store, its wholesale account and the gift shops that stock the pourer publish no numbers.',
+      },
+      {
+        type: 'prose',
+        text:
+          'On Amazon every badged colour ships from Amazon’s warehouses, sold by Totally Bamboo with the buy box all of the time, and the listing carries an Amazon’s Choice badge. Off it, totallybamboo.com sells the four colours at the same $29.99 beside about six hundred bamboo products, the company sells wholesale on Faire, and museum and gift shops carry the pourer, the Denver Art Museum’s at $40. What follows is presence rather than share, and a method nobody looked for is listed as unchecked rather than counted as absent.',
+      },
+      { type: 'selling' },
+
+      { type: 'section', id: 'margin', title: 'Margin breakdown', group: 'What it earns', asOf: true },
+      {
+        type: 'lede',
+        text:
+          'Of a $29.99 pourer, about half is left once Amazon’s two fees, the cost to make, a tariff, freight and advertising are paid — on a cost to make that is a placeholder until a factory quotes it.',
+      },
+      {
+        type: 'prose',
+        text:
+          'There is one product to cost: four colours of one pourer, one price. Amazon’s fees and the advertising are read or modelled for the pourer itself. The cost to make is not: no supplier has quoted a carved wood bird with silicone wings and a whistling pour tube yet, so the figure below is a placeholder, and the tariff and the margin lean on it.',
+      },
+      {
+        /* Standard supplier columns, no attribution: nothing here comes from
+           Alibaba yet. The request is accio/songbird-specialties/
+           singing-bird-pourer (waithowmuch-research, Mode inquiry); replace
+           the first row with the offers, ordered by track record, when
+           process-accio-quotes files them. */
+        type: 'table',
+        id: 'cogs-breakdown',
+        caption: 'COGS — what a pourer costs to make',
+        columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+        rows: [
+          ['No quote yet — requested from Alibaba suppliers', '', '', '', '', ''],
+          ['Average lowest price — the cost to make used below — our figure, not a quote', '', '', '', '', lineUsd(SB_COST.make)],
+        ],
+        note:
+          'A request for an acacia-wood bird body, two silicone wings, a stainless pour tube with a built-in whistle, a beak, a silicone seal and a printed box went to Alibaba’s sourcing agent as an inquiry, since the wings and the whistle need moulds. Until it is answered the $4.00 is a placeholder with no quote behind it.',
+      },
+      {
+        /* The freight half at the dated LCL rate every profile uses —
+           waithowmuch-research calibration/freight-rates.json, CN-USWC low end,
+           read 2026-09-28. Keepa B0F1H6B5VJ: 190 × 116 × 59 mm, 141 g. */
+        type: 'table',
+        id: 'shipping-breakdown',
+        caption: 'Shipping — what it costs to move one pourer from China',
+        attribution: 'freightos',
+        noteColumns: [2],
+        columns: ['Input', 'Figure', 'Where it comes from'],
+        rows: [
+          ['Carton', '19.0 × 11.6 × 5.9 cm, 0.14 kg', 'Keepa’s package for B0F1H6B5VJ, the red pourer; the colours share one box'],
+          ['Volume', '0.0013 cbm', 'The carton, in cubic metres'],
+          ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+          ['Shipping, per pourer', '$0.65', '0.0013 cbm × $497'],
+        ],
+        note:
+          'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. The lane assumes a Chinese factory, which nothing read confirms.',
+      },
+      {
+        /* Derived from the two tables above and the tariff line, so no source logo. */
+        type: 'table',
+        id: 'landed-cost',
+        caption: 'Landed cost — production, duty and shipping, per pourer',
+        noteColumns: [2],
+        columns: ['Line', 'Per pourer', 'From'],
+        rows: [
+          ['Production', lineUsd(SB_COST.make), 'Our placeholder until a factory quotes — COGS table above'],
+          ['Tariff', lineUsd(SB_COST.tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+          ['Shipping', lineUsd(SB_COST.freight), 'The pourer’s carton at $497/cbm — shipping table above'],
+          ['Landed cost', lineUsd(SB_COST.landed), 'What one pourer costs to reach Amazon’s door, before it sells'],
+        ],
+        note: 'The first three cost lines of the breakdown below, added up: 18.2% of the $29.99 price. Amazon’s fees are their own lines.',
+      },
+      {
+        /* 🚨 The profit series is 100% less these lines — 51.578% — and the
+           backend seed builds it from the SAME percentages. */
+        type: 'margin',
+        basis: { label: 'Selling price', value: SB_COST.price },
+        lines: [
+          {
+            label: 'Cost of goods',
+            key: 'cogs',
+            pct: -SB_COST.makePct,
+            amount: SB_COST.make,
+            emphasis: true,
+            detail: 'A placeholder, not a quote: what a carved wood bird, two silicone wings and a whistling steel tube might cost a factory to make. The quote that replaces it has been requested.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+            ],
+          },
+          {
+            label: 'Tariff',
+            pct: -SB_COST.tariffPct,
+            amount: SB_COST.tariff,
+            detail: 'Assumed: 20% of the cost to make, the rate this site uses for goods made in China. Neither the listing nor their own store says where the pourer is made.',
+            links: [
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Shipping',
+            pct: -SB_COST.freightPct,
+            amount: SB_COST.freight,
+            detail: 'The pourer’s own carton at a read sea-freight rate from China, door to door.',
+            links: [
+              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
+          },
+          {
+            label: 'Amazon referral fee',
+            pct: -15,
+            amount: SB_COST.referral,
+            detail: 'Amazon’s published Home & Kitchen rate, a flat 15%.',
+            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+          },
+          {
+            /* Keepa product record for B0F1H6B5VJ, read 2026-10-15: package
+               190 × 116 × 59 mm, 141 g; pickAndPackFee 435 cents.
+               sources.json carries the same. */
+            label: 'FBA fulfilment',
+            pct: -SB_COST.fbaPct,
+            amount: SB_COST.fba,
+            detail: 'Size tier: Large Standard. The best seller’s box, B0F1H6B5VJ, is 7.5 × 4.6 × 2.3 in and 5.0 oz — the 2.3 in is over Small Standard’s 0.75 in — and Amazon charges $4.35 to pick and pack it. Every colour ships in the same box.',
+            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+          },
+          {
+            label: 'Advertising',
+            pct: -SB_AD.ratePct.central,
+            amount: SB_AD.products[0].perUnit,
+            detail: `Modelled, not observed: about ${monthUsd(SB_AD.monthlyUsd.central)} a month, ${linePct(SB_AD.ratePct.central)} of September’s revenue (band ${sbBand(SB_AD.monthlyUsd)}), most of it on “wine pourer” and on searches naming the pourer itself. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.`,
+            links: [
+              { label: 'See the ad spend behind this line', href: '/business/songbird-specialties/advertising/#ad-spend' },
+              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/songbird-specialties/advertising/' },
+            ],
+          },
+        ],
+        note:
+          'Before returns, storage and overhead, none of which is modelled: a ceiling on profit, not profit. The cost to make is a placeholder; every dollar it is off moves the margin by over three points.',
+      },
+      {
+        type: 'prose',
+        text:
+          'The price does the work. At $29.99 for a 5-ounce box, Amazon’s two fees take under a third of a sale, and even a generous cost to make leaves about half — a margin few kitchen gadgets this size reach. What it costs is the account behind it: the pourer sells from a seller with twenty years and twelve thousand ratings, and a new listing would pay for its first reviews in ads.',
+      },
+      {
+        type: 'callout',
+        text:
+          'Profit here is a modelled ceiling on a placeholder cost to make and an assumed origin for the tariff. The quote that replaces the placeholder has been requested; the margin moves with it.',
+      },
+
+      { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
+      {
+        /* amazon-adspend-spy's strategy.label, adspend.json 2026-10-17, read at New York 10001. */
+        type: 'strategy',
+        label: SB_AD.strategy,
+        points: [
+          'The modelled spend is small and spread thin: the most on “wine pourer”, where theirs are about a quarter of the sponsored results and an ad of theirs was second in the New York read, then on phrases that describe the pourer itself, such as “whistling bird wine pourer”.',
+          'About a ninth is on their own name, and one search where theirs are all the sponsored results is a rival’s: “chirpy top wine pourer”, the name of the competing bird pourer.',
+          'Of the fifteen biggest generic searches the pourer ranks on, they buy one, “wine pourer”. They do not buy “wine stopper”, the biggest at 59,197 a month, “wine gifts” or “bird gifts”.',
+          'Ads of theirs were seen on 23 keywords read one by one and about 20 more estimated from a sample, and the spend is a floor: automatic campaigns, product-page ads, Sponsored Brands and Display are invisible from outside. No ad library off Amazon was read.',
+        ],
+      },
+      {
+        type: 'table',
+        caption: 'Top keywords',
+        columns: ['Keyword', 'Searches a month', 'Organic rank', 'Their ads', 'Cost per click', 'Ad spend a month'],
+        rows: SB_TOP_KEYWORDS,
+        visibleRows: 10,
+        note: `Jungle Scout, for the pourer’s listings: exact-match monthly searches and the best organic position any of them held, among the fifty biggest keywords where one ranks in the top 60 or carries an ad. “Their ads” is the brand’s share of the sponsored results where Jungle Scout’s share of voice was read, weighted by position. Cost per click is Amazon’s own suggested exact bid. Ad spend is modelled. These fifty carry ${monthUsd(topSpend(SB_TOP_KEYWORDS))} of the ${monthUsd(SB_AD.monthlyUsd.central)} a month; the rest is on keywords outside the fifty, listed in the next table.`,
+      },
+      adKeywordsTable(SB_AD_KEYWORDS, SB_AD_KEYWORDS_TOTAL, SB_AD.monthlyUsd.central),
+      {
+        type: 'prose',
+        text:
+          'Unpaid, the pourer ranks only in the thirties and below on the big wine-gift searches — 33rd on “wine gifts”, 43rd on “wine pourer” — and higher on small phrases that describe it. The searches it is found on are mostly ones a shopper types already knowing the product exists, which is where its few ads sit too.',
+      },
+      {
+        type: 'prose',
+        text:
+          'So the sales do not come from buying the category. A keyword read cannot say where they do come from: the Amazon’s Choice badge, a parent account with twenty years of reviews, gift-shop shoppers searching for the pourer they saw, and campaigns invisible from outside are all candidates, and the brand’s own search-term report would settle it.',
+      },
+      {
+        type: 'channels',
+        items: [
+          {
+            label: 'Amazon Sponsored Products',
+            value: `≈ ${monthUsd(SB_AD.monthlyUsd.central)} a month, ${linePct(SB_AD.ratePct.central)} of revenue — modelled`,
+            counted: 'Ads on 23 keywords read and about 20 estimated — Jungle Scout share of voice; a New York read',
+            flag: true,
+            note: `amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s bid; band ${sbBand(SB_AD.monthlyUsd)}. The smaller keywords are estimated from a sample. The click rate, 3.0% (1.8–4.5%), is borrowed from another brand because no row here was sponsored-dominant enough to measure one. Two keywords with ads of theirs have no bid and are not priced. A floor: ads on product pages, automatic targeting, Sponsored Brands and Display are invisible to it, and a bid is not what a click is billed. The Ad spend table below is exactly what the margin takes off.`,
+          },
+        ],
+        note: 'Off-Amazon advertising is unknown, not zero: no ad library was read.',
+      },
+      {
+        /* The Margin breakdown's advertising line, row for row, built from
+           SB_AD. check-profile fails if they drift apart. */
+        type: 'table',
+        id: 'ad-spend',
+        caption: 'Ad spend',
+        columns: ['Line', 'A month', 'Share of revenue', 'Per sale', 'Basis'],
+        noteColumns: [4],
+        rows: [
+          ...SB_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${sbBand(p.monthlyUsd)}`]),
+          ['Total — the margin line', monthUsd(SB_AD.monthlyUsd.central), linePct(SB_AD.ratePct.central), lineUsd((SB_COST.price * SB_AD.ratePct.central) / 100), `Modelled: ${sbBand(SB_AD.monthlyUsd)}`],
+        ],
+        note: 'What the Margin breakdown takes off for Amazon advertising, line for line. Per sale is the share of the $29.99 price.',
+      },
+
+      /* Socials and traffic OMITTED: the only off-Amazon presence read is the
+         parent company's store, its Faire account and the gift shops, all
+         covered in How it sells; no social account or traffic was read for
+         the brand. */
+
+      { type: 'section', id: 'brand-owner', title: 'Brand owner', group: 'Who and when', asOf: true },
+      {
+        type: 'facts',
+        items: [
+          { label: 'Company', value: 'Totally Bamboo', note: 'Its Amazon business name is Hollywood Chairs, the founders’ earlier director’s-chair company' },
+          { label: 'Amazon seller', value: 'A3UD9FK955DKQN', note: 'Totally Bamboo — over 500 listings, the whole bamboo line' },
+          { label: 'Address', value: '120 W Grand Ave., Escondido, CA', note: '92025, as Amazon’s seller record gives it' },
+          { label: 'Founders', value: 'Tom and Joanne Sullivan', note: 'By Amazon’s own 2023 seller story' },
+          { label: 'Seller feedback', value: '99%', note: 'Over 12,180 ratings', info: 'sellerFeedback' },
+          { label: 'First listing', value: '21 Feb 2025', note: 'The brand’s; the account is much older' },
+        ],
+      },
+      {
+        type: 'prose',
+        text:
+          'Totally Bamboo is a California company founded by Tom and Joanne Sullivan, who made director’s chairs as Hollywood Chairs before bamboo cutting boards; Amazon featured them in a 2023 seller story as more than twenty years in business with about five hundred products. Songbird Specialties is a registered brand of theirs with one product, made under a model number in the same catalogue. Nobody at the company has spoken to us: every fact here comes from Keepa, Amazon, the company’s own store and the public web.',
+      },
+
+      /* LAST in the blocks: the nav lists it below Links & sources under a
+         "Build your own" rule. 🚨 NO TEST IS PUBLISHED: make-validation-launch.mjs
+         finds no search that names a version of the pourer, ranks it top 25 and
+         can deliver 300 clicks — the best, --variant wine, reaches 292
+         ("wine pourer spout", "funny wine gifts"); colour and "bird" searches
+         reach none. --category would pull Jungle Scout share of voice for the
+         category searches, which this build did not run (no Jungle Scout
+         calls); owner's call. The blocks render their own "no test" note. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether a copy sells. No test is priced yet: the searches that name the pourer and that it already ranks on are too small to buy the clicks a test needs.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
 };
