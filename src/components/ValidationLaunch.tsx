@@ -33,13 +33,26 @@ type Product = Launch["products"][number];
 const TOGETHER = "together";
 
 /** A product label mid-sentence: lower-case, except a word that is always
- *  capitalised — "the Bible verse jar", not "the bible verse jar". */
+ *  capitalised — "the Bible verse jar", not "the bible verse jar" — and a
+ *  name the label itself capitalises past its first word: "the Draft Top Lift
+ *  can opener", "the Mount Cleverest decks", "the Scratch & Swing game". The
+ *  first word stays capitalised only when it starts such a name (the next
+ *  word with letters is capitalised too); otherwise it is sentence case
+ *  ("Jigsaw puzzle" → "jigsaw puzzle"). */
 const PROPER = new Set(["Bible", "God", "Christmas", "Easter", "American"]);
-const inSentence = (label: string) =>
-  label
-    .split(" ")
-    .map((w) => (PROPER.has(w) ? w : w.toLowerCase()))
+const isCap = (w: string) => /^[A-Z]/.test(w);
+const inSentence = (label: string) => {
+  const words = label.split(" ");
+  const nextLettered = words.slice(1).find((w) => /[A-Za-z]/.test(w));
+  return words
+    .map((w, i) => {
+      if (PROPER.has(w)) return w;
+      if (i > 0 && isCap(w)) return w;
+      if (i === 0 && isCap(w) && nextLettered && isCap(nextLettered)) return w;
+      return w.toLowerCase();
+    })
     .join(" ");
+};
 const pct = (v: number) => `${Math.round(v * 100)}%`;
 /** A conversion rate: one decimal, because a set's 1.8% is not "2%". */
 const rate = (v: number) => `${(v * 100).toFixed(1)}%`;
