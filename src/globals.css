@@ -696,6 +696,11 @@ img[data-row-logo] {
 [data-row-stat] [data-row-sub] {
   font-size: 0.75rem; font-weight: 500; color: var(--muted-foreground); white-space: nowrap;
 }
+/* "To test" is the bare minimum; the asterisk points at the fixed costs a new
+   brand adds (owner, 2026-10-25) — present, but quieter than the figure. */
+[data-asterisk] {
+  font-size: 0.6em; font-weight: 500; color: var(--muted-foreground); margin-left: 0.1em;
+}
 
 [data-row-head] {
   display: grid;

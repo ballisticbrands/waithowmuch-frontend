@@ -371,7 +371,7 @@ for (const c of [...COLLECTIONS]) {
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
     const revenue = b.latestMonthlyRevenue != null ? `${money(b.latestMonthlyRevenue, b.currency)} revenue/mo` : null;
     const startFigure = startingCostFigure(b);
-    const start = startFigure != null ? `about ${money(startFigure, b.currency)} to start` : null;
+    const start = startFigure != null ? `about ${money(startFigure, b.currency)} to test, plus fixed costs for a new brand` : null;
     const est = b.establishedAt ? `${ageLabel(b.establishedAt)} old` : null;
     // Same as the live row: the headline is the link text, the name and
     // subtitle (or tagline) follow.
@@ -476,7 +476,7 @@ for (const b of all) {
   const profit = money(b.latestMonthlyProfit, b.currency);
   const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}%` : null;
   const cost = money(startingCostFigure(b), b.currency);
-  const costRange = b.startingCostLow != null && b.startingCostHigh != null
+  const costRange = b.startingCostLow != null && b.startingCostHigh != null && Number(b.startingCostLow) !== Number(b.startingCostHigh)
     ? `${money(b.startingCostLow, b.currency)}–${money(b.startingCostHigh, b.currency)}`
     : null;
   const cats = (b.categories ?? []).map((c) => c.name).join(', ');
@@ -687,7 +687,7 @@ for (const b of all) {
     <p>${esc(readingStamp(headline.snapshotMonth))}</p>` : ''}
     <p>${esc(b.name)} is estimated to make ${rev ?? 'an undisclosed amount'} per month in
        revenue${profit ? `, on roughly ${profit} of monthly profit` : ''}${margin ? ` — a margin of about ${margin}` : ''}.${
-       cost ? ` Launching a copy today would cost an estimated ${cost}${costRange ? ` (${costRange})` : ''}.` : ''}
+       cost ? ` Testing a copy today would cost an estimated ${cost}${costRange ? ` (${costRange})` : ''} for the first order and launch ads, plus fixed costs for a new brand.` : ''}
        ${cats ? `It operates in ${esc(cats)}.` : ''}</p>
     ${authored}
     <p><a href="${collectionPath('all-ideas')}">All case studies</a></p>`.trim();

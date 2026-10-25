@@ -260,6 +260,13 @@ function ValidationNumbers({
           moneyBack: selection[0]!.moneyBack,
           adsDays: selection[0]!.adsDays,
         };
+  /* The test's figure is the first order and the launch ads only (owner,
+     2026-10-25). Fixed costs are what a brand-new seller pays on top, shown
+     apart as an option — a seller with an account, photos and packaging
+     already can run the test without them. */
+  const toTest = totals.inventory + totals.ads;
+  const withSetup = { low: toTest + totals.setup.low, high: toTest + totals.setup.high };
+  const setupItems = business.startingCostEstimate?.breakdown?.setupItems ?? [];
   const totalsDays = totals.adsDays;
   const tabId = active === TOGETHER || selection.length > 1 ? TOGETHER : selection[0]!.id;
 
@@ -283,7 +290,7 @@ function ValidationNumbers({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              <span data-product-share="">{money(p.low, currency)} to test</span>
+              <span data-product-share="">{money(p.inventory + p.ads, currency)} to test</span>
             </button>
           ))}
           {many && (
@@ -297,7 +304,7 @@ function ValidationNumbers({
               onClick={() => setActive(TOGETHER)}
             >
               <span>Both together</span>
-              <span data-product-share="">{money(launch.together.low, currency)} to test</span>
+              <span data-product-share="">{money(launch.together.inventory + launch.together.ads, currency)} to test</span>
             </button>
           )}
         </div>
@@ -310,8 +317,9 @@ function ValidationNumbers({
         key={tabId}
       >
         <p data-starting-cost-lede="">
-          {subject} would cost about <strong data-figure="">{money(totals.low, currency)}</strong> to test, and as
-          much as {exactMoney(totals.high, currency)}. {selection.length > 1 ? "That is one setup and both first orders, for a seller testing them at the same time." : ""}
+          {subject} would cost about <strong data-figure="">{money(toTest, currency)}</strong> to test: the first
+          order, made and shipped to Amazon, and the launch ads. {selection.length > 1 ? "That is both first orders, for a seller testing them at the same time. " : ""}A
+          brand-new seller also has fixed costs, set out below.
         </p>
 
         <h3>The test, in numbers</h3>
@@ -511,35 +519,27 @@ function ValidationNumbers({
                   {int(selection.reduce((t, p) => t + p.clicks, 0))} clicks on the searches above, each at Amazon’s suggested bid — the most the test can spend
                 </td>
               </tr>
-              <tr>
-                <th scope="row">Fixed costs</th>
-                <td data-figure="">{span(totals.setup, currency)}</td>
-                <td data-note="">Paid once, however many products: Seller Central’s first months, a trademark filing, samples, photos and listing content, and packaging design</td>
-              </tr>
               <tr data-total="">
                 <th scope="row">To test</th>
-                <td data-figure="">{span({ low: totals.low, high: totals.high }, currency)}</td>
+                <td data-figure="">{exactMoney(toTest, currency)}</td>
                 <td data-note="" />
               </tr>
             </tbody>
           </table>
         </div>
         <p>
-          The low end is <strong data-figure="">{money(totals.low, currency)}</strong>. The ads are the most the test
-          can cost, and the range is the fixed costs: setup is paid once, however many products you test.
+          The ads are the most the test can cost, so <strong data-figure="">{money(toTest, currency)}</strong> is
+          the most it takes to find out.
         </p>
         <p>
           That is the money out before a sale. If the test passes, the {int(g.paidUnits * selection.length)} units the
           ads sell pay out about <strong data-figure="">{exactMoney(totals.moneyBack, currency)}</strong> after
           Amazon’s referral and FBA fees{selection.length > 1 ? "" : ` — ${exactMoney(selection[0]!.payout, currency)} a unit`}
           , so a passing test costs{" "}
-          {totals.low - totals.moneyBack <= 0 ? (
+          {toTest - totals.moneyBack <= 0 ? (
             <>nothing net — it pays for itself</>
           ) : (
-            <>
-              about {span({ low: Math.max(0, totals.low - totals.moneyBack), high: totals.high - totals.moneyBack }, currency)}{" "}
-              net
-            </>
+            <>about {exactMoney(toTest - totals.moneyBack, currency)} net</>
           )}
           . The money comes back as the units sell, so it still has to be found up front.
         </p>
@@ -547,18 +547,73 @@ function ValidationNumbers({
         <StartingCostWaterfall
           currency={currency}
           estimate={{
-            low: totals.low,
-            high: totals.high,
+            low: toTest,
+            high: toTest,
             breakdown: {
               parts: {
                 inventory: { low: totals.inventory, high: totals.inventory },
                 ads: { low: totals.ads, high: totals.ads },
-                setup: totals.setup,
+                setup: { low: 0, high: 0 },
                 tooling: null,
               },
             },
           }}
         />
+
+        {/* ── Optional: what a brand-new seller adds (owner, 2026-10-25) ── */}
+        <h3>
+          Starting a brand from scratch <span data-starting-cost-amount="">{span(totals.setup, currency)}</span>
+        </h3>
+        <p>
+          The test above is the product itself: making the first order, shipping it and buying the clicks. Someone
+          launching a new brand on Amazon also pays some fixed costs once, however many products they test. None of
+          them is needed to run the test — a seller with an account, photos and packaging already can skip them — and
+          the figures are approximate.
+        </p>
+        <div data-table-wrap="">
+          <table data-earnings-table="">
+            <caption>Fixed costs for a new brand, on top of the test</caption>
+            <thead>
+              <tr>
+                <th scope="col">Part</th>
+                <th scope="col">Cost</th>
+                <th scope="col" data-working="">Where the figure comes from</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Item by item (owner, 2026-10-25): the estimate stores the
+                  backend's SETUP_COSTS with it; one bundled row hid what a
+                  reader could skip. */}
+              {setupItems.length > 0 ? (
+                setupItems.map((s) => (
+                  <tr key={s.label}>
+                    <th scope="row">{s.label}</th>
+                    <td data-figure="">{span(s.cost, currency)}</td>
+                    <td data-note="">{s.basis}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <th scope="row">Fixed costs</th>
+                  <td data-figure="">{span(totals.setup, currency)}</td>
+                  <td data-note="">Seller Central’s first months, a trademark filing, samples, photos and listing content, and packaging design</td>
+                </tr>
+              )}
+              {setupItems.length > 0 && (
+                <tr data-total="">
+                  <th scope="row">Fixed costs</th>
+                  <td data-figure="">{span(totals.setup, currency)}</td>
+                  <td data-note="" />
+                </tr>
+              )}
+              <tr data-total="">
+                <th scope="row">Test and fixed costs</th>
+                <td data-figure="">{span(withSetup, currency)}</td>
+                <td data-note="" />
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   );

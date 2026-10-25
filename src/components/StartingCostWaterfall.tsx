@@ -54,7 +54,8 @@ export function StartingCostWaterfall({ estimate: e, currency }: { estimate: Wat
   const rows: Array<{ label: string; range: Range }> = [
     { label: "First order", range: p.inventory },
     { label: "Launch ads", range: p.ads },
-    { label: "Fixed costs", range: p.setup },
+    // The validation test leaves fixed costs out of its total (owner, 2026-10-25): no row for them
+    ...(Number(p.setup.high) > 0 ? [{ label: "Fixed costs", range: p.setup }] : []),
     ...(p.tooling ? [{ label: "Tooling", range: p.tooling }] : []),
   ];
 
@@ -115,7 +116,7 @@ export function StartingCostWaterfall({ estimate: e, currency }: { estimate: Wat
           <rect x={x(0)} y={totalY} width={x(total.low) - x(0)} height={LANE} rx={2} data-sc-bar="" data-total="" data-shade="light" />
           <rect x={x(0)} y={totalY + LANE + 2} width={x(total.high) - x(0)} height={LANE} rx={2} data-sc-bar="" data-total="" />
           <text x={W - 8} y={totalY + LANE + 4} textAnchor="end" data-sc-value="" data-strong="">
-            {exactMoney(total.low, currency)}–{exactMoney(total.high, currency)}
+            {total.low === total.high ? exactMoney(total.low, currency) : `${exactMoney(total.low, currency)}–${exactMoney(total.high, currency)}`}
           </text>
         </svg>
       </div>
