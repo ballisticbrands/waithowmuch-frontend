@@ -253,6 +253,7 @@ function ValidationNumbers({
       ? launch.together
       : {
           inventory: selection[0]!.inventory,
+          tooling: selection[0]!.tooling,
           ads: selection[0]!.ads,
           setup: launch.together.setup,
           low: selection[0]!.low,
@@ -264,7 +265,9 @@ function ValidationNumbers({
      2026-10-25). Fixed costs are what a brand-new seller pays on top, shown
      apart as an option — a seller with an account, photos and packaging
      already can run the test without them. */
-  const toTest = totals.inventory + totals.ads;
+  /* A mould is unavoidable, like the first order (owner, 2026-10-25): it is in. */
+  const tooling = totals.tooling ?? 0;
+  const toTest = totals.inventory + tooling + totals.ads;
   const withSetup = { low: toTest + totals.setup.low, high: toTest + totals.setup.high };
   const setupItems = business.startingCostEstimate?.breakdown?.setupItems ?? [];
   const totalsDays = totals.adsDays;
@@ -290,7 +293,7 @@ function ValidationNumbers({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              <span data-product-share="">{money(p.inventory + p.ads, currency)} to test</span>
+              <span data-product-share="">{money(p.inventory + (p.tooling ?? 0) + p.ads, currency)} to test</span>
             </button>
           ))}
           {many && (
@@ -304,7 +307,7 @@ function ValidationNumbers({
               onClick={() => setActive(TOGETHER)}
             >
               <span>Both together</span>
-              <span data-product-share="">{money(launch.together.inventory + launch.together.ads, currency)} to test</span>
+              <span data-product-share="">{money(launch.together.inventory + (launch.together.tooling ?? 0) + launch.together.ads, currency)} to test</span>
             </button>
           )}
         </div>
@@ -318,7 +321,7 @@ function ValidationNumbers({
       >
         <p data-starting-cost-lede="">
           {subject} would cost about <strong data-figure="">{money(toTest, currency)}</strong> to test: the first
-          order, made and shipped to Amazon, and the launch ads. {selection.length > 1 ? "That is both first orders, for a seller testing them at the same time. " : ""}A
+          order, made and shipped to Amazon, {tooling > 0 ? "the mould it cannot be made without, " : ""}and the launch ads. {selection.length > 1 ? "That is both first orders, for a seller testing them at the same time. " : ""}A
           brand-new seller also has fixed costs, set out below.
         </p>
 
@@ -512,6 +515,23 @@ function ValidationNumbers({
                   ))}
                 </td>
               </tr>
+              {tooling > 0 && (
+                <tr>
+                  <th scope="row">Moulds</th>
+                  <td data-figure="">{exactMoney(tooling, currency)}</td>
+                  <td data-note="">
+                    {selection
+                      .filter((p) => (p.tooling ?? 0) > 0)
+                      .map((p, i) => (
+                        <span key={p.id}>
+                          {i > 0 && <br />}
+                          <strong>{p.label}:</strong> {exactMoney(p.tooling!, currency)}, paid once before the factory can make the first order, as the supplier priced it.{" "}
+                          <a href={landedLink(business.slug, p.id, many, landedHref)}>See the cost to make</a>
+                        </span>
+                      ))}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <th scope="row">Launch ads</th>
                 <td data-figure="">{exactMoney(totals.ads, currency)}</td>
@@ -554,7 +574,7 @@ function ValidationNumbers({
                 inventory: { low: totals.inventory, high: totals.inventory },
                 ads: { low: totals.ads, high: totals.ads },
                 setup: { low: 0, high: 0 },
-                tooling: null,
+                tooling: tooling > 0 ? { low: tooling, high: tooling } : null,
               },
             },
           }}

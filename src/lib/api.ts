@@ -258,6 +258,8 @@ export type ValidationLaunch = {
      *  above the gate's 50 (owner's call, 2026-10-13). */
     moq?: number | null;
     inventory: number;
+    /** A one-time mould the product needs, in the test's total (owner, 2026-10-25). Absent before then. */
+    tooling?: number;
     conversion: {
       /** The median of competing listings on this product's searches. */
       market: number;
@@ -302,7 +304,7 @@ export type ValidationLaunch = {
     high: number;
   }>;
   /** Every product at once: one setup, however many launch. */
-  together: { inventory: number; ads: number; setup: Range; low: number; high: number; moneyBack: number; adsDays: number };
+  together: { inventory: number; tooling?: number; ads: number; setup: Range; low: number; high: number; moneyBack: number; adsDays: number };
 };
 
 export type BusinessLink = {

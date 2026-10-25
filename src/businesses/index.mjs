@@ -154,13 +154,18 @@ const GAMBLIN_PHOTOS = {
 const gamblinPhoto = (asin) => `${GAMBLIN_BUCKET}${GAMBLIN_PHOTOS[asin]}.jpg`;
 
 /* Scratch & Swing's per-box cost lines at the $24 price, in dollars (research/
-   gamblin-golf/pnl.json). 🚨 make, tariff and freight are ASSUMED until the
-   Accio quote lands (accio/gamblin-golf/scratch-swing-deck); postage is theirs
-   because the listing is merchant-fulfilled with free delivery. Their shares of
-   the price are the backend seed's COST_LINES (cogs 10.417, tariff 2.083,
-   freight 1.125, postage 27.083, referral 15); check-profile asserts the margin
-   block and the profit series agree. Advertising is GG_AD, never typed. */
-const GG_COST = { price: 24, factory: 2.5, tariff: 0.5, freight: 0.27, postage: 6.5, referral: 3.6 };
+   gamblin-golf/pnl.json). Make is the Accio production price (suppliers.json
+   scratch-swing-deck cogsAverage, verified against the screenshot, filed
+   2026-10-22): Dongguan KK at the 5,000 tier, nearest ~6,000 a year. 🚨 It
+   rests on ONE supplier (owner's call). Tariff is 20% of make on an assumed
+   China origin; freight is the quoted 15 × 9 × 4 cm tuck box × Freightos
+   CN-USWC $496.67/cbm. Postage is theirs because the listing is
+   merchant-fulfilled with free delivery. Their shares of the price are the
+   backend seed's COST_LINES (cogs 3.667, tariff 0.75, freight 1.125, postage
+   27.083, referral 15); check-profile asserts the margin block and the profit
+   series agree. Advertising is GG_AD, never typed. Until 2026-10-25: make
+   $2.50 (placeholder), tariff $0.50. */
+const GG_COST = { price: 24, factory: 0.88, tariff: 0.18, freight: 0.27, landed: 1.33, postage: 6.5, referral: 3.6 };
 const ggPct = (amount) => -+((amount / GG_COST.price) * 100).toFixed(3);
 const ggBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 const GG_TOP_SPEND = GG_TOP_KEYWORDS.reduce((sum, row) => sum + (/^\$(\d+)$/.test(row[5]) ? Number(row[5].slice(1)) : 0), 0);
@@ -188,8 +193,11 @@ const draftTopPhoto = (asin) => `${DRAFT_TOP_BUCKET}${DRAFT_TOP_PHOTOS[asin]}.jp
 
 /* The Lift's September 2026 unit economics at the blended $26.76 (3,900 units,
    seven listings), in dollars — research/draft-top/pnl.json. 🚨 make is the
-   FOUNDERS' OWN self-reported $4.13 (Shark Tank, 2021), for the Draft Top 3.0,
-   not a quote. 🚨 The tariff ASSUMES China origin (owner's call, 2026-10-15):
+   Accio production price (suppliers.json lift-can-opener cogsAverage, verified
+   against the screenshots and confirmed by the owner, 2026-10-25): two
+   suppliers' prices for an EXISTING opener, not a custom Lift, averaged; the
+   owner accepted them as the COGS. Until 2026-10-25 it was the founders'
+   self-reported $4.13 (Shark Tank, 2021). 🚨 The tariff ASSUMES China origin (owner's call, 2026-10-15):
    20% of the cost to make, though they say it is made in the USA and one
    listing's title says "Made In china". Freight on the China lane. The percentages are pnl.json's and are the
    backend seed's COST_LINES (seed-draft-top.ts, generated from the same file);
@@ -197,12 +205,19 @@ const draftTopPhoto = (asin) => `${DRAFT_TOP_BUCKET}${DRAFT_TOP_PHOTOS[asin]}.jp
    Advertising is DT_AD, never typed. */
 const DT_COST = {
   price: 26.76, // blended September sale: $104,361 / 3,900
-  make: 4.13, makePct: 15.434,
-  tariff: 0.83, tariffPct: 3.087, // 20% of $4.13, ASSUMED China origin
+  /* make = the factory price + the moulds spread over a year (owner's call
+     2026-10-25: moulds are unavoidable, so they are in the margin AND in
+     "To test"). Moulds: $9,000, the low end of Yongli's 3–4 sets at
+     $3,000–5,000 each (Keyhome has not priced tooling), ÷ 47,000 a year
+     (suppliers.json cogsAverage.yearlyUnits) = $0.19. Until 2026-10-25 make
+     was the factory price alone, $1.37, 5.12%. */
+  factory: 1.37, moulds: 0.19, mouldsOnce: 9000, mouldUnits: 47000,
+  make: 1.56, makePct: 5.835,
+  tariff: 0.27, tariffPct: 1.024, // 20% of the $1.37 factory price only — a mould is not imported per unit; ASSUMED China origin
   freight: 0.19, freightPct: 0.723, // 0.00039 cbm × $496.67 (freight-rates.json, read 2026-09-28)
   fba: 3.9, fbaPct: 14.569,
   referral: 4.01,
-  landed: 5.15, // make + tariff + freight; also what "Test it first" prices on (starting-cost.lift.inputs.json)
+  landed: 2.03, // make (moulds in) + tariff + freight; also what "Test it first" prices on (starting-cost.lift.inputs.json)
 };
 const dtBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 const DT_AD_PER_SALE = +((DT_COST.price * DT_AD.ratePct.central) / 100).toFixed(2);
@@ -334,19 +349,28 @@ const SONGBIRD_PHOTOS = {
 const songbirdPhoto = (asin) => `${SONGBIRD_BUCKET}${SONGBIRD_PHOTOS[asin]}.jpg`;
 
 /* The pourer's per-unit lines at $29.99 — research/songbird-specialties/
-   pnl.json lines. 🚨 make is OUR $4.00 PLACEHOLDER: no supplier has quoted it
-   (accio/songbird-specialties/singing-bird-pourer). Tariff 20% of it, ASSUMED
-   China. The percentages are pnl.json's and the backend seed's COST_LINES
-   (seed-songbird-specialties.ts, generated from the same file); check-profile
-   asserts the margin block and the profit series agree. Advertising is SB_AD. */
+   pnl.json lines. make is the Accio production price, suppliers.json
+   cogsAverage (run accio/singing-bird-pourer/2026-10-25T1146): Kingtop $2.28
+   and Sinowin $3.45 at 10,000, averaged = $2.87. Until 2026-10-25 it was OUR
+   $4.00 placeholder (13.338%). From 2026-10-25 (owner: the mould is
+   unavoidable) make also carries Kingtop's $1,200 mould over a year's sales,
+   $1,200 / 13,200 (cogsAverage.yearlyUnits) = $0.091: $2.961, 9.873%.
+   Tariff 20% of the $2.87 factory price only ($0.574), ASSUMED China — the
+   mould is paid once, not imported per unit.
+   The percentages are pnl.json's and the backend seed's COST_LINES
+   (seed-songbird-specialties.ts); check-profile asserts the margin block and
+   the profit series agree. Advertising is SB_AD. */
 const SB_COST = {
   price: 29.99,
-  make: 4, makePct: 13.338,
-  tariff: 0.8, tariffPct: 2.668,
+  factory: 2.87, // the two quotes, averaged
+  mouldPerUnit: 0.09, // $1,200 ÷ 13,200 = $0.091
+  make: 2.96, makePct: 9.873, // $2.87 + $0.091 = $2.961
+  tariff: 0.57, tariffPct: 1.914, // 20% × $2.87 = $0.574, the factory price only
   freight: 0.65, freightPct: 2.153, // 0.0013003 cbm × $496.67 = $0.646
   fba: 4.35, fbaPct: 14.505,
   referral: 4.5,
-  landed: 5.45,
+  landed: 4.18, // $2.961 + $0.574 + $0.646
+  tooling: 1200, // Kingtop's mould, one time: spread over a year in make, and paid up front in "Test it first"
 };
 const sbBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 
@@ -11409,6 +11433,8 @@ export const PROFILES = {
        June 2026; the months before are the Roll and Play ball game. October's
        badge read is a partial month and is not a point. */
     headline: {
+      /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/gamblin-golf/01430eb94ce4e58ba99655358d8d0c0c1f28eac620efd9f11989e29f58acaa79.png',
       /* Scratch & Swing: the best seller, and all of September's sales. */
       image: {
         src: gamblinPhoto('B0GNWNXFY1'),
@@ -11603,7 +11629,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The chart is two businesses in a row. Until early 2025 it is the ball game, selling hundreds in December and close to nothing in between; the zero months are months below Amazon’s badge, not months without a sale. From June 2026 it is Scratch & Swing, rising from 100 boxes in July to 500 in September. Of each of those months a modelled two fifths is kept, after postage, Amazon’s fee and a cost to make that no printer has quoted yet.',
+          'The chart is two businesses in a row. Until early 2025 it is the ball game, selling hundreds in December and close to nothing in between; the zero months are months below Amazon’s badge, not months without a sale. From June 2026 it is Scratch & Swing, rising from 100 boxes in July to 500 in September. Of each of those months a modelled half is kept, after postage, Amazon’s fee and a cost to make that rests on one printer’s quote.',
       },
       { type: 'chart' },
       {
@@ -11653,34 +11679,41 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Of a $24 box, a little over two fifths is left once postage, Amazon’s fee and the cost of making it are paid. Postage is the biggest cost, and the cost to make is a placeholder until a printer quotes it.',
+          'Of a $24 box, about half is left once postage, Amazon’s fee and the cost of making it are paid. Postage is the biggest cost by far; making the game, on one factory’s quote, is under a dollar.',
       },
       {
         type: 'prose',
         text:
-          'There is one product to cost, because Scratch & Swing is every measured sale in September. A box is fifty-seven printed scratch-off cards, three heat-sealed foil packs and a printed box, which card printers make to order, but no quote has been read yet: the request is with Alibaba’s sourcing agent. Until it comes back the cost to make is our placeholder, and the tariff and the freight lean on it, so everything under it moves when the quote lands.',
+          'There is one product to cost, because Scratch & Swing is every measured sale in September. A box is fifty-seven printed scratch-off cards, three foil packs and a printed tuck box, which card printers make to order. One Alibaba factory quoted that kit, from 500 boxes, and the cost to make rests on its price alone, by the owner’s decision; two more answered, but not in a form that could be priced like for like. The tariff leans on that price and the freight on the box it quoted.',
       },
       {
-        /* Standard supplier columns, no attribution: nothing here comes from
-           Alibaba yet. The quote request is accio/gamblin-golf/scratch-swing-deck
-           (waithowmuch-research); replace the first row with the offers, ordered
-           by track record, when process-accio-quotes files them. */
+        /* waithowmuch-research research/gamblin-golf/suppliers.json
+           (scratch-swing-deck, source accio), Accio run
+           accio/scratch-swing-deck/2026-10-22T1413, verified against its
+           screenshot. 🚨 ONE supplier priced (owner's call, 2026-10-22):
+           Hongju (no screenshot; a rigid lid-and-base box) and Bonroy
+           (ballpark ranges only) are excluded from the price. Store details
+           (years, Verified, rating, reviews) were not captured for any
+           supplier, so those cells are '—'. */
         type: 'table',
         id: 'cogs-breakdown',
         caption: 'COGS — what a box costs to make',
+        attribution: 'alibaba',
         columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
         rows: [
-          ['No quote yet — requested from Alibaba suppliers', '', '', '', '', ''],
-          ['Average lowest price — the cost to make used below — our figure, not a quote', '', '', '', '', '$2.50'],
+          ['Dongguan KK Technology Co., LTD', '—', '—', '—', '500 sets', '$0.67–2.43'],
+          ['Average — the cost to make used below', '', '', '', '', lineUsd(GG_COST.factory)],
         ],
         note:
-          'A request for 57 custom scratch-off cards, three printed foil packs and a printed box went to Alibaba’s sourcing agent, asking for prices at 500 to 10,000 boxes; the brand sells about 6,000 a year at September’s pace. Until it is answered the $2.50 is a placeholder with no quote behind it.',
+          'One supplier, and the cost to make rests on it alone, by the owner’s decision. Dongguan KK quoted the whole kit — 57 scratch-off cards, three foil booster packs and a 15 × 9 × 4 cm tuck box, shrink-wrapped — EXW, with plates and setup in the price: $2.43 a set at 500, $1.62 at 1,000, $1.05 at 3,000, $0.88 at 5,000 and $0.67 at 10,000. The figure used is the 5,000 tier, nearest the brand’s yearly sales of about 6,000 at September’s pace. A sample set is $320. A second factory, Hongju, quoted a rigid lid-and-base box rather than a tuck box, and its price could not be checked against a screenshot; a third, Bonroy, gave only ballpark ranges. Neither is in the price. Requested through Alibaba’s sourcing agent (Accio) in October 2026 and checked against its screenshot of the reply; the suppliers’ store ratings were not read.',
       },
       {
         /* The freight half of the landed cost at the same dated LCL rate every
            profile uses — waithowmuch-research calibration/freight-rates.json,
-           CN-USWC low end, read 2026-09-28. 🚨 Keepa has no package dimensions
-           for B0GNWNXFY1 and the listing gives only 8 oz, so the box is assumed. */
+           CN-USWC low end, read 2026-09-28. Keepa has no package dimensions
+           for B0GNWNXFY1 and the listing gives only 8 oz, so the box is the
+           15 × 9 × 4 cm tuck box Dongguan KK quoted (suppliers.json) — the
+           size this table had assumed before the quote. */
         type: 'table',
         id: 'shipping-breakdown',
         caption: 'Shipping — what it costs to move one box from China',
@@ -11688,13 +11721,13 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Input', 'Figure', 'Where it comes from'],
         rows: [
-          ['Carton', '15 × 9 × 4 cm, 0.23 kg', 'Our assumption: no package size is published for B0GNWNXFY1, and the listing gives 8 oz'],
+          ['Carton', '15 × 9 × 4 cm, 0.23 kg', 'The tuck box the factory quoted; no package size is published for B0GNWNXFY1, and the listing gives 8 oz'],
           ['Volume', '0.00054 cbm', 'The carton, in cubic metres'],
           ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
-          ['Shipping, per box', '$0.27', '0.00054 cbm × $497'],
+          ['Shipping, per box', lineUsd(GG_COST.freight), '0.00054 cbm × $497'],
         ],
         note:
-          'The rate is the low end of Freightos’ band, $497 to $4,241 a cbm; the top prices express services a first order would not buy. It is door to door, customs clearance and delivery included, and excludes the duty, which is its own line. The box size is a placeholder until it is measured; a box twice the size would add 27 cents.',
+          'The rate is the low end of Freightos’ band, $497 to $4,241 a cbm; the top prices express services a first order would not buy. It is door to door, customs clearance and delivery included, and excludes the duty, which is its own line. The box is the size the factory quoted, not a measured Scratch & Swing box; a box twice the size would add 27 cents.',
       },
       {
         /* Derived from the two tables above and the tariff line below, so no
@@ -11705,13 +11738,13 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per box', 'From'],
         rows: [
-          ['Production', '$2.50', 'Our placeholder until a printer quotes — COGS table above'],
-          ['Tariff', '$0.50', '20% of the cost to make, assuming China origin — the tariff line below'],
-          ['Shipping', '$0.27', 'An assumed box at $497/cbm — shipping table above'],
-          ['Landed cost', '$3.27', 'What one box costs to get to their door, before it sells'],
+          ['Production', lineUsd(GG_COST.factory), 'One Alibaba supplier’s quote, at 5,000 boxes — COGS table above'],
+          ['Tariff', lineUsd(GG_COST.tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+          ['Shipping', lineUsd(GG_COST.freight), 'The quoted box at $497/cbm — shipping table above'],
+          ['Landed cost', lineUsd(GG_COST.landed), 'What one box costs to get to their door, before it sells'],
         ],
         note:
-          'The first three lines of the breakdown below, added up: $3.27 is 13.6% of the $24 price. It covers making the box and bringing it in, not posting it to the buyer or Amazon’s fee, which are their own lines.',
+          'The first three lines of the breakdown below, added up: $1.33 is 5.5% of the $24 price. It covers making the box and bringing it in, not posting it to the buyer or Amazon’s fee, which are their own lines.',
       },
       {
         type: 'margin',
@@ -11722,8 +11755,7 @@ export const PROFILES = {
             key: 'cogs',
             pct: ggPct(GG_COST.factory),
             amount: GG_COST.factory,
-            emphasis: true,
-            detail: 'A placeholder, not a quote: what 57 printed scratch-off cards, three foil packs and a box might cost a printer to make. The quote that replaces it has been requested.',
+            detail: 'One Alibaba factory’s quote for the whole kit — 57 scratch-off cards, three foil packs and a tuck box — at 5,000 boxes, EXW, plates and setup included. It rests on that one supplier.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -11733,7 +11765,7 @@ export const PROFILES = {
             label: 'Tariff',
             pct: ggPct(GG_COST.tariff),
             amount: GG_COST.tariff,
-            detail: '20% of the cost to make, the rate this site uses for games made in China: Section 301 plus the reciprocal tariff, over a base near zero. Where the game is printed is not known; printed in the US, this line is zero.',
+            detail: '20% of the cost to make, the rate this site uses for games made in China: Section 301 plus the reciprocal tariff, over a base near zero. The quoting factory is in China; where the brand prints the game today is not known, and printed in the US this line is zero.',
             links: [
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
               { label: 'See landed cost above', href: '#landed-cost' },
@@ -11743,7 +11775,7 @@ export const PROFILES = {
             label: 'Shipping',
             pct: ggPct(GG_COST.freight),
             amount: GG_COST.freight,
-            detail: 'An assumed box at a read sea-freight rate, door to door. A placeholder for the size, not for the rate.',
+            detail: 'The quoted tuck box at a read sea-freight rate, door to door.',
             links: [
               { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
               { label: 'See landed cost above', href: '#landed-cost' },
@@ -11764,7 +11796,7 @@ export const PROFILES = {
             pct: ggPct(GG_COST.postage),
             amount: GG_COST.postage,
             emphasis: true,
-            detail: 'The listing is merchant-fulfilled with free delivery, so the seller pays to post each box: USPS Ground Advantage at commercial prices runs $5.50 to $8.40 for a parcel under a pound, and an 8 oz box to a middle zone is about $6.25, plus a mailer. More than twice the placeholder cost to make the game.',
+            detail: 'The listing is merchant-fulfilled with free delivery, so the seller pays to post each box: USPS Ground Advantage at commercial prices runs $5.50 to $8.40 for a parcel under a pound, and an 8 oz box to a middle zone is about $6.25, plus a mailer. More than seven times the quoted cost to make the game.',
             links: [{ label: 'USPS Ground Advantage commercial prices, 2026', href: 'https://onlineshippingcalculator.com/guides/ground-advantage-retail-vs-commercial-guide' }],
           },
           {
@@ -11784,12 +11816,12 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Posting it themselves is the decision that shapes the margin: postage is the largest line, bigger than Amazon’s fee and more than twice the placeholder cost to make. In exchange the stock stays with them, sold from the same shelf as their own store’s orders. What it gives up is the Prime badge, on a listing that competes with Prime games on every golf search.',
+          'Posting it themselves is the decision that shapes the margin: postage is the largest line, bigger than Amazon’s fee and more than seven times the quoted cost to make. In exchange the stock stays with them, sold from the same shelf as their own store’s orders. What it gives up is the Prime badge, on a listing that competes with Prime games on every golf search.',
       },
       {
         type: 'callout',
         text:
-          'Profit here is a modelled ceiling on a placeholder cost to make, an assumed origin for the tariff and an assumed box for the freight. The make cost is the one that matters: every dollar it moves is four points of margin. The quote that replaces it has been requested.',
+          'Profit here is a modelled ceiling on one factory’s quote for the cost to make, at 5,000 boxes, and an assumed origin for the tariff. At 500 boxes, that factory’s smallest order, the same kit is $2.43, which with its tariff would take nearly eight points off the margin.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
@@ -11902,6 +11934,8 @@ export const PROFILES = {
        the owner 2026-10-15) — and the page reads them from the row alone.
        The image is the black Lift, B0FS8PXTX3, the hero listing. */
     headline: {
+      /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/draft-top/a11d0900bf86fbc9f98ffe10bdc5d7b2c1ac7ba73d8170a4e72cead94a83fbc9.png',
       image: {
         src: draftTopPhoto('B0FS8PXTX3'),
         alt: 'The Draft Top Lift topless can opener in black: an oval plastic body with a ringed opening in the middle and a curved handle on one side',
@@ -12146,7 +12180,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The year has two peaks: summer, when June 2024 and June 2026 each sold over 7,000, and November to December, with January to March falling to a fraction of either. A little under half of each month is kept, after Amazon’s two fees, the cost to make the founders gave, an assumed tariff and modelled advertising. September 2026 was twice September 2025, and the badges read in October were running higher again.',
+          'The year has two peaks: summer, when June 2024 and June 2026 each sold over 7,000, and November to December, with January to March falling to a fraction of either. Close to three fifths of each month is kept, after Amazon’s two fees, the cost to make two Alibaba factories quoted with the moulds spread over a year, an assumed tariff and modelled advertising. September 2026 was twice September 2025, and the badges read in October were running higher again.',
       },
       {
         type: 'prose',
@@ -12190,7 +12224,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is the founders’ own figure from 2021, for the design before the Lift — Margin breakdown says what that means. Their own store, the distributors and retail are not in either.',
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is two Alibaba factories’ prices for openers they already make, not a quote for the Lift’s own design, plus one factory’s estimate for the moulds — Margin breakdown says what that means. Their own store, the distributors and retail are not in either.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
@@ -12209,41 +12243,62 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Of a $26.76 average sale, a little under half is left once Amazon’s two fees, the cost to make it, a tariff and advertising are paid — on a cost to make the founders gave on television five years ago, for the design before this one, and a tariff that assumes it is made in China.',
+          'Of a $26.76 average sale, close to three fifths is left once Amazon’s two fees, the cost to make it, a tariff and advertising are paid — on a cost to make two Alibaba factories quoted for openers they already make, and a tariff that assumes it is made in China.',
       },
       {
         type: 'prose',
         text:
-          'There is one product to cost, because the Lift is every measured sale in September: seven colours of one tool from one factory. Amazon’s fees and the advertising are read or modelled for the Lift itself. The cost to make is not. It is the founders’ own answer on Shark Tank in February 2021 — “$4.13 to make it. It’s 100% American made” — self-reported, and given for the Draft Top 3.0, the design the Lift replaced. Nobody has priced the Lift since, so the figure is used as they said it, five years on, and labelled as theirs. The tariff is an assumption the other way: they say it is made in America, but this page assumes China, as one of their own listing titles does.',
+          'There is one product to cost, because the Lift is every measured sale in September: seven colours of one tool from one factory. Amazon’s fees and the advertising are read or modelled for the Lift itself. The cost to make is not. It is what two factories in China quoted through Alibaba in October 2026 — but for an opener each already makes, not for the Lift’s own design, so it prices a copy of the tool rather than the Lift itself. A copy cannot be made without its own moulds, so one factory’s estimate for them is in it too, spread over a year’s sales. The founders gave a figure too, on Shark Tank in February 2021: “$4.13 to make it. It’s 100% American made” — for the Draft Top 3.0, the design the Lift replaced, and three times the quotes. The tariff is an assumption: they say it is made in America, but this page assumes China, as one of their own listing titles does.',
       },
       {
-        /* 🚨 Owner's call, 2026-10-15: the margin cites the FOUNDERS' OWN cost
-           of goods (payload.json founderStatements[0]), labelled self-reported,
-           as kalotoys leads with its founders' shares. This table is what the
-           cost lines link back to. It is NOT a supplier table — its caption
-           does not start "COGS" and it has no alibaba attribution — so it is
-           held to no supplier columns.
-           🚨 TODO when the Accio quotes land (accio/draft-top/lift-can-opener/,
-           filed by process-accio-quotes): add, ABOVE the margin block and below
-           this table, a `cost-agreement` exhibit (the founders' 15.4% against
-           the quotes' make cost), a founders-against-quotes table (make only,
-           + 20% tariff, landed) and the supplier table in the standard columns
-           (`product-tabs` only if more than one product is quoted) — the
-           kalotoys pattern. The margin keeps the founders' $4.13; the quote's
-           landed cost is the comparison "Test it first" is re-published on. */
+        /* waithowmuch-research research/draft-top/suppliers.json
+           (lift-can-opener, source accio), Accio run
+           accio/lift-can-opener/2026-10-25T1146, verified against its
+           screenshots; both replies confirmed by the owner in the Alibaba chat,
+           2026-10-25. 🚨 Both suppliers quoted an EXISTING model, not the
+           custom Lift — the owner accepted that as the COGS (2026-10-25,
+           suppliers.json corrections). Yongli's $0.90 1,000 tier and its
+           $5,000 mould figure were removed in verification (not in the
+           confirmed reply); its custom-tooling estimate ("3-4 sets of moulds
+           at $3,000-$5,000 USD per set", quoteText) is in the note as an
+           estimate, and since 2026-10-25 (owner: moulds are unavoidable) its
+           low end, $9,000, is in the cost to make, ÷ cogsAverage.yearlyUnits
+           47,000. Track record, ratings and sales were not read (null in
+           suppliers.json). Until 2026-10-25 this margin used the founders'
+           self-reported $4.13; their words are in the table below. */
         type: 'table',
         id: 'cogs-breakdown',
-        caption: 'Cost of goods — what the founders said it costs to make',
+        caption: 'COGS — what a topless can opener costs to make',
+        attribution: 'alibaba',
+        columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price', 'Lead time'],
+        rows: [
+          ['Yangjiang Keyhome Hardware Factory', '—', '—', '—', '1,000 pieces (lowest tier)', '$1.66–1.96', '—'],
+          ['Huizhou Yongli Industrial Co., Ltd', '—', '—', '—', '5,000 pieces (lowest tier)', '$0.86–0.99', '15 working days'],
+          ['Average — the factory price', '', '', '', '', lineUsd(DT_COST.factory), ''],
+          [`Moulds, spread over a year — $${DT_COST.mouldsOnce.toLocaleString('en-US')} once ÷ ~${DT_COST.mouldUnits.toLocaleString('en-US')} openers`, '', '', '', '', lineUsd(DT_COST.moulds), ''],
+          ['The cost to make used below', '', '', '', '', lineUsd(DT_COST.make), ''],
+        ],
+        note:
+          'Two factories in China quoted, and neither priced the Lift’s own design: each quoted a can opener it already makes. Keyhome, boxed, EXW: $1.96 at 1,000, $1.84 at 10,000 and $1.66 at 50,000. Yongli, a 45 g two-in-1 rotary opener in a plain white box — lighter than the 80–90 g a custom design was specified at — FOB Shenzhen: $0.99 at 5,000, $0.95 at 10,000, $0.90 at 30,000 and $0.86 at 50,000. Each at its largest tier below the brand’s yearly sales of about 47,000 — $1.84 and $0.90 — and averaged; the two are twice apart. Moulds, in the cost to make: for a custom design Yongli estimated three to four mould sets at $3,000–5,000 each — $9,000 to $20,000 — refundable on terms still to be agreed, and said the reference design appears to be patented; Keyhome has not priced tooling. A copy cannot be made without them, so this page takes the low end, $9,000, and spreads it over a year’s sales at the tiers above, about 47,000 openers: $0.19 each. Yongli’s samples are $5 and take 3 days. Three more factories did not reply. Track record, buyer ratings and sales on Alibaba were not read. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
+      },
+      {
+        /* payload.json founderStatements[0]: the founders' own cost of goods,
+           which this margin used until 2026-10-25. Kept as what they said; it
+           is NOT a supplier table (caption does not start "COGS", no alibaba
+           attribution), so it is held to no supplier columns. */
+        type: 'table',
+        id: 'founders-cost',
+        caption: 'What the founders said it costs to make',
         noteColumns: [3],
         columns: ['Line', 'Said on Shark Tank (Feb 2021)', 'Used here', 'Basis'],
         rows: [
-          ['Cost to make, per unit', '“$4.13 to make it”', '$4.13 · 15.4% of $26.76', 'Self-reported, for the Draft Top 3.0 — the design before the Lift — and five years old. Make cost only; freight not stated'],
+          ['Cost to make, per unit', '“$4.13 to make it”', 'Not used: the factory quotes above are', 'Self-reported, for the Draft Top 3.0 — the design before the Lift — and five years old. Make cost only; freight not stated. Three times the quotes'],
           ['Where it is made', '“100% American made”', 'Not used: a 20% China tariff is assumed', 'What they say, and drafttop.com says “Built in USA” today; but the Ghost White listing’s title reads “Made In china”, and nothing read settles it. This page assumes China'],
           ['Price then', '$24.99', '$26.76, September’s average sale', 'At the price they gave, $4.13 was 16.5% of a sale'],
           ['Net margin', '“50% net margin”', 'Not used', 'A margin for the whole company, Kickstarter and their own store included, not a cost'],
         ],
         note:
-          'The founders’ words, from the Season 12 episode as a reaction video replays it; the original ABC clip was not found. No supplier quote has been read for the Lift: a request for one is with Alibaba’s sourcing agent, and it will be set beside this figure as a comparison when it comes back.',
+          'The founders’ words, from the Season 12 episode as a reaction video replays it; the original ABC clip was not found. Their $4.13 was this page’s cost to make until the factory quotes above came back.',
       },
       {
         /* The freight half at the same dated LCL rate every profile uses —
@@ -12273,18 +12328,21 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per unit', 'From'],
         rows: [
-          ['Production', '$4.13', 'The founders’ own figure, self-reported — the table above'],
-          ['Tariff', '$0.83', '20% of the cost to make, assuming China origin — the tariff line below'],
-          ['Shipping', '$0.19', 'The hero’s carton at $497/cbm — shipping table above'],
+          ['Production', lineUsd(DT_COST.factory), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+          ['Moulds, spread over a year', lineUsd(DT_COST.moulds), `$${DT_COST.mouldsOnce.toLocaleString('en-US')} once ÷ ~${DT_COST.mouldUnits.toLocaleString('en-US')} openers — the low end of one factory’s estimate; COGS table above`],
+          ['Tariff', lineUsd(DT_COST.tariff), '20% of the factory price, assuming China origin — a mould is paid once at the factory, not imported with each opener, so it carries none; the tariff line below'],
+          ['Shipping', lineUsd(DT_COST.freight), 'The hero’s carton at $497/cbm — shipping table above'],
           ['Landed cost', `$${DT_COST.landed.toFixed(2)}`, 'What one opener costs to reach Amazon’s door, before it sells'],
         ],
         note:
-          'The first three cost lines of the breakdown below, added up: $5.15 is 19.2% of the $26.76 average sale. It covers making the tool and bringing it in, not Amazon’s fees, which are their own lines. “Test it first” prices its first order on this same figure.',
+          'The first three cost lines of the breakdown below, added up — cost of goods (moulds in), tariff and shipping: $2.03 is 7.6% of the $26.76 average sale; the lines above are rounded to the cent and come to $2.029 unrounded. It covers making the tool, its moulds and bringing it in, not Amazon’s fees, which are their own lines. “Test it first” prices its first order on this same figure, and adds the $9,000 for the moulds once, up front.',
       },
       {
-        /* 🚨 The profit series is 100% less these lines — 46.3% — and the
+        /* 🚨 The profit series is 100% less these lines — 57.981% — and the
            backend seed (seed-draft-top.ts, generated from pnl.json) builds it
-           from the SAME percentages. Change one, regenerate the other. */
+           from the SAME percentages. Change one, regenerate the other.
+           Until 2026-10-25 (moulds added): cogs 5.12, 58.696%. Before that:
+           cogs 15.434, tariff 3.087 (the founders' $4.13), 46.3%. */
         type: 'margin',
         basis: { label: 'Average selling price', value: DT_COST.price },
         lines: [
@@ -12294,10 +12352,10 @@ export const PROFILES = {
             pct: -DT_COST.makePct,
             amount: DT_COST.make,
             detail:
-              'Self-reported: the founders’ own “$4.13 to make it”, said on Shark Tank in February 2021 for the Draft Top 3.0, the design before the Lift. Five years old and for an earlier tool, so it is a stated figure, not a measured one; a supplier quote has been requested to set beside it.',
+              'Two Alibaba factories’ quotes, averaged — $1.84 at 10,000 and $0.90 at 30,000 — for can openers they already make, not for the Lift’s own design: $1.37. Plus the moulds a copy cannot be made without, spread over a year’s sales: $9,000 — the low end of one factory’s estimate of three to four sets at $3,000–5,000 each; the other has not priced them — ÷ about 47,000 openers = $0.19. The founders’ own 2021 figure, for the design before the Lift, was $4.13.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
-              { label: 'See what the founders said above', href: '#cogs-breakdown' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
             ],
           },
           {
@@ -12308,9 +12366,10 @@ export const PROFILES = {
                made in China"). Keepa's title for B0DS23PTB2 (Ghost White) reads
                "Made In china"; B0DFDWRVPN's reads "Made In The USA". */
             detail:
-              'Assumed: 20% of the cost to make, the rate this site uses for goods made in China — Section 301 plus the reciprocal tariff. What they say is different: “100% American made” on air, “Built in USA” on their site. But the Ghost White listing’s own title reads “Made In china”, so this page assumes China. Made in the USA, this line would be zero.',
+              'Assumed: 20% of the cost to make, the rate this site uses for goods made in China — Section 301 plus the reciprocal tariff. What they say is different: “100% American made” on air, “Built in USA” on their site. But the Ghost White listing’s own title reads “Made In china”, so this page assumes China, where both quoting factories are. Made in the USA, this line would be zero.',
             links: [
-              { label: 'See what the founders said above', href: '#cogs-breakdown' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+              { label: 'See what the founders said above', href: '#founders-cost' },
               { label: 'See landed cost above', href: '#landed-cost' },
             ],
           },
@@ -12356,17 +12415,17 @@ export const PROFILES = {
           },
         ],
         note:
-          'Self-reported cost basis: the cost to make is the founders’ 2021 figure for the Draft Top 3.0, applied to the Lift, and the tariff assumes China origin. Returns, payroll, warehousing and overhead are not modelled, so this is a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–24 months of the 3.0 and of older Lift listings at $19.99 to $24.99; those months show the shape of the series, not their own margins.',
+          'Quoted cost basis: the cost to make is two Alibaba factories’ prices for openers they already make, averaged — not a quote for the Lift’s own design — and the tariff assumes China origin. The moulds a copy needs are in it: $9,000 once, the low end of one factory’s estimate, spread over a year’s sales; the other factory has not priced them. Returns, payroll, warehousing and overhead are not modelled, so this is a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–24 months of the 3.0 and of older Lift listings at $19.99 to $24.99; those months show the shape of the series, not their own margins.',
       },
       {
         type: 'prose',
         text:
-          'Amazon takes more of a sale than making it does: the referral fee and the pick-and-pack fee together are about twice the stated cost to make. That is the shape of a $27 tool in a Large Standard box. The founders also told the Sharks they ran a 50% net margin — a figure for the whole company in 2021, mostly direct and Kickstarter sales, which this page does not use, though it lands near what the lines above leave before any overhead.',
+          'Amazon takes far more of a sale than making it does: the referral fee and the pick-and-pack fee together are about five times the cost to make, moulds included. That is the shape of a $27 tool in a Large Standard box. The founders also told the Sharks they ran a 50% net margin — a figure for the whole company in 2021, mostly direct and Kickstarter sales, which this page does not use; the lines above leave more than that, on a cost to make under two fifths of the $4.13 they gave.',
       },
       {
         type: 'callout',
         text:
-          'The one line that could move this margin is the cost to make. It is the founders’ own and five years old, and a factory quote for the Lift has been requested to set beside it: every dollar it is off moves the margin by almost four points.',
+          'The one line that could move this margin is the cost to make. It rests on two factories’ prices for openers they already make, twice apart, not on a quote for the Lift itself, and on one factory’s estimate for the moulds; at the founders’ own $4.13, moulds on top, the margin would be 45.6%. Every dollar it is off moves the margin by almost four points.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
@@ -12493,7 +12552,7 @@ export const PROFILES = {
       {
         type: 'valuation-board',
         note:
-          'Their own store, the distributors and retail are excluded: all real, none sized from outside. The profit being multiplied rests on the founders’ own 2021 cost to make, for the design before the Lift, and an assumed China tariff, and deducts no overhead, so on that basis this figure is an upper bound.',
+          'Their own store, the distributors and retail are excluded: all real, none sized from outside. The profit being multiplied rests on two Alibaba factories’ prices for openers they already make, rather than a quote for the Lift itself, and an assumed China tariff, and deducts no overhead, so on that basis this figure is an upper bound.',
       },
       {
         type: 'prose',
@@ -12509,14 +12568,16 @@ export const PROFILES = {
       /* LAST in the blocks: the nav lists it below Links & sources under a
          "Build your own" rule. The published estimate is created by
          make-validation-launch.mjs (--variants "lift=opener"); these blocks
-         carry no data. Its landed cost, $5.15, is the Margin breakdown's —
-         the founders' $4.13 + the assumed 20% China tariff + freight — so
-         landedHref is the margin's landed-cost table. 🚨 Re-publish when the
-         Accio quotes land. */
+         carry no data. Its landed cost, $2.03, is the Margin breakdown's —
+         the Accio production price $1.37 + moulds spread over a year $0.19 +
+         the assumed 20% China tariff on $1.37 + freight — so landedHref is
+         the margin's landed-cost table. The moulds themselves, $9,000 once
+         ("tooling" in starting-cost.lift.inputs.json), are in "To test" too
+         (owner, 2026-10-25). Re-published locally 2026-10-25 (validation.json). */
       { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
       {
         type: 'lede',
-        text: 'The least you would spend to find out whether a copy of the Lift sells, before you commit to a full launch — priced, for now, on the founders’ own cost to make plus the assumed China tariff, a placeholder until factory quotes come back. The moulds and blade die a copy would need are a one-time cost not in it.',
+        text: 'The least you would spend to find out whether a copy of the Lift sells, before you commit to a full launch — priced on two Alibaba factories’ quotes plus the assumed China tariff, and on the moulds a copy cannot be made without: $9,000 once, the low end of one factory’s estimate of three to four sets at $3,000–5,000 each. The other factory has not priced them.',
       },
       { type: 'validation-strategy' },
       { type: 'validation-launch', landedHref: '/business/draft-top/margin/#landed-cost' },
@@ -14585,7 +14646,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'This is not a Christmas-only gift. December sold 600, January fell under the badge, and then April and September both sold more than December did. About half of each month is kept, after Amazon’s two fees, the cost to make it, an assumed tariff, freight and a modest modelled ad line — a margin a $29.99 price with a light box allows.',
+          'This is not a Christmas-only gift. December sold 600, January fell under the badge, and then April and September both sold more than December did. More than half of each month is kept, after Amazon’s two fees, the quoted cost to make it, an assumed tariff, freight and a modest modelled ad line — a margin a $29.99 price with a light box allows.',
       },
       {
         type: 'prose',
@@ -14623,7 +14684,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is a placeholder, not a quote — Margin breakdown says so — and the parent company’s own store, its wholesale and the gift shops are in neither.',
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is two Alibaba factories’ quotes for a copy, not the brand’s own cost — Margin breakdown shows them — and the parent company’s own store, its wholesale and the gift shops are in neither.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
@@ -14642,29 +14703,35 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Of a $29.99 pourer, about half is left once Amazon’s two fees, the cost to make, a tariff, freight and advertising are paid — on a cost to make that is a placeholder until a factory quotes it.',
+          'Of a $29.99 pourer, more than half is left once Amazon’s two fees, the cost to make, a tariff, freight and advertising are paid — on a cost to make two Alibaba factories quoted.',
       },
       {
         type: 'prose',
         text:
-          'There is one product to cost: four colours of one pourer, one price. Amazon’s fees and the advertising are read or modelled for the pourer itself. The cost to make is not: no supplier has quoted a carved wood bird with silicone wings and a whistling pour tube yet, so the figure below is a placeholder, and the tariff and the margin lean on it.',
+          'There is one product to cost: four colours of one pourer, one price. Amazon’s fees and the advertising are read or modelled for the pourer itself, and the cost to make is now quoted: two Alibaba factories priced a carved wood bird with silicone wings and a whistling pour tube, and the figure below is their average. Where the brand’s own pourer is made is still not stated, so the tariff assumes China.',
       },
       {
-        /* Standard supplier columns, no attribution: nothing here comes from
-           Alibaba yet. The request is accio/songbird-specialties/
-           singing-bird-pourer (waithowmuch-research, Mode inquiry); replace
-           the first row with the offers, ordered by track record, when
-           process-accio-quotes files them. */
+        /* waithowmuch-research research/songbird-specialties/suppliers.json
+           (source accio), run accio/singing-bird-pourer/2026-10-25T1146,
+           verified against its screenshots and confirmed by the owner in the
+           Alibaba chat, 2026-10-25. Track record, rating and sales were not
+           read for either store (null in suppliers.json), hence the dashes;
+           suppliers.json order. Until 2026-10-25 this table held OUR $4.00
+           placeholder. */
         type: 'table',
         id: 'cogs-breakdown',
         caption: 'COGS — what a pourer costs to make',
+        attribution: 'alibaba',
         columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
         rows: [
-          ['No quote yet — requested from Alibaba suppliers', '', '', '', '', ''],
-          ['Average lowest price — the cost to make used below — our figure, not a quote', '', '', '', '', lineUsd(SB_COST.make)],
+          ['Dongguan City Kingtop Metal Product Co., Ltd.', '—', '—', '—', 'Not stated', '$2.28'],
+          ['Shenzhen Sinowin Wine Accessories Co., Ltd.', '—', '—', '—', '500 pieces', '$3.35–3.85'],
+          ['Average of the two quotes', '', '', '', '', lineUsd(SB_COST.factory)],
+          ['Mould, spread over a year — $1,200 once ÷ ~13,200 pourers', '', '', '', '', lineUsd(SB_COST.mouldPerUnit)],
+          ['Cost to make used below', '', '', '', '', lineUsd(SB_COST.make)],
         ],
         note:
-          'A request for an acacia-wood bird body, two silicone wings, a stainless pour tube with a built-in whistle, a beak, a silicone seal and a printed box went to Alibaba’s sourcing agent as an inquiry, since the wings and the whistle need moulds. Until it is answered the $4.00 is a placeholder with no quote behind it.',
+          'Two factories quoted the pourer as briefed: an acacia-wood bird body, silicone wings, a plastic beak over a stainless whistling pour tube, silicone stopper rings and a printed box. Kingtop: $2.28 a piece, a figure with no quantity attached, so it is taken at every quantity, plus a $1,200 mould, paid once; it gave no minimum or lead time. Sinowin already has the tooling, so no mould: $3.85, $3.75, $3.65, $3.55, $3.45 and $3.35 at 500, 1,000, 3,000, 5,000, 10,000 and 20,000, EXW (FOB Shenzhen for a flat $500 more), its own simple packaging, 35 days to make, no samples, and food-contact testing (FDA/LFGB) at about $900 if wanted. Sinowin also warned of a third-party patent risk on the design. Each at the tier nearest the brand’s yearly sales of about 13,200 — $2.28 and $3.45 — and averaged. Two more factories did not reply and one declined. Requested through Alibaba’s sourcing agent (Accio), read 18 October 2026, and checked against its screenshots of the replies. Sinowin’s mould is its own, so a copy needs one too: Kingtop’s $1,200 is spread over a year’s sales of about 13,200 — $0.09 a pourer — and added to the cost to make.',
       },
       {
         /* The freight half at the dated LCL rate every profile uses —
@@ -14683,7 +14750,7 @@ export const PROFILES = {
           ['Shipping, per pourer', '$0.65', '0.0013 cbm × $497'],
         ],
         note:
-          'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. The lane assumes a Chinese factory, which nothing read confirms.',
+          'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. The lane assumes a Chinese factory: both that quoted are in China, though where the brand’s own pourer is made is not stated.',
       },
       {
         /* Derived from the two tables above and the tariff line, so no source logo. */
@@ -14693,15 +14760,16 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per pourer', 'From'],
         rows: [
-          ['Production', lineUsd(SB_COST.make), 'Our placeholder until a factory quotes — COGS table above'],
-          ['Tariff', lineUsd(SB_COST.tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
+          ['Production', lineUsd(SB_COST.factory), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+          ['Mould, spread over a year', lineUsd(SB_COST.mouldPerUnit), '$1,200 once ÷ ~13,200 pourers, a year’s sales — COGS table above'],
+          ['Tariff', lineUsd(SB_COST.tariff), '20% of the factory price, assuming China origin; the mould is paid once, not shipped — the tariff line below'],
           ['Shipping', lineUsd(SB_COST.freight), 'The pourer’s carton at $497/cbm — shipping table above'],
           ['Landed cost', lineUsd(SB_COST.landed), 'What one pourer costs to reach Amazon’s door, before it sells'],
         ],
-        note: 'The first three cost lines of the breakdown below, added up: 18.2% of the $29.99 price. Amazon’s fees are their own lines.',
+        note: 'The first three cost lines of the breakdown below, added up: 13.9% of the $29.99 price. Amazon’s fees are their own lines. The $1,200 mould is in it, spread over a year’s sales.',
       },
       {
-        /* 🚨 The profit series is 100% less these lines — 51.578% — and the
+        /* 🚨 The profit series is 100% less these lines — 55.797% — and the
            backend seed builds it from the SAME percentages. */
         type: 'margin',
         basis: { label: 'Selling price', value: SB_COST.price },
@@ -14712,7 +14780,7 @@ export const PROFILES = {
             pct: -SB_COST.makePct,
             amount: SB_COST.make,
             emphasis: true,
-            detail: 'A placeholder, not a quote: what a carved wood bird, two silicone wings and a whistling steel tube might cost a factory to make. The quote that replaces it has been requested.',
+            detail: 'Two Alibaba factories’ quotes for the pourer, each at the tier nearest about 13,200 a year, averaged: $2.28 and $3.45, $2.87. Plus Kingtop’s $1,200 mould, paid once and spread over a year’s sales: $0.09 a pourer.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -14722,7 +14790,7 @@ export const PROFILES = {
             label: 'Tariff',
             pct: -SB_COST.tariffPct,
             amount: SB_COST.tariff,
-            detail: 'Assumed: 20% of the cost to make, the rate this site uses for goods made in China. Neither the listing nor their own store says where the pourer is made.',
+            detail: 'Assumed: 20% of the $2.87 factory price, the rate this site uses for goods made in China; the mould is paid once, not shipped with each pourer, so it carries no duty here. Neither the listing nor their own store says where the pourer is made.',
             links: [
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
               { label: 'See landed cost above', href: '#landed-cost' },
@@ -14767,17 +14835,17 @@ export const PROFILES = {
           },
         ],
         note:
-          'Before returns, storage and overhead, none of which is modelled: a ceiling on profit, not profit. The cost to make is a placeholder; every dollar it is off moves the margin by over three points.',
+          'Before returns, storage and overhead, none of which is modelled: a ceiling on profit, not profit. The one-time $1,200 mould is in the cost of goods, spread over a year’s sales. The two quotes are $1.17 apart, and every dollar of cost to make moves the margin by over three points.',
       },
       {
         type: 'prose',
         text:
-          'The price does the work. At $29.99 for a 5-ounce box, Amazon’s two fees take under a third of a sale, and even a generous cost to make leaves about half — a margin few kitchen gadgets this size reach. What it costs is the account behind it: the pourer sells from a seller with twenty years and twelve thousand ratings, and a new listing would pay for its first reviews in ads.',
+          'The price does the work. At $29.99 for a 5-ounce box, Amazon’s two fees take under a third of a sale, and even at the dearer of the two factory quotes more than half is left — a margin few kitchen gadgets this size reach. What it costs is the account behind it: the pourer sells from a seller with twenty years and twelve thousand ratings, and a new listing would pay for its first reviews in ads.',
       },
       {
         type: 'callout',
         text:
-          'Profit here is a modelled ceiling on a placeholder cost to make and an assumed origin for the tariff. The quote that replaces the placeholder has been requested; the margin moves with it.',
+          'Profit here is a modelled ceiling on two factories’ quotes for the cost to make, one of them a figure with no quantity attached, and an assumed origin for the tariff. The $1,200 mould one of them charges is paid once: the margin spreads it over a year’s sales, and Test it first pays it up front.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
@@ -14863,17 +14931,19 @@ export const PROFILES = {
       },
 
       /* LAST in the blocks: the nav lists it below Links & sources under a
-         "Build your own" rule. 🚨 NO TEST IS PUBLISHED: make-validation-launch.mjs
-         finds no search that names a version of the pourer, ranks it top 25 and
-         can deliver 300 clicks — the best, --variant wine, reaches 292
-         ("wine pourer spout", "funny wine gifts"); colour and "bird" searches
-         reach none. --category would pull Jungle Scout share of voice for the
-         category searches, which this build did not run (no Jungle Scout
-         calls); owner's call. The blocks render their own "no test" note. */
+         "Build your own" rule. Published 2026-10-25 (local) with
+         make-validation-launch.mjs songbird-specialties --variant pourer,pourers
+         --variant-kind theme --category — category mode by the owner's call,
+         since the plain run fails the top-25 organic-rank rule (no search that
+         names the pourer and ranks it top 25 delivers the 300 clicks). Market
+         conversion from 4 share-of-voice rows (cached, no new Jungle Scout
+         calls). First order 500 (Sinowin's minimum, suppliers.json lowestMoq)
+         × $4.18 landed, plus the $1,200 Kingtop mould as tooling (owner,
+         2026-10-25: unavoidable; re-published with it the same day). */
       { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
       {
         type: 'lede',
-        text: 'The least you would spend to find out whether a copy sells. No test is priced yet: the searches that name the pourer and that it already ranks on are too small to buy the clicks a test needs.',
+        text: 'The least you would spend to find out whether it sells, before you commit to a full launch. It includes the $1,200 mould one of the two factories charges, paid once: the other factory’s mould is its own, so a copy needs one.',
       },
       { type: 'validation-strategy' },
       { type: 'validation-launch' },

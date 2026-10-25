@@ -19,13 +19,13 @@ export const FIXED_COSTS_NOTE = "+ fixed costs for a new brand";
 /** The same, for a table cell too narrow for it; the column's ⓘ says the rest. */
 export const FIXED_COSTS_SHORT = "+ fixed costs";
 
-/** The validation test without fixed costs: first order + launch ads (owner,
- *  2026-10-25). Only a profile page has the estimate's breakdown; elsewhere
+/** The validation test without fixed costs: first order + any mould + launch
+ *  ads (owner, 2026-10-25). Only a profile page has the estimate's breakdown; elsewhere
  *  this is null and the stored range stands. */
 export function testCost(b: BusinessCard): number | null {
   const t = (b as { startingCostEstimate?: { breakdown?: { validation?: { together?: { inventory: number; ads: number } } } } | null })
-    .startingCostEstimate?.breakdown?.validation?.together;
-  return t ? Math.round(t.inventory + t.ads) : null;
+    .startingCostEstimate?.breakdown?.validation?.together as { inventory: number; ads: number; tooling?: number } | undefined;
+  return t ? Math.round(t.inventory + (t.tooling ?? 0) + t.ads) : null;
 }
 
 export function startingCostRange(b: BusinessCard): { low: number; high: number } | null {

@@ -56,7 +56,7 @@ export function StartingCostWaterfall({ estimate: e, currency }: { estimate: Wat
     { label: "Launch ads", range: p.ads },
     // The validation test leaves fixed costs out of its total (owner, 2026-10-25): no row for them
     ...(Number(p.setup.high) > 0 ? [{ label: "Fixed costs", range: p.setup }] : []),
-    ...(p.tooling ? [{ label: "Tooling", range: p.tooling }] : []),
+    ...(p.tooling ? [{ label: "Moulds", range: p.tooling }] : []),
   ];
 
   const max = axisMax(total.high);

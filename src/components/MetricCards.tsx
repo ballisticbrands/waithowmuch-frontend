@@ -242,7 +242,7 @@ function startingCostWorking(b: BusinessDetail): string[] | undefined {
     const t = v.together;
     const products = v.products.length === 1 ? "the product" : `each of its ${v.products.length} products`;
     return [
-      `For this business it is the validation test: what it costs to find out whether it sells — ${exactMoney(t.inventory + t.ads, b.currency)}, the first order and the launch ads.`,
+      `For this business it is the validation test: what it costs to find out whether it sells — ${exactMoney(t.inventory + (t.tooling ?? 0) + t.ads, b.currency)}, the first order${t.tooling ? `, the mould it needs (${exactMoney(t.tooling, b.currency)}, once)` : ""} and the launch ads.`,
       `First order ${exactMoney(t.inventory, b.currency)} — ${firstOrderUnits(v)} units of ${products}, ${v.gate.vineUnits} of them to Amazon Vine for the first reviews${v.products.some((p) => p.units > v.gate.firstOrderUnits) ? ", and more where the factory's minimum asks for it" : ""}.`,
       `Test ads ${exactMoney(t.ads, b.currency)} at most — enough clicks on searches naming ${v.variant.kind === "version" ? "each product’s version" : v.variant.label} to show whether the other ${v.gate.paidUnits} sell.`,
       `If the test passes, the units the ads sell pay back about ${exactMoney(t.moneyBack, b.currency)} after Amazon’s fees. A brand-new seller also pays fixed costs of about ${span(breakdown.parts.setup)} — not counted here.`,
