@@ -6258,7 +6258,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The publisher gave one cost: in April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, 12.5% of that set’s $39.99 buy box, and the Unmatched sets still carry it. Thunder Road: Vendetta, about 73% of September’s own-account revenue, is now priced from a factory quote: two Alibaba factories quoted the standard box, but one left out its plastic vehicles, so the cost to make rests on the other’s quote alone. Nobody quoted the $160 Maximum Chrome edition, so it carries the standard box’s quote scaled by price. Dinosaur Tea Party is priced from three Alibaba listings, and the two Thunder Road expansions are still on the publisher’s 12.5%. Tariff is today’s rate on board games from China, 20% of the cost to make; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
+          'The publisher gave one cost: in April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, 12.5% of that set’s $39.99 buy box, and the Unmatched sets still carry it. Thunder Road: Vendetta, its two editions 63.5% of September’s own-account revenue (about 73% with its two expansions), is now priced from a factory quote: two Alibaba factories quoted the standard box, but one left out its plastic vehicles, so the cost to make rests on the other’s quote alone. Nobody quoted the $160 Maximum Chrome edition, so it carries the standard box’s quote scaled by price. Dinosaur Tea Party is priced from three Alibaba listings, and the two Thunder Road expansions are still on the publisher’s 12.5%. Tariff is today’s rate on board games from China, 20% of the cost to make; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing. The two products that make most of the month, Thunder Road: Vendetta and the Unmatched sets, 85% between them, each have a tab below with their own suppliers, landed cost and margin; Whole brand, last, is the account at September’s mix.',
       },
       {
         type: 'prose',
@@ -6266,15 +6266,29 @@ export const PROFILES = {
           'A copy of Thunder Road also needs its own moulds for the plastic vehicles: one factory charges $8,800 for the four of them. That is a one-time payment made before the first order, a cost of starting rather than of each sale, so it is not in the margin below.',
       },
       {
-        /* One supplier table per product, behind tabs (SKILL §2: the margin is
-           not split by product, the quotes are — the kalotoys way). Each tab's
-           table is id 'cogs-breakdown'; only the chosen tab renders. Shares are
-           of the own account's September, $34,633: the two Thunder Road boxes
-           $21,995 (63.5%), the three Unmatched sets $7,393 (21.3%), Dinosaur
-           Tea Party $2,000 (5.8%). The expansions ($3,245, 9.4%) have no
-           quote and no tab. waithowmuch-research research/restoration-games/
-           suppliers.json; per-listing costs pnl.json byListing (2026-10-25). */
-        type: 'product-tabs',
+        /* One full margin breakdown per main product (SKILL §2, "Products —
+           one margin breakdown per main product"; owner, 2026-10-25: the
+           blended block read the same whichever product was picked). The
+           80% rule on the own account's September, $34,633 (pnl.json
+           byListing 2026-09), variations grouped under their product (rule
+           1): Thunder Road: Vendetta, the standard box and its Maximum Chrome
+           deluxe edition, $21,995 (63.51%); the three Unmatched sets $7,393
+           (21.35%) → 84.86%, past 80% on the second, so two tabs. Left out:
+           the two Thunder Road expansions, $3,245 (9.37%) — add-on boxes, not
+           an edition of the game — and Dinosaur Tea Party, $2,000 (5.77%).
+           Each tab's lines are pnl.json byListing summed over the product's
+           listings and divided by its units: make, tariff (20%), freight and
+           FBA per listing; referral at each listing's Keepa rate (15%, or
+           14.99% on Cobble & Fog); advertising at the brand's modelled rate,
+           RG_AD.ratePct.central, as the Whole brand applies it. So the tabs
+           reconcile: 63.509% × 13.426 + 21.347% × 36.581 + expansions 9.370%
+           × 32.725 + Dinosaur Tea Party 5.775% × 28.844 = 21.068%, the
+           Whole brand's 21.069% with its lines rounded to three decimals.
+           The tab id 'thunder-road' is the validation product's: "Test it
+           first" links its first order to this tab's #landed-cost (the
+           first tab, so the plain #landed-cost also opens it). */
+        type: 'product-margins',
+        period: '2026-09',
         products: [
           {
             id: 'thunder-road',
@@ -6336,6 +6350,95 @@ export const PROFILES = {
                 note:
                   'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. At 4.56 kg the box is denser than the band was priced on, so a weight charge could run higher. The standard edition’s own package was not read; it is priced at the box the factories quoted. No package size is on file for the Unmatched sets, Dinosaur Tea Party or the expansions, so their shipping is our $1.50 placeholder.',
               },
+              {
+                /* Derived from the two tables above and the tariff line, so no
+                   source logo. pnl.json byListing 2026-09; the last row is the
+                   product's units-weighted average, 100 of each edition. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — making, duty and shipping, per Thunder Road box',
+                noteColumns: [6],
+                columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
+                rows: [
+                  ['Maximum Chrome', '100', '$57.38', '$11.48', '$8.84', '$77.70', 'The standard box’s quote scaled by price'],
+                  ['The standard edition', '100', '$21.50', '$4.30', '$8.76', '$34.56', 'One Alibaba factory’s quote'],
+                  ['Per box, at September’s mix', '200', '$39.44', '$7.89', '$8.80', '$56.13', 'The two editions, 100 of each'],
+                ],
+                note:
+                  'The first three cost lines of the breakdown below, edition by edition: 51.0% of the $109.98 average box. Amazon’s fees on the sale are their own lines. The vehicle moulds, $8,800 once, are not in it.',
+              },
+              {
+                /* pnl.json byListing 2026-09, B0C6NR9ZC4 + B0BZ62KRGF: revenue
+                   $21,995 on 200 units. Per box: make (5,738 + 2,150) / 200 =
+                   39.44; tariff 7.888; freight (884 + 876) / 200 = 8.80;
+                   referral 15% on both, 3,299.25 / 200 = 16.50; FBA (988 +
+                   798) / 200 = 8.93; ads 12.416% of 109.975 = 13.65. pct =
+                   the product's total ÷ $21,995, three decimals → 86.574,
+                   margin 13.426%. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: 109.98 },
+                lines: [
+                  {
+                    label: 'Manufacturing',
+                    key: 'cogs',
+                    pct: -35.863,
+                    amount: 39.44,
+                    detail:
+                      'The two editions at September’s mix, 100 of each. The standard box $21.50, Jiangsu Hicreate’s quote at 1,000 with the 16 plastic vehicles; a second factory left the vehicles out, so its quote is not used. Maximum Chrome $57.38, that quote scaled by price, because no factory quoted the deluxe box. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -7.173,
+                    amount: 7.89,
+                    detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat: $11.48 on Maximum Chrome, $4.30 on the standard box. None on the moulds, which are paid once at the factory.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: -8.002,
+                    amount: 8.8,
+                    detail: 'Each box at a read sea-freight rate from China, door to door: $8.84 for Maximum Chrome’s own package, $8.76 for the standard edition at the box the factories quoted.',
+                    links: [
+                      { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -15,
+                    amount: 16.5,
+                    detail: 'Measured per listing: 15%, the Toys & Games rate, on both editions — $24.00 on Maximum Chrome, $8.99 on the standard box.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -8.12,
+                    amount: 8.93,
+                    /* Keepa product record B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g, pick-and-pack $9.88, read 2026-10-13. B0BZ62KRGF: pick-and-pack $7.98 (keepa/brand-series.json), no package on file. */
+                    detail: 'Size tier: Large Standard. Maximum Chrome (B0C6NR9ZC4), the product’s best seller by revenue, packs to 15 × 11.5 × 6.3 in at 10.05 lb: over Small Standard’s 0.75 in and 16 oz, inside Large Standard’s 18 × 14 × 8 in and 20 lb. Amazon charges $9.88 to pick and pack it and $7.98 for the standard edition, whose own package is not on file. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -RG_AD.ratePct.central,
+                    amount: +((109.975 * RG_AD.ratePct.central) / 100).toFixed(2),
+                    detail: `MODELLED, not observed: the brand’s ${linePct(RG_AD.ratePct.central)} of revenue, amazon-adspend-spy’s rate on the five games it reads, applied to this product as the Whole brand applies it, so the tabs add up to it. On these two listings alone the model sees about ${monthUsd((RG_AD.products.find((p) => p.id === 'maximum-chrome')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'thunder-road')?.monthlyUsd.central ?? 0))} a month, all of it on Maximum Chrome: ${linePct((((RG_AD.products.find((p) => p.id === 'maximum-chrome')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'thunder-road')?.monthlyUsd.central ?? 0)) / 21995) * 100)} of the product’s September revenue. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so either figure is a floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'At September’s mix of the two editions, 100 boxes each at $160 and $59.95. Before licence royalties — whether Thunder Road: Vendetta pays its designers or anyone else one is not known — and before the $8,800 moulds, the team, storage and returns, so this is a ceiling on profit rather than profit.',
+              },
             ],
           },
           {
@@ -6364,13 +6467,113 @@ export const PROFILES = {
                 note:
                   'Restoration’s own figure comes first. Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, so the sets carry it as 12.5% of each set’s price: $3.93 on Battle of Legends Vol 3 at $31.46, $5.62 on Cobble & Fog at $44.95 and $5.00 on Vol 1 at $39.99. One factory’s listing for a card game with plastic miniatures, close to an Unmatched set, shows what a new seller might pay: $3.50 at 500–999 sets, $2.30 at 1,000–4,999 and $1.80 from 5,000. The margin does not use it.',
               },
+              {
+                /* Derived from the table above and the tariff line, so no
+                   source logo. pnl.json byListing 2026-09; the last row is the
+                   product's units-weighted average. No shipping table: no
+                   package size is on file for the sets, so their shipping is
+                   the $1.50 placeholder, said in the line. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — making, duty and shipping, per Unmatched set',
+                noteColumns: [6],
+                columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
+                rows: [
+                  ['Battle of Legends Vol 3', '100', '$3.93', '$0.79', '$1.50', '$6.22', 'The publisher’s $5, as 12.5% of price'],
+                  ['Cobble & Fog', '50', '$5.62', '$1.12', '$1.50', '$8.24', 'The publisher’s $5, as 12.5% of price'],
+                  ['Battle of Legends Vol 1', '50', '$5.00', '$1.00', '$1.50', '$7.50', 'The publisher’s $5'],
+                  ['Per set, at September’s mix', '200', '$4.62', '$0.92', '$1.50', '$7.04', 'The three sets, by units sold'],
+                ],
+                note:
+                  'The first three cost lines of the breakdown below, set by set: 19.1% of the $36.97 average set. Shipping is our $1.50 placeholder, not a quote: no package size is on file for the sets. Amazon’s fees on the sale are their own lines.',
+              },
+              {
+                /* pnl.json byListing 2026-09, B0F79P73F1 + B085NRHTYX +
+                   B08LVRQNYK: revenue $7,393 on 200 units. Per set: make
+                   924.13 / 200 = 4.62 (12.5% of price); tariff 0.92; freight
+                   1.50 placeholder; referral 471.90 + 336.90 (14.99%) +
+                   299.93 = 1,108.73 / 200 = 5.54; FBA (631 + 306.50 + 315.50)
+                   / 200 = 6.27; ads 12.416% of 36.965 = 4.59. pct = the
+                   product's total ÷ $7,393 → 63.419, margin 36.581%. */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: 36.97 },
+                lines: [
+                  {
+                    label: 'Manufacturing',
+                    key: 'cogs',
+                    pct: -12.5,
+                    amount: 4.62,
+                    detail:
+                      'The publisher’s own figure: Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, so each set carries it as 12.5% of its price — $3.93 on Vol 3, $5.62 on Cobble & Fog, $5.00 on Vol 1. Self-reported, not a quote; one factory’s listing for a similar game with miniatures reads $2.30 at 1,000–4,999 sets, and the margin does not use it.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -2.5,
+                    amount: 0.92,
+                    detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat.',
+                    links: [
+                      { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: -4.058,
+                    amount: 1.5,
+                    /* No shipping table in this tab: no package size is on file for the sets. */
+                    detail: '$1.50 a set, a placeholder, not a quote: no package size is on file for the Unmatched sets, so their freight from China is not priced.',
+                    links: [{ label: 'See landed cost above', href: '#landed-cost' }],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -14.997,
+                    amount: 5.54,
+                    detail: 'Measured per listing: 15%, the Toys & Games rate, and 14.99% on Cobble & Fog.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -16.948,
+                    amount: 6.27,
+                    /* Keepa (keepa/brand-series.json) holds pick-and-pack fees for the sets — B0F79P73F1 $6.31, B085NRHTYX $6.13, B08LVRQNYK $6.31 — but no package size, so the tier is inferred from the fee. */
+                    emphasis: true,
+                    detail: 'Size tier: Large Standard, inferred from the fee: Keepa holds no package size for the Unmatched sets, and Amazon’s $6.31 to pick and pack the best seller, Battle of Legends Vol 3 (B0F79P73F1), is above anything it charges in Small Standard. Cobble & Fog is $6.13 and Vol 1 $6.31. On a $37 set it is the biggest line, ahead of the referral fee. Measured.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -RG_AD.ratePct.central,
+                    amount: +((36.965 * RG_AD.ratePct.central) / 100).toFixed(2),
+                    detail: `MODELLED, not observed: the brand’s ${linePct(RG_AD.ratePct.central)} of revenue, amazon-adspend-spy’s rate on the five games it reads, applied to these sets as the Whole brand applies it, so the tabs add up to it. On the sets alone the model sees about ${monthUsd((RG_AD.products.find((p) => p.id === 'unmatched-v3')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'cobble-fog')?.monthlyUsd.central ?? 0))} a month, nearly all of it on Vol 3 and none read for Vol 1: ${linePct((((RG_AD.products.find((p) => p.id === 'unmatched-v3')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'cobble-fog')?.monthlyUsd.central ?? 0)) / 7393) * 100)} of their September revenue, which would take most of this margin. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so either figure is a floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'At September’s mix of the three sets, 200 in all. Before any royalty — none of the three is one of the named licensed sets, but whether their designers carry one is not known — and before the team, storage and returns, so this is a ceiling on profit rather than profit.',
+              },
             ],
           },
           {
-            id: 'dinosaur-tea-party',
-            label: 'Dinosaur Tea Party',
-            sharePct: 5.8,
+            id: 'all',
+            label: 'Whole brand',
+            blended: true,
             blocks: [
+              {
+                type: 'prose',
+                text:
+                  'The whole own account at September’s mix, the margin the profit series is built from: the two products above, plus the two Thunder Road expansions, still on the publisher’s 12.5% and unquoted, and Dinosaur Tea Party, priced from three Alibaba listings below. Weighted by revenue, Thunder Road: Vendetta’s 13.4% on 63.5% of the month, the Unmatched sets’ 36.6% on 21.3%, the expansions’ 32.7% on 9.4% and Dinosaur Tea Party’s 28.8% on 5.8% come to the 21.1% here.',
+              },
+              /* Dinosaur Tea Party's supplier table: its own product is under
+                 the 80% line, so it has no tab, and its quotes sit here, the
+                 only COGS table in this tab (the blended tab otherwise carries
+                 none — SKILL §2). */
               {
                 /* suppliers.json dinosaur-tea-party (screenshots
                    alibaba-family-card-game-2026-10-13.png, alibaba-yahong-
@@ -6391,110 +6594,109 @@ export const PROFILES = {
                 note:
                   'Three factories’ listings for a boxed card game, the closest each had to Dinosaur Tea Party: listing prices, not quotes for its own design. Each is read at the tier nearest the game’s yearly sales of about 1,200. Yahong’s 200–19,999-set tier is $2.50; the two Senfutong listings show only a range, so their low ends, $1.69 and $0.89. Averaged: $1.69, against the $2.50 the publisher’s 12.5% would give. The lowest minimum is Yahong’s 200. Two card-only decks and a deck of stock playing cards were left out.',
               },
+              {
+                /* Derived from the tables above and the tariff line, so no source
+                   logo. pnl.json byListing, 2026-09: per unit, rounded to the cent;
+                   the totals are the unrounded sums. */
+                type: 'table',
+                id: 'landed-cost',
+                caption: 'Landed cost — making, duty and shipping, per listing',
+                noteColumns: [6],
+                columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
+                rows: [
+                  ['Thunder Road: Vendetta · Maximum Chrome', '100', '$57.38', '$11.48', '$8.84', '$77.70', 'The standard box’s quote scaled by price'],
+                  ['Thunder Road: Vendetta', '100', '$21.50', '$4.30', '$8.76', '$34.56', 'One Alibaba factory’s quote'],
+                  ['Unmatched: Battle of Legends Vol 3', '100', '$3.93', '$0.79', '$1.50', '$6.22', 'The publisher’s $5, as 12.5% of price'],
+                  ['Unmatched: Cobble & Fog', '50', '$5.62', '$1.12', '$1.50', '$8.24', 'The publisher’s $5, as 12.5% of price'],
+                  ['Dinosaur Tea Party', '100', '$1.69', '$0.34', '$1.50', '$3.53', 'Three Alibaba listings'],
+                  ['Unmatched: Battle of Legends Vol 1', '50', '$5.00', '$1.00', '$1.50', '$7.50', 'The publisher’s $5'],
+                  ['Thunder Road: Vendetta · Carnage at Devil’s Run expansion', '50', '$4.99', '$1.00', '$1.50', '$7.49', 'Still the publisher’s 12.5% stretched — no quote'],
+                  ['Thunder Road: Vendetta · Choppe Shoppe expansion', '50', '$3.12', '$0.62', '$1.50', '$5.24', 'Still the publisher’s 12.5% stretched — no quote'],
+                  ['September, all 600', '600', '$9,387', '$1,877', '$2,360', '$13,624', '39.3% of the month’s revenue'],
+                ],
+                note:
+                  'The first three cost lines of the breakdown below, listing by listing: what each box costs to make, its 20% tariff and its shipping from China. Shipping is the Freightos rate for the two Thunder Road boxes and our $1.50 placeholder for the rest. The vehicle moulds, $8,800 once, are not in it. Amazon’s fees on the sale are their own lines.',
+              },
+              {
+                /* 🚨 The margin row is computed as 100% less these lines — 21.069%
+                   since Thunder Road went on Hicreate's quote alone (2026-10-25) —
+                   and the backend seed builds the profit and ad-spend series from
+                   the SAME six numbers (COST_LINES). Change one, change both. Three
+                   decimals, September's rates (pnl.json 2026-09 ÷ $34,633), so the
+                   title's $7.3K and the series agree. Until 2026-10-25:
+                   manufacturing 12.5, tariff 2.5, freight 2.6, referral 15, FBA
+                   12.18 → 42.804% ($14.8K); then, on the Hicreate + Senfutong
+                   average, manufacturing 19.53, tariff 3.906 → 30.157% ($10.4K).
+                   Moulds are NOT a line (owner's ruling 2026-10-25: one-time). */
+                type: 'margin',
+                basis: { label: 'Average selling price', value: 57.72 },
+                lines: [
+                  {
+                    label: 'Manufacturing',
+                    key: 'cogs',
+                    pct: -27.103,
+                    /* No `emphasis`: since 2026-10-25 it is the biggest line, but
+                       also the most uncertain, which the detail and the callout say
+                       instead. */
+                    detail:
+                      'Per listing, at September’s mix. Thunder Road: Vendetta $21.50, one Alibaba factory’s quote with the plastic vehicles; a second factory left them out, so its quote is not used. Maximum Chrome $57.38, the standard box’s quote scaled by price, because no factory quoted the deluxe box. Dinosaur Tea Party $1.69, from three Alibaba listings. The Unmatched sets carry the publisher’s own $5 for a 4-pack, as 12.5% of price, and the two Thunder Road expansions are still on that 12.5%, unquoted. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                      { label: 'See Dinosaur Tea Party’s COGS above — each product’s tab has its own', href: '#cogs-breakdown' },
+                    ],
+                  },
+                  {
+                    label: 'Tariff',
+                    pct: -5.421,
+                    detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat. None on the moulds, which are paid once at the factory.',
+                    links: [
+                      { label: 'See Dinosaur Tea Party’s COGS above', href: '#cogs-breakdown' },
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Shipping',
+                    pct: -6.814,
+                    detail: 'The two Thunder Road boxes at a read sea-freight rate from China, door to door: $8.84 and $8.76 a box. The other 400 units, the Unmatched sets, Dinosaur Tea Party and the expansions, at $1.50 each, a placeholder, not a quote: no package size is on file for them. The Thunder Road tab has its shipping table.',
+                    links: [
+                      { label: 'See landed cost above', href: '#landed-cost' },
+                    ],
+                  },
+                  {
+                    label: 'Amazon referral fee',
+                    pct: -14.998,
+                    detail: 'Measured per listing: 15%, the Toys & Games rate.',
+                    links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+                  },
+                  {
+                    label: 'FBA fulfilment',
+                    pct: -12.179,
+                    /* Keepa product record B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g, pick-and-pack $9.88, read 2026-10-13. */
+                    detail: 'Size tier: Large Standard. The best seller, Thunder Road: Vendetta Maximum Chrome (B0C6NR9ZC4), packs to 15 × 11.5 × 6.3 in at 10.05 lb. Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
+                    links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+                  },
+                  {
+                    label: 'Advertising',
+                    pct: -12.416,
+                    amount: 7.17,
+                    detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(RG_AD.monthlyUsd.central)} a month on the five games in the margin, ${linePct(RG_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
+                    links: [
+                      { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
+                      { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
+                    ],
+                  },
+                ],
+                note:
+                  'Before licence royalties, which this model does not include: Marvel, The Witcher, TMNT, Buffy and Jurassic Park Unmatched sets are licensed, no rate is published, and whether Thunder Road: Vendetta or the designers carry a royalty is not known. Also before the team, warehouse, design, art, storage and returns, so this is a ceiling on profit rather than profit.',
+              },
             ],
           },
         ],
-      },
-      {
-        /* Derived from the tables above and the tariff line, so no source
-           logo. pnl.json byListing, 2026-09: per unit, rounded to the cent;
-           the totals are the unrounded sums. */
-        type: 'table',
-        id: 'landed-cost',
-        caption: 'Landed cost — making, duty and shipping, per listing',
-        noteColumns: [6],
-        columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
-        rows: [
-          ['Thunder Road: Vendetta · Maximum Chrome', '100', '$57.38', '$11.48', '$8.84', '$77.70', 'The standard box’s quote scaled by price'],
-          ['Thunder Road: Vendetta', '100', '$21.50', '$4.30', '$8.76', '$34.56', 'One Alibaba factory’s quote'],
-          ['Unmatched: Battle of Legends Vol 3', '100', '$3.93', '$0.79', '$1.50', '$6.22', 'The publisher’s $5, as 12.5% of price'],
-          ['Unmatched: Cobble & Fog', '50', '$5.62', '$1.12', '$1.50', '$8.24', 'The publisher’s $5, as 12.5% of price'],
-          ['Dinosaur Tea Party', '100', '$1.69', '$0.34', '$1.50', '$3.53', 'Three Alibaba listings'],
-          ['Unmatched: Battle of Legends Vol 1', '50', '$5.00', '$1.00', '$1.50', '$7.50', 'The publisher’s $5'],
-          ['Thunder Road: Vendetta · Carnage at Devil’s Run expansion', '50', '$4.99', '$1.00', '$1.50', '$7.49', 'Still the publisher’s 12.5% stretched — no quote'],
-          ['Thunder Road: Vendetta · Choppe Shoppe expansion', '50', '$3.12', '$0.62', '$1.50', '$5.24', 'Still the publisher’s 12.5% stretched — no quote'],
-          ['September, all 600', '600', '$9,387', '$1,877', '$2,360', '$13,624', '39.3% of the month’s revenue'],
-        ],
-        note:
-          'The first three cost lines of the breakdown below, listing by listing: what each box costs to make, its 20% tariff and its shipping from China. Shipping is the Freightos rate for the two Thunder Road boxes and our $1.50 placeholder for the rest. The vehicle moulds, $8,800 once, are not in it. Amazon’s fees on the sale are their own lines.',
-      },
-      {
-        /* 🚨 The margin row is computed as 100% less these lines — 21.069%
-           since Thunder Road went on Hicreate's quote alone (2026-10-25) —
-           and the backend seed builds the profit and ad-spend series from
-           the SAME six numbers (COST_LINES). Change one, change both. Three
-           decimals, September's rates (pnl.json 2026-09 ÷ $34,633), so the
-           title's $7.3K and the series agree. Until 2026-10-25:
-           manufacturing 12.5, tariff 2.5, freight 2.6, referral 15, FBA
-           12.18 → 42.804% ($14.8K); then, on the Hicreate + Senfutong
-           average, manufacturing 19.53, tariff 3.906 → 30.157% ($10.4K).
-           Moulds are NOT a line (owner's ruling 2026-10-25: one-time). */
-        type: 'margin',
-        basis: { label: 'Average selling price', value: 57.72 },
-        lines: [
-          {
-            label: 'Manufacturing',
-            key: 'cogs',
-            pct: -27.103,
-            /* No `emphasis`: since 2026-10-25 it is the biggest line, but
-               also the most uncertain, which the detail and the callout say
-               instead. */
-            detail:
-              'Per listing, at September’s mix. Thunder Road: Vendetta $21.50, one Alibaba factory’s quote with the plastic vehicles; a second factory left them out, so its quote is not used. Maximum Chrome $57.38, the standard box’s quote scaled by price, because no factory quoted the deluxe box. Dinosaur Tea Party $1.69, from three Alibaba listings. The Unmatched sets carry the publisher’s own $5 for a 4-pack, as 12.5% of price, and the two Thunder Road expansions are still on that 12.5%, unquoted. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
-            links: [
-              { label: 'See landed cost above', href: '#landed-cost' },
-              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
-            ],
-          },
-          {
-            label: 'Tariff',
-            pct: -5.421,
-            detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat. None on the moulds, which are paid once at the factory.',
-            links: [
-              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
-              { label: 'See landed cost above', href: '#landed-cost' },
-            ],
-          },
-          {
-            label: 'Shipping',
-            pct: -6.814,
-            detail: 'The two Thunder Road boxes at a read sea-freight rate from China, door to door: $8.84 and $8.76 a box. The other 400 units, the Unmatched sets, Dinosaur Tea Party and the expansions, at $1.50 each, a placeholder, not a quote: no package size is on file for them.',
-            links: [
-              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
-              { label: 'See landed cost above', href: '#landed-cost' },
-            ],
-          },
-          {
-            label: 'Amazon referral fee',
-            pct: -14.998,
-            detail: 'Measured per listing: 15%, the Toys & Games rate.',
-            links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
-          },
-          {
-            label: 'FBA fulfilment',
-            pct: -12.179,
-            /* Keepa product record B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g, pick-and-pack $9.88, read 2026-10-13. */
-            detail: 'Size tier: Large Standard. The best seller, Thunder Road: Vendetta Maximum Chrome (B0C6NR9ZC4), packs to 15 × 11.5 × 6.3 in at 10.05 lb. Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
-            links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
-          },
-          {
-            label: 'Advertising',
-            pct: -12.416,
-            amount: 7.17,
-            detail: `MODELLED, not observed: amazon-adspend-spy's Sponsored Products spend, about ${monthUsd(RG_AD.monthlyUsd.central)} a month on the five games in the margin, ${linePct(RG_AD.ratePct.central)} of their revenue, applied here to the whole brand. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so it is a floor.`,
-            links: [
-              { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
-              { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
-            ],
-          },
-        ],
-        note:
-          'Before licence royalties, which this model does not include: Marvel, The Witcher, TMNT, Buffy and Jurassic Park Unmatched sets are licensed, no rate is published, and whether Thunder Road: Vendetta or the designers carry a royalty is not known. Also before the team, warehouse, design, art, storage and returns, so this is a ceiling on profit rather than profit.',
       },
       {
         type: 'prose',
         text:
-          'Royalties are the cost this profile cannot price, and it is not a small one for a publisher. Several Unmatched sets are licensed from Marvel, The Witcher, TMNT, Buffy and Jurassic Park, and nobody publishes the rate. In September the only named licensed listing with a badge, the TMNT set, was in a reseller’s buy box, so none of the own account’s month sits on a named licence. But whether Thunder Road: Vendetta, about 73% of that revenue, pays a royalty to its designers or anyone else is unknown either way. The profit here is before that.',
+          'Royalties are the cost this profile cannot price, and it is not a small one for a publisher. Several Unmatched sets are licensed from Marvel, The Witcher, TMNT, Buffy and Jurassic Park, and nobody publishes the rate. In September the only named licensed listing with a badge, the TMNT set, was in a reseller’s buy box, so none of the own account’s month sits on a named licence. But whether Thunder Road: Vendetta, about 73% of that revenue with its expansions, pays a royalty to its designers or anyone else is unknown either way. The profit here is before that.',
       },
       {
         type: 'callout',
@@ -6580,10 +6782,15 @@ export const PROFILES = {
         noteColumns: [4],
         rows: [
           ...(RG_AD.products.length > 1 ? RG_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
+          /* The two product tabs of the Margin breakdown carry the brand's
+             rate at their own price (so the tabs add up to the Whole brand);
+             check-profile matches each tab's line to a row here. */
+          ['Thunder Road: Vendetta tab — the brand’s rate on its $21,995', monthUsd((21995 * RG_AD.ratePct.central) / 100), linePct(RG_AD.ratePct.central), lineUsd((109.975 * RG_AD.ratePct.central) / 100), 'The total’s rate, applied to the product’s September revenue'],
+          ['Unmatched sets tab — the brand’s rate on their $7,393', monthUsd((7393 * RG_AD.ratePct.central) / 100), linePct(RG_AD.ratePct.central), lineUsd((36.965 * RG_AD.ratePct.central) / 100), 'The total’s rate, applied to the product’s September revenue'],
           ['Total — the margin line', monthUsd(Math.round((34633 * RG_AD.ratePct.central) / 100)), linePct(RG_AD.ratePct.central), lineUsd((57.72 * RG_AD.ratePct.central) / 100), `Modelled: ${monthUsd(RG_AD.monthlyUsd.low)}–${monthUsd(RG_AD.monthlyUsd.high)}`],
         ],
         note:
-          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $34,633, since the model reads the five games in the margin; per sale is that share of the $57.72 average sale.',
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $34,633, since the model reads the five games in the margin; per sale is that share of the $57.72 average sale. The two tab rows are that same rate in the Margin breakdown’s Thunder Road: Vendetta and Unmatched tabs, at each product’s own average sale; the listing rows above them are what the model reads on each listing.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
