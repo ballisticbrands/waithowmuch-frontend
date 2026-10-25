@@ -6279,11 +6279,26 @@ export const PROFILES = {
            Each tab's lines are pnl.json byListing summed over the product's
            listings and divided by its units: make, tariff (20%), freight and
            FBA per listing; referral at each listing's Keepa rate (15%, or
-           14.99% on Cobble & Fog); advertising at the brand's modelled rate,
-           RG_AD.ratePct.central, as the Whole brand applies it. So the tabs
-           reconcile: 63.509% × 13.426 + 21.347% × 36.581 + expansions 9.370%
-           × 32.725 + Dinosaur Tea Party 5.775% × 28.844 = 21.068%, the
-           Whole brand's 21.069% with its lines rounded to three decimals.
+           14.99% on Cobble & Fog); advertising at the product's OWN modelled
+           spend (owner, 2026-10-25, the OTOTO convention), RG_AD's listings
+           summed over the product ÷ the product's September revenue:
+           Thunder Road 1,186 + 0 = $1,186 ÷ $21,995 = 5.392% ($5.93 a box,
+           1,186 / 200); Unmatched 2,455 + 0 (Cobble & Fog) + Vol 1 not in the spy
+           = $2,455 ÷ $7,393 = 33.207% ($12.28 a set, 2,455 / 200).
+           Reconciliation. Before advertising the tabs add up exactly:
+           63.509% × 25.842 + 21.347% × 48.997 + expansions 9.370% × 45.141
+           + Dinosaur Tea Party 5.775% × 41.260 = 33.483%, the Whole brand's
+           33.485% before ads with its lines rounded to three decimals. With
+           each product's own spend — Thunder Road 5.392 → 20.450%, Unmatched
+           33.207 → 15.790%, the expansions 0 (not among the spy's five
+           products) → 45.141%, Dinosaur Tea Party 0.4 (RG_AD, $8) → 40.860%
+           — the weighted sum is 22.947%, not the Whole brand's 21.069%. The
+           1.880-point gap is exactly the $651 a month the Whole brand's line
+           adds by applying the spy's 12.416% to all $34,633 (= $4,300)
+           rather than the $29,389 it read ($3,649): 12.416% of the $5,244 the
+           spy does not cover, the expansions $3,245 ($403) and Unmatched
+           Vol 1 $1,999 ($248). The Whole brand line (and the seed's
+           COST_LINES) is untouched at 12.416% / 21.069%.
            The tab id 'thunder-road' is the validation product's: "Test it
            first" links its first order to this tab's #landed-cost (the
            first tab, so the plain #landed-cost also opens it). */
@@ -6372,9 +6387,11 @@ export const PROFILES = {
                    $21,995 on 200 units. Per box: make (5,738 + 2,150) / 200 =
                    39.44; tariff 7.888; freight (884 + 876) / 200 = 8.80;
                    referral 15% on both, 3,299.25 / 200 = 16.50; FBA (988 +
-                   798) / 200 = 8.93; ads 12.416% of 109.975 = 13.65. pct =
-                   the product's total ÷ $21,995, three decimals → 86.574,
-                   margin 13.426%. */
+                   798) / 200 = 8.93; ads the product's own modelled spend,
+                   RG_AD maximum-chrome $1,186 + thunder-road $0 = $1,186 /
+                   200 = 5.93, ÷ $21,995 = 5.392% (was the brand's 12.416%,
+                   $13.65, until 2026-10-25). pct = the product's total ÷
+                   $21,995, three decimals → 79.550, margin 20.450%. */
                 type: 'margin',
                 basis: { label: 'Average selling price', value: 109.98 },
                 lines: [
@@ -6427,9 +6444,10 @@ export const PROFILES = {
                   },
                   {
                     label: 'Advertising',
-                    pct: -RG_AD.ratePct.central,
-                    amount: +((109.975 * RG_AD.ratePct.central) / 100).toFixed(2),
-                    detail: `MODELLED, not observed: the brand’s ${linePct(RG_AD.ratePct.central)} of revenue, amazon-adspend-spy’s rate on the five games it reads, applied to this product as the Whole brand applies it, so the tabs add up to it. On these two listings alone the model sees about ${monthUsd((RG_AD.products.find((p) => p.id === 'maximum-chrome')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'thunder-road')?.monthlyUsd.central ?? 0))} a month, all of it on Maximum Chrome: ${linePct((((RG_AD.products.find((p) => p.id === 'maximum-chrome')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'thunder-road')?.monthlyUsd.central ?? 0)) / 21995) * 100)} of the product’s September revenue. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so either figure is a floor.`,
+                    /* This product's own spend (RG_AD maximum-chrome + thunder-road), not the brand's rate — the Ad spend table's Thunder Road tab row. */
+                    pct: -5.392,
+                    amount: 5.93,
+                    detail: 'Modelled, not observed: about $1,186 a month on this product’s own keywords ($717–$1,767), all of it on Maximum Chrome and none read on the standard box, 5.392% of the two editions’ $21,995 September revenue. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.',
                     links: [
                       { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
                       { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
@@ -6493,8 +6511,12 @@ export const PROFILES = {
                    924.13 / 200 = 4.62 (12.5% of price); tariff 0.92; freight
                    1.50 placeholder; referral 471.90 + 336.90 (14.99%) +
                    299.93 = 1,108.73 / 200 = 5.54; FBA (631 + 306.50 + 315.50)
-                   / 200 = 6.27; ads 12.416% of 36.965 = 4.59. pct = the
-                   product's total ÷ $7,393 → 63.419, margin 36.581%. */
+                   / 200 = 6.27; ads the product's own modelled spend, RG_AD
+                   unmatched-v3 $2,455 + cobble-fog $0 (Vol 1 not read by the
+                   spy) = $2,455 / 200 = 12.28 (12.275 rounded half up),
+                   ÷ $7,393 = 33.207% (was the brand's 12.416%, $4.59, until
+                   2026-10-25). pct = the product's total ÷ $7,393 → 84.210,
+                   margin 15.790%. */
                 type: 'margin',
                 basis: { label: 'Average selling price', value: 36.97 },
                 lines: [
@@ -6540,15 +6562,16 @@ export const PROFILES = {
                     pct: -16.948,
                     amount: 6.27,
                     /* Keepa (keepa/brand-series.json) holds pick-and-pack fees for the sets — B0F79P73F1 $6.31, B085NRHTYX $6.13, B08LVRQNYK $6.31 — but no package size, so the tier is inferred from the fee. */
-                    emphasis: true,
-                    detail: 'Size tier: Large Standard, inferred from the fee: Keepa holds no package size for the Unmatched sets, and Amazon’s $6.31 to pick and pack the best seller, Battle of Legends Vol 3 (B0F79P73F1), is above anything it charges in Small Standard. Cobble & Fog is $6.13 and Vol 1 $6.31. On a $37 set it is the biggest line, ahead of the referral fee. Measured.',
+                    detail: 'Size tier: Large Standard, inferred from the fee: Keepa holds no package size for the Unmatched sets, and Amazon’s $6.31 to pick and pack the best seller, Battle of Legends Vol 3 (B0F79P73F1), is above anything it charges in Small Standard. Cobble & Fog is $6.13 and Vol 1 $6.31. On a $37 set it costs more than the referral fee. Measured.',
                     links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
                   },
                   {
                     label: 'Advertising',
-                    pct: -RG_AD.ratePct.central,
-                    amount: +((36.965 * RG_AD.ratePct.central) / 100).toFixed(2),
-                    detail: `MODELLED, not observed: the brand’s ${linePct(RG_AD.ratePct.central)} of revenue, amazon-adspend-spy’s rate on the five games it reads, applied to these sets as the Whole brand applies it, so the tabs add up to it. On the sets alone the model sees about ${monthUsd((RG_AD.products.find((p) => p.id === 'unmatched-v3')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'cobble-fog')?.monthlyUsd.central ?? 0))} a month, nearly all of it on Vol 3 and none read for Vol 1: ${linePct((((RG_AD.products.find((p) => p.id === 'unmatched-v3')?.monthlyUsd.central ?? 0) + (RG_AD.products.find((p) => p.id === 'cobble-fog')?.monthlyUsd.central ?? 0)) / 7393) * 100)} of their September revenue, which would take most of this margin. Automatic and product-targeting campaigns, Sponsored Brands and Display are invisible to it, so either figure is a floor.`,
+                    /* These sets' own spend (RG_AD unmatched-v3 + cobble-fog), not the brand's rate — the Ad spend table's Unmatched tab row. */
+                    pct: -33.207,
+                    amount: 12.28,
+                    emphasis: true,
+                    detail: 'Modelled, not observed: about $2,455 a month on the sets’ own keywords ($1,473–$3,681), all of it on Battle of Legends Vol 3, none on Cobble & Fog and none read for Vol 1, 33.207% of the three sets’ $7,393 September revenue. Only $402 of it is on searches with “unmatched” in them; the rest is spread over other names, from “the witcher” to video-game titles. On a $37 set it is the biggest line, twice the fulfilment fee. A floor: it cannot see ads on product pages, automatic campaigns, Sponsored Brands or Display.',
                     links: [
                       { label: 'See the ad spend behind this line', href: '/business/restoration-games/advertising/#ad-spend' },
                       { label: 'If you want to go in depth, go to the Advertising section', href: '/business/restoration-games/advertising/' },
@@ -6568,7 +6591,7 @@ export const PROFILES = {
               {
                 type: 'prose',
                 text:
-                  'The whole own account at September’s mix, the margin the profit series is built from: the two products above, plus the two Thunder Road expansions, still on the publisher’s 12.5% and unquoted, and Dinosaur Tea Party, priced from three Alibaba listings below. Weighted by revenue, Thunder Road: Vendetta’s 13.4% on 63.5% of the month, the Unmatched sets’ 36.6% on 21.3%, the expansions’ 32.7% on 9.4% and Dinosaur Tea Party’s 28.8% on 5.8% come to the 21.1% here.',
+                  'The whole own account at September’s mix, the margin the profit series is built from: the two products above, plus the two Thunder Road expansions, still on the publisher’s 12.5% and unquoted, and Dinosaur Tea Party, priced from three Alibaba listings below. Every line but advertising is the products’ own lines weighted by revenue. Advertising is where they part: each product tab carries only the ad spend modelled on its own listings, 5.4% on Thunder Road: Vendetta and 33.2% on the Unmatched sets, while this tab applies the model’s 12.4% to the whole month, including the $5,244 of it, the two expansions and Unmatched Vol 1, that the model does not cover. So Thunder Road: Vendetta’s 20.4% on 63.5% of the month, the Unmatched sets’ 15.8% on 21.3%, the expansions on 9.4% and Dinosaur Tea Party on 5.8%, each at its own ad spend, come to 22.9%; the 21.1% here is lower by that rate on the $5,244, about $651 a month.',
               },
               /* Dinosaur Tea Party's supplier table: its own product is under
                  the 80% line, so it has no tab, and its quotes sit here, the
@@ -6782,15 +6805,18 @@ export const PROFILES = {
         noteColumns: [4],
         rows: [
           ...(RG_AD.products.length > 1 ? RG_AD.products.map((p) => [p.label, monthUsd(p.monthlyUsd.central), linePct(p.ratePct.central), lineUsd(p.perUnit), `Modelled: ${monthUsd(p.monthlyUsd.low)}–${monthUsd(p.monthlyUsd.high)}`]) : []),
-          /* The two product tabs of the Margin breakdown carry the brand's
-             rate at their own price (so the tabs add up to the Whole brand);
-             check-profile matches each tab's line to a row here. */
-          ['Thunder Road: Vendetta tab — the brand’s rate on its $21,995', monthUsd((21995 * RG_AD.ratePct.central) / 100), linePct(RG_AD.ratePct.central), lineUsd((109.975 * RG_AD.ratePct.central) / 100), 'The total’s rate, applied to the product’s September revenue'],
-          ['Unmatched sets tab — the brand’s rate on their $7,393', monthUsd((7393 * RG_AD.ratePct.central) / 100), linePct(RG_AD.ratePct.central), lineUsd((36.965 * RG_AD.ratePct.central) / 100), 'The total’s rate, applied to the product’s September revenue'],
+          /* The two product tabs of the Margin breakdown carry each product's
+             OWN modelled spend (owner, 2026-10-25, as OTOTO): the listing rows
+             above summed over the product, ÷ its September revenue, per sale
+             ÷ its 200 units. check-profile matches each tab's line to a row
+             here. Thunder Road 1,186 + 0 ÷ 21,995 = 5.392%, $5.93; Unmatched
+             2,455 + 0 (Vol 1 not read) ÷ 7,393 = 33.207%, $12.28. */
+          ['Thunder Road: Vendetta tab — Maximum Chrome and the standard box', monthUsd(1186), linePct(5.392), lineUsd(5.93), `Modelled: ${monthUsd(717)}–${monthUsd(1767)}, on the product’s ${monthUsd(21995)} September revenue`],
+          ['Unmatched sets tab — Vol 3, Cobble & Fog and Vol 1', monthUsd(2455), linePct(33.207), lineUsd(12.28), `Modelled: ${monthUsd(1473)}–${monthUsd(3681)}, on the sets’ ${monthUsd(7393)} September revenue; Vol 1 not read`],
           ['Total — the margin line', monthUsd(Math.round((34633 * RG_AD.ratePct.central) / 100)), linePct(RG_AD.ratePct.central), lineUsd((57.72 * RG_AD.ratePct.central) / 100), `Modelled: ${monthUsd(RG_AD.monthlyUsd.low)}–${monthUsd(RG_AD.monthlyUsd.high)}`],
         ],
         note:
-          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $34,633, since the model reads the five games in the margin; per sale is that share of the $57.72 average sale. The two tab rows are that same rate in the Margin breakdown’s Thunder Road: Vendetta and Unmatched tabs, at each product’s own average sale; the listing rows above them are what the model reads on each listing.',
+          'What the Margin breakdown takes off for Amazon advertising. The total applies the modelled rate to the whole brand’s snapshot revenue, $34,633, since the model reads the five games in the margin; per sale is that share of the $57.72 average sale. The listing rows are what the model reads on each listing. The two tab rows are those listings added up per product, as a share of the product’s own September revenue and per sale at its 200 units: the advertising lines of the Margin breakdown’s Thunder Road: Vendetta and Unmatched tabs.',
       },
 
       { type: 'section', id: 'traffic', title: 'Socials and traffic', group: 'Where demand comes from', asOf: true },
