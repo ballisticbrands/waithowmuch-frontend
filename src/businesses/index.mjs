@@ -443,13 +443,16 @@ import { OTOTO_BREAKDOWN, ototoPhoto } from './ototo.breakdown.mjs';
    80%), August 2026 unit economics in dollars — waithowmuch-research research/
    ototo/pnl.json products.*.perUnit. Make is the Accio production price
    (suppliers.json cogsAverage, verified against the screenshots, 2026-10-18);
-   🚨 the scissors rest on ONE supplier (owner's call). Tariff keeps OTOTO's
+   the scissors re-filed 2026-10-25 on TWO suppliers (accio/scissors/
+   2026-10-25T1155: Zhuopeng $1.79 + Asiakey $3.04 → $2.42; was $1.79 on
+   Zhuopeng alone). Moulds are one-time, never in these per-unit figures
+   (owner, 2026-10-25). Tariff keeps OTOTO's
    duty-class model (owner's call): plastic 3.4% + 10% China; metal 3.7% + 25%
    Section 301 + 10% China — scissors and corkscrew are metal. Freight is the
    Keepa package × Freightos CN-USWC $496.67/cbm; FBA is Keepa's pick-and-pack.
    Advertising is OT_AD, never typed. */
 const OT_COST = {
-  scissors: { price: 9.99, make: 1.79, tariff: 0.69, freight: 0.29, landed: 2.77, fba: 4.09, referral: 1.5 },
+  scissors: { price: 9.99, make: 2.42, tariff: 0.94, freight: 0.29, landed: 3.65, fba: 4.09, referral: 1.5 },
   spatula: { price: 9.95, make: 1.4, tariff: 0.19, freight: 0.17, landed: 1.76, fba: 3.86, referral: 1.49 },
   opener: { price: 19.95, make: 5.54, tariff: 2.14, freight: 0.63, landed: 8.31, fba: 4.35, referral: 2.99 },
 };
@@ -460,7 +463,7 @@ const otBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
    its revenue, the heroes at the costs above and every other listing at its
    type cost — the SAME numbers as the backend seed's COST_LINES
    (seed-ototo.ts). */
-const OT_BLEND = { cogs: 13.536, tariff: 2.895, freight: 3.294, fba: 28.093 };
+const OT_BLEND = { cogs: 13.834, tariff: 3.01, freight: 3.294, fba: 28.093 };
 import { HIGHMARK_BREAKDOWN, highmarkPhoto } from './highmark-collective.breakdown.mjs';
 import { MOUNT_CLEVEREST_BREAKDOWN, mountCleverestPhoto } from './mount-cleverest.breakdown.mjs';
 
@@ -5901,7 +5904,7 @@ export const PROFILES = {
        2026-09-16). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/1ae6d995b429949df1ebfc27f03662b66a327d86229d9c9e064473a7a33b1c4b.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/d16473292592bb97e1213a5d354eeda40e65f9f2aca69ded3588c21343d1f2f3.png',
       /* The best seller by revenue: 46% of the own account's September on 100
          units. */
       image: {
@@ -6196,7 +6199,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The chart starts in November 2025 on purpose. Amazon’s badge history on the brand’s listings reaches back to September 2023, but until October 2025 resellers held every buy box that sold, so the retail revenue in those months was theirs; Restoration was paid a wholesale price that nobody publishes. November 2025 is the first month its own account held one. The series counts only listings with its own account in the buy box at month end, so it is smaller than the brand’s Amazon sales, and it grew as the account took more listings over. Of each month a little over half is left after Amazon’s fees, making the games, tariff, freight and advertising — but that is before licence royalties, and two of those cost lines are our placeholders.',
+          'The chart starts in November 2025 on purpose. Amazon’s badge history on the brand’s listings reaches back to September 2023, but until October 2025 resellers held every buy box that sold, so the retail revenue in those months was theirs; Restoration was paid a wholesale price that nobody publishes. November 2025 is the first month its own account held one. The series counts only listings with its own account in the buy box at month end, so it is smaller than the brand’s Amazon sales, and it grew as the account took more listings over. Of each month about three tenths is left after Amazon’s fees, making the games, tariff, shipping and advertising — but that is before licence royalties, and the $160 deluxe box’s cost to make is a quote for the standard box scaled by price.',
       },
       { type: 'chart' },
       {
@@ -6250,65 +6253,221 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Every cent of a $57.72 average sale, down to the little over half that is left before licence royalties — and the line that decides it is the one priced from a single Unmatched set.',
+          'Every cent of a $57.72 average sale, down to the roughly three tenths left before licence royalties — and the line that decides it is what the Thunder Road boxes cost to make.',
       },
       {
         type: 'prose',
         text:
-          'The publisher gave the one cost that matters. In April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, and that is 12.5% of that set’s $39.99 buy box. The model carries that ratio to every listing. That holds for Unmatched sets. It is weak for Thunder Road: Vendetta, about 73% of September’s own-account revenue, including a $160 deluxe box nobody priced. Tariff is today’s rate on board games from China, 20% of the manufacturing cost; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
+          'The publisher gave one cost: in April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, 12.5% of that set’s $39.99 buy box, and the Unmatched sets still carry it. Thunder Road: Vendetta, about 73% of September’s own-account revenue, is now priced from factory quotes: two Alibaba factories quoted the standard box, one of them without its plastic vehicles. Nobody quoted the $160 Maximum Chrome edition, so it carries the standard box’s quote scaled by price. Dinosaur Tea Party is priced from three Alibaba listings, and the two Thunder Road expansions are still on the publisher’s 12.5%. Tariff is today’s rate on board games from China, 20% of the cost to make; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
       },
       {
+        type: 'prose',
+        text:
+          'A copy of Thunder Road also needs its own moulds for the plastic vehicles: one factory charges $8,800 for the four of them. That is a one-time payment made before the first order, a cost of starting rather than of each sale, so it is not in the margin below.',
+      },
+      {
+        /* One supplier table per product, behind tabs (SKILL §2: the margin is
+           not split by product, the quotes are — the kalotoys way). Each tab's
+           table is id 'cogs-breakdown'; only the chosen tab renders. Shares are
+           of the own account's September, $34,633: the two Thunder Road boxes
+           $21,995 (63.5%), the three Unmatched sets $7,393 (21.3%), Dinosaur
+           Tea Party $2,000 (5.8%). The expansions ($3,245, 9.4%) have no
+           quote and no tab. waithowmuch-research research/restoration-games/
+           suppliers.json; per-listing costs pnl.json byListing (2026-10-25). */
+        type: 'product-tabs',
+        products: [
+          {
+            id: 'thunder-road',
+            label: 'Thunder Road: Vendetta',
+            sharePct: 63.5,
+            blocks: [
+              {
+                /* suppliers.json thunder-road, source "accio", run accio/
+                   thunder-road/2026-10-25T1148, verified against its
+                   screenshots; Hicreate's reply confirmed by the owner in the
+                   Alibaba chat 2026-10-25. Its 500-set tier ($28.99) was
+                   removed in verification. Senfutong's quote has no vehicles
+                   (flag partial-scope), kept by the owner for a rough
+                   estimate. cogsAverage $14.35 = (21.50 + 7.19) / 2, both at
+                   1,000, the tier nearest ~2,400 a year. toolingCost
+                   [8800, 0]: 🚨 a one-time payment, NOT in the margin (owner's
+                   ruling 2026-10-25); it is `tooling` in research
+                   starting-cost.thunder-road.inputs.json. Maximum Chrome has
+                   no quote: $14.35 × 160 / 59.95 = $38.30, owner-approved
+                   plan 2026-10-25. Until 2026-10-25 both boxes carried 12.5% of
+                   price ($7.49, $20.00). */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a Thunder Road: Vendetta box costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price', 'Lead time'],
+                rows: [
+                  ['Jiangsu Hicreate Entertainment Co., Ltd.', 'Verified · 11 yrs', '5.0★ from 10 (store)', '—', '500 sets', '$16.14–21.50', 'About 45 days'],
+                  ['Dongguan Senfutong Paper Co., Ltd.', 'Verified · 10 yrs', '4.8★ from 13 (store)', '—', '500 sets', '$5.14–9.38', '20–25 days'],
+                  ['Average at 1,000 — the cost to make used below for Thunder Road: Vendetta', '', '', '', '', '$14.35', ''],
+                  ['Maximum Chrome — the standard box’s quote scaled by price, $14.35 × 160 ÷ 59.95: our figure, not a quote', '', '', '', '', '$38.30', ''],
+                ],
+                note:
+                  'Two factories in China quoted the standard Thunder Road: Vendetta box as briefed: 38 × 29 × 16 cm, with cards, player boards, folding road tiles, dice, a punchboard of tokens, a rulebook and assembly. Jiangsu Hicreate, FOB Shanghai, with the 16 plastic vehicles: $21.50 at 1,000, $18.29 at 3,000 and $16.14 at 5,000, of which the vehicles alone are $10.47 at 1,000. Dongguan Senfutong, FOB Shenzhen, quoted everything but the vehicles: $9.38 at 500, $7.19 at 1,000, $5.53 at 3,000 and $5.14 at 5,000. It is kept as a rough estimate, so the average understates a full box. Each at 1,000, the tier nearest the brand’s yearly sales of about 2,400, and averaged: $14.35. No factory quoted the $160 Maximum Chrome edition. Its cost to make is the standard box’s quote scaled by price, which assumes the deluxe box costs as much more to make as it sells for. Tooling, not in the unit price: Hicreate charges $8,800 once for the four vehicle moulds, non-refundable and reusable, half of it in advance. It is a one-time cost paid before the first order, not part of the per-unit margin. Samples are $400 (Hicreate) and $242.50 (Senfutong). Three more factories did not reply. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
+              },
+              {
+                /* Freightos CN-USWC low end, $496.67/cbm, waithowmuch-research
+                   skills/build-ecom-biz-page/scripts/calibration/
+                   freight-rates.json, read 2026-09-28. Keepa product record
+                   B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g (sources.json, size
+                   tiers) → 0.0178 cbm → $8.84. The standard edition
+                   B0BZ62KRGF has no package on file: priced at the quoted
+                   38 × 29 × 16 cm box, 0.017632 cbm → $8.76. */
+                type: 'table',
+                id: 'shipping-breakdown',
+                caption: 'Shipping — what it costs to move one Thunder Road box from China',
+                attribution: 'freightos',
+                noteColumns: [2],
+                columns: ['Input', 'Figure', 'Where it comes from'],
+                rows: [
+                  ['Carton', '38.1 × 29.2 × 16.0 cm, 4.56 kg', 'Keepa’s package for B0C6NR9ZC4, Maximum Chrome — the size the factories quoted, 38 × 29 × 16 cm'],
+                  ['Volume', '0.0178 cbm', 'The package in cubic metres; 0.0176 cbm at the quoted size'],
+                  ['Rate', '$497 / cbm', 'Less-than-container-load, China → US West Coast, door to door'],
+                  ['Shipping, per box', '$8.84 · $8.76', 'Maximum Chrome · the standard edition, at the quoted box'],
+                ],
+                note:
+                  'The rate is the low end of Freightos’ door-to-door band, customs clearance and delivery included and duty excluded. At 4.56 kg the box is denser than the band was priced on, so a weight charge could run higher. The standard edition’s own package was not read; it is priced at the box the factories quoted. No package size is on file for the Unmatched sets, Dinosaur Tea Party or the expansions, so their shipping is our $1.50 placeholder.',
+              },
+            ],
+          },
+          {
+            id: 'unmatched',
+            label: 'Unmatched sets',
+            sharePct: 21.3,
+            blocks: [
+              {
+                /* suppliers.json unmatched: Samfine's listing page with tiers,
+                   read from a screenshot (alibaba-samfine-miniature-game-
+                   2026-10-13.png), $2.30 at the 1,000–4,999 tier for ~1,800 a
+                   year. 🚨 The margin keeps the publisher's own $5 (owner,
+                   2026-10-13 and again 2026-10-25), applied as 12.5% of each
+                   set's price, unchanged by this rebuild; Samfine is shown
+                   for comparison only. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a similar card game with miniatures costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Samfine Printing (Shenzhen) Co., Ltd.', 'Verified · 8 yrs', '4.9★ from 159 (store)', '—', '500 sets', '$1.80–3.50'],
+                  ['At 1,000–4,999 sets, the tier for about 1,800 a year — for comparison', '', '', '', '', '$2.30'],
+                  ['The publisher’s own figure for a 4-pack — the cost to make used below (self-reported, not a quote)', '', '', '', '', '$5.00'],
+                ],
+                note:
+                  'Restoration’s own figure comes first. Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, so the sets carry it as 12.5% of each set’s price: $3.93 on Battle of Legends Vol 3 at $31.46, $5.62 on Cobble & Fog at $44.95 and $5.00 on Vol 1 at $39.99. One factory’s listing for a card game with plastic miniatures, close to an Unmatched set, shows what a new seller might pay: $3.50 at 500–999 sets, $2.30 at 1,000–4,999 and $1.80 from 5,000. The margin does not use it.',
+              },
+            ],
+          },
+          {
+            id: 'dinosaur-tea-party',
+            label: 'Dinosaur Tea Party',
+            sharePct: 5.8,
+            blocks: [
+              {
+                /* suppliers.json dinosaur-tea-party (screenshots
+                   alibaba-family-card-game-2026-10-13.png, alibaba-yahong-
+                   board-game-2026-10-13.png), ordered by track record.
+                   cogsAverage $1.69 = (1.69 + 0.89 + 2.50) / 3. Until
+                   2026-10-25 it carried 12.5% of its $20 price, $2.50. */
+                type: 'table',
+                id: 'cogs-breakdown',
+                caption: 'COGS — what a boxed family card game costs to make',
+                attribution: 'alibaba',
+                columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
+                rows: [
+                  ['Shenzhen Senfutong Paper Co., Ltd.', 'Verified · 18 yrs', '—', '6,564', '500 pieces', '$0.89–1.89'],
+                  ['Shenzhen Yahong Color Printing Co., Ltd.', 'Verified · 12 yrs', '4.9★ from 176 (store)', '—', '200 sets', '$0.65–2.50'],
+                  ['Dongguan Senfutong Paper Co., Ltd.', 'Verified · 10 yrs', '4.8★ from 13 (store)', '—', '500 sets', '$1.69–4.59'],
+                  ['Average — the cost to make used below', '', '', '', '', '$1.69'],
+                ],
+                note:
+                  'Three factories’ listings for a boxed card game, the closest each had to Dinosaur Tea Party: listing prices, not quotes for its own design. Each is read at the tier nearest the game’s yearly sales of about 1,200. Yahong’s 200–19,999-set tier is $2.50; the two Senfutong listings show only a range, so their low ends, $1.69 and $0.89. Averaged: $1.69, against the $2.50 the publisher’s 12.5% would give. The lowest minimum is Yahong’s 200. Two card-only decks and a deck of stock playing cards were left out.',
+              },
+            ],
+          },
+        ],
+      },
+      {
+        /* Derived from the tables above and the tariff line, so no source
+           logo. pnl.json byListing, 2026-09: per unit, rounded to the cent;
+           the totals are the unrounded sums. */
         type: 'table',
-        caption: 'COGS — what it costs to make',
-        columns: ['Line', 'Unmatched 4-pack', 'Thunder Road: Vendetta', 'Maximum Chrome'],
+        id: 'landed-cost',
+        caption: 'Landed cost — making, duty and shipping, per listing',
+        noteColumns: [6],
+        columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
         rows: [
-          ['Manufacturing — the publisher’s $5 for the 4-pack, carried pro rata to the others', '$5.00', '$7.49', '$20.00'],
-          ['Tariff, 20% of manufacturing', '$1.00', '$1.50', '$4.00'],
-          ['Freight and inbound — a placeholder, not a quote', '$1.50', '$1.50', '$1.50'],
-          ['For comparison: tariff on the 4-pack at April 2025’s 145%, the publisher’s own figure', '$7.50', '—', '—'],
-          ['Buy box on Amazon', '$39.99', '$59.95', '$160.00'],
+          ['Thunder Road: Vendetta · Maximum Chrome', '100', '$38.30', '$7.66', '$8.84', '$54.80', 'The standard box’s quote scaled by price'],
+          ['Thunder Road: Vendetta', '100', '$14.35', '$2.87', '$8.76', '$25.98', 'Two Alibaba factories’ quotes'],
+          ['Unmatched: Battle of Legends Vol 3', '100', '$3.93', '$0.79', '$1.50', '$6.22', 'The publisher’s $5, as 12.5% of price'],
+          ['Unmatched: Cobble & Fog', '50', '$5.62', '$1.12', '$1.50', '$8.24', 'The publisher’s $5, as 12.5% of price'],
+          ['Dinosaur Tea Party', '100', '$1.69', '$0.34', '$1.50', '$3.53', 'Three Alibaba listings'],
+          ['Unmatched: Battle of Legends Vol 1', '50', '$5.00', '$1.00', '$1.50', '$7.50', 'The publisher’s $5'],
+          ['Thunder Road: Vendetta · Carnage at Devil’s Run expansion', '50', '$4.99', '$1.00', '$1.50', '$7.49', 'Still the publisher’s 12.5% stretched — no quote'],
+          ['Thunder Road: Vendetta · Choppe Shoppe expansion', '50', '$3.12', '$0.62', '$1.50', '$5.24', 'Still the publisher’s 12.5% stretched — no quote'],
+          ['September, all 600', '600', '$6,764', '$1,353', '$2,360', '$10,477', '30.3% of the month’s revenue'],
         ],
         note:
-          'Only the first column’s manufacturing figure comes from the publisher; the other two are the same 12.5% of price. The tariff rate is a secondary summary (tariffstool.com), not a customs ruling.',
+          'The first three cost lines of the breakdown below, listing by listing: what each box costs to make, its 20% tariff and its shipping from China. Shipping is the Freightos rate for the two Thunder Road boxes and our $1.50 placeholder for the rest. The vehicle moulds, $8,800 once, are not in it. Amazon’s fees on the sale are their own lines.',
       },
       {
-        /* 🚨 The margin row is computed as 100% less these lines — 42.80% since
-           2026-10-14, when advertising became amazon-adspend-spy's 12.416% — and
-           the backend seed builds the profit and ad-spend series from the SAME
-           six numbers (COST_LINES). Change one, change both. Two decimals, at
-           September's rates, so the title's $14.8K and the series agree. */
+        /* 🚨 The margin row is computed as 100% less these lines — 30.157%
+           since 2026-10-25 — and the backend seed builds the profit and
+           ad-spend series from the SAME six numbers (COST_LINES). Change one,
+           change both. Three decimals, September's rates (pnl.json 2026-09 ÷
+           $34,633), so the title's $10.4K and the series agree. Until
+           2026-10-25: manufacturing 12.5, tariff 2.5, freight 2.6, referral
+           15, FBA 12.18 → 42.804% ($14.8K). Moulds are NOT a line (owner's
+           ruling 2026-10-25: one-time). */
         type: 'margin',
         basis: { label: 'Average selling price', value: 57.72 },
         lines: [
           {
             label: 'Manufacturing',
             key: 'cogs',
-            pct: -12.5,
-            /* 🚨 No `emphasis`: the page labels that line "Biggest line", and
-               the referral fee (15%) is bigger. This one is the most
-               uncertain, which the detail and the callout say instead. */
+            pct: -19.53,
+            /* No `emphasis`: since 2026-10-25 it is the biggest line, but
+               also the most uncertain, which the detail and the callout say
+               instead. */
             detail:
-              'Derived from the publisher’s own figure: about $5 to make an Unmatched 4-pack, over its $39.99 buy box, applied to every listing. Weak for Thunder Road, which is most of the month. The most uncertain line here, and the one where a better figure would move the profit most.',
+              'Per listing, at September’s mix. Thunder Road: Vendetta $14.35, two Alibaba factories’ quotes averaged, one of them without the plastic vehicles. Maximum Chrome $38.30, the standard box’s quote scaled by price, because no factory quoted the deluxe box. Dinosaur Tea Party $1.69, from three Alibaba listings. The Unmatched sets carry the publisher’s own $5 for a 4-pack, as 12.5% of price, and the two Thunder Road expansions are still on that 12.5%, unquoted. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
+            links: [
+              { label: 'See landed cost above', href: '#landed-cost' },
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+            ],
           },
           {
             label: 'Tariff',
-            pct: -2.5,
-            detail: 'Derived: 20% of manufacturing, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat.',
+            pct: -3.906,
+            detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat. None on the moulds, which are paid once at the factory.',
+            links: [
+              { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
           },
           {
-            label: 'Freight and inbound',
-            pct: -2.6,
-            detail: '$1.50 a unit from China to their warehouse and on to Amazon’s. A placeholder, not a quote — the publisher names freight as a cost but gives no figure.',
+            label: 'Shipping',
+            pct: -6.814,
+            detail: 'The two Thunder Road boxes at a read sea-freight rate from China, door to door: $8.84 and $8.76 a box. The other 400 units, the Unmatched sets, Dinosaur Tea Party and the expansions, at $1.50 each, a placeholder, not a quote: no package size is on file for them.',
+            links: [
+              { label: 'See shipping breakdown above', href: '#shipping-breakdown' },
+              { label: 'See landed cost above', href: '#landed-cost' },
+            ],
           },
           {
             label: 'Amazon referral fee',
-            pct: -15,
+            pct: -14.998,
             detail: 'Measured per listing: 15%, the Toys & Games rate.',
             links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
           },
           {
             label: 'FBA fulfilment',
-            pct: -12.18,
+            pct: -12.179,
             /* Keepa product record B0C6NR9ZC4: 381 × 292 × 160 mm, 4,559 g, pick-and-pack $9.88, read 2026-10-13. */
             detail: 'Size tier: Large Standard. The best seller, Thunder Road: Vendetta Maximum Chrome (B0C6NR9ZC4), packs to 15 × 11.5 × 6.3 in at 10.05 lb. Measured: each listing’s own pick-and-pack fee, $6.31 on an Unmatched set to $9.88 on the Maximum Chrome box, times September’s badged units.',
             links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
@@ -6335,7 +6494,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Three of these six lines are Amazon’s or the publisher’s; two are placeholders and one is stretched past what its source covers. Manufacturing on Thunder Road is the first number to replace — and royalties are the first number to add.',
+          'The cost to make is now quoted for the box that sells most, but only for its standard edition: the $160 Maximum Chrome box, 46% of September, carries that quote scaled by price, and one of the two quotes leaves out the plastic vehicles. The two expansions are still on the publisher’s Unmatched ratio, and shipping on everything but the Thunder Road boxes is a placeholder. A quote for the deluxe box is the number to get next, and royalties are the number to add.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -6397,7 +6556,7 @@ export const PROFILES = {
             counted: 'Ads on 804 of 1,646 keywords their listings rank on — Jungle Scout share of voice; searches read from New York, 13 Oct 2026',
             flag: true,
             note:
-              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is still the earlier estimate until the margin is rebuilt with supplier quotes.',
+              'amazon-adspend-spy: per keyword, searches × their share of the sponsored results × a click rate × Amazon’s suggested bid. The Margin breakdown’s advertising line is this figure.',
           },
           {
             label: 'Meta and Google',
@@ -7789,7 +7948,7 @@ export const PROFILES = {
        September read. Every "Read" stamp below is August's. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/1bb5d370da64f9afa76409f0484f62eb6b9e1e78932bcc543c0e21be76c68193.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/ototo/ec3255dd13dd596e699d17e87f66758db4d5e8412509fa0601cf1b1894a072e6.png',
       /* August's revenue leader, and it is 5.5% of the month. Not the Nessie
          ladle: that is the brand's best-known shape and its biggest review
          count, but Nessie listings were under 5% of August. */
@@ -8205,21 +8364,27 @@ export const PROFILES = {
             blocks: [
               {
                 /* waithowmuch-research research/ototo/suppliers.json, Accio run
-                   accio/scissors/2026-10-17T2337, verified against its
-                   screenshots. 🚨 ONE supplier priced (owner's call,
-                   2026-10-18): Luban quoted its stock item 0487, flagged
-                   different-unit and excluded from the price. */
+                   accio/scissors/2026-10-25T1155 (filed 2026-10-25, verified
+                   against its screenshots), cogsAverage $2.42 from TWO
+                   suppliers. Zhuopeng's quote is carried over from the
+                   2026-10-17T2337 run, which holds its track record (18 yrs,
+                   4.7★ from 522); Asiakey's quotation sheet is
+                   screenshots/reply-asiakey.png. Luban quoted its stock item
+                   0487, flagged different-unit and excluded from the price.
+                   Until 2026-10-25 the scissors rested on Zhuopeng alone,
+                   $1.79. */
                 type: 'table',
                 id: 'cogs-breakdown',
                 caption: 'COGS — what a pair of Elizabat scissors costs to make',
                 attribution: 'alibaba',
                 columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price'],
                 rows: [
-                  ['Yangjiang Yangdong Zhuopeng Industrial & Trade Co., Ltd.', 'Verified · 18 yrs', '4.7★ from 522 (store)', '—', '3,000 pieces', '$1.79–1.82'],
+                  ['Yangjiang Yangdong Zhuopeng Industry & Trade Co., Ltd.', 'Verified · 18 yrs', '4.7★ from 522 (store)', '—', '5,000 pieces', '$1.79'],
+                  ['Yangjiang Asiakey Industrial Co., Ltd.', 'Verified · 12 yrs', '5.0★ from 6 (store)', '—', '3,000 pieces', '$3.04–3.29'],
                   ['Average — the cost to make used below', '', '', '', '', lineUsd(OT_COST.scissors.make)],
                 ],
                 note:
-                  'One supplier, and the cost to make rests on it alone, by the owner’s decision. Zhuopeng quoted the custom bat handle itself, black and grey, boxed without a logo, EXW: $1.82 from 3,000 and $1.79 from 5,000, the tier nearest the brand’s yearly sales of about 12,000. It refused 1,000 as too small, so its minimum is 3,000. Tooling, not in the unit price: a mould of about $2,800, not refundable as stated, though the supplier offered to find a way round it on an order. A second factory, Luban, quoted only its own stock scissors, a different design, and is not in the price; two more did not quote. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies. Verified suppliers rated 4.5 or better.',
+                  'Two factories quoted the custom bat handle itself, each at the tier nearest the brand’s yearly sales of about 12,000, and the two are averaged. Zhuopeng: $1.79 from 5,000, black and grey, boxed without a logo, EXW; it named 3,000 as the least it would make on a new mould. Asiakey: $3.29, $3.09 and $3.04 at 3,000, 5,000 and 10,000, FOB Shenzhen, in a custom printed box — an estimate from photos, to be adjusted once a prototype sets the weight. The two are nearly twice apart. Tooling, a one-time payment and not in the unit price: Zhuopeng’s mould is about $2,800, not refundable as stated; Asiakey’s is $5,000 for two moulds (the plastic body and the soft grip), refunded once orders reach 30,000. Averaged like the prices, $3,900. Both take about 50 days to produce. A third factory, Luban, quoted only its own stock scissors, a different design, and is not in the price; one more did not quote. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies. Verified suppliers rated 4.5 or better.',
               },
               {
                 /* Freightos CN-USWC low end, waithowmuch-research calibration/
@@ -8249,12 +8414,12 @@ export const PROFILES = {
                 noteColumns: [2],
                 columns: ['Line', 'Per pair', 'From'],
                 rows: [
-                  ['Production', lineUsd(OT_COST.scissors.make), 'One Alibaba supplier’s quote — COGS table above'],
+                  ['Production', lineUsd(OT_COST.scissors.make), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
                   ['Tariff', lineUsd(OT_COST.scissors.tariff), 'Metal-implement duty, Section 301 and the China duty — the tariff line below'],
                   ['Shipping', lineUsd(OT_COST.scissors.freight), 'The package at $497/cbm — shipping table above'],
                   ['Landed cost', lineUsd(OT_COST.scissors.landed), 'What one pair costs to reach Amazon’s door, before it sells'],
                 ],
-                note: 'The first three cost lines of the breakdown below, added up: 27.7% of the $9.99 August price. Amazon’s fees on the sale are their own lines. The mould is not in it.',
+                note: 'The first three cost lines of the breakdown below, added up: 36.5% of the $9.99 August price. Amazon’s fees on the sale are their own lines. The mould, a one-time payment, is not in it.',
               },
               {
                 type: 'margin',
@@ -8265,7 +8430,7 @@ export const PROFILES = {
                     key: 'cogs',
                     pct: otPct('scissors', OT_COST.scissors.make),
                     amount: OT_COST.scissors.make,
-                    detail: 'One Alibaba factory’s quote for the custom bat-handle scissors at 5,000 pieces, EXW. The roughly $2,800 mould is on top.',
+                    detail: 'Two Alibaba factories’ quotes for the custom bat-handle scissors, $1.79 at 5,000 pieces EXW and $3.04 at 10,000 FOB, averaged. The moulds, $2,800 and $5,000, are a one-time payment on top, not in this line.',
                     links: [
                       { label: 'See landed cost above', href: '#landed-cost' },
                       { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -8305,7 +8470,7 @@ export const PROFILES = {
                     pct: otPct('scissors', OT_COST.scissors.fba),
                     amount: OT_COST.scissors.fba,
                     emphasis: true,
-                    detail: 'Size tier: Large Standard. The Elizabat box (B0C6MMDCT2) is 9.6 × 4.8 × 0.79 in at 5.3 oz: light enough for Small Standard, but 0.79 in deep against that tier’s 0.75 in limit. Amazon charges $4.09 to pick and pack it, more than twice the cost to make. Measured.',
+                    detail: 'Size tier: Large Standard. The Elizabat box (B0C6MMDCT2) is 9.6 × 4.8 × 0.79 in at 5.3 oz: light enough for Small Standard, but 0.79 in deep against that tier’s 0.75 in limit. Amazon charges $4.09 to pick and pack it, well over one and a half times the cost to make. Measured.',
                     links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
                   },
                   {
@@ -8582,20 +8747,22 @@ export const PROFILES = {
                 rows: [
                   ['Small silicone or plastic gadget — spoon rests, tea infusers, ladles and the rest. Made-in-China list prices: jar spatulas $0.30–1.10, nylon ladles $0.48–1.69, character tea infusers $1.35–2.00, spoon rests $0.19–2.94. Taken at $1.20 for a custom-moulded piece, plus a ~$0.40 printed box — the box a placeholder, not a quote', 'Derived, weak', '$1.60'],
                   ['Garlic press. Plastic $0.55, aluminium $1.33–1.75. Gracula is glass-fibre polypropylene, made in China by one listing; the ~$0.40 box is assumed', 'Derived, weak', '$1.80'],
-                  ['Metal gadget — other scissors, openers, peelers. Kitchen scissors $0.22–0.95, corkscrews $0.16–1.03, steel gadgets $0.40–2.00, plus ~$1 for the character handle, tooling and box — a placeholder, not a quote. Quoted, the Vino corkscrew came to $5.54', 'Derived, weak', '$2.20'],
+                  ['Metal gadget — other scissors, openers, peelers. Kitchen scissors $0.22–0.95, corkscrews $0.16–1.03, steel gadgets $0.40–2.00, plus ~$1 for the character handle, tooling and box — a placeholder, not a quote. Quoted, the Elizabat scissors came to $2.42 and the Vino corkscrew to $5.54', 'Derived, weak', '$2.20'],
                   ['Three-piece bundle. Three small gadgets and a ~$0.20 shared box (assumed)', 'Derived, weak', '$5.00'],
                   ['Cutting board / oven mitts. Bamboo boards $1.80–4.85; custom-print cotton mitts $1.67–2.00 a piece, double mitts $7.22–8.66', 'Derived, weak', '$3.50 each'],
                   ['Tongs / larger moulded items / umbrella / bookmarks / unclassified — a placeholder, not a quote. No price read for any of them', 'ASSUMED', '$1.50 / $2.50 / $4.00 / $0.60 / $2.00'],
                 ],
                 note:
-                  'List prices describe the category, not OTOTO’s supplier, and these are the company’s own shapes. The quotes for the three heroes landed below the type cost for the spatula and scissors and well above it for the corkscrew, so the error runs both ways. Freight for these listings is their package volume at the FBX01 container rate with assumed container fill, 15% carton overhead and $0.35 a unit for drayage and placement.',
+                  'List prices describe the category, not OTOTO’s supplier, and these are the company’s own shapes. The quotes for the three heroes landed below the type cost for the spatula, a little above it for the scissors and well above it for the corkscrew, so the error runs both ways. Freight for these listings is their package volume at the FBX01 container rate with assumed container fill, 15% carton overhead and $0.35 a unit for drayage and placement.',
               },
               {
                 /* 🚨 The backend seed builds the profit and ad-spend series from
                    the SAME numbers (seed-ototo.ts COST_LINES): OT_BLEND + 15%
                    referral + OT_AD's rate = pnl.json blendedCostSharesPct.
-                   63.478% off leaves 36.522% → August's $77,197, the title's
-                   $77.2K. THREE decimals on purpose. Until 2026-10-18 the
+                   63.891% off leaves 36.109% → August's $76,324, the title's
+                   $76.3K. THREE decimals on purpose. Until 2026-10-25 the
+                   scissors were $1.79 on one quote: cogs 13.536, tariff
+                   2.895 → 36.522%, $77.2K. Until 2026-10-18 the
                    heroes carried type costs: cogs 13.351, tariff 2.8, freight
                    3.462 → 36.634%. */
                 type: 'margin',
@@ -8605,13 +8772,13 @@ export const PROFILES = {
                     label: 'Cost of goods',
                     key: 'cogs',
                     pct: -OT_BLEND.cogs,
-                    detail: 'About $2.02 of a $14.94 sale on August’s mix. The three heroes at their quoted cost to make — $1.79 for the Elizabat, $1.40 for the Splatypus, $5.54 for the Vino — and every other listing at its product type’s assumed cost, derived from commodity list prices and weak.',
+                    detail: 'About $2.07 of a $14.94 sale on August’s mix. The three heroes at their quoted cost to make — $2.42 for the Elizabat, $1.40 for the Splatypus, $5.54 for the Vino — and every other listing at its product type’s assumed cost, derived from commodity list prices and weak.',
                     links: [{ label: 'See the assumed costs above', href: '#type-costs' }],
                   },
                   {
                     label: 'Tariff',
                     pct: -OT_BLEND.tariff,
-                    detail: 'About $0.43. By duty class: plastic and silicone kitchenware at 3.4% (the Splatypus among them); metal implements at 3.7% plus 25% Section 301 (the Elizabat and the Vino among them); textile, wood and umbrella rates assumed. Plus the 10% China duty in force two months before sale. China origin is read for Gracula only and assumed for the rest. Any IEEPA refund is left out.',
+                    detail: 'About $0.45. By duty class: plastic and silicone kitchenware at 3.4% (the Splatypus among them); metal implements at 3.7% plus 25% Section 301 (the Elizabat and the Vino among them); textile, wood and umbrella rates assumed. Plus the 10% China duty in force two months before sale. China origin is read for Gracula only and assumed for the rest. Any IEEPA refund is left out.',
                   },
                   {
                     label: 'Freight and inbound',
@@ -8656,12 +8823,12 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The quotes cut both ways. The spatula and the scissors cost less to make than the type model assumed, and the scissors’ margin nearly doubles, but on a $10 sale Amazon’s pick-and-pack fee is still the biggest cost. The corkscrew is the opposite: at more than twice the assumed cost, with a 38.7% duty on top, its landed cost is over two-fifths of its price and it keeps about a fifth. One set of rates also understates the rest of the year. August ended on sale prices, so Amazon’s fixed fee took a bigger share of each dollar than usual. The dossier’s month-by-month model uses each month’s own prices, duty and freight, and keeps 42% over the twelve months to August 2026, about $2.51M, where this chart’s August rates give about $2.17M.',
+          'The quotes cut both ways. The spatula costs less to make than the type model assumed, and its margin rises. The scissors cost a little more, and on a $10 sale, where Amazon’s pick-and-pack fee is still the biggest cost, they keep about 7%. The corkscrew is further out: at more than twice the assumed cost, with a 38.7% duty on top, its landed cost is over two-fifths of its price and it keeps about a fifth. One set of rates also understates the rest of the year. August ended on sale prices, so Amazon’s fixed fee took a bigger share of each dollar than usual. The dossier’s month-by-month model uses each month’s own prices, duty and freight, and keeps 42% over the twelve months to August 2026, about $2.50M, where this chart’s August rates give about $2.15M.',
       },
       {
         type: 'callout',
         text:
-          'The three quotes are for OTOTO’s own bat and platypus designs, from factories that would need, or already have, the moulds; the scissors rest on one factory, by the owner’s decision. The other 84 listings, nearly nine-tenths of August, are still commodity list prices standing in for a quote, and freight and several duty classes are placeholders beside them. Those are the numbers to replace next.',
+          'The three quotes are for OTOTO’s own bat and platypus designs, from factories that would need, or already have, the moulds, and each rests on two factories’ prices averaged. The other 84 listings, nearly nine-tenths of August, are still commodity list prices standing in for a quote, and freight and several duty classes are placeholders beside them. Those are the numbers to replace next.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
