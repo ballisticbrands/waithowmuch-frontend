@@ -205,19 +205,18 @@ const draftTopPhoto = (asin) => `${DRAFT_TOP_BUCKET}${DRAFT_TOP_PHOTOS[asin]}.jp
    Advertising is DT_AD, never typed. */
 const DT_COST = {
   price: 26.76, // blended September sale: $104,361 / 3,900
-  /* make = the factory price + the moulds spread over a year (owner's call
-     2026-10-25: moulds are unavoidable, so they are in the margin AND in
-     "To test"). Moulds: $9,000, the low end of Yongli's 3–4 sets at
-     $3,000–5,000 each (Keyhome has not priced tooling), ÷ 47,000 a year
-     (suppliers.json cogsAverage.yearlyUnits) = $0.19. Until 2026-10-25 make
-     was the factory price alone, $1.37, 5.12%. */
-  factory: 1.37, moulds: 0.19, mouldsOnce: 9000, mouldUnits: 47000,
-  make: 1.56, makePct: 5.835,
-  tariff: 0.27, tariffPct: 1.024, // 20% of the $1.37 factory price only — a mould is not imported per unit; ASSUMED China origin
+  /* make = the factory price alone. 🚨 Moulds are NOT in the margin (owner's
+     ruling 2026-10-25): a one-time payment, ~$9,000 (the low end of Yongli's
+     3–4 sets at $3,000–5,000 each; Keyhome has not priced tooling), paid
+     before the first order and counted in "To test" only (mouldsOnce, the
+     "tooling" in starting-cost.lift.inputs.json). Briefly on 2026-10-25 they
+     were amortised into make ($1.56, 5.835%); withdrawn. */
+  make: 1.37, makePct: 5.12, mouldsOnce: 9000,
+  tariff: 0.27, tariffPct: 1.024, // 20% of the $1.37 cost to make; ASSUMED China origin
   freight: 0.19, freightPct: 0.723, // 0.00039 cbm × $496.67 (freight-rates.json, read 2026-09-28)
   fba: 3.9, fbaPct: 14.569,
   referral: 4.01,
-  landed: 2.03, // make (moulds in) + tariff + freight; also what "Test it first" prices on (starting-cost.lift.inputs.json)
+  landed: 1.83, // make + tariff + freight ($1.8375); also what "Test it first" prices on (starting-cost.lift.inputs.json)
 };
 const dtBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 const DT_AD_PER_SALE = +((DT_COST.price * DT_AD.ratePct.central) / 100).toFixed(2);
@@ -352,25 +351,23 @@ const songbirdPhoto = (asin) => `${SONGBIRD_BUCKET}${SONGBIRD_PHOTOS[asin]}.jpg`
    pnl.json lines. make is the Accio production price, suppliers.json
    cogsAverage (run accio/singing-bird-pourer/2026-10-25T1146): Kingtop $2.28
    and Sinowin $3.45 at 10,000, averaged = $2.87. Until 2026-10-25 it was OUR
-   $4.00 placeholder (13.338%). From 2026-10-25 (owner: the mould is
-   unavoidable) make also carries Kingtop's $1,200 mould over a year's sales,
-   $1,200 / 13,200 (cogsAverage.yearlyUnits) = $0.091: $2.961, 9.873%.
-   Tariff 20% of the $2.87 factory price only ($0.574), ASSUMED China — the
-   mould is paid once, not imported per unit.
+   $4.00 placeholder (13.338%). Kingtop's $1,200 mould is a one-time payment
+   (owner's ruling 2026-10-25): it is in "Test it first" (tooling), NOT in the
+   per-unit margin. (Earlier the same day it was amortised into make,
+   $2.961, 9.873%; taken out by that ruling.) make $2.87, 9.570%.
+   Tariff 20% of the $2.87 ($0.574), ASSUMED China.
    The percentages are pnl.json's and the backend seed's COST_LINES
    (seed-songbird-specialties.ts); check-profile asserts the margin block and
    the profit series agree. Advertising is SB_AD. */
 const SB_COST = {
   price: 29.99,
-  factory: 2.87, // the two quotes, averaged
-  mouldPerUnit: 0.09, // $1,200 ÷ 13,200 = $0.091
-  make: 2.96, makePct: 9.873, // $2.87 + $0.091 = $2.961
-  tariff: 0.57, tariffPct: 1.914, // 20% × $2.87 = $0.574, the factory price only
+  make: 2.87, makePct: 9.57, // the two quotes, averaged
+  tariff: 0.57, tariffPct: 1.914, // 20% × $2.87 = $0.574
   freight: 0.65, freightPct: 2.153, // 0.0013003 cbm × $496.67 = $0.646
   fba: 4.35, fbaPct: 14.505,
   referral: 4.5,
-  landed: 4.18, // $2.961 + $0.574 + $0.646
-  tooling: 1200, // Kingtop's mould, one time: spread over a year in make, and paid up front in "Test it first"
+  landed: 4.09, // $2.87 + $0.574 + $0.646; also what "Test it first" prices its first order on
+  tooling: 1200, // Kingtop's mould, one time: paid up front in "Test it first", not in the per-unit margin
 };
 const sbBand = (m) => `${monthUsd(m.low)}–${monthUsd(m.high)} a month`;
 
@@ -11935,7 +11932,7 @@ export const PROFILES = {
        The image is the black Lift, B0FS8PXTX3, the hero listing. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/draft-top/a11d0900bf86fbc9f98ffe10bdc5d7b2c1ac7ba73d8170a4e72cead94a83fbc9.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/draft-top/de872117f657b9c71c24e73c01ae962063de0ebe5d4bb1de97db956c5b16da99.png',
       image: {
         src: draftTopPhoto('B0FS8PXTX3'),
         alt: 'The Draft Top Lift topless can opener in black: an oval plastic body with a ringed opening in the middle and a curved handle on one side',
@@ -12180,7 +12177,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The year has two peaks: summer, when June 2024 and June 2026 each sold over 7,000, and November to December, with January to March falling to a fraction of either. Close to three fifths of each month is kept, after Amazon’s two fees, the cost to make two Alibaba factories quoted with the moulds spread over a year, an assumed tariff and modelled advertising. September 2026 was twice September 2025, and the badges read in October were running higher again.',
+          'The year has two peaks: summer, when June 2024 and June 2026 each sold over 7,000, and November to December, with January to March falling to a fraction of either. Close to three fifths of each month is kept, after Amazon’s two fees, the cost to make two Alibaba factories quoted, an assumed tariff and modelled advertising. September 2026 was twice September 2025, and the badges read in October were running higher again.',
       },
       {
         type: 'prose',
@@ -12224,7 +12221,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is two Alibaba factories’ prices for openers they already make, not a quote for the Lift’s own design, plus one factory’s estimate for the moulds — Margin breakdown says what that means. Their own store, the distributors and retail are not in either.',
+          'Revenue is a floor and profit is a ceiling. The cost to make under the profit is two Alibaba factories’ prices for openers they already make, not a quote for the Lift’s own design — Margin breakdown says what that means. The moulds a copy needs, about $9,000 once, are paid before the first order and counted in Test it first, not in the profit. Their own store, the distributors and retail are not in either.',
       },
 
       { type: 'section', id: 'how-it-sells', title: 'How it sells', group: 'What it earns', asOf: true },
@@ -12248,7 +12245,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'There is one product to cost, because the Lift is every measured sale in September: seven colours of one tool from one factory. Amazon’s fees and the advertising are read or modelled for the Lift itself. The cost to make is not. It is what two factories in China quoted through Alibaba in October 2026 — but for an opener each already makes, not for the Lift’s own design, so it prices a copy of the tool rather than the Lift itself. A copy cannot be made without its own moulds, so one factory’s estimate for them is in it too, spread over a year’s sales. The founders gave a figure too, on Shark Tank in February 2021: “$4.13 to make it. It’s 100% American made” — for the Draft Top 3.0, the design the Lift replaced, and three times the quotes. The tariff is an assumption: they say it is made in America, but this page assumes China, as one of their own listing titles does.',
+          'There is one product to cost, because the Lift is every measured sale in September: seven colours of one tool from one factory. Amazon’s fees and the advertising are read or modelled for the Lift itself. The cost to make is not. It is what two factories in China quoted through Alibaba in October 2026 — but for an opener each already makes, not for the Lift’s own design, so it prices a copy of the tool rather than the Lift itself. A copy also needs its own moulds, about $9,000 by one factory’s estimate; that is a one-time payment made before the first order, counted in Test it first, not in the per-unit margin. The founders gave a figure too, on Shark Tank in February 2021: “$4.13 to make it. It’s 100% American made” — for the Draft Top 3.0, the design the Lift replaced, and three times the quotes. The tariff is an assumption: they say it is made in America, but this page assumes China, as one of their own listing titles does.',
       },
       {
         /* waithowmuch-research research/draft-top/suppliers.json
@@ -12261,11 +12258,12 @@ export const PROFILES = {
            $5,000 mould figure were removed in verification (not in the
            confirmed reply); its custom-tooling estimate ("3-4 sets of moulds
            at $3,000-$5,000 USD per set", quoteText) is in the note as an
-           estimate, and since 2026-10-25 (owner: moulds are unavoidable) its
-           low end, $9,000, is in the cost to make, ÷ cogsAverage.yearlyUnits
-           47,000. Track record, ratings and sales were not read (null in
-           suppliers.json). Until 2026-10-25 this margin used the founders'
-           self-reported $4.13; their words are in the table below. */
+           estimate; its low end, $9,000, is the one-time "tooling" in "To
+           test" — NOT in the cost to make (owner's ruling 2026-10-25: moulds
+           are a one-time payment, out of the per-unit margin). Track record,
+           ratings and sales were not read (null in suppliers.json). Until
+           2026-10-25 this margin used the founders' self-reported $4.13; their
+           words are in the table below. */
         type: 'table',
         id: 'cogs-breakdown',
         caption: 'COGS — what a topless can opener costs to make',
@@ -12274,12 +12272,10 @@ export const PROFILES = {
         rows: [
           ['Yangjiang Keyhome Hardware Factory', '—', '—', '—', '1,000 pieces (lowest tier)', '$1.66–1.96', '—'],
           ['Huizhou Yongli Industrial Co., Ltd', '—', '—', '—', '5,000 pieces (lowest tier)', '$0.86–0.99', '15 working days'],
-          ['Average — the factory price', '', '', '', '', lineUsd(DT_COST.factory), ''],
-          [`Moulds, spread over a year — $${DT_COST.mouldsOnce.toLocaleString('en-US')} once ÷ ~${DT_COST.mouldUnits.toLocaleString('en-US')} openers`, '', '', '', '', lineUsd(DT_COST.moulds), ''],
-          ['The cost to make used below', '', '', '', '', lineUsd(DT_COST.make), ''],
+          ['Average — the cost to make used below', '', '', '', '', lineUsd(DT_COST.make), ''],
         ],
         note:
-          'Two factories in China quoted, and neither priced the Lift’s own design: each quoted a can opener it already makes. Keyhome, boxed, EXW: $1.96 at 1,000, $1.84 at 10,000 and $1.66 at 50,000. Yongli, a 45 g two-in-1 rotary opener in a plain white box — lighter than the 80–90 g a custom design was specified at — FOB Shenzhen: $0.99 at 5,000, $0.95 at 10,000, $0.90 at 30,000 and $0.86 at 50,000. Each at its largest tier below the brand’s yearly sales of about 47,000 — $1.84 and $0.90 — and averaged; the two are twice apart. Moulds, in the cost to make: for a custom design Yongli estimated three to four mould sets at $3,000–5,000 each — $9,000 to $20,000 — refundable on terms still to be agreed, and said the reference design appears to be patented; Keyhome has not priced tooling. A copy cannot be made without them, so this page takes the low end, $9,000, and spreads it over a year’s sales at the tiers above, about 47,000 openers: $0.19 each. Yongli’s samples are $5 and take 3 days. Three more factories did not reply. Track record, buyer ratings and sales on Alibaba were not read. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
+          'Two factories in China quoted, and neither priced the Lift’s own design: each quoted a can opener it already makes. Keyhome, boxed, EXW: $1.96 at 1,000, $1.84 at 10,000 and $1.66 at 50,000. Yongli, a 45 g two-in-1 rotary opener in a plain white box — lighter than the 80–90 g a custom design was specified at — FOB Shenzhen: $0.99 at 5,000, $0.95 at 10,000, $0.90 at 30,000 and $0.86 at 50,000. Each at its largest tier below the brand’s yearly sales of about 47,000 — $1.84 and $0.90 — and averaged; the two are twice apart. Tooling, not in the unit price: for a custom design Yongli estimated three to four mould sets at $3,000–5,000 each — $9,000 to $20,000 — refundable on terms still to be agreed, and said the reference design appears to be patented; Keyhome has not priced tooling. The moulds are a one-time payment of about $9,000, the low end, made before the first order: Test it first counts them, the per-unit margin does not. Yongli’s samples are $5 and take 3 days. Three more factories did not reply. Track record, buyer ratings and sales on Alibaba were not read. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
       },
       {
         /* payload.json founderStatements[0]: the founders' own cost of goods,
@@ -12328,21 +12324,22 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per unit', 'From'],
         rows: [
-          ['Production', lineUsd(DT_COST.factory), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
-          ['Moulds, spread over a year', lineUsd(DT_COST.moulds), `$${DT_COST.mouldsOnce.toLocaleString('en-US')} once ÷ ~${DT_COST.mouldUnits.toLocaleString('en-US')} openers — the low end of one factory’s estimate; COGS table above`],
-          ['Tariff', lineUsd(DT_COST.tariff), '20% of the factory price, assuming China origin — a mould is paid once at the factory, not imported with each opener, so it carries none; the tariff line below'],
+          ['Production', lineUsd(DT_COST.make), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+          ['Tariff', lineUsd(DT_COST.tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
           ['Shipping', lineUsd(DT_COST.freight), 'The hero’s carton at $497/cbm — shipping table above'],
           ['Landed cost', `$${DT_COST.landed.toFixed(2)}`, 'What one opener costs to reach Amazon’s door, before it sells'],
         ],
         note:
-          'The first three cost lines of the breakdown below, added up — cost of goods (moulds in), tariff and shipping: $2.03 is 7.6% of the $26.76 average sale; the lines above are rounded to the cent and come to $2.029 unrounded. It covers making the tool, its moulds and bringing it in, not Amazon’s fees, which are their own lines. “Test it first” prices its first order on this same figure, and adds the $9,000 for the moulds once, up front.',
+          'The first three cost lines of the breakdown below, added up: $1.83 is 6.9% of the $26.76 average sale ($1.8375 unrounded). It covers making the tool and bringing it in, not Amazon’s fees, which are their own lines. The moulds are not in it: about $9,000, paid once before the first order. “Test it first” prices its first order on this same figure and adds the moulds once, up front.',
       },
       {
-        /* 🚨 The profit series is 100% less these lines — 57.981% — and the
+        /* 🚨 The profit series is 100% less these lines — 58.696% — and the
            backend seed (seed-draft-top.ts, generated from pnl.json) builds it
            from the SAME percentages. Change one, regenerate the other.
-           Until 2026-10-25 (moulds added): cogs 5.12, 58.696%. Before that:
-           cogs 15.434, tariff 3.087 (the founders' $4.13), 46.3%. */
+           Moulds are NOT a line (owner's ruling 2026-10-25: one-time, in "To
+           test" only); briefly on 2026-10-25 they were, cogs 5.835, 57.981%.
+           Before the Accio quotes: cogs 15.434, tariff 3.087 (the founders'
+           $4.13), 46.3%. */
         type: 'margin',
         basis: { label: 'Average selling price', value: DT_COST.price },
         lines: [
@@ -12352,7 +12349,7 @@ export const PROFILES = {
             pct: -DT_COST.makePct,
             amount: DT_COST.make,
             detail:
-              'Two Alibaba factories’ quotes, averaged — $1.84 at 10,000 and $0.90 at 30,000 — for can openers they already make, not for the Lift’s own design: $1.37. Plus the moulds a copy cannot be made without, spread over a year’s sales: $9,000 — the low end of one factory’s estimate of three to four sets at $3,000–5,000 each; the other has not priced them — ÷ about 47,000 openers = $0.19. The founders’ own 2021 figure, for the design before the Lift, was $4.13.',
+              'Two Alibaba factories’ quotes, averaged — $1.84 at 10,000 and $0.90 at 30,000 — for can openers they already make, not for the Lift’s own design: $1.37. The moulds a copy needs are not in it: about $9,000 — the low end of one factory’s estimate of three to four sets at $3,000–5,000 each; the other has not priced them — is a one-time payment made before the first order, counted in Test it first, not in the per-unit margin. The founders’ own 2021 figure, for the design before the Lift, was $4.13.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -12415,17 +12412,17 @@ export const PROFILES = {
           },
         ],
         note:
-          'Quoted cost basis: the cost to make is two Alibaba factories’ prices for openers they already make, averaged — not a quote for the Lift’s own design — and the tariff assumes China origin. The moulds a copy needs are in it: $9,000 once, the low end of one factory’s estimate, spread over a year’s sales; the other factory has not priced them. Returns, payroll, warehousing and overhead are not modelled, so this is a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–24 months of the 3.0 and of older Lift listings at $19.99 to $24.99; those months show the shape of the series, not their own margins.',
+          'Quoted cost basis: the cost to make is two Alibaba factories’ prices for openers they already make, averaged — not a quote for the Lift’s own design — and the tariff assumes China origin. The moulds a copy needs are not in it: about $9,000, the low end of one factory’s estimate, paid once before the first order and counted in Test it first; the other factory has not priced them. Returns, payroll, warehousing and overhead are not modelled, so this is a ceiling on profit, not profit. The profit series uses this September breakdown for every month, including the 2023–24 months of the 3.0 and of older Lift listings at $19.99 to $24.99; those months show the shape of the series, not their own margins.',
       },
       {
         type: 'prose',
         text:
-          'Amazon takes far more of a sale than making it does: the referral fee and the pick-and-pack fee together are about five times the cost to make, moulds included. That is the shape of a $27 tool in a Large Standard box. The founders also told the Sharks they ran a 50% net margin — a figure for the whole company in 2021, mostly direct and Kickstarter sales, which this page does not use; the lines above leave more than that, on a cost to make under two fifths of the $4.13 they gave.',
+          'Amazon takes far more of a sale than making it does: the referral fee and the pick-and-pack fee together are nearly six times the cost to make. That is the shape of a $27 tool in a Large Standard box. The founders also told the Sharks they ran a 50% net margin — a figure for the whole company in 2021, mostly direct and Kickstarter sales, which this page does not use; the lines above leave more than that, on a cost to make about a third of the $4.13 they gave.',
       },
       {
         type: 'callout',
         text:
-          'The one line that could move this margin is the cost to make. It rests on two factories’ prices for openers they already make, twice apart, not on a quote for the Lift itself, and on one factory’s estimate for the moulds; at the founders’ own $4.13, moulds on top, the margin would be 45.6%. Every dollar it is off moves the margin by almost four points.',
+          'The one line that could move this margin is the cost to make. It rests on two factories’ prices for openers they already make, twice apart; at the founders’ own $4.13 the margin would be 46.3%. Every dollar it is off moves the margin by about four and a half points, its tariff included. The moulds, about $9,000 once, are not in it: they are paid before the first order and counted in Test it first.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
@@ -12568,12 +12565,12 @@ export const PROFILES = {
       /* LAST in the blocks: the nav lists it below Links & sources under a
          "Build your own" rule. The published estimate is created by
          make-validation-launch.mjs (--variants "lift=opener"); these blocks
-         carry no data. Its landed cost, $2.03, is the Margin breakdown's —
-         the Accio production price $1.37 + moulds spread over a year $0.19 +
-         the assumed 20% China tariff on $1.37 + freight — so landedHref is
-         the margin's landed-cost table. The moulds themselves, $9,000 once
-         ("tooling" in starting-cost.lift.inputs.json), are in "To test" too
-         (owner, 2026-10-25). Re-published locally 2026-10-25 (validation.json). */
+         carry no data. Its landed cost, $1.83, is the Margin breakdown's —
+         the Accio production price $1.37 + the assumed 20% China tariff on it
+         + freight — so landedHref is the margin's landed-cost table. The
+         moulds, $9,000 once ("tooling" in starting-cost.lift.inputs.json), are
+         in "To test" and NOT in the margin (owner's ruling 2026-10-25: a
+         one-time payment). Re-published locally 2026-10-25 (validation.json). */
       { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
       {
         type: 'lede',
@@ -14726,12 +14723,10 @@ export const PROFILES = {
         rows: [
           ['Dongguan City Kingtop Metal Product Co., Ltd.', '—', '—', '—', 'Not stated', '$2.28'],
           ['Shenzhen Sinowin Wine Accessories Co., Ltd.', '—', '—', '—', '500 pieces', '$3.35–3.85'],
-          ['Average of the two quotes', '', '', '', '', lineUsd(SB_COST.factory)],
-          ['Mould, spread over a year — $1,200 once ÷ ~13,200 pourers', '', '', '', '', lineUsd(SB_COST.mouldPerUnit)],
-          ['Cost to make used below', '', '', '', '', lineUsd(SB_COST.make)],
+          ['Average of the two quotes — the cost to make used below', '', '', '', '', lineUsd(SB_COST.make)],
         ],
         note:
-          'Two factories quoted the pourer as briefed: an acacia-wood bird body, silicone wings, a plastic beak over a stainless whistling pour tube, silicone stopper rings and a printed box. Kingtop: $2.28 a piece, a figure with no quantity attached, so it is taken at every quantity, plus a $1,200 mould, paid once; it gave no minimum or lead time. Sinowin already has the tooling, so no mould: $3.85, $3.75, $3.65, $3.55, $3.45 and $3.35 at 500, 1,000, 3,000, 5,000, 10,000 and 20,000, EXW (FOB Shenzhen for a flat $500 more), its own simple packaging, 35 days to make, no samples, and food-contact testing (FDA/LFGB) at about $900 if wanted. Sinowin also warned of a third-party patent risk on the design. Each at the tier nearest the brand’s yearly sales of about 13,200 — $2.28 and $3.45 — and averaged. Two more factories did not reply and one declined. Requested through Alibaba’s sourcing agent (Accio), read 18 October 2026, and checked against its screenshots of the replies. Sinowin’s mould is its own, so a copy needs one too: Kingtop’s $1,200 is spread over a year’s sales of about 13,200 — $0.09 a pourer — and added to the cost to make.',
+          'Two factories quoted the pourer as briefed: an acacia-wood bird body, silicone wings, a plastic beak over a stainless whistling pour tube, silicone stopper rings and a printed box. Kingtop: $2.28 a piece, a figure with no quantity attached, so it is taken at every quantity, plus a $1,200 mould, paid once; it gave no minimum or lead time. Sinowin already has the tooling, so no mould: $3.85, $3.75, $3.65, $3.55, $3.45 and $3.35 at 500, 1,000, 3,000, 5,000, 10,000 and 20,000, EXW (FOB Shenzhen for a flat $500 more), its own simple packaging, 35 days to make, no samples, and food-contact testing (FDA/LFGB) at about $900 if wanted. Sinowin also warned of a third-party patent risk on the design. Each at the tier nearest the brand’s yearly sales of about 13,200 — $2.28 and $3.45 — and averaged. Two more factories did not reply and one declined. Requested through Alibaba’s sourcing agent (Accio), read 18 October 2026, and checked against its screenshots of the replies. Sinowin’s mould is its own, so a copy needs one too: Kingtop’s $1,200 is a one-time payment made before the first order, counted in “Test it first”, not in the per-unit cost to make.',
       },
       {
         /* The freight half at the dated LCL rate every profile uses —
@@ -14760,16 +14755,15 @@ export const PROFILES = {
         noteColumns: [2],
         columns: ['Line', 'Per pourer', 'From'],
         rows: [
-          ['Production', lineUsd(SB_COST.factory), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
-          ['Mould, spread over a year', lineUsd(SB_COST.mouldPerUnit), '$1,200 once ÷ ~13,200 pourers, a year’s sales — COGS table above'],
-          ['Tariff', lineUsd(SB_COST.tariff), '20% of the factory price, assuming China origin; the mould is paid once, not shipped — the tariff line below'],
+          ['Production', lineUsd(SB_COST.make), 'Two Alibaba suppliers’ quotes, averaged — COGS table above'],
+          ['Tariff', lineUsd(SB_COST.tariff), '20% of the cost to make, assuming China origin — the tariff line below'],
           ['Shipping', lineUsd(SB_COST.freight), 'The pourer’s carton at $497/cbm — shipping table above'],
           ['Landed cost', lineUsd(SB_COST.landed), 'What one pourer costs to reach Amazon’s door, before it sells'],
         ],
-        note: 'The first three cost lines of the breakdown below, added up: 13.9% of the $29.99 price. Amazon’s fees are their own lines. The $1,200 mould is in it, spread over a year’s sales.',
+        note: 'The first three cost lines of the breakdown below, added up: 13.6% of the $29.99 price. Amazon’s fees are their own lines. The $1,200 mould is not in it: it is a one-time payment made before the first order, counted in “Test it first”, not in the per-unit margin.',
       },
       {
-        /* 🚨 The profit series is 100% less these lines — 55.797% — and the
+        /* 🚨 The profit series is 100% less these lines — 56.100% — and the
            backend seed builds it from the SAME percentages. */
         type: 'margin',
         basis: { label: 'Selling price', value: SB_COST.price },
@@ -14780,7 +14774,7 @@ export const PROFILES = {
             pct: -SB_COST.makePct,
             amount: SB_COST.make,
             emphasis: true,
-            detail: 'Two Alibaba factories’ quotes for the pourer, each at the tier nearest about 13,200 a year, averaged: $2.28 and $3.45, $2.87. Plus Kingtop’s $1,200 mould, paid once and spread over a year’s sales: $0.09 a pourer.',
+            detail: 'Two Alibaba factories’ quotes for the pourer, each at the tier nearest about 13,200 a year, averaged: $2.28 and $3.45, $2.87. Kingtop’s $1,200 mould is not in it: a one-time payment made before the first order, counted in “Test it first”, not in the per-unit margin.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -14790,7 +14784,7 @@ export const PROFILES = {
             label: 'Tariff',
             pct: -SB_COST.tariffPct,
             amount: SB_COST.tariff,
-            detail: 'Assumed: 20% of the $2.87 factory price, the rate this site uses for goods made in China; the mould is paid once, not shipped with each pourer, so it carries no duty here. Neither the listing nor their own store says where the pourer is made.',
+            detail: 'Assumed: 20% of the $2.87 cost to make, the rate this site uses for goods made in China. Neither the listing nor their own store says where the pourer is made.',
             links: [
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
               { label: 'See landed cost above', href: '#landed-cost' },
@@ -14835,7 +14829,7 @@ export const PROFILES = {
           },
         ],
         note:
-          'Before returns, storage and overhead, none of which is modelled: a ceiling on profit, not profit. The one-time $1,200 mould is in the cost of goods, spread over a year’s sales. The two quotes are $1.17 apart, and every dollar of cost to make moves the margin by over three points.',
+          'Before returns, storage and overhead, none of which is modelled: a ceiling on profit, not profit. The $1,200 mould is not in these lines: it is a one-time payment made before the first order, counted in “Test it first”. The two quotes are $1.17 apart, and every dollar of cost to make moves the margin by over three points.',
       },
       {
         type: 'prose',
@@ -14845,7 +14839,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'Profit here is a modelled ceiling on two factories’ quotes for the cost to make, one of them a figure with no quantity attached, and an assumed origin for the tariff. The $1,200 mould one of them charges is paid once: the margin spreads it over a year’s sales, and Test it first pays it up front.',
+          'Profit here is a modelled ceiling on two factories’ quotes for the cost to make, one of them a figure with no quantity attached, and an assumed origin for the tariff. The $1,200 mould one of them charges is a one-time payment made before the first order: it is counted in Test it first, not in the per-unit margin.',
       },
 
       { type: 'section', id: 'advertising', title: 'Advertising', group: 'Where demand comes from', asOf: true },
@@ -14938,8 +14932,9 @@ export const PROFILES = {
          names the pourer and ranks it top 25 delivers the 300 clicks). Market
          conversion from 4 share-of-voice rows (cached, no new Jungle Scout
          calls). First order 500 (Sinowin's minimum, suppliers.json lowestMoq)
-         × $4.18 landed, plus the $1,200 Kingtop mould as tooling (owner,
-         2026-10-25: unavoidable; re-published with it the same day). */
+         × $4.09 landed (the margin's, mould not in it), plus the $1,200 Kingtop
+         mould once as tooling (owner, 2026-10-25: unavoidable, a one-time
+         payment — in the test, not in the margin; re-published that day). */
       { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
       {
         type: 'lede',
