@@ -5904,7 +5904,7 @@ export const PROFILES = {
        2026-09-16). This entry carries only the image beside them. */
     headline: {
       /* The link preview card — scripts/build-og.mjs, uploaded to the bucket. */
-      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/d16473292592bb97e1213a5d354eeda40e65f9f2aca69ded3588c21343d1f2f3.png',
+      ogImage: 'https://storage.googleapis.com/verifiedmargins/products/restoration-games/0ab1abf5889e59d4e33afc464bbee36aca4c2e93c6eda1e3a0474d73ccef13af.png',
       /* The best seller by revenue: 46% of the own account's September on 100
          units. */
       image: {
@@ -6253,12 +6253,12 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'Every cent of a $57.72 average sale, down to the roughly three tenths left before licence royalties — and the line that decides it is what the Thunder Road boxes cost to make.',
+          'Every cent of a $57.72 average sale, down to the roughly one fifth left before licence royalties — and the line that decides it is what the Thunder Road boxes cost to make.',
       },
       {
         type: 'prose',
         text:
-          'The publisher gave one cost: in April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, 12.5% of that set’s $39.99 buy box, and the Unmatched sets still carry it. Thunder Road: Vendetta, about 73% of September’s own-account revenue, is now priced from factory quotes: two Alibaba factories quoted the standard box, one of them without its plastic vehicles. Nobody quoted the $160 Maximum Chrome edition, so it carries the standard box’s quote scaled by price. Dinosaur Tea Party is priced from three Alibaba listings, and the two Thunder Road expansions are still on the publisher’s 12.5%. Tariff is today’s rate on board games from China, 20% of the cost to make; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
+          'The publisher gave one cost: in April 2025 Jacobson wrote that a standard Unmatched 4-pack costs about $5 to make, 12.5% of that set’s $39.99 buy box, and the Unmatched sets still carry it. Thunder Road: Vendetta, about 73% of September’s own-account revenue, is now priced from a factory quote: two Alibaba factories quoted the standard box, but one left out its plastic vehicles, so the cost to make rests on the other’s quote alone. Nobody quoted the $160 Maximum Chrome edition, so it carries the standard box’s quote scaled by price. Dinosaur Tea Party is priced from three Alibaba listings, and the two Thunder Road expansions are still on the publisher’s 12.5%. Tariff is today’s rate on board games from China, 20% of the cost to make; units landed during 2025 paid far more, and that is not modelled. Amazon’s two fees are measured per listing.',
       },
       {
         type: 'prose',
@@ -6286,16 +6286,19 @@ export const PROFILES = {
                    thunder-road/2026-10-25T1148, verified against its
                    screenshots; Hicreate's reply confirmed by the owner in the
                    Alibaba chat 2026-10-25. Its 500-set tier ($28.99) was
-                   removed in verification. Senfutong's quote has no vehicles
-                   (flag partial-scope), kept by the owner for a rough
-                   estimate. cogsAverage $14.35 = (21.50 + 7.19) / 2, both at
-                   1,000, the tier nearest ~2,400 a year. toolingCost
+                   removed in verification. 🚨 ONE supplier priced (owner's
+                   call, 2026-10-25): Senfutong's quote has no vehicles (flag
+                   partial-scope) and is excludeFromPrice, its row kept and
+                   marked. cogsAverage $21.50 = Hicreate at 1,000, the tier
+                   nearest ~2,400 a year. Earlier on 2026-10-25 it was
+                   (21.50 + 7.19) / 2 = $14.35. toolingCost
                    [8800, 0]: 🚨 a one-time payment, NOT in the margin (owner's
                    ruling 2026-10-25); it is `tooling` in research
                    starting-cost.thunder-road.inputs.json. Maximum Chrome has
-                   no quote: $14.35 × 160 / 59.95 = $38.30, owner-approved
-                   plan 2026-10-25. Until 2026-10-25 both boxes carried 12.5% of
-                   price ($7.49, $20.00). */
+                   no quote: $21.50 × 160 / 59.95 = $57.38, owner-approved
+                   plan 2026-10-25 (was $38.30 on the average). Until
+                   2026-10-25 both boxes carried 12.5% of price ($7.49,
+                   $20.00). */
                 type: 'table',
                 id: 'cogs-breakdown',
                 caption: 'COGS — what a Thunder Road: Vendetta box costs to make',
@@ -6303,12 +6306,12 @@ export const PROFILES = {
                 columns: ['Supplier', 'Track record', 'Buyer rating', 'Sold on Alibaba', 'MOQ', 'Unit price', 'Lead time'],
                 rows: [
                   ['Jiangsu Hicreate Entertainment Co., Ltd.', 'Verified · 11 yrs', '5.0★ from 10 (store)', '—', '500 sets', '$16.14–21.50', 'About 45 days'],
-                  ['Dongguan Senfutong Paper Co., Ltd.', 'Verified · 10 yrs', '4.8★ from 13 (store)', '—', '500 sets', '$5.14–9.38', '20–25 days'],
-                  ['Average at 1,000 — the cost to make used below for Thunder Road: Vendetta', '', '', '', '', '$14.35', ''],
-                  ['Maximum Chrome — the standard box’s quote scaled by price, $14.35 × 160 ÷ 59.95: our figure, not a quote', '', '', '', '', '$38.30', ''],
+                  ['Dongguan Senfutong Paper Co., Ltd. — not in the price: its quote leaves out the 16 plastic vehicles', 'Verified · 10 yrs', '4.8★ from 13 (store)', '—', '500 sets', '$5.14–9.38', '20–25 days'],
+                  ['Hicreate at 1,000 — the cost to make used below for Thunder Road: Vendetta', '', '', '', '', '$21.50', ''],
+                  ['Maximum Chrome — the standard box’s quote scaled by price, $21.50 × 160 ÷ 59.95: our figure, not a quote', '', '', '', '', '$57.38', ''],
                 ],
                 note:
-                  'Two factories in China quoted the standard Thunder Road: Vendetta box as briefed: 38 × 29 × 16 cm, with cards, player boards, folding road tiles, dice, a punchboard of tokens, a rulebook and assembly. Jiangsu Hicreate, FOB Shanghai, with the 16 plastic vehicles: $21.50 at 1,000, $18.29 at 3,000 and $16.14 at 5,000, of which the vehicles alone are $10.47 at 1,000. Dongguan Senfutong, FOB Shenzhen, quoted everything but the vehicles: $9.38 at 500, $7.19 at 1,000, $5.53 at 3,000 and $5.14 at 5,000. It is kept as a rough estimate, so the average understates a full box. Each at 1,000, the tier nearest the brand’s yearly sales of about 2,400, and averaged: $14.35. No factory quoted the $160 Maximum Chrome edition. Its cost to make is the standard box’s quote scaled by price, which assumes the deluxe box costs as much more to make as it sells for. Tooling, not in the unit price: Hicreate charges $8,800 once for the four vehicle moulds, non-refundable and reusable, half of it in advance. It is a one-time cost paid before the first order, not part of the per-unit margin. Samples are $400 (Hicreate) and $242.50 (Senfutong). Three more factories did not reply. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
+                  'Two factories in China quoted the standard Thunder Road: Vendetta box as briefed: 38 × 29 × 16 cm, with cards, player boards, folding road tiles, dice, a punchboard of tokens, a rulebook and assembly. Jiangsu Hicreate, FOB Shanghai, with the 16 plastic vehicles: $21.50 at 1,000, $18.29 at 3,000 and $16.14 at 5,000, of which the vehicles alone are $10.47 at 1,000. Dongguan Senfutong, FOB Shenzhen, quoted everything but the vehicles: $9.38 at 500, $7.19 at 1,000, $5.53 at 3,000 and $5.14 at 5,000. Without the vehicles it is not the whole game, so it is shown but left out of the price, by the owner’s decision. One supplier, and the cost to make rests on it alone: Hicreate’s $21.50 at 1,000, the tier nearest the brand’s yearly sales of about 2,400. No factory quoted the $160 Maximum Chrome edition. Its cost to make is the standard box’s quote scaled by price, which assumes the deluxe box costs as much more to make as it sells for. Tooling, not in the unit price: Hicreate charges $8,800 once for the four vehicle moulds, non-refundable and reusable, half of it in advance. It is a one-time cost paid before the first order, not part of the per-unit margin. Samples are $400 (Hicreate) and $242.50 (Senfutong). Three more factories did not reply. Requested through Alibaba’s sourcing agent (Accio) and checked against its screenshots of the replies.',
               },
               {
                 /* Freightos CN-USWC low end, $496.67/cbm, waithowmuch-research
@@ -6402,40 +6405,42 @@ export const PROFILES = {
         noteColumns: [6],
         columns: ['Listing', 'Sold in September', 'Make', 'Tariff', 'Shipping', 'Landed', 'Cost to make from'],
         rows: [
-          ['Thunder Road: Vendetta · Maximum Chrome', '100', '$38.30', '$7.66', '$8.84', '$54.80', 'The standard box’s quote scaled by price'],
-          ['Thunder Road: Vendetta', '100', '$14.35', '$2.87', '$8.76', '$25.98', 'Two Alibaba factories’ quotes'],
+          ['Thunder Road: Vendetta · Maximum Chrome', '100', '$57.38', '$11.48', '$8.84', '$77.70', 'The standard box’s quote scaled by price'],
+          ['Thunder Road: Vendetta', '100', '$21.50', '$4.30', '$8.76', '$34.56', 'One Alibaba factory’s quote'],
           ['Unmatched: Battle of Legends Vol 3', '100', '$3.93', '$0.79', '$1.50', '$6.22', 'The publisher’s $5, as 12.5% of price'],
           ['Unmatched: Cobble & Fog', '50', '$5.62', '$1.12', '$1.50', '$8.24', 'The publisher’s $5, as 12.5% of price'],
           ['Dinosaur Tea Party', '100', '$1.69', '$0.34', '$1.50', '$3.53', 'Three Alibaba listings'],
           ['Unmatched: Battle of Legends Vol 1', '50', '$5.00', '$1.00', '$1.50', '$7.50', 'The publisher’s $5'],
           ['Thunder Road: Vendetta · Carnage at Devil’s Run expansion', '50', '$4.99', '$1.00', '$1.50', '$7.49', 'Still the publisher’s 12.5% stretched — no quote'],
           ['Thunder Road: Vendetta · Choppe Shoppe expansion', '50', '$3.12', '$0.62', '$1.50', '$5.24', 'Still the publisher’s 12.5% stretched — no quote'],
-          ['September, all 600', '600', '$6,764', '$1,353', '$2,360', '$10,477', '30.3% of the month’s revenue'],
+          ['September, all 600', '600', '$9,387', '$1,877', '$2,360', '$13,624', '39.3% of the month’s revenue'],
         ],
         note:
           'The first three cost lines of the breakdown below, listing by listing: what each box costs to make, its 20% tariff and its shipping from China. Shipping is the Freightos rate for the two Thunder Road boxes and our $1.50 placeholder for the rest. The vehicle moulds, $8,800 once, are not in it. Amazon’s fees on the sale are their own lines.',
       },
       {
-        /* 🚨 The margin row is computed as 100% less these lines — 30.157%
-           since 2026-10-25 — and the backend seed builds the profit and
-           ad-spend series from the SAME six numbers (COST_LINES). Change one,
-           change both. Three decimals, September's rates (pnl.json 2026-09 ÷
-           $34,633), so the title's $10.4K and the series agree. Until
-           2026-10-25: manufacturing 12.5, tariff 2.5, freight 2.6, referral
-           15, FBA 12.18 → 42.804% ($14.8K). Moulds are NOT a line (owner's
-           ruling 2026-10-25: one-time). */
+        /* 🚨 The margin row is computed as 100% less these lines — 21.069%
+           since Thunder Road went on Hicreate's quote alone (2026-10-25) —
+           and the backend seed builds the profit and ad-spend series from
+           the SAME six numbers (COST_LINES). Change one, change both. Three
+           decimals, September's rates (pnl.json 2026-09 ÷ $34,633), so the
+           title's $7.3K and the series agree. Until 2026-10-25:
+           manufacturing 12.5, tariff 2.5, freight 2.6, referral 15, FBA
+           12.18 → 42.804% ($14.8K); then, on the Hicreate + Senfutong
+           average, manufacturing 19.53, tariff 3.906 → 30.157% ($10.4K).
+           Moulds are NOT a line (owner's ruling 2026-10-25: one-time). */
         type: 'margin',
         basis: { label: 'Average selling price', value: 57.72 },
         lines: [
           {
             label: 'Manufacturing',
             key: 'cogs',
-            pct: -19.53,
+            pct: -27.103,
             /* No `emphasis`: since 2026-10-25 it is the biggest line, but
                also the most uncertain, which the detail and the callout say
                instead. */
             detail:
-              'Per listing, at September’s mix. Thunder Road: Vendetta $14.35, two Alibaba factories’ quotes averaged, one of them without the plastic vehicles. Maximum Chrome $38.30, the standard box’s quote scaled by price, because no factory quoted the deluxe box. Dinosaur Tea Party $1.69, from three Alibaba listings. The Unmatched sets carry the publisher’s own $5 for a 4-pack, as 12.5% of price, and the two Thunder Road expansions are still on that 12.5%, unquoted. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
+              'Per listing, at September’s mix. Thunder Road: Vendetta $21.50, one Alibaba factory’s quote with the plastic vehicles; a second factory left them out, so its quote is not used. Maximum Chrome $57.38, the standard box’s quote scaled by price, because no factory quoted the deluxe box. Dinosaur Tea Party $1.69, from three Alibaba listings. The Unmatched sets carry the publisher’s own $5 for a 4-pack, as 12.5% of price, and the two Thunder Road expansions are still on that 12.5%, unquoted. The $8,800 for the vehicle moulds is not in it: a one-time payment before the first order.',
             links: [
               { label: 'See landed cost above', href: '#landed-cost' },
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -6443,7 +6448,7 @@ export const PROFILES = {
           },
           {
             label: 'Tariff',
-            pct: -3.906,
+            pct: -5.421,
             detail: 'Derived: 20% of the cost to make, the 2026 rate on board games from China (7.5% Section 301 and a 12.5% tier), applied flat. None on the moulds, which are paid once at the factory.',
             links: [
               { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -6494,7 +6499,7 @@ export const PROFILES = {
       {
         type: 'callout',
         text:
-          'The cost to make is now quoted for the box that sells most, but only for its standard edition: the $160 Maximum Chrome box, 46% of September, carries that quote scaled by price, and one of the two quotes leaves out the plastic vehicles. The two expansions are still on the publisher’s Unmatched ratio, and shipping on everything but the Thunder Road boxes is a placeholder. A quote for the deluxe box is the number to get next, and royalties are the number to add.',
+          'The cost to make is now quoted for the box that sells most, but only for its standard edition: the $160 Maximum Chrome box, 46% of September, carries that quote scaled by price, and the standard box itself rests on one factory’s quote, since the second left out the plastic vehicles. The two expansions are still on the publisher’s Unmatched ratio, and shipping on everything but the Thunder Road boxes is a placeholder. A quote for the deluxe box is the number to get next, and royalties are the number to add.',
       },
 
       { type: 'section', id: 'growth', title: 'Growth', group: 'Where demand comes from' },
@@ -6641,6 +6646,21 @@ export const PROFILES = {
         text: 'These details are resolved from the seller record behind the brand’s Amazon storefront, and from the company’s own and trade-press announcements.',
       },
       /* Valuation omitted: eleven profit months, and the model needs twelve. */
+      /* The validation test, read off the published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs restoration-games
+         --products thunder-road --variant board,vendetta --variant-kind theme
+         --category), so the section and the headline figure are one record.
+         Category mode (owner, 2026-10-25): the brand ranks only on other
+         games' names, and the competitor panel there is too thin, so the pass
+         line is read from the wider board-game searches. Thunder Road only:
+         two thirds of September. The mould is in it, once. */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether a game like Thunder Road: Vendetta sells, before you commit to a full launch: the factory’s 500-set minimum, the mould for its plastic vehicles, and the ads. It is the publisher’s biggest seller, so it is the one to test.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
 
@@ -9073,6 +9093,20 @@ export const PROFILES = {
         text:
           'Sourcing, catalogue shape and differentiation level are questionnaire answers taken from the public record, and they are inferences. Differentiation is scored at level 3, character shapes of their own design. The moulds and the 150 design patents the site claims would make it level 4, and nobody has seen them. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. The trademark was not read, so the model does not score it. All of these are the first things to put to the owner, along with what the Amazon business is worth inside Essor.',
       },
+      /* The validation test, read off the published "to start" estimate
+         (waithowmuch-research make-validation-launch.mjs --products
+         spatula,scissors --variants "spatula=funny,unique:funny;scissors=gothic,
+         goth,witchy:gothic"), so the section and the headline figure are one
+         record. The Vino opener is not in it: Jungle Scout's competitor panel on
+         its searches is one listing, too thin to set a pass line. The moulds are
+         in it, once (owner, 2026-10-25). */
+      { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
+      {
+        type: 'lede',
+        text: 'The least you would spend to find out whether the Splatypus spatula and the Elizabat scissors sell, before you commit to a full launch: each factory’s minimum order, the moulds they need, and the ads. The Vino corkscrew is left out, because too few competing listings sell on its searches to set a pass line.',
+      },
+      { type: 'validation-strategy' },
+      { type: 'validation-launch' },
     ],
   },
   'highmark-collective': {
