@@ -98,6 +98,7 @@ export function SalesBreakdown({
   currency,
   showShare = false,
   showSummary = true,
+  maxRows,
 }: {
   block: Breakdown;
   currency: string;
@@ -107,6 +108,9 @@ export function SalesBreakdown({
   /** The "9 priced listings, summing to…" sentence under the bar. Off in the
    *  /business2/ prototype, where the Share column says the same thing. */
   showSummary?: boolean;
+  /** Rows shown before "View all" — a 199-product catalogue is otherwise a
+   *  table thirteen thousand pixels tall. Unset: every row (the case study). */
+  maxRows?: number;
 }) {
   const items = [...block.items].sort((a, b) => b.revenue - a.revenue);
   const host = block.marketplace ?? "www.amazon.com";
@@ -125,6 +129,8 @@ export function SalesBreakdown({
      same state unpinned, and cannot clear a pinned one out from under a
      reader who deliberately opened it. */
   const [active, setActive] = useState<{ index: number; pinned: boolean } | null>(null);
+  const [allRows, setAllRows] = useState(false);
+  const rows = maxRows && !allRows ? items.slice(0, maxRows) : items;
   const trackRef = useRef<HTMLDivElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
   const [left, setLeft] = useState(0);
@@ -232,7 +238,7 @@ export function SalesBreakdown({
             </tr>
           </thead>
           <tbody>
-            {items.map((i) => {
+            {rows.map((i) => {
               /* The swatch is the legend. Nine product names down the side of
                  the bar would be a second table; keyed to the row instead, the
                  table the reader already has does the job. */
@@ -298,6 +304,15 @@ export function SalesBreakdown({
           </tbody>
         </table>
       </div>
+      {maxRows !== undefined && items.length > maxRows && (
+        <button
+          type="button"
+          onClick={() => setAllRows((v) => !v)}
+          style={{ marginTop: "0.75rem", width: "100%", padding: "0.5rem", border: "1px solid var(--border)", borderRadius: "0.5rem", background: "var(--card)", fontSize: "0.875rem", fontWeight: 500, cursor: "pointer" }}
+        >
+          {allRows ? "Show less" : `View all ${items.length} products`}
+        </button>
+      )}
 
       {block.note && <p data-breakdown-note="">{block.note}</p>}
     </section>

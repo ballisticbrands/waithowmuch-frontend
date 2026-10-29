@@ -3,6 +3,7 @@ import type { BusinessDetail, ValidationLaunch as Launch } from "@/lib/api";
 import { dayLabel, exactMoney, money, price } from "@/lib/format";
 import { int, span } from "./StartingCost";
 import { StartingCostWaterfall } from "./StartingCostWaterfall";
+import { rebase, useCaseStudyBase } from "@/lib/case-study-base";
 
 /**
  * "What it costs to start (2)": the least a seller has to spend to validate the
@@ -238,10 +239,13 @@ type LandedHref = string | Record<string, string> | undefined;
 /** A unit cost keeps its cents: $9.06, not the $9 exactMoney rounds to. */
 const unitMoney = (v: number, currency: string) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
-const landedLink = (slug: string, id: string, many: boolean, override: LandedHref) =>
-  typeof override === "string"
-    ? override
-    : override?.[id] ?? `/business/${slug}/margin/${many ? `?product=${encodeURIComponent(id)}` : ""}#landed-cost`;
+const landedLink = (slug: string, id: string, many: boolean, override: LandedHref, base = "/business") =>
+  rebase(
+    typeof override === "string"
+      ? override
+      : override?.[id] ?? `/business/${slug}/margin/${many ? `?product=${encodeURIComponent(id)}` : ""}#landed-cost`,
+    base,
+  );
 
 export function ValidationLaunch({ business, landedHref, compact = false }: { business: BusinessDetail; landedHref?: LandedHref; compact?: boolean }) {
   const launch = business.startingCostEstimate?.breakdown?.validation;
@@ -275,6 +279,7 @@ function ValidationNumbers({
   compact?: boolean;
 }) {
   const currency = business.currency ?? "USD";
+  const caseBase = useCaseStudyBase();
   const g = launch.gate;
   const many = launch.products.length > 1;
 
@@ -561,7 +566,7 @@ function ValidationNumbers({
                       {unitMoney(p.landedUnitCost, currency)} — the landed cost of one, made and shipped to Amazon’s warehouse.{" "}
                         </>
                       )}
-                      <a href={landedLink(business.slug, p.id, many, landedHref)}>See the landed cost</a>
+                      <a href={landedLink(business.slug, p.id, many, landedHref, caseBase)}>See the landed cost</a>
                     </span>
                   ))}
                 </td>
@@ -577,7 +582,7 @@ function ValidationNumbers({
                         <span key={p.id}>
                           {i > 0 && <br />}
                           <strong>{p.label}:</strong> {exactMoney(p.tooling!, currency)}{compact ? ", paid once." : ", paid once before the factory can make the first order, as the supplier priced it."}{" "}
-                          <a href={landedLink(business.slug, p.id, many, landedHref)}>See the cost to make</a>
+                          <a href={landedLink(business.slug, p.id, many, landedHref, caseBase)}>See the cost to make</a>
                         </span>
                       ))}
                   </td>

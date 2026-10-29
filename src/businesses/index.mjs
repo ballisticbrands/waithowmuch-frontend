@@ -1088,7 +1088,7 @@ export const PROFILES = {
             ],
             short: {
               detail: `Modelled, not observed: about ${monthUsd(SHG_AD.monthlyUsd.central)} a month.`,
-              links: [{ label: 'See the ad spend in depth', href: '/business2/spite-house-games/?tab=ads' }],
+              links: [{ label: 'See the ad spend in depth', href: '/business/spite-house-games/?tab=ads' }],
             },
           },
         ],

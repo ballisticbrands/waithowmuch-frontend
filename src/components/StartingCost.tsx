@@ -4,6 +4,7 @@ import type { BusinessDetail, StartingCostEstimate } from "@/lib/api";
 import { dayLabel, exactMoney, money, price } from "@/lib/format";
 import { InfoTip } from "./InfoTip";
 import { StartingCostWaterfall } from "./StartingCostWaterfall";
+import { rebase, useCaseStudyBase } from "@/lib/case-study-base";
 
 /**
  * "What it costs to start" — the launch-cost estimate, opened up.
@@ -121,6 +122,7 @@ function EstimateView({
   product?: { id: string; label: string };
 }) {
   const currency = business.currency ?? "USD";
+  const caseBase = useCaseStudyBase();
 
   // No published estimate is a legitimate state, not an error: §3a leaves the
   // figure NULL for a business with no supplier quote carrying a minimum order.
@@ -142,7 +144,7 @@ function EstimateView({
   const f = inputs.freight;
   const kr = e.keywordReading;
   // A product tab's links open the same product's margin tab.
-  const margin = `/business/${business.slug}/margin${product ? `?product=${product.id}` : ""}`;
+  const margin = rebase(`/business/${business.slug}/margin${product ? `?product=${product.id}` : ""}`, caseBase);
   const marginHref = `${margin}#cogs-breakdown`;
   const shippingHref = `${margin}#shipping-breakdown`;
   const landedHref = `${margin}#landed-cost`;
@@ -478,9 +480,10 @@ function LaunchParts({
   products: LaunchProducts;
 }) {
   const currency = business.currency ?? "USD";
+  const caseBase = useCaseStudyBase();
   const parts = e.breakdown.parts;
   const w = e.breakdown.working;
-  const marginFor = (id: string) => `/business/${business.slug}/margin?product=${id}#landed-cost`;
+  const marginFor = (id: string) => rebase(`/business/${business.slug}/margin?product=${id}#landed-cost`, caseBase);
   return (
     <>
       {/* ── 1. The first order, by product ─────────────────────────── */}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Block } from "@/businesses/types";
 import { percent, price } from "@/lib/format";
 import { linePct } from "@/lib/pct.mjs";
+import { rebase, useCaseStudyBase } from "@/lib/case-study-base";
 
 type Margin = Extract<Block, { type: "margin" }>;
 
@@ -222,7 +223,9 @@ function withBold(text: string, bold?: string) {
   );
 }
 
-function MarginLink({ label, href }: { label: string; href: string }) {
+function MarginLink({ label, href: authored }: { label: string; href: string }) {
+  // On the previous case study (/business2/) its own links stay inside it.
+  const href = rebase(authored, useCaseStudyBase());
   if (href.startsWith("/")) return <Link to={href}>{label}</Link>;
   if (href.startsWith("#")) return <a href={href}>{label}</a>;
   return (

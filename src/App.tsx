@@ -3,8 +3,7 @@ import { Layout } from "@/components/Layout";
 import { RouteAnalytics } from "@/components/RouteAnalytics";
 import Home from "@/pages/Home";
 import Ideas, { MoreIdeas } from "@/pages/Ideas";
-import Business from "@/pages/Business";
-import Business2 from "@/pages/Business2";
+import { BusinessRoute, PreviousCaseStudyRoute } from "@/pages/CaseStudyRoute";
 import Login, { Signup } from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import { About, Privacy, Terms, HowWeResearch, NotFound } from "@/pages/Static";
@@ -49,16 +48,18 @@ export default function App() {
         <Route path="/data/more-ideas/" element={<MoreIdeas />} />
         <Route path="/data/:collection" element={<Ideas />} />
         <Route path="/data/:collection/" element={<Ideas />} />
-        <Route path="/business/:slug" element={<Business />} />
-        <Route path="/business/:slug/" element={<Business />} />
-        {/* A profile is paginated: one section per URL, with the overview at
-            the business root. An unknown section redirects to that root rather
-            than 404ing — the business exists, only the section does not. */}
-        <Route path="/business/:slug/:section" element={<Business />} />
-        <Route path="/business/:slug/:section/" element={<Business />} />
-        {/* The brand page redrawn as a research dashboard — a prototype beside
-            /business/, on the same data. Not prerendered, and noindex. */}
-        {Both({ path: "/business2/:slug", element: <Business2 /> })}
+        {/* A brand on the new brand page (data/new-brand-page.ts) gets it here;
+            every other brand gets its case study. Both answer the section URLs:
+            the case study pages one section per URL (an unknown one redirects
+            to the root), and the brand page turns each into its tab. */}
+        <Route path="/business/:slug" element={<BusinessRoute />} />
+        <Route path="/business/:slug/" element={<BusinessRoute />} />
+        <Route path="/business/:slug/:section" element={<BusinessRoute />} />
+        <Route path="/business/:slug/:section/" element={<BusinessRoute />} />
+        {/* The previous case study of a brand that moved to the new page —
+            noindex, beside it. Any other brand redirects to /business/. */}
+        {Both({ path: "/business2/:slug", element: <PreviousCaseStudyRoute /> })}
+        {Both({ path: "/business2/:slug/:section", element: <PreviousCaseStudyRoute /> })}
         {Both({ path: "/login", element: <Login /> })}
         {Both({ path: "/signup", element: <Signup /> })}
         <Route path="/auth/callback" element={<AuthCallback />} />

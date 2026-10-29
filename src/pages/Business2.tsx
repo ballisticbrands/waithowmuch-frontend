@@ -124,7 +124,40 @@ function sectionHolding(profile: Profile | undefined, types: Block["type"][]): s
  *  footnotes under the tables (the attribution badge already says where the
  *  numbers come from), and the margin lines in their short form. Prototype only —
  *  the case study keeps the full text. */
-function withoutNarrative(profile: Profile): Profile {
+type MarginLine = Extract<Block, { type: "margin" }>["lines"][number];
+
+/**
+ * A margin line in its short form. The profile's own `short` wins; otherwise
+ * the three lines every profile words the same way are cut by rule — the
+ * referral fee to its category and rate, fulfilment to its size tier, and
+ * advertising to its modelled monthly figure with one link to the Ads tab.
+ * Anything that does not match is left as written.
+ */
+function shortLine(l: MarginLine, slug: string): MarginLine {
+  if (l.short) return { ...l, detail: l.short.detail, links: l.short.links ?? l.links, bold: l.short.bold };
+  const d = l.detail ?? "";
+  const referral = d.match(/published (.+?) rate, a flat (\d+(?:\.\d+)?%)/i);
+  if (referral) return { ...l, detail: `${referral[1]}: ${referral[2]}` };
+  const tier = d.match(/^Size tier: ([^.,;]+)/i);
+  if (tier) return { ...l, detail: `Size tier: ${tier[1]}.`, bold: tier[1] };
+  const ads = d.match(/^modelled, not observed: about (\$[\d,.]+K?) a month/i);
+  if (ads)
+    return {
+      ...l,
+      detail: `Modelled, not observed: about ${ads[1]} a month.`,
+      links: [{ label: "See the ad spend in depth", href: `/business/${encodeURIComponent(slug)}/?tab=ads` }],
+    };
+  // Worded another way, an advertising line still says what it is and its share.
+  if (/^advertising/i.test(l.label) && /^modelled/i.test(d))
+    return {
+      ...l,
+      detail: `Modelled, not observed: ${+Math.abs(l.pct).toFixed(2)}% of revenue.`,
+      links: [{ label: "See the ad spend in depth", href: `/business/${encodeURIComponent(slug)}/?tab=ads` }],
+    };
+  return l;
+}
+
+function withoutNarrative(profile: Profile, slug: string): Profile {
   const lean = (blocks: Block[]): Block[] =>
     blocks
       .filter((b) => b.type !== "lede" && b.type !== "prose" && b.type !== "callout")
@@ -136,7 +169,7 @@ function withoutNarrative(profile: Profile): Profile {
           return {
             ...b,
             note: undefined,
-            lines: b.lines.map((l) => (l.short ? { ...l, detail: l.short.detail, links: l.short.links ?? l.links, bold: l.short.bold } : l)),
+            lines: b.lines.map((l) => shortLine(l, slug)),
           };
         if (b.type === "product-margins") return { ...b, products: b.products.map((p) => ({ ...p, blocks: lean(p.blocks) })) };
         if (b.type === "product-tabs") return { ...b, products: b.products.map((p) => ({ ...p, blocks: lean(p.blocks) })) };
@@ -167,13 +200,27 @@ function useSimilar(b: BusinessDetail | null): BusinessCard[] | null {
   return rows;
 }
 
-/** The brands the prototype is shown for. Any other slug goes to its normal
- *  case study, so /business2/ cannot become a second copy of every profile. */
-const PROTOTYPE_SLUGS = new Set(["spite-house-games"]);
+/** The old case study's section pages, as tabs of this one — so every
+ *  /business/<slug>/<section>/ link already out there (posts, the sitemap,
+ *  search results) lands on the same content here. */
+const SECTION_TAB: Record<string, TabId> = {
+  timeline: "analytics", growth: "analytics", traffic: "analytics", sources: "analytics", links: "analytics",
+  revenue: "revenue", "how-it-sells": "revenue",
+  margin: "margin",
+  advertising: "ads",
+  "brand-owner": "owner",
+  valuation: "valuation",
+  "to-start": "validate",
+};
 
 export default function Business2Route() {
-  const { slug = "" } = useParams();
-  if (!PROTOTYPE_SLUGS.has(slug)) return <Navigate to={`/business/${encodeURIComponent(slug)}/`} replace />;
+  const { slug = "", section } = useParams();
+  const [params] = useSearchParams();
+  if (section) {
+    const next = new URLSearchParams(params);
+    if (!next.has("tab")) next.set("tab", SECTION_TAB[section] ?? "analytics");
+    return <Navigate to={`/business/${encodeURIComponent(slug)}/?${next}${window.location.hash}`} replace />;
+  }
   return <Business2 />;
 }
 
@@ -215,15 +262,6 @@ function Business2() {
   useEffect(() => {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
-
-  // A second URL for a published profile: keep it out of the index.
-  useEffect(() => {
-    const meta = document.createElement("meta");
-    meta.name = "robots";
-    meta.content = "noindex";
-    document.head.appendChild(meta);
-    return () => meta.remove();
-  }, []);
 
   useSetCrumbs(
     () => [
@@ -275,6 +313,16 @@ function Business2() {
     similar: similar?.length,
   };
   const shade = q4 && q4Year !== null ? q4Year : null;
+  const hiddenTabs = new Set<TabId>(
+    ([
+      [!marginSection, "margin"],
+      [!ads?.AD_SPEND, "ads"],
+      [!ads?.TOP_KEYWORDS?.length, "keywords"],
+      [!ownerSection, "owner"],
+      [!valuationSection, "valuation"],
+      [!b.startingCostEstimate?.breakdown?.validation, "validate"],
+    ] as Array<[boolean, TabId]>).flatMap(([gone, id]) => (gone ? [id] : [])),
+  );
 
   return (
     /* Full width, like TrendTrack: a thin edge instead of the site's 2rem
@@ -285,7 +333,7 @@ function Business2() {
         <FactRow b={b} facts={facts} more={[...derivedFacts({ business: b, metrics: toChartPoints(series), series, profile }), ...facts]} />
 
         <div className={`lg:grid ${navCollapsed ? "lg:grid-cols-[64px_minmax(0,1fr)]" : "lg:grid-cols-[240px_minmax(0,1fr)]"}`}>
-          <SideNav tab={tab} onTab={setTab} counts={counts} slug={slug} collapsed={navCollapsed} onToggle={toggleNav} />
+          <SideNav tab={tab} onTab={setTab} counts={counts} slug={slug} collapsed={navCollapsed} onToggle={toggleNav} hidden={hiddenTabs} />
 
           <div className="min-w-0 space-y-5 bg-[var(--surface)] p-4 sm:p-6">
             {(tab === "analytics" || tab === "ads") && q4Year !== null && (
@@ -307,7 +355,7 @@ function Business2() {
                     the brand's first breakdown, the one the products tab lists. */}
                 {breakdown && (
                   <div className="[&>*]:m-0">
-                    <SalesBreakdown block={{ ...breakdown, intro: undefined, note: undefined }} currency={b.currency} showShare showSummary={false} />
+                    <SalesBreakdown block={{ ...breakdown, intro: undefined, note: undefined }} currency={b.currency} showShare showSummary={false} maxRows={25} />
                   </div>
                 )}
               </>
@@ -315,7 +363,7 @@ function Business2() {
             {tab === "margin" &&
               (profile && marginSection ? (
                 <section className="rounded-xl border border-[color:var(--border)] bg-[var(--card)] p-4 sm:p-6">
-                  <ProfileBlocks profile={withoutNarrative(profile)} business={b} metrics={toChartPoints(series)} series={series} only={marginSection} />
+                  <ProfileBlocks profile={withoutNarrative(profile, slug)} business={b} metrics={toChartPoints(series)} series={series} only={marginSection} />
                 </section>
               ) : (
                 <div data-empty>No margin breakdown published for this brand yet.</div>
@@ -340,7 +388,7 @@ function Business2() {
                   <div className="[&>*]:mt-0">
                     <ValidationStrategy business={b} compact />
                   </div>
-                  <ValidationLaunch business={b} compact landedHref={`/business2/${encodeURIComponent(slug)}/?tab=margin`} />
+                  <ValidationLaunch business={b} compact landedHref={`/business/${encodeURIComponent(slug)}/?tab=margin`} />
                 </section>
               ) : (
                 <div data-empty>No validation test published for this brand yet.</div>
@@ -487,7 +535,7 @@ function FactRow({ b, facts, more }: { b: BusinessDetail; facts: Fact[]; more: F
                   target="_blank"
                   rel="noopener noreferrer"
                   title={site ? `${new URL(site.url).hostname.replace(/^www\./, "")} · visits per month` : "Visits per month"}
-                  className="flex items-center gap-1.5 text-sm font-semibold text-[color:var(--foreground)] no-underline hover:text-[color:var(--accent)]"
+                  className="flex items-center gap-1.5 text-sm font-semibold text-[color:var(--foreground)] no-underline hover:text-[color:var(--foreground)]"
                 >
                   <PlatformIcon platform="WEBSITE" /> {compact(visits)}<span className="font-normal text-[color:var(--muted-foreground)]">/mo</span>
                 </a>
@@ -659,9 +707,12 @@ function Tip({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-function SideNav({ tab, onTab, counts, slug, collapsed, onToggle }: {
+function SideNav({ tab, onTab, counts, slug, collapsed, onToggle, hidden }: {
   tab: TabId; onTab: (t: TabId) => void; counts: Partial<Record<TabId, number>>; slug: string; collapsed: boolean; onToggle: () => void;
+  /** Tabs this brand has nothing for, left out of the menu. */
+  hidden: Set<TabId>;
 }) {
+  const nav = NAV.map((g) => ({ ...g, items: g.items.filter((it) => !hidden.has(it.id)) })).filter((g) => g.items.length > 0);
   const item = (it: (typeof NAV)[number]["items"][number], compactNav = false, iconOnly = false) => {
     const active = it.id === tab;
     const button = (
@@ -686,7 +737,8 @@ function SideNav({ tab, onTab, counts, slug, collapsed, onToggle }: {
     );
     return iconOnly ? <Tip key={it.id} label={it.label}>{button}</Tip> : button;
   };
-  const caseStudyHref = `/business/${encodeURIComponent(slug)}/`;
+  // The previous long-form case study, kept at /business2/.
+  const caseStudyHref = `/business2/${encodeURIComponent(slug)}/`;
   const caseStudy = (
     <Link to={caseStudyHref} className="flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-[color:var(--accent)] no-underline">
       Full case study →
@@ -713,14 +765,14 @@ function SideNav({ tab, onTab, counts, slug, collapsed, onToggle }: {
     <>
       {/* Phones and tablets: the same menu as one scrolling row. */}
       <nav aria-label="Brand sections" className="flex gap-1 overflow-x-auto border-b border-[color:var(--border)] px-3 py-2 lg:hidden">
-        {NAV.flatMap((g) => g.items).map((it) => item(it, true))}
+        {nav.flatMap((g) => g.items).map((it) => item(it, true))}
         {caseStudy}
       </nav>
       <nav aria-label="Brand sections" className="hidden border-r border-[color:var(--border)] lg:block">
         <div className={`flex border-b border-[color:var(--border)] px-3 py-2 ${collapsed ? "justify-center" : "justify-end"}`}>{toggle}</div>
         {collapsed ? (
           <div className="sticky top-3 flex flex-col items-center gap-1 px-2 py-3">
-            {NAV.map((g, i) => (
+            {nav.map((g, i) => (
               <div key={i} className={`flex flex-col items-center gap-1 ${i > 0 ? "mt-1 border-t border-[color:var(--border)] pt-2" : ""}`}>
                 {g.items.map((it) => item(it, false, true))}
               </div>
@@ -735,7 +787,7 @@ function SideNav({ tab, onTab, counts, slug, collapsed, onToggle }: {
           </div>
         ) : (
           <div className="sticky top-3 space-y-4 p-3">
-            {NAV.map((g, i) => (
+            {nav.map((g, i) => (
               <div key={i} className={`space-y-0.5 ${g.divider ? "border-t border-[color:var(--border)] pt-4" : ""}`}>
                 {g.group && <div className="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--muted-foreground)]">{g.group}</div>}
                 {g.items.map((it) => item(it))}
@@ -1169,7 +1221,9 @@ function SocialStat({ link }: { link: BusinessLink }) {
   const followers = linkFollowers(link);
   return (
     <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-sm font-semibold text-[color:var(--foreground)] no-underline" title={platformLabel(link.platform)}>
-      <PlatformIcon platform={link.platform} /> {followers !== null ? compact(followers) : "—"}
+      {/* No follower count read: the icon alone, still a link. */}
+      <PlatformIcon platform={link.platform} />
+      {followers !== null && compact(followers)}
     </a>
   );
 }
@@ -1341,12 +1395,16 @@ function ProductLibrary({ products, currency }: { products: Product[]; currency:
   const [view, setView] = useState<"Table" | "Grid">("Table");
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<ProductFilterState>({});
+  // 25 rows, then "View all": a 199-product catalogue is otherwise one very long table.
+  const [showAll, setShowAll] = useState(false);
+  const PAGE = 25;
   const rows = useMemo(() => products.map(filterRow), [products]);
   const filtered = useMemo(() => products.filter((_, i) => matches(rows[i]!, filters)), [products, rows, filters]);
   const sorted = useMemo(() => sortProducts(filtered, order), [filtered, order]);
   const rank = useRanks(sorted);
   const total = products.reduce((t, p) => t + p.revenue, 0);
   const shown = sorted.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()) || p.asin?.toLowerCase().includes(query.toLowerCase()));
+  const visible = showAll ? shown : shown.slice(0, PAGE);
 
   if (products.length === 0) return <div data-empty>No product breakdown published for this brand.</div>;
   return (
@@ -1376,7 +1434,7 @@ function ProductLibrary({ products, currency }: { products: Product[]; currency:
         <div data-empty>No products match.</div>
       ) : view === "Grid" ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {shown.map((p) => <ProductCard key={p.asin ?? p.name} p={p} rank={rank.get(p)!} currency={currency} />)}
+          {visible.map((p) => <ProductCard key={p.asin ?? p.name} p={p} rank={rank.get(p)!} currency={currency} />)}
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -1389,7 +1447,7 @@ function ProductLibrary({ products, currency }: { products: Product[]; currency:
               </tr>
             </thead>
             <tbody>
-              {shown.map((p) => {
+              {visible.map((p) => {
                 const share = total ? (p.revenue / total) * 100 : 0;
                 return (
                   <tr key={p.asin ?? p.name} className="hover:bg-[var(--surface)]">
@@ -1444,6 +1502,11 @@ function ProductLibrary({ products, currency }: { products: Product[]; currency:
             </tbody>
           </table>
         </div>
+      )}
+      {shown.length > PAGE && (
+        <button type="button" onClick={() => setShowAll((v) => !v)} className="mt-3 w-full rounded-lg border border-[color:var(--border)] py-2 text-sm font-medium">
+          {showAll ? "Show less" : `View all ${shown.length} products`}
+        </button>
       )}
     </Card>
     </div>
@@ -1663,7 +1726,7 @@ function SimilarCarousel({ rows, onMore }: { rows: BusinessCard[] | null; onMore
         {rows.map((r) => (
           <Link
             key={r.slug}
-            to={`/business2/${r.slug}/`}
+            to={`/business/${r.slug}/`}
             className="w-[220px] shrink-0 snap-start rounded-xl border border-[color:var(--border)] bg-white p-3.5 text-[color:var(--foreground)] no-underline transition-shadow hover:shadow-[var(--shadow)]"
           >
             <div className="flex items-center gap-2.5">
@@ -1709,7 +1772,7 @@ function Similar({ rows }: { rows: BusinessCard[] | null }) {
             {rows.map((r) => (
               <tr key={r.slug} className="hover:bg-[var(--surface)]">
                 <td className="border-b border-[color:var(--border)] px-2 py-3">
-                  <Link to={`/business2/${r.slug}/`} className="flex items-center gap-3 text-[color:var(--foreground)] no-underline">
+                  <Link to={`/business/${r.slug}/`} className="flex items-center gap-3 text-[color:var(--foreground)] no-underline">
                     {r.logoUrl ? <img src={r.logoUrl} alt="" className="h-9 w-9 rounded-lg border border-[color:var(--border)] bg-white object-contain p-1" /> : <span className="h-9 w-9 rounded-lg bg-[var(--muted)]" />}
                     <span>
                       <span className="block font-semibold">{r.name}</span>

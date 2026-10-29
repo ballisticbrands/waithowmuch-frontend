@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
+import { useCaseStudyBase } from "@/lib/case-study-base";
 import {
   getBusiness, getMetrics, linkFollowers, toChartPoints,
   type BusinessDetail, type MetricsResponse,
@@ -34,6 +35,7 @@ function sectionTitleFor(slug: string, section: string | undefined): string | nu
 
 export default function Business() {
   const { slug = "", section } = useParams();
+  const caseBase = useCaseStudyBase();
   const boot = businessBootstrap(slug);
   // A frontend-only draft, if this slug has one. Checked before the bootstrap
   // and before the API: a local record is the whole source of truth for its
@@ -74,6 +76,17 @@ export default function Business() {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
 
+  // At /business2/ this is the previous case study, kept beside the new brand
+  // page: a second URL for the same profile, so it stays out of the index.
+  useEffect(() => {
+    if (caseBase !== "/business2") return;
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex";
+    document.head.appendChild(meta);
+    return () => meta.remove();
+  }, [caseBase]);
+
   // Fires exactly once per slug, and only once the page has resolved one way
   // or the other.
   //
@@ -109,7 +122,7 @@ export default function Business() {
       { label: "Case studies", to: collectionPath("all-ideas") },
       ...(crumbSection
         ? [
-            { label: b?.name ?? "…", to: `/business/${encodeURIComponent(slug)}/` },
+            { label: b?.name ?? "…", to: `${caseBase}/${encodeURIComponent(slug)}/` },
             { label: crumbSection },
           ]
         : [{ label: b?.name ?? (missing ? "Not found" : "…") }]),
@@ -151,7 +164,8 @@ export default function Business() {
   /* Overview and Sources are rendered by this page rather than by the profile,
      so they are added around the profile's own sections rather than being
      declared in the .mjs. Everything between them comes from the blocks. */
-  const base = `/business/${encodeURIComponent(slug)}`;
+  // /business/, or /business2/ for a brand already on the new brand page.
+  const base = `${caseBase}/${encodeURIComponent(slug)}`;
   const declared = profile ? profileSections(profile) : [];
 
   /* No section markers, no pagination. A profile that declares none is one

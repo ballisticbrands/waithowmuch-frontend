@@ -9,6 +9,7 @@ import { METRIC_INFO } from "@/data/metric-info";
 import { scoreProfile, ttmWindow, valuationAsOf } from "@/valuation/inputs.mjs";
 import { InfoTip } from "./InfoTip";
 import { PerformanceChart } from "./PerformanceChart";
+import { useCaseStudyBase } from "@/lib/case-study-base";
 
 /**
  * The cards at the top of a business profile.
@@ -307,11 +308,14 @@ export function derivedFacts({
   metrics,
   series,
   profile,
+  base = "/business",
 }: {
   business: BusinessDetail;
   metrics: ChartPoint[];
   series?: MetricsResponse | null;
   profile?: Profile;
+  /** Where the case study the COGS ⓘ links into lives — see case-study-base. */
+  base?: string;
 }): Fact[] {
   const ttm = metrics.length >= 12;
   const recent = ttm ? metrics.slice(-12) : metrics;
@@ -366,7 +370,7 @@ export function derivedFacts({
         b.currency,
       )} order`,
       info: "cogs",
-      learnMore: marginHref ? `/business/${encodeURIComponent(b.slug)}/${marginHref}/` : undefined,
+      learnMore: marginHref ? `${base}/${encodeURIComponent(b.slug)}/${marginHref}/` : undefined,
     });
   }
 
@@ -435,6 +439,7 @@ export function TopMetrics({
   /** Where "View the figures" jumps to. */
   chartHref?: string;
 }) {
+  const caseBase = useCaseStudyBase();
   /* 🚨 The four headline cards state ONE MONTH — the latest published one,
      off the Business row — not an average. They used to read a trailing
      twelve months, which is how a broker prices a listing, but a TTM revenue
@@ -466,7 +471,7 @@ export function TopMetrics({
 
   const timeline =
     profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
-  const derived = derivedFacts({ business: b, metrics, series, profile });
+  const derived = derivedFacts({ business: b, metrics, series, profile, base: caseBase });
 
   const startingCost = startingCostFigure(b);
   const range = startingCost === null ? null : startingCostRange(b);

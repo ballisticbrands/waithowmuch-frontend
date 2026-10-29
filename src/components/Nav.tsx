@@ -7,6 +7,7 @@ import { useRailCollapsed } from "@/lib/rail";
 import { COLLECTIONS, MORE, collectionPath } from "@/data/collections.mjs";
 import { BRAND_NAME } from "@/data/site";
 import { trackCtaClick } from "@/lib/track";
+import { onNewBrandPage } from "@/data/new-brand-page";
 
 /** The thin strip across the top: mark, the breadcrumb trail beside it, and
  *  auth pinned to the right. Deliberately shallow — the real navigation is the
@@ -99,9 +100,9 @@ export function SideRail() {
   const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
   const here = norm(pathname);
   const [collapsed, toggle] = useRailCollapsed();
-  /* The /business2/ prototype gets TrendTrack's rail: narrow, icon over
-     label, nothing to collapse. The rest of the site keeps this one. */
-  if (here.startsWith("/business2/")) return <CompactRail here={here} />;
+  /* The new brand page gets TrendTrack's rail: narrow, icon over label,
+     nothing to collapse. The rest of the site keeps this one. */
+  if (onNewBrandPage(here.match(/^\/business\/([^/]+)\//)?.[1] ?? "")) return <CompactRail here={here} />;
   const action = collapsed ? "Expand sidebar" : "Collapse sidebar";
 
   return (
