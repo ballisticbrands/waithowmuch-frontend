@@ -296,33 +296,23 @@ function sectionOf(profile: Profile, match: (b: Block) => boolean): string | nul
   return null;
 }
 
-export function TopMetrics({
+/**
+ * The Additional-metrics cells computed rather than authored — TACoS, COGS,
+ * Brand Registry and the two retail prices — each from the same source the
+ * rest of the page reads. Shared with the /business2/ prototype's More info
+ * panel, so the two cannot show different figures.
+ */
+export function derivedFacts({
   business: b,
   metrics,
   series,
   profile,
-  chartHref = "#earnings",
 }: {
   business: BusinessDetail;
   metrics: ChartPoint[];
-  /** The whole series. `metrics` is the revenue/profit pivot; anything else —
-   *  ad spend here — has to be read from the rows. */
   series?: MetricsResponse | null;
   profile?: Profile;
-  /** Where "View the figures" jumps to. */
-  chartHref?: string;
-}) {
-  /* 🚨 The four headline cards state ONE MONTH — the latest published one,
-     off the Business row — not an average. They used to read a trailing
-     twelve months, which is how a broker prices a listing, but a TTM revenue
-     beside a single-month profit invites the reader to divide one by the
-     other and get a margin the page does not show. One month across all four
-     is the only version that survives that arithmetic. The chart below still
-     draws every month, and TACoS in Additional metrics is still a TTM ratio
-     — it says so on its own note.
-
-     The month is on each basis line rather than in the label: "Monthly
-     revenue · Sep 2026" wraps to two lines in a card. */
+}): Fact[] {
   const ttm = metrics.length >= 12;
   const recent = ttm ? metrics.slice(-12) : metrics;
   const revenues = recent.map((p) => num(p.revenue) ?? 0);
@@ -335,20 +325,7 @@ export function TopMetrics({
   const allAdRows = rowsOfType(series ?? null, "ad_spend");
   const adRows = allAdRows.length >= 12 ? allAdRows.slice(-12) : allAdRows;
   const adSpends = adRows.map((r) => Number(r.value));
-
   const n = recent.length;
-
-  /* The three figures the Business row carries for its latest period. The row
-     is the same source the /data/ listing, the share card and the crawler HTML
-     read, so a card cannot disagree with the row that links to it. */
-  const monthlyRevenue = num(b.latestMonthlyRevenue);
-  const monthlyProfit = num(b.latestMonthlyProfit);
-  /* Stored, not derived — but a row with the two figures and no percentage
-     still has a margin, and it is the one the reader would work out. */
-  const margin =
-    num(b.latestMarginPct) ??
-    (monthlyRevenue && monthlyProfit !== null ? (monthlyProfit / monthlyRevenue) * 100 : null);
-  const monthBasis = b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month";
 
   /* Ad spend lost its headline card: it is an input, not a result, and on a
      phone it pushed the figures the page is about below the fold. The series
@@ -379,8 +356,6 @@ export function TopMetrics({
     (blk): blk is Extract<Block, { type: "margin" }> => blk.type === "margin",
   );
   const cogsLine = marginBlock?.lines.find((l) => l.key === "cogs");
-  const timeline =
-    profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
   if (marginBlock && cogsLine) {
     const marginHref = profile ? sectionOf(profile, (blk) => blk.type === "margin" || blk.type === "product-margins") : null;
     derivedFacts.push({
@@ -441,13 +416,65 @@ export function TopMetrics({
     }
   }
 
+  return derivedFacts;
+}
+
+export function TopMetrics({
+  business: b,
+  metrics,
+  series,
+  profile,
+  chartHref = "#earnings",
+}: {
+  business: BusinessDetail;
+  metrics: ChartPoint[];
+  /** The whole series. `metrics` is the revenue/profit pivot; anything else —
+   *  ad spend here — has to be read from the rows. */
+  series?: MetricsResponse | null;
+  profile?: Profile;
+  /** Where "View the figures" jumps to. */
+  chartHref?: string;
+}) {
+  /* 🚨 The four headline cards state ONE MONTH — the latest published one,
+     off the Business row — not an average. They used to read a trailing
+     twelve months, which is how a broker prices a listing, but a TTM revenue
+     beside a single-month profit invites the reader to divide one by the
+     other and get a margin the page does not show. One month across all four
+     is the only version that survives that arithmetic. The chart below still
+     draws every month, and TACoS in Additional metrics is still a TTM ratio
+     — it says so on its own note.
+
+     The month is on each basis line rather than in the label: "Monthly
+     revenue · Sep 2026" wraps to two lines in a card. */
+  const ttm = metrics.length >= 12;
+  const recent = ttm ? metrics.slice(-12) : metrics;
+  const allAdRows = rowsOfType(series ?? null, "ad_spend");
+
+  const n = recent.length;
+
+  /* The three figures the Business row carries for its latest period. The row
+     is the same source the /data/ listing, the share card and the crawler HTML
+     read, so a card cannot disagree with the row that links to it. */
+  const monthlyRevenue = num(b.latestMonthlyRevenue);
+  const monthlyProfit = num(b.latestMonthlyProfit);
+  /* Stored, not derived — but a row with the two figures and no percentage
+     still has a margin, and it is the one the reader would work out. */
+  const margin =
+    num(b.latestMarginPct) ??
+    (monthlyRevenue && monthlyProfit !== null ? (monthlyProfit / monthlyRevenue) * 100 : null);
+  const monthBasis = b.latestPeriod ? monthLabel(b.latestPeriod) : "Latest published month";
+
+  const timeline =
+    profile?.blocks.find((blk): blk is Extract<Block, { type: "timeline" }> => blk.type === "timeline")?.items ?? [];
+  const derived = derivedFacts({ business: b, metrics, series, profile });
+
   const startingCost = startingCostFigure(b);
   const range = startingCost === null ? null : startingCostRange(b);
   const startingCostRangeNote = range
     ? `Estimated, ${exactMoney(range.low, b.currency)}–${exactMoney(range.high, b.currency)}`
     : null;
 
-  const facts = [...derivedFacts, ...(profile?.facts ?? [])];
+  const facts = [...derived, ...(profile?.facts ?? [])];
 
   return (
     <section data-glance="" aria-label="Key figures">
@@ -464,7 +491,7 @@ export function TopMetrics({
             were cells in Additional metrics, where the figures the page is
             about had to be scrolled to. */}
         <AverageCard
-          label="To test"
+          label="To launch your own"
           value={startingCost === null ? "—" : `${exactMoney(startingCost, b.currency)}*`}
           basis={startingCostRangeNote ?? (startingCost === null ? "Not researched yet" : `* ${FIXED_COSTS_NOTE}`)}
           info="toStart"

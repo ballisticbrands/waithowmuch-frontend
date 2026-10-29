@@ -349,6 +349,31 @@ export function linkFollowers(link: BusinessLink): number | null {
   return typeof legacy === "number" && Number.isFinite(legacy) ? legacy : null;
 }
 
+/** Amazon's Best Seller Rank for one listing in one category, on `readAt`.
+ *  Amazon ranks a variation FAMILY, so children of one `parentAsin` share it. */
+export type ListingRank = {
+  asin: string;
+  parentAsin: string | null;
+  marketplace: string;
+  categoryId: string;
+  categoryName: string;
+  isRoot: boolean;
+  rank: number;
+  readAt: string;
+  source: string;
+};
+
+/** A listing's latest reviews / Subscribe & Save reading (ListingDetail). */
+export type ListingDetail = {
+  asin: string;
+  marketplace: string;
+  rating: number | null;
+  reviewCount: number | null;
+  subscribeAndSave: boolean | null;
+  readAt: string;
+  source: string;
+};
+
 export type BusinessDetail = BusinessCard & {
   startingCostNote: string | null;
   /** The published estimate behind the range, and its keyword reading.
@@ -357,6 +382,10 @@ export type BusinessDetail = BusinessCard & {
   /** One live estimate per product, for a brand whose margin breakdown is split
    *  by product. Optional until every API the frontend can meet serves it. */
   productStartingCosts?: StartingCostEstimate[];
+  /** Each listing's latest Best Seller Rank, one row per category it ranks in
+   *  (root first). Optional until every API the frontend can meet serves it. */
+  listingRanks?: ListingRank[];
+  listingDetails?: ListingDetail[];
   /** The month this profile's story is told as of — the date every stamp on
    *  the page carries (lib/reading.ts). Null for a business with no researched
    *  headline. Optional only until every API the frontend can meet serves it. */

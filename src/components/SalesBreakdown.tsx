@@ -93,7 +93,21 @@ function segmentsOf(items: Item[], total: number): Segment[] {
   }));
 }
 
-export function SalesBreakdown({ block, currency }: { block: Breakdown; currency: string }) {
+export function SalesBreakdown({
+  block,
+  currency,
+  showShare = false,
+  showSummary = true,
+}: {
+  block: Breakdown;
+  currency: string;
+  /** A Share column after Revenue / mo — each row's slice of the bar, as a
+   *  number. On in the /business2/ prototype; the case study keeps its table. */
+  showShare?: boolean;
+  /** The "9 priced listings, summing to…" sentence under the bar. Off in the
+   *  /business2/ prototype, where the Share column says the same thing. */
+  showSummary?: boolean;
+}) {
   const items = [...block.items].sort((a, b) => b.revenue - a.revenue);
   const host = block.marketplace ?? "www.amazon.com";
   /* Floored, not rounded. One row is $649.50, so the true sum is $89,988.50 —
@@ -183,6 +197,7 @@ export function SalesBreakdown({ block, currency }: { block: Breakdown; currency
         )}
       </div>
 
+      {showSummary && (
       <p data-breakdown-total="">
         {items.length} priced listings, summing to {exactMoney(total, currency)} a month
         {top && units > 0 && (
@@ -193,6 +208,7 @@ export function SalesBreakdown({ block, currency }: { block: Breakdown; currency
         )}
         .
       </p>
+      )}
 
       <div data-table-wrap="">
         <table data-earnings-table="">
@@ -212,6 +228,7 @@ export function SalesBreakdown({ block, currency }: { block: Breakdown; currency
               <th scope="col">Sold / mo</th>
               <th scope="col">Price</th>
               <th scope="col">Revenue / mo</th>
+              {showShare && <th scope="col">Share</th>}
             </tr>
           </thead>
           <tbody>
@@ -274,6 +291,7 @@ export function SalesBreakdown({ block, currency }: { block: Breakdown; currency
                   <td data-figure="">{i.sold === undefined ? "—" : `${i.sold.toLocaleString("en-US")}+`}</td>
                   <td data-figure="">{i.price === undefined ? "—" : exactMoney(i.price, currency)}</td>
                   <td data-figure="">{exactMoney(i.revenue, currency)}</td>
+                  {showShare && <td data-figure="">{i.revenue > 0 && exact > 0 ? pct(i.revenue / exact) : "0%"}</td>}
                 </tr>
               );
             })}

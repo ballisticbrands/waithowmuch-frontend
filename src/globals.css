@@ -277,6 +277,25 @@ h1, h2, h3, h4 {
   color: transparent; background: var(--border);
 }
 
+/* ─── The compact rail (/business2/ prototype, TrendTrack-style) ─────── */
+
+/* Desktop only: under 900px every rail is the horizontal strip. */
+@media (min-width: 901px) {
+  [data-rail][data-compact] { width: 88px; padding: 1rem 0.375rem 2rem; }
+  [data-rail][data-compact] nav { gap: 0.75rem; }
+  [data-rail][data-compact] [data-rail-link] {
+    flex-direction: column; justify-content: center; gap: 0.3rem;
+    padding: 0.6rem 0.25rem; text-align: center;
+    font-size: 0.75rem; font-weight: 500; line-height: 1.2; color: var(--muted-foreground);
+  }
+  [data-rail][data-compact] [data-rail-link]:hover { color: var(--foreground); }
+  [data-rail][data-compact] [data-rail-link][data-placeholder] { cursor: default; }
+  [data-rail][data-compact] [data-rail-link][data-placeholder]:hover { background: transparent; color: var(--muted-foreground); }
+  [data-rail][data-compact] [data-rail-link][data-active="true"] {
+    background: transparent; color: var(--foreground); font-weight: 600;
+  }
+}
+
 /* Tinted, while the rail stays white. Without this the rail has no edge of its
    own and the two regions read as one undifferentiated white field — the
    border alone is not enough separation at this scale. It also lets the white
@@ -2367,3 +2386,23 @@ img[data-row-logo] {
 [data-product-tab][aria-selected="true"] { background: var(--accent); color: var(--accent-foreground, #fff); }
 [data-product-tab]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 [data-product-share] { font-size: 0.75rem; font-weight: 500; opacity: 0.8; font-variant-numeric: tabular-nums; }
+
+/* ─── Stepped two-handle slider (product filters, /business2/) ─────────
+   Two native range inputs stacked on one track; only the handles take the
+   pointer, so either can be dragged past where the other's track would be. */
+[data-step-slider] input[type="range"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+  background: none; pointer-events: none;
+  -webkit-appearance: none; appearance: none;
+}
+[data-step-slider] input[type="range"]::-webkit-slider-runnable-track { background: none; height: 100%; }
+[data-step-slider] input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; pointer-events: auto; cursor: grab;
+  width: 6px; height: 22px; margin-top: 9px; border-radius: 3px; background: var(--foreground);
+}
+[data-step-slider] input[type="range"]::-moz-range-track { background: none; }
+[data-step-slider] input[type="range"]::-moz-range-thumb {
+  pointer-events: auto; cursor: grab; border: 0;
+  width: 6px; height: 22px; border-radius: 3px; background: var(--foreground);
+}
+[data-step-slider] input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }

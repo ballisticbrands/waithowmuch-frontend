@@ -99,6 +99,9 @@ export function SideRail() {
   const norm = (p: string) => (p.endsWith("/") ? p : `${p}/`);
   const here = norm(pathname);
   const [collapsed, toggle] = useRailCollapsed();
+  /* The /business2/ prototype gets TrendTrack's rail: narrow, icon over
+     label, nothing to collapse. The rest of the site keeps this one. */
+  if (here.startsWith("/business2/")) return <CompactRail here={here} />;
   const action = collapsed ? "Expand sidebar" : "Collapse sidebar";
 
   return (
@@ -147,6 +150,48 @@ export function SideRail() {
           icon="book"
           collapsed={collapsed}
         />
+      </nav>
+    </aside>
+  );
+}
+
+/** Icons for the compact rail's placeholder entries — not in RailIcons yet. */
+const PLACEHOLDER_ICONS = {
+  compass: <><circle cx="12" cy="12" r="9" /><path d="m15.5 8.5-2 5-5 2 2-5z" /></>,
+  target: <><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.2" /></>,
+};
+
+/** TrendTrack-style rail: a narrow column, each link an icon over its label,
+ *  no group headings and no collapse toggle — it is already as small as it gets.
+ *  Explorer and Brand Tracker are placeholders: shown, not linked, until the
+ *  pages exist. */
+function CompactRail({ here }: { here: string }) {
+  type Item = { label: string; active?: boolean } & ({ to: string; icon: RailIconName } | { to?: undefined; glyph: keyof typeof PLACEHOLDER_ICONS });
+  const items: Item[] = [
+    { to: "/", label: "Home", icon: "home", active: here === "/" },
+    { label: "Explorer", glyph: "compass" },
+    { label: "Brand Tracker", glyph: "target" },
+    { to: collectionPath("all-ideas"), label: "All case studies", icon: "database" },
+    { to: "/how-we-research/", label: "How we research", icon: "book", active: here === "/how-we-research/" },
+  ];
+  return (
+    <aside data-rail data-compact="">
+      <nav aria-label="Sections">
+        {items.map((it) =>
+          !("glyph" in it) ? (
+            <Link key={it.label} data-rail-link data-active={!!it.active} to={it.to} aria-current={it.active ? "page" : undefined}>
+              <RailIcon name={it.icon} />
+              <span>{it.label}</span>
+            </Link>
+          ) : (
+            <span key={it.label} data-rail-link data-placeholder="" aria-disabled="true">
+              <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden focusable={false}>
+                {PLACEHOLDER_ICONS[it.glyph]}
+              </svg>
+              <span>{it.label}</span>
+            </span>
+          ),
+        )}
       </nav>
     </aside>
   );

@@ -209,6 +209,19 @@ function MarginDonut({
  */
 /** A path stays in the app, a #anchor stays on the page, and anything else is
  *  Amazon's own help, opened beside the profile rather than instead of it. */
+/** `text` with the first `bold` phrase in it set in <strong>. */
+function withBold(text: string, bold?: string) {
+  const at = bold ? text.indexOf(bold) : -1;
+  if (!bold || at < 0) return text;
+  return (
+    <>
+      {text.slice(0, at)}
+      <strong>{bold}</strong>
+      {text.slice(at + bold.length)}
+    </>
+  );
+}
+
 function MarginLink({ label, href }: { label: string; href: string }) {
   if (href.startsWith("/")) return <Link to={href}>{label}</Link>;
   if (href.startsWith("#")) return <a href={href}>{label}</a>;
@@ -267,7 +280,7 @@ export function MarginBreakdown({ block, currency }: { block: Margin; currency: 
             <span data-margin-unit="" data-figure="">
               −{lineMoney(l, basis.value, currency)}
             </span>
-            {l.detail && <p data-margin-detail="">{l.detail}</p>}
+            {l.detail && <p data-margin-detail="">{withBold(l.detail, l.bold)}</p>}
             {l.links && (
               <p data-margin-detail="" data-margin-links="">
                 {l.links.map((k) => (

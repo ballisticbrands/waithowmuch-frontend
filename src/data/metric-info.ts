@@ -22,7 +22,7 @@ export const METRIC_INFO: Record<string, string[]> = {
     "Calculated across every month of available history.",
   ],
   toStart: [
-    "What it would cost to test launching a competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells, before committing to a full launch.",
+    "What it would cost to launch your own competitor: the least it takes to put a copy of this business on Amazon and find out whether it sells, before committing to a full launch.",
     "It covers a first order of 50 units (30 of them go to Amazon Vine for the first reviews), the ads that test whether the rest sell, and setup — the seller account, a trademark, samples, photos and packaging.",
     "It is an estimate, shown at its low end. It is not what the founders spent, which nobody published. Where the inputs are missing, it is shown as unknown rather than guessed. This business’s “Test it first” section works it out step by step.",
   ],

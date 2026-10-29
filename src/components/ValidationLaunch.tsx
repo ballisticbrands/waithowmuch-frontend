@@ -62,7 +62,9 @@ const rate = (v: number) => `${(v * 100).toFixed(1)}%`;
  * works in the order a seller meets it. Kept at reading width, so it is its own
  * block; the numbers that follow take the full column.
  */
-export function ValidationStrategy({ business }: { business: BusinessDetail }) {
+/** `compact`: the /business2/ prototype's version — the steps as headlines
+ *  only, no paragraphs around them. The numbers are in the table that follows. */
+export function ValidationStrategy({ business, compact = false }: { business: BusinessDetail; compact?: boolean }) {
   const launch = business.startingCostEstimate?.breakdown?.validation;
   if (!launch) return null;
   const currency = business.currency ?? "USD";
@@ -86,6 +88,32 @@ export function ValidationStrategy({ business }: { business: BusinessDetail }) {
   const category = launch.products.some((p) =>
     p.keywords.some((k) => k.organicRank == null || k.organicRank > launch.maxRank),
   );
+  if (compact) {
+    const first =
+      v.kind === "version"
+        ? "Make your first order one version of each product."
+        : colour
+          ? `Make your first order in one colour — ${v.label}.`
+          : `Make your first order one design, on one theme — ${v.label}.`;
+    return (
+      <aside data-strategy="" data-validation-strategy="">
+        <p data-strategy-eyebrow="">Validation</p>
+        <h3>How to validate a product for the least money</h3>
+        <ol data-validation-steps="" style={{ listStyle: "decimal", paddingLeft: "1.25rem" }}>
+          {[
+            first,
+            `Send ${int(g.vineUnits)} units to Amazon Vine, and wait for ${int(g.reviewsBeforeAds)} reviews before any ads.`,
+            `Pay for the clicks that test it — about ${days} days of ads.`,
+            "Count the orders against the clicks: pass, fail, or in between.",
+            `Judge the product: ${g.rating}★ or better, under ${pct(g.returns)} returned.`,
+            "Look for sales that are not from ads.",
+          ].map((t) => (
+            <li key={t}>{t}</li>
+          ))}
+        </ol>
+      </aside>
+    );
+  }
   return (
     <aside data-strategy="" data-validation-strategy="">
       <p data-strategy-eyebrow="">Validation</p>
@@ -215,7 +243,7 @@ const landedLink = (slug: string, id: string, many: boolean, override: LandedHre
     ? override
     : override?.[id] ?? `/business/${slug}/margin/${many ? `?product=${encodeURIComponent(id)}` : ""}#landed-cost`;
 
-export function ValidationLaunch({ business, landedHref }: { business: BusinessDetail; landedHref?: LandedHref }) {
+export function ValidationLaunch({ business, landedHref, compact = false }: { business: BusinessDetail; landedHref?: LandedHref; compact?: boolean }) {
   const launch = business.startingCostEstimate?.breakdown?.validation;
   const [active, setActive] = useState(launch?.products[0]?.id);
   // No published test is a legitimate state, as for any "to start" estimate.
@@ -226,7 +254,7 @@ export function ValidationLaunch({ business, landedHref }: { business: BusinessD
       </section>
     );
   }
-  return <ValidationNumbers business={business} launch={launch} active={active} setActive={setActive} landedHref={landedHref} />;
+  return <ValidationNumbers business={business} launch={launch} active={active} setActive={setActive} landedHref={landedHref} compact={compact} />;
 }
 
 function ValidationNumbers({
@@ -235,12 +263,16 @@ function ValidationNumbers({
   active,
   setActive,
   landedHref,
+  compact = false,
 }: {
   business: BusinessDetail;
   launch: Launch;
   active: string | undefined;
   setActive: (id: string) => void;
   landedHref?: LandedHref;
+  /** The /business2/ prototype's version: the same tables and figures, with
+   *  the paragraphs, source notes and "what it rests on" column left out. */
+  compact?: boolean;
 }) {
   const currency = business.currency ?? "USD";
   const g = launch.gate;
@@ -280,7 +312,7 @@ function ValidationNumbers({
       {/* ── The numbers: one tab per product, and the products together ── */}
       <h3>What it costs to validate</h3>
       {many && (
-        <div role="tablist" aria-label="Product to test" data-product-tabs="">
+        <div role="tablist" aria-label="Product to launch" data-product-tabs="">
           {launch.products.map((p) => (
             <button
               key={p.id}
@@ -293,7 +325,7 @@ function ValidationNumbers({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              <span data-product-share="">{money(p.inventory + (p.tooling ?? 0) + p.ads, currency)} to test</span>
+              <span data-product-share="">{money(p.inventory + (p.tooling ?? 0) + p.ads, currency)} to launch your own</span>
             </button>
           ))}
           {many && (
@@ -307,7 +339,7 @@ function ValidationNumbers({
               onClick={() => setActive(TOGETHER)}
             >
               <span>Both together</span>
-              <span data-product-share="">{money(launch.together.inventory + (launch.together.tooling ?? 0) + launch.together.ads, currency)} to test</span>
+              <span data-product-share="">{money(launch.together.inventory + (launch.together.tooling ?? 0) + launch.together.ads, currency)} to launch your own</span>
             </button>
           )}
         </div>
@@ -319,11 +351,17 @@ function ValidationNumbers({
         aria-labelledby={many ? `validate-tab-${tabId}` : undefined}
         key={tabId}
       >
+        {compact ? (
+          <p data-starting-cost-lede="">
+            {subject} would cost about <strong data-figure="">{money(toTest, currency)}</strong> to launch your own.
+          </p>
+        ) : (
         <p data-starting-cost-lede="">
-          {subject} would cost about <strong data-figure="">{money(toTest, currency)}</strong> to test: the first
+          {subject} would cost about <strong data-figure="">{money(toTest, currency)}</strong> to launch your own: the first
           order, made and shipped to Amazon, {tooling > 0 ? "the mould it cannot be made without, " : ""}and the launch ads. {selection.length > 1 ? "That is both first orders, for a seller testing them at the same time. " : ""}A
           brand-new seller also has fixed costs, set out below.
         </p>
+        )}
 
         <h3>The test, in numbers</h3>
         <div data-table-wrap="">
@@ -337,7 +375,7 @@ function ValidationNumbers({
                     {selection.length > 1 ? p.label : "Pass line"}
                   </th>
                 ))}
-                <th scope="col" data-note="">What it rests on</th>
+                {!compact && <th scope="col" data-note="">What it rests on</th>}
               </tr>
             </thead>
             <tbody>
@@ -348,7 +386,7 @@ function ValidationNumbers({
                     {int(g.reviewsBeforeAds)} from Vine
                   </td>
                 ))}
-                <td data-note="">A listing with no reviews sells far less, so testing it then would fail a good product</td>
+                {!compact && (<td data-note="">A listing with no reviews sells far less, so testing it then would fail a good product</td>)}
               </tr>
               <tr>
                 <th scope="row">2. Clicks to buy</th>
@@ -357,10 +395,10 @@ function ValidationNumbers({
                     up to {int(p.clicksNeeded)}
                   </td>
                 ))}
-                <td data-note="">
+                {!compact && (<td data-note="">
                   Enough clicks for all {int(g.paidUnits)} units to sell if the product sells as well as similar
                   products do. Never fewer than {int(g.minClicks)}, so one lucky or unlucky day cannot decide the result
-                </td>
+                </td>)}
               </tr>
               <tr>
                 <th scope="row">3. Pass</th>
@@ -369,7 +407,7 @@ function ValidationNumbers({
                     {int(g.paidUnits)} sold within {int(p.passClicks)} clicks
                   </td>
                 ))}
-                <td data-note="">
+                {!compact && (<td data-note="">
                   As fast as similar products sell on these searches:{" "}
                   {selection.map((p, i) => (
                     <span key={p.id}>
@@ -378,7 +416,7 @@ function ValidationNumbers({
                       clicks become orders
                     </span>
                   ))}
-                </td>
+                </td>)}
               </tr>
               <tr>
                 <th scope="row">4. Fail</th>
@@ -387,10 +425,10 @@ function ValidationNumbers({
                     under {int(g.failBelowUnits)} sold by {int(p.clicksNeeded)} clicks
                   </td>
                 ))}
-                <td data-note="">
+                {!compact && (<td data-note="">
                   Stop here. Anything between a pass and a fail sells, but slower than competitors: improve the listing
                   and run another round
-                </td>
+                </td>)}
               </tr>
               <tr>
                 <th scope="row">5. Rating</th>
@@ -399,7 +437,7 @@ function ValidationNumbers({
                     {g.rating} or more
                   </td>
                 ))}
-                <td data-note="">Judged once {int(g.reviews)} reviews are in, which the Vine units supply</td>
+                {!compact && (<td data-note="">Judged once {int(g.reviews)} reviews are in, which the Vine units supply</td>)}
               </tr>
               <tr>
                 <th scope="row">6. Returns</th>
@@ -408,7 +446,7 @@ function ValidationNumbers({
                     Under {pct(g.returns)}
                   </td>
                 ))}
-                <td data-note="">Of units sold in the launch</td>
+                {!compact && (<td data-note="">Of units sold in the launch</td>)}
               </tr>
               <tr>
                 <th scope="row">7. Demand beyond ads</th>
@@ -417,7 +455,7 @@ function ValidationNumbers({
                     Top {g.organicRank}, or growing
                   </td>
                 ))}
-                <td data-note="">A rank on one of the searches, or organic orders rising week on week</td>
+                {!compact && (<td data-note="">A rank on one of the searches, or organic orders rising week on week</td>)}
               </tr>
             </tbody>
           </table>
@@ -426,12 +464,14 @@ function ValidationNumbers({
         <h3>
           The ads <span data-starting-cost-amount="">{exactMoney(totals.ads, currency)}</span>
         </h3>
+        {!compact && (
         <p>
           The clicks are split across a product’s searches in proportion to their volume, at each search’s cost per
           click. This is the most the test costs — what it takes to fail. At the {pct(g.clickShare)} of a search’s
           shoppers a new listing can expect to win, buying them takes about {int(totalsDays)} days of ads
           {selection.length > 1 ? ", with the products running side by side" : ""}.
         </p>
+        )}
         {selection.map((p) => (
           <div key={p.id} data-launch-product="">
             <div data-table-wrap="">
@@ -468,7 +508,7 @@ function ValidationNumbers({
                 </tbody>
               </table>
             </div>
-            {(p.widened || p.atMinimumClicks) && (
+            {!compact && (p.widened || p.atMinimumClicks) && (
               <p data-starting-cost-source="">
                 {p.widened
                   ? `Competing listings convert ${rate(p.conversion.market)} on these searches, so it takes ${int(p.clicksNeeded)} clicks to sell ${int(g.paidUnits)} units. The ${launch.variant.kind === "colour" ? launch.variant.label : launch.variant.kind === "version" ? "matching" : `“${launch.variant.label}”`} searches of ${int(launch.band.min)}–${int(launch.band.max)} a month cannot deliver that many, so the smallest one above them is added.`
@@ -477,11 +517,13 @@ function ValidationNumbers({
             )}
           </div>
         ))}
+        {!compact && (
         <p data-starting-cost-source="">
           Searches a month and best organic rank: Jungle Scout, read {dayLabel(launch.readAt)}. Cost per click: Amazon’s
           suggested exact bid, read {dayLabel(launch.bidsReadAt)}. A brand-new listing may have to bid above the
           suggestion before Amazon shows it, so treat these as a starting point rather than a price.
         </p>
+        )}
 
         <h3>Adding it up</h3>
         <div data-table-wrap="">
@@ -507,9 +549,18 @@ function ValidationNumbers({
                       {i > 0 && <br />}
                       {/* Always named, even alone: the unit cost belongs to THIS product
                           and the reader should not have to infer which (owner, 2026-10-11). */}
+                      {compact ? (
+                        <>
+                          {many && <strong>{p.label}: </strong>}
+                          {int(p.units)} units × {unitMoney(p.landedUnitCost, currency)} landed.{" "}
+                        </>
+                      ) : (
+                        <>
                       <strong>{p.label}:</strong> {int(p.units)} units ({int(g.vineUnits)} for Vine, {int(g.paidUnits)} to sell
                       {p.units > g.firstOrderUnits ? `, ${int(p.units - g.firstOrderUnits)} more to meet the factory’s minimum` : ""}) ×{" "}
                       {unitMoney(p.landedUnitCost, currency)} — the landed cost of one, made and shipped to Amazon’s warehouse.{" "}
+                        </>
+                      )}
                       <a href={landedLink(business.slug, p.id, many, landedHref)}>See the landed cost</a>
                     </span>
                   ))}
@@ -525,7 +576,7 @@ function ValidationNumbers({
                       .map((p, i) => (
                         <span key={p.id}>
                           {i > 0 && <br />}
-                          <strong>{p.label}:</strong> {exactMoney(p.tooling!, currency)}, paid once before the factory can make the first order, as the supplier priced it.{" "}
+                          <strong>{p.label}:</strong> {exactMoney(p.tooling!, currency)}{compact ? ", paid once." : ", paid once before the factory can make the first order, as the supplier priced it."}{" "}
                           <a href={landedLink(business.slug, p.id, many, landedHref)}>See the cost to make</a>
                         </span>
                       ))}
@@ -536,17 +587,26 @@ function ValidationNumbers({
                 <th scope="row">Launch ads</th>
                 <td data-figure="">{exactMoney(totals.ads, currency)}</td>
                 <td data-note="">
-                  {int(selection.reduce((t, p) => t + p.clicks, 0))} clicks on the searches above, each at Amazon’s suggested bid — the most the test can spend
+                  {compact
+                    ? `${int(selection.reduce((t, p) => t + p.clicks, 0))} clicks at Amazon’s suggested bid`
+                    : `${int(selection.reduce((t, p) => t + p.clicks, 0))} clicks on the searches above, each at Amazon’s suggested bid — the most the test can spend`}
                 </td>
               </tr>
               <tr data-total="">
-                <th scope="row">To test</th>
+                <th scope="row">To launch your own</th>
                 <td data-figure="">{exactMoney(toTest, currency)}</td>
                 <td data-note="" />
               </tr>
             </tbody>
           </table>
         </div>
+        {compact ? (
+          <p>
+            If it passes, the units it sells pay back about <strong data-figure="">{exactMoney(totals.moneyBack, currency)}</strong> after
+            Amazon’s fees.
+          </p>
+        ) : (
+        <>
         <p>
           The ads are the most the test can cost, so <strong data-figure="">{money(toTest, currency)}</strong> is
           the most it takes to find out.
@@ -563,6 +623,8 @@ function ValidationNumbers({
           )}
           . The money comes back as the units sell, so it still has to be found up front.
         </p>
+        </>
+        )}
 
         <StartingCostWaterfall
           currency={currency}
@@ -584,12 +646,14 @@ function ValidationNumbers({
         <h3>
           Starting a brand from scratch <span data-starting-cost-amount="">{span(totals.setup, currency)}</span>
         </h3>
+        {!compact && (
         <p>
           The test above is the product itself: making the first order, shipping it and buying the clicks. Someone
           launching a new brand on Amazon also pays some fixed costs once, however many products they test. None of
           them is needed to run the test — a seller with an account, photos and packaging already can skip them — and
           the figures are approximate.
         </p>
+        )}
         <div data-table-wrap="">
           <table data-earnings-table="">
             <caption>Fixed costs for a new brand, on top of the test</caption>

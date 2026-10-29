@@ -1063,6 +1063,7 @@ export const PROFILES = {
             detail:
               'Amazon’s published Toys & Games rate, a flat 15% with a $0.30 minimum and no price threshold, so a cheap product gets no relief. Keepa reads 15% on the listings.',
             links: [{ label: 'Amazon’s referral fees by category', href: 'https://sell.amazon.com/pricing' }],
+            short: { detail: 'Toys & Games: 15%' },
           },
           {
             label: 'FBA fulfilment',
@@ -1074,6 +1075,7 @@ export const PROFILES = {
                2026 low-price rate applies: $2.91 + 3.5% surcharge = $3.01. */
             detail: `Size tier: Large Standard. The best seller, B0FMGJSSXT, packs to 3.7 × 2.8 × 0.87 in at 3.5 oz: light enough for Small Standard, but 0.87 in deep against that tier’s 0.75 in limit. In September 8,000 of them sold at $6.97, under $10, where Amazon’s low-price rate is $3.01; at the usual $12.99 it is $3.86, and the other designs pay $3.86–3.99. About ${lineUsd(SHG.fbaPerUnit)} a deck on average — more than the printer, the boat and the tariff put together.`,
             links: [{ label: 'All of Amazon’s size tiers, explained', href: 'https://sellercentral.amazon.com/help/hub/reference/external/GG5KW835AHDJCH8W?locale=en-US' }],
+            short: { detail: 'Size tier: Large Standard. The best seller packs to 3.7 × 2.8 × 0.87 in at 3.5 oz.', bold: 'Large Standard' },
           },
           {
             label: 'Advertising',
@@ -1084,6 +1086,10 @@ export const PROFILES = {
               { label: 'See the ad spend behind this line', href: '/business/spite-house-games/advertising/#ad-spend' },
               { label: 'If you want to go in depth, go to the Advertising section', href: '/business/spite-house-games/advertising/' },
             ],
+            short: {
+              detail: `Modelled, not observed: about ${monthUsd(SHG_AD.monthlyUsd.central)} a month.`,
+              links: [{ label: 'See the ad spend in depth', href: '/business2/spite-house-games/?tab=ads' }],
+            },
           },
         ],
         note:

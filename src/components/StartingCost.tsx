@@ -98,7 +98,7 @@ export function StartingCost({
               onClick={() => setActive(p.id)}
             >
               <span>{p.label}</span>
-              {e && <span data-product-share="">{money(e.low, business.currency ?? "USD")} to test</span>}
+              {e && <span data-product-share="">{money(e.low, business.currency ?? "USD")} to launch your own</span>}
             </button>
           );
         })}
@@ -432,7 +432,7 @@ function EstimateView({
                 </tr>
               )}
               <tr data-total="">
-                <th scope="row">To test</th>
+                <th scope="row">To launch your own</th>
                 <td data-figure="">{span({ low: e.low, high: e.high }, currency)}</td>
               </tr>
             </tbody>

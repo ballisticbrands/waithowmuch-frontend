@@ -371,7 +371,7 @@ for (const c of [...COLLECTIONS]) {
     const margin = b.latestMarginPct != null ? `${Math.round(Number(b.latestMarginPct))}% margin` : null;
     const revenue = b.latestMonthlyRevenue != null ? `${money(b.latestMonthlyRevenue, b.currency)} revenue/mo` : null;
     const startFigure = startingCostFigure(b);
-    const start = startFigure != null ? `about ${money(startFigure, b.currency)} to test, plus fixed costs for a new brand` : null;
+    const start = startFigure != null ? `about ${money(startFigure, b.currency)} to launch your own, plus fixed costs for a new brand` : null;
     const est = b.establishedAt ? `${ageLabel(b.establishedAt)} old` : null;
     // Same as the live row: the headline is the link text, the name and
     // subtitle (or tagline) follow.

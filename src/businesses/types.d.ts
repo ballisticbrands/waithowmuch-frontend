@@ -157,6 +157,11 @@ export type Block =
          *  another part of this profile. A path or `#id` stays in the tab;
          *  anything else opens a new one. */
         links?: Array<{ label: string; href: string }>;
+        /** The /business2/ prototype's one-liner for this line, shown in place
+         *  of `detail` (and `links`, when given). The case study ignores it. */
+        short?: { detail: string; links?: Array<{ label: string; href: string }>; bold?: string };
+        /** A phrase inside `detail` to set in bold — its first occurrence. */
+        bold?: string;
       }>;
       /** The margin row's own note. */
       note?: string;
