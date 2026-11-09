@@ -32,19 +32,21 @@ export const POSTS = [
     angle:
       'Referral fee + FBA fulfilment + storage, worked through on real unit economics ' +
       'rather than the fee table everyone else republishes. Lead with a single ASIN: ' +
-      'on a $6.97 product the FBA fee alone is $2.56 — 37% before COGS.',
+      'on a $6.97 product the FBA fee alone is $3.01 — 43% before COGS.',
     cite: ['spite-house-games', 'ototo', 'white-mountain-puzzles'],
   },
   {
     slug: 'is-amazon-fba-still-profitable',
-    title: 'Is Amazon FBA Still Profitable in 2026?',
-    kw: 'amazon profitable', vol: 1000, comp: 'Low',
+    title: 'Is Amazon FBA Worth It in 2026? Margins From 13 Real Businesses',
+    kw: 'is amazon fba worth it', vol: 320, comp: 'Low',
     tier: 1, status: 'published',
     body: b1,
     angle:
-      'Highest-volume low-competition term in the whole set. Answer with the margin ' +
-      'distribution across every business researched, not an opinion. State the spread ' +
-      'and the worst case, not just the winners.',
+      'Answer with the margin distribution across every business researched, not an ' +
+      'opinion. State the spread and the worst case, not just the winners. Retargeted ' +
+      '2026-11-10 from "amazon profitable" (1,000), whose volume is mostly people asking ' +
+      'whether Amazon the company is profitable. "is amazon fba worth it" is 320/mo, SD 20 ' +
+      '(Ubersuggest); the slug stays so the indexed URL keeps its history.',
     cite: ['*'],
   },
   {
@@ -100,11 +102,82 @@ export const POSTS = [
   {
     slug: 'selling-books-on-amazon-fba',
     title: 'Selling Books on Amazon FBA: What It Actually Pays',
-    kw: 'amazon book selling', vol: 6600, comp: 'Low',
+    kw: 'selling books on amazon', vol: 9900, comp: 'Low',
     tier: 1, status: 'draft',
     angle:
       'Biggest niche term found, by an order of magnitude. ⚠️ No book case study exists ' +
-      'yet — research one first or the post has nothing proprietary in it.',
+      'yet — research one first or the post has nothing proprietary in it. ⚠️ The SERP ' +
+      'for "selling books on amazon" is mostly authors self-publishing (KDP), not ' +
+      'resellers (2026-11-09 SERP check). Decide which reader this is for before writing.',
+    cite: [],
+  },
+
+  // ── High-volume topics our data does not answer yet (2026-11-09 research) ──
+  // Ubersuggest US volumes and SD; full list in Dragon-marketing/skills/WHM-SEO.
+  // Each needs a WHM angle found before it is written, not a generic guide.
+  {
+    slug: 'is-alibaba-legit',
+    title: 'Is Alibaba Legit? What Real Amazon Brands Paid Their Suppliers',
+    kw: 'is alibaba legit', vol: 18100, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 18,630/mo, SD 27; cosmosourcing (DA 20) ranks #6, so a small site can get ' +
+      'in. Our angle: the factory quotes behind the businesses we model (Accio/Alibaba ' +
+      'quotes are already on file for several), not a trust-badge checklist.',
+    cite: [],
+  },
+  {
+    slug: 'alibaba-vs-aliexpress',
+    title: 'Alibaba vs AliExpress: Unit Costs Compared on Real Products',
+    kw: 'alibaba vs aliexpress', vol: 6600, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 6,940/mo, median SD 21. Price the same products from both against the ' +
+      'cost of goods in our margin models.',
+    cite: [],
+  },
+  {
+    slug: 'how-much-do-tariffs-add-to-amazon-products',
+    title: 'How Much Do Tariffs Add to an Amazon Product?',
+    kw: 'tariff calculator', vol: 3600, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 17,130/mo, SD 11 on the head term. Searchers want a calculator; we have ' +
+      'no duty-rate data yet. Our margin models already carry a tariff line per ' +
+      'business, so start with those as worked examples and add a tool once rates are sourced.',
+    cite: ['*'],
+  },
+  {
+    slug: 'amazon-fba-fees-2026',
+    title: 'Amazon FBA Fees 2026: The Full Schedule, Worked on Real Products',
+    kw: 'amazon fba fees', vol: 2900, comp: null,
+    tier: 1, status: 'draft',
+    angle:
+      'Cluster 6,120/mo, SD 15. Page 1 is Amazon itself plus Reddit, so the realistic ' +
+      'target is the long tail (named fees, size tiers, "2026"). The fee-schedule ' +
+      'reference; links to the FBA calculator and leaves "how much does Amazon take" ' +
+      'to that post.',
+    cite: ['*'],
+  },
+
+  // ── Trend radar picks: ship within ~48h of the spike (Dragon-marketing/skills/WHM-trend-radar) ──
+  {
+    slug: 'amazon-seller-insurance-requirement-2026',
+    title: "Amazon's New Liability Insurance Rule: Who Needs It and What It Costs",
+    kw: 'amazon seller insurance', vol: 140, comp: null,
+    tier: 1, status: 'draft',
+    angle:
+      'Trigger: Amazon\'s 2026-11-02 announcement (Seller Forums, news and announcements, ' +
+      'thread 287d5c33-8278-4802-ba69-2f58f7dda408; 4.9k views). The rule: $1M per ' +
+      'occurrence and aggregate was already required within 30 days of a $10k gross-proceeds ' +
+      'month; now it is required REGARDLESS of sales for categories with enhanced safety ' +
+      'listing requirements (children\'s products, cosmetics, ingestibles, lithium batteries, ' +
+      'more), and China-based sellers must buy through the Amazon Insurance Accelerator. ' +
+      'WHM angle: which of our businesses sit in those categories (toys, supplements, drink ' +
+      'mixes...), and the premium as a share of revenue for a launch-stage seller vs an ' +
+      'established one. Premium figures must come from insurer quotes or published rate ' +
+      'pages, never from memory. Keywords: 140/mo, SD 28, $33 CPC; "requirements" 40/mo ' +
+      '(Ubersuggest lags new policies; the forum thread is the real signal).',
     cite: [],
   },
   {
