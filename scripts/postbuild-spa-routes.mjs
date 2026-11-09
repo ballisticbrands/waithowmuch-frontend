@@ -22,6 +22,12 @@ import { profileFor } from '../src/businesses/index.mjs';
 import { publishedPosts, publishedTerms, postPath, termPath } from '../src/data/content.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
 import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
+import {
+  CALCULATOR_PATH, TITLE as FBA_TITLE, DOC_TITLE as FBA_DOC_TITLE, META_DESCRIPTION as FBA_META_DESCRIPTION,
+  LEDE as FBA_LEDE, SOURCE_LINE as FBA_SOURCE_LINE, SECTIONS as FBA_SECTIONS, FAQ as FBA_FAQ,
+  RELATED as FBA_RELATED, faqPlain,
+} from '../src/data/fba-calculator-page.mjs';
+import { fbaPresets } from '../src/data/fba-calculator-presets.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -949,6 +955,76 @@ for (const r of STATIC) {
   const html = render(r);
   if (r.guard) guard(r.path, html);
   write(r.path, html);
+}
+
+// ── Amazon FBA calculator ─────────────────────────────────────────────
+/* The calculator itself is client-side; everything a crawler should read
+   about it (the lede, the fee tables, the presets, the FAQ) comes from the
+   same JSX-free modules pages/FbaCalculator.tsx renders, so the two cannot
+   say different things. The presets are limited to published businesses —
+   `all` is the API catalogue — exactly as the app limits them. */
+{
+  const publishedSlugs = new Set(all.map((b) => b.slug));
+  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
+  const presets = fbaPresets().filter((p) => publishedSlugs.has(p.slug));
+  const cents = (n) => `$${n.toFixed(2)}`;
+  const presetList = presets.map((p) =>
+    `<li><a href="${businessPath(p.slug)}">${esc(nameOf.get(p.slug))}</a>${p.product ? `: ${esc(p.product)}` : ''}, ${
+      cents(p.price)}, ${p.marginPct.toFixed(1)}% margin before storage</li>`).join('\n      ');
+
+  const body = `
+    <h1>${esc(FBA_TITLE)}</h1>
+    <p>${FBA_LEDE}</p>
+    <p>${FBA_SOURCE_LINE}</p>
+    <p>We publish the real unit economics of Amazon businesses like these, with every figure sourced. One email when a
+       new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
+    ${FBA_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
+    <h2>Businesses you can compare with</h2>
+    <p>Each preset is one product from a business in our database, with the per-unit figures from its case study:
+       price, cost of goods, freight, Amazon's fees and advertising.</p>
+    <ul>
+      ${presetList}
+    </ul>
+    <h2>Frequently asked questions</h2>
+    ${FBA_FAQ.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
+    <h2>Related reading</h2>
+    <ul>${FBA_RELATED.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>`.trim();
+
+  const url = `${SITE}${CALCULATOR_PATH}`;
+  const html = render({
+    path: CALCULATOR_PATH,
+    title: FBA_DOC_TITLE,
+    description: FBA_META_DESCRIPTION,
+    body,
+    bootstrap: { route: 'fba-calculator', businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
+    schema: [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: FBA_TITLE,
+        url,
+        description: FBA_META_DESCRIPTION,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: FBA_FAQ.map((x) => ({
+          '@type': 'Question',
+          name: x.q,
+          acceptedAnswer: { '@type': 'Answer', text: faqPlain(x.a) },
+        })),
+      },
+      crumbs([{ name: 'Amazon FBA calculator', path: CALCULATOR_PATH }]),
+    ],
+  });
+  guard(CALCULATOR_PATH, html);
+  write(CALCULATOR_PATH, html);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────

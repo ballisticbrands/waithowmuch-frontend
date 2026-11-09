@@ -9,6 +9,7 @@ import AuthCallback from "@/pages/AuthCallback";
 import { About, Privacy, Terms, HowWeResearch, NotFound } from "@/pages/Static";
 import { BlogIndex, BlogPost, GlossaryIndex, GlossaryTerm } from "@/pages/Blog";
 import BusinessAttributes from "@/pages/BusinessAttributes";
+import FbaCalculator from "@/pages/FbaCalculator";
 
 /** Every content route is registered with AND without a trailing slash: the
  *  prerender writes directories, so the canonical URL has one, but inbound
@@ -68,6 +69,8 @@ export default function App() {
             every profile. A real route, not an anchor: the tooltips link to it
             in a new tab, and a 404 behind a "Learn more" is worse than no link. */}
         {Both({ path: "/business-attributes", element: <BusinessAttributes /> })}
+        {/* No /tools/ index: one tool on an index page is thin content. */}
+        {Both({ path: "/tools/amazon-fba-calculator", element: <FbaCalculator /> })}
         {Both({ path: "/about", element: <About /> })}
         {Both({ path: "/privacy", element: <Privacy /> })}
         {Both({ path: "/terms", element: <Terms /> })}

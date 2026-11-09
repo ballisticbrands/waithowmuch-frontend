@@ -2406,3 +2406,93 @@ img[data-row-logo] {
   width: 6px; height: 22px; border-radius: 3px; background: var(--foreground);
 }
 [data-step-slider] input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─── Amazon FBA calculator (pages/FbaCalculator.tsx) ──────────────────
+   Inputs and results side by side from a wide column down, stacked on a
+   phone. The results table has a fixed set of rows whatever is typed, so the
+   page does not jump as the numbers change; the comparison column only adds
+   width, never height. */
+[data-fba] > h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.033em; max-width: 44rem; }
+[data-fba-lede] { max-width: 44rem; margin: 0.9rem 0 0.5rem; font-size: 1.0625rem; }
+[data-fba-source] { max-width: 44rem; margin: 0 0 1.5rem; font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-fba-source] a, [data-fba-compare-note] a, [data-fba-copy] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+
+[data-fba-grid] { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+@media (min-width: 1100px) { [data-fba-grid] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
+
+[data-fba-card] {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.1rem 1.1rem 1.25rem; box-shadow: var(--shadow); min-width: 0;
+}
+[data-fba-card-title] {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted-foreground); margin-bottom: 0.85rem;
+}
+[data-fba-field] { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 0.8rem; min-width: 0; }
+[data-fba-field] > span:first-child { font-size: 0.8125rem; font-weight: 600; color: var(--foreground); }
+[data-fba-field] em { font-style: normal; font-weight: 400; color: var(--muted-foreground); }
+[data-fba-field] [data-input], [data-fba-field] [data-select] { font-variant-numeric: tabular-nums; min-width: 0; }
+[data-fba-affix] { position: relative; display: block; }
+[data-fba-affix] > span { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--muted-foreground); pointer-events: none; }
+[data-fba-affix] [data-input] { padding-left: 1.45rem; }
+
+[data-fba-row] { display: grid; gap: 0 0.6rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+[data-fba-row][data-cols="3"] { grid-template-columns: 1fr; }
+@media (min-width: 560px) {
+  [data-fba-row][data-cols="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  [data-fba-row][data-cols="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+[data-fba-subhead] { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0.35rem 0 0.5rem; }
+[data-fba-subhead] > span { font-size: 0.8125rem; font-weight: 600; }
+[data-fba-toggle] { display: inline-flex; border: 1px solid var(--border-strong); border-radius: 999px; padding: 2px; }
+[data-fba-toggle] button {
+  border: 0; background: transparent; border-radius: 999px; padding: 0.2rem 0.65rem;
+  font-size: 0.8125rem; color: var(--muted-foreground); cursor: pointer;
+}
+[data-fba-toggle] button[aria-pressed="true"] { background: var(--accent-tint); color: var(--accent); font-weight: 600; }
+
+[data-fba-check] { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; margin: 0 0 0.85rem; cursor: pointer; }
+[data-fba-check] input { accent-color: var(--accent); width: 1rem; height: 1rem; }
+[data-fba-check-inline] { margin-top: 1.55rem; }
+
+[data-fba-results-table] { width: 100%; border-collapse: collapse; }
+[data-fba-results-table] thead th {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted-foreground); text-align: right; padding: 0 0 0.35rem 0.75rem;
+}
+[data-fba-results-table] tbody th { text-align: left; font-weight: 400; padding: 0.55rem 0; vertical-align: top; }
+[data-fba-results-table] tbody tr + tr > * { border-top: 1px solid var(--border); }
+[data-fba-results-table] td { text-align: right; vertical-align: top; padding: 0.55rem 0 0.55rem 0.75rem; white-space: nowrap; }
+[data-fba-num] { font-variant-numeric: tabular-nums; letter-spacing: -0.015em; font-weight: 600; }
+[data-fba-num][data-theirs] { color: var(--muted-foreground); font-weight: 500; }
+[data-fba-num][data-negative] { color: var(--danger); }
+[data-fba-line] { display: block; font-size: 0.9375rem; font-weight: 600; }
+[data-fba-note] { display: block; font-size: 0.78rem; line-height: 1.4; color: var(--muted-foreground); margin-top: 0.1rem; white-space: normal; }
+[data-fba-results-table] tr[data-strong] [data-fba-num]:not([data-theirs]) { font-size: 1.0625rem; font-weight: 700; }
+[data-fba-empty], [data-fba-flag] { font-size: 0.875rem; color: var(--muted-foreground); }
+[data-fba-flag] { margin: 0.75rem 0 0; color: var(--warning); }
+[data-fba-compare-note] { margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border); font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-fba-compare-note] p { margin: 0 0 0.6rem; }
+
+[data-fba-cta] {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem;
+  margin: 1.25rem 0 0.5rem; padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: var(--radius-lg);
+  background: var(--surface); font-size: 0.9375rem;
+}
+[data-fba-cta] p { margin: 0; max-width: 36rem; }
+
+[data-fba-copy] { margin-top: 1rem; }
+[data-fba-copy] h3 { margin-top: 1.25rem; }
+[data-fba-table] { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; font-size: 0.875rem; display: block; overflow-x: auto; }
+[data-fba-table] th, [data-fba-table] td { text-align: left; padding: 0.45rem 0.9rem 0.45rem 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+[data-fba-table] th { font-size: 0.75rem; font-weight: 650; color: var(--muted-foreground); white-space: nowrap; }
+[data-fba-table] td { font-variant-numeric: tabular-nums; }
+[data-fba-faq] p { margin-bottom: 0.5rem; }
+
+@media (max-width: 640px) {
+  [data-fba] > h1 { font-size: 1.875rem; }
+  [data-fba-card] { padding: 0.95rem 0.9rem 1.1rem; }
+  [data-fba-results-table] td, [data-fba-results-table] thead th { padding-left: 0.5rem; }
+  [data-fba-results-table] tr[data-strong] [data-fba-num]:not([data-theirs]) { font-size: 1rem; }
+}
