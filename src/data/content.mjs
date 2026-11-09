@@ -33,7 +33,7 @@ export const POSTS = [
     angle:
       'Referral fee + FBA fulfilment + storage, worked through on real unit economics ' +
       'rather than the fee table everyone else republishes. Lead with a single ASIN: ' +
-      'on a $6.97 product the FBA fee alone is $2.56 — 37% before COGS.',
+      'on a $6.97 product the FBA fee alone is $3.01 — 43% before COGS.',
     cite: ['spite-house-games', 'ototo', 'white-mountain-puzzles'],
   },
   {
@@ -164,6 +164,27 @@ export const POSTS = [
       'doctor-jupiter', 'virora-mahjong', 'restoration-games', 'lighten-life', 'wet-noses',
       'ototo', 'highmark-collective', 'kajun-loaded-tea', 'maryruth', 'gamblin-golf',
     ],
+  },
+
+  // ── Trend radar picks: ship within ~48h of the spike (Dragon-marketing/skills/WHM-trend-radar) ──
+  {
+    slug: 'amazon-seller-insurance-requirement-2026',
+    title: "Amazon's New Liability Insurance Rule: Who Needs It and What It Costs",
+    kw: 'amazon seller insurance', vol: 140, comp: null,
+    tier: 1, status: 'draft',
+    angle:
+      'Trigger: Amazon\'s 2026-11-02 announcement (Seller Forums, news and announcements, ' +
+      'thread 287d5c33-8278-4802-ba69-2f58f7dda408; 4.9k views). The rule: $1M per ' +
+      'occurrence and aggregate was already required within 30 days of a $10k gross-proceeds ' +
+      'month; now it is required REGARDLESS of sales for categories with enhanced safety ' +
+      'listing requirements (children\'s products, cosmetics, ingestibles, lithium batteries, ' +
+      'more), and China-based sellers must buy through the Amazon Insurance Accelerator. ' +
+      'WHM angle: which of our businesses sit in those categories (toys, supplements, drink ' +
+      'mixes...), and the premium as a share of revenue for a launch-stage seller vs an ' +
+      'established one. Premium figures must come from insurer quotes or published rate ' +
+      'pages, never from memory. Keywords: 140/mo, SD 28, $33 CPC; "requirements" 40/mo ' +
+      '(Ubersuggest lags new policies; the forum thread is the real signal).',
+    cite: [],
   },
   {
     slug: 'how-to-start-an-amazon-t-shirt-business',

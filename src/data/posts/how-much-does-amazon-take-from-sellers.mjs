@@ -1,5 +1,5 @@
 export default `
-<p>On a $6.97 product, the Amazon FBA fee alone is $2.56, which is <strong>37% of the price</strong> before the seller has paid for the product. Add the 15% referral fee and Amazon takes $3.61 of that $6.97, about 52%. Most guides republish Amazon's fee table. This page works the fees through on real businesses instead.</p>
+<p>On a $6.97 product, the Amazon FBA fee alone is $3.01, which is <strong>43% of the price</strong> before the seller has paid for the product. Add the 15% referral fee and Amazon takes $4.06 of that $6.97, about 58%. Most guides republish Amazon's fee table. This page works the fees through on real businesses instead.</p>
 
 <h2>How much does it cost to sell on Amazon?</h2>
 <p>Before any per-sale fee, Amazon charges for the account: the Professional plan is $39.99 a month, and the Individual plan has no monthly fee but charges $0.99 per item sold. Sponsored Products ads and Brand Registry both need the Professional plan, so it is the realistic choice for a brand. After that, two fees take most of what Amazon keeps.</p>
@@ -9,16 +9,16 @@ export default `
 <p><strong>FBA fulfilment fee.</strong> A flat dollar amount per unit, set by size, weight and price band. Because it is flat, it hurts cheap products far more than expensive ones.</p>
 
 <h2>Worked example: Spite House Games</h2>
-<p><a href="/business/spite-house-games/">Spite House Games</a> sells a card deck with a usual price of $12.99. In September 2026 its best seller was caught at a $6.97 discount. Using the fees in our data:</p>
+<p><a href="/business/spite-house-games/">Spite House Games</a> sells a card deck with a usual price of $12.99. In September 2026 its best seller was caught at a $6.97 discount. The deck is 0.87 in thick and weighs 3.5 oz, which makes it large standard size in Amazon's fee table, not small standard:</p>
 <table>
 <thead><tr><th></th><th>At $6.97</th><th>At $12.99</th></tr></thead>
 <tbody>
 <tr><td>Referral fee, 15%</td><td>$1.05</td><td>$1.95</td></tr>
-<tr><td>FBA fulfilment fee</td><td>$2.56</td><td>$3.01</td></tr>
-<tr><td><strong>Total to Amazon</strong></td><td><strong>$3.61 (52%)</strong></td><td><strong>$4.96 (38%)</strong></td></tr>
+<tr><td>FBA fulfilment fee</td><td>$3.01</td><td>$3.86</td></tr>
+<tr><td><strong>Total to Amazon</strong></td><td><strong>$4.06 (58%)</strong></td><td><strong>$5.81 (45%)</strong></td></tr>
 </tbody>
 </table>
-<p>The percentages are our own arithmetic on the two fees; storage and returns are not included. The fee schedule is Amazon's 2026 rate card with the 17 April fuel and logistics surcharge. The lesson is that discounting a cheap item does not just cut your margin, it can hand half the sale to Amazon.</p>
+<p>The percentages are our own arithmetic on the two fees; storage and returns are not included. The fee schedule is Amazon's 2026 rate card with the 17 April fuel and logistics surcharge. The lesson is that discounting a cheap item does not just cut your margin, it can hand more than half the sale to Amazon. A deck a fraction of an inch thinner would sit in the cheaper small standard tier, which is why package size is worth checking before a product is made.</p>
 
 <h2>What Amazon takes across the businesses we track</h2>
 <p>Referral plus FBA, as a share of revenue, from each business's margin model (advertising is separate):</p>
