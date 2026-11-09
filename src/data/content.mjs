@@ -19,6 +19,7 @@ import b0 from './posts/how-much-does-amazon-take-from-sellers.mjs';
 import b1 from './posts/is-amazon-fba-still-profitable.mjs';
 import b2 from './posts/how-much-does-amazon-fba-cost-to-start.mjs';
 import b3 from './posts/how-much-do-amazon-sellers-make.mjs';
+import b4 from './posts/amazon-fba-fees-2026.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -151,13 +152,18 @@ export const POSTS = [
     slug: 'amazon-fba-fees-2026',
     title: 'Amazon FBA Fees 2026: The Full Schedule, Worked on Real Products',
     kw: 'amazon fba fees', vol: 2900, comp: null,
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published',
+    body: b4,
     angle:
       'Cluster 6,120/mo, SD 15. Page 1 is Amazon itself plus Reddit, so the realistic ' +
       'target is the long tail (named fees, size tiers, "2026"). The fee-schedule ' +
       'reference; links to the FBA calculator and leaves "how much does Amazon take" ' +
       'to that post.',
-    cite: ['*'],
+    cite: [
+      'white-mountain-puzzles', 'spite-house-games', 'draft-top', 'songbird-specialties',
+      'doctor-jupiter', 'virora-mahjong', 'restoration-games', 'lighten-life', 'wet-noses',
+      'ototo', 'highmark-collective', 'kajun-loaded-tea', 'maryruth', 'gamblin-golf',
+    ],
   },
 
   // ── Trend radar picks: ship within ~48h of the spike (Dragon-marketing/skills/WHM-trend-radar) ──
