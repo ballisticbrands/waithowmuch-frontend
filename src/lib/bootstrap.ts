@@ -15,7 +15,11 @@ type Bootstrap =
       slug: string;
       business: BusinessDetail;
       metrics: MetricsResponse | null;
-    };
+    }
+  /* The FBA calculator: which businesses are published, and their names, so
+     the "compare with a real business" presets never link to an unpublished
+     profile and need no fetch on a landing. */
+  | { route: "fba-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> };
 
 declare global {
   interface Window {
@@ -52,3 +56,6 @@ export const ideasBootstrap = (collection: string) =>
 
 export const businessBootstrap = (slug: string) =>
   initial?.route === "business" && initial.slug === slug ? initial : undefined;
+
+export const fbaCalculatorBootstrap = () =>
+  initial?.route === "fba-calculator" && initial.businesses.length > 0 ? initial : undefined;
