@@ -1,5 +1,5 @@
 export default `
-<p>Across the 13 Amazon businesses we have researched, the estimated profit margin runs from <strong>24.1% to 54.2%</strong>, with a median of <strong>39.0%</strong>. None of the 13 is below 24%, and none is losing money. That is the honest short answer to whether Amazon FBA is still profitable in 2026: the businesses we can see are, by a wide margin. The caveat is below, and it matters.</p>
+<p>Across the 13 Amazon businesses we have researched, the estimated profit margin runs from <strong>24.1% to 54.2%</strong>, with a median of <strong>39.0%</strong>. None of the 13 is below 24%, and none is losing money. That is the honest short answer to whether Amazon FBA is worth it in 2026: the businesses we can see are still profitable, by a wide margin. The caveat is below, and it matters.</p>
 
 <h2>The margin spread, business by business</h2>
 <p>Every figure here is the latest month in our data (September 2026, or August for OTOTO). Profit is revenue minus cost of goods, tariff, freight, Amazon's referral fee, FBA fulfilment and advertising. All of it is modelled from public data, so treat each number as an estimate.</p>

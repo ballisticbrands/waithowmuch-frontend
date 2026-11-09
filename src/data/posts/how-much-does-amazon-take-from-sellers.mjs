@@ -1,7 +1,10 @@
 export default `
-<p>On a $6.97 product, the Amazon FBA fee alone is $2.56, which is <strong>37% of the price</strong> before the seller has paid for the product. Add the 15% referral fee and Amazon takes about 52 cents of that $6.97. Most guides republish Amazon's fee table. This page works the fees through on real businesses instead.</p>
+<p>On a $6.97 product, the Amazon FBA fee alone is $2.56, which is <strong>37% of the price</strong> before the seller has paid for the product. Add the 15% referral fee and Amazon takes $3.61 of that $6.97, about 52%. Most guides republish Amazon's fee table. This page works the fees through on real businesses instead.</p>
 
-<h2>The two fees that matter most</h2>
+<h2>How much does it cost to sell on Amazon?</h2>
+<p>Before any per-sale fee, Amazon charges for the account: the Professional plan is $39.99 a month, and the Individual plan has no monthly fee but charges $0.99 per item sold. Sponsored Products ads and Brand Registry both need the Professional plan, so it is the realistic choice for a brand. After that, two fees take most of what Amazon keeps.</p>
+
+<h3>The two fees that matter most</h3>
 <p><strong>Referral fee.</strong> A percentage of the sale price. In the categories we have researched it is 15% for Toys &amp; Games, Kitchen &amp; Dining and Pet Products. The exception is MaryRuth's: Amazon's schedule for Beauty, Health and Personal Care is 8% on items at $10 or less and 15% above that.</p>
 <p><strong>FBA fulfilment fee.</strong> A flat dollar amount per unit, set by size, weight and price band. Because it is flat, it hurts cheap products far more than expensive ones.</p>
 
