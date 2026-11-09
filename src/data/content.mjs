@@ -32,7 +32,7 @@ export const POSTS = [
     angle:
       'Referral fee + FBA fulfilment + storage, worked through on real unit economics ' +
       'rather than the fee table everyone else republishes. Lead with a single ASIN: ' +
-      'on a $6.97 product the FBA fee alone is $2.56 — 37% before COGS.',
+      'on a $6.97 product the FBA fee alone is $3.01 — 43% before COGS.',
     cite: ['spite-house-games', 'ototo', 'white-mountain-puzzles'],
   },
   {
