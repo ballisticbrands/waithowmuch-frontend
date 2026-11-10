@@ -41,6 +41,9 @@ import b17 from './posts/how-much-do-tariffs-add-to-amazon-products.mjs';
 import b18 from './posts/amazon-fba-storage-fees.mjs';
 import b19 from './posts/how-to-start-amazon-fba-with-no-money.mjs';
 import b20 from './posts/how-to-start-selling-on-amazon.mjs';
+import b21 from './posts/amazon-fba-courses.mjs';
+import b22 from './posts/best-3pl-for-ecommerce.mjs';
+import b23 from './posts/print-on-demand-vs-dropshipping.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -337,10 +340,10 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'amazon-fba-courses', category: 'Getting started',
+    slug: 'amazon-fba-courses', published: '2026-11-10', category: 'Getting started',
     title: 'Are Amazon FBA Courses Worth It? What the Numbers Say',
     kw: 'amazon fba course', vol: 320, comp: null,
-    tier: 3, status: 'draft',
+    tier: 3, status: 'published', body: b21,
     angle:
       'Cluster 700/mo, SD 41: above our usual ceiling. Angle: what a course costs vs what a ' +
       'first product test costs in our data. Course prices from official pages only; no ' +
@@ -348,10 +351,10 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'best-3pl-for-ecommerce', category: 'Sourcing',
+    slug: 'best-3pl-for-ecommerce', published: '2026-11-10', category: 'Sourcing',
     title: '3PL for E-commerce: When You Need One and What It Costs',
     kw: '3pl for ecommerce', vol: 880, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b22,
     angle:
       'Cluster 920/mo, SD 22, fit 1. FBA vs 3PL vs AWD on real cost lines; published 3PL ' +
       'pricing from official pages only; which of our businesses run multi-channel (White ' +
@@ -359,14 +362,14 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'print-on-demand-vs-dropshipping', category: 'Getting started',
+    slug: 'print-on-demand-vs-dropshipping', published: '2026-11-10', category: 'Getting started',
     title: 'Print on Demand vs Dropshipping: Which Makes More Per Sale?',
     kw: 'print on demand vs dropshipping', vol: 90, comp: null,
-    tier: 3, status: 'draft',
+    tier: 3, status: 'published', body: b23,
     angle:
       'Cluster 150/mo, SD 5. Unit economics of both, from official POD price lists and ' +
       'platform fees, against a private-label product in our data as the third option.',
-    cite: [],
+    cite: ['white-mountain-puzzles'],
   },
 
   // ── Tool comparison: pure commercial intent ──
