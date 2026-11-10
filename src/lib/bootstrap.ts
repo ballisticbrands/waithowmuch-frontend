@@ -19,7 +19,9 @@ type Bootstrap =
   /* The FBA calculator: which businesses are published, and their names, so
      the "compare with a real business" presets never link to an unpublished
      profile and need no fetch on a landing. */
-  | { route: "fba-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> };
+  | { route: "fba-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> }
+  /* The ROAS calculator: the same list, for its benchmark table and presets. */
+  | { route: "roas-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> };
 
 declare global {
   interface Window {
@@ -59,3 +61,6 @@ export const businessBootstrap = (slug: string) =>
 
 export const fbaCalculatorBootstrap = () =>
   initial?.route === "fba-calculator" && initial.businesses.length > 0 ? initial : undefined;
+
+export const roasCalculatorBootstrap = () =>
+  initial?.route === "roas-calculator" && initial.businesses.length > 0 ? initial : undefined;
