@@ -38,6 +38,9 @@ import b14 from './posts/selling-books-on-amazon-fba.mjs';
 import b15 from './posts/is-alibaba-legit.mjs';
 import b16 from './posts/alibaba-vs-aliexpress.mjs';
 import b17 from './posts/how-much-do-tariffs-add-to-amazon-products.mjs';
+import b18 from './posts/amazon-fba-storage-fees.mjs';
+import b19 from './posts/how-to-start-amazon-fba-with-no-money.mjs';
+import b20 from './posts/how-to-start-selling-on-amazon.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -93,10 +96,10 @@ export const POSTS = [
 
   // ── Tier 2: bigger volume, Medium competition ──
   {
-    slug: 'how-to-start-selling-on-amazon', category: 'Getting started',
+    slug: 'how-to-start-selling-on-amazon', published: '2026-11-10', category: 'Getting started',
     title: 'How to Start Selling on Amazon (2026)',
     kw: 'how to start amazon selling', vol: 1900, comp: 'Medium',
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b20,
     angle: 'Beginner head term. Differentiate with real cost and timeline data per step.',
     cite: ['*'],
   },
@@ -296,6 +299,74 @@ export const POSTS = [
     tier: 3, status: 'published', body: b11,
     angle: 'Compare on observed margin by model, not theory.',
     cite: ['*'],
+  },
+
+  // ── Batch 2 (2026-11-10): the research's "not covered yet" list ──
+  {
+    slug: 'amazon-fba-storage-fees', published: '2026-11-10', category: 'Fees & costs',
+    title: 'Amazon FBA Storage Fees in 2026: Monthly, Aged and Peak, Worked on Real Stock',
+    kw: 'fba amazon storage fees', vol: 170, comp: null,
+    tier: 2, status: 'published', body: b18,
+    angle:
+      'Cluster 440/mo, median SD 19. Monthly storage by season and size, the aged-inventory ' +
+      'surcharge, utilisation surcharge, the Feb 2027 unified fee. Use src/data/fba-fees-2026.mjs ' +
+      'and the FBA calculator (which already computes storage); don\'t repeat amazon-fba-fees-2026 ' +
+      'prose, go deeper with worked examples on our businesses\' real box sizes.',
+    cite: ['*'],
+  },
+  {
+    slug: 'de-minimis-for-ecommerce-sellers', category: 'Policy',
+    title: 'The End of De Minimis: What It Costs E-commerce Sellers',
+    kw: 'will de minimis come back', vol: 390, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 40,080/mo but median SD 46: a long shot on the head terms, realistic on the ' +
+      'seller long tail. What the suspension changed (Federal Register 2026-12670 / 2026-12669), ' +
+      'who pays what now, and what it means for a small brand importing from China, with our ' +
+      'businesses\' tariff lines as worked examples. Link the tariffs post and the tariff calculator.',
+    cite: ['*'],
+  },
+  {
+    slug: 'how-to-start-amazon-fba-with-no-money', published: '2026-11-10', category: 'Getting started',
+    title: 'Can You Start Amazon FBA With Little or No Money? Real Budgets',
+    kw: 'how to start amazon fba with no money', vol: 30, comp: null,
+    tier: 3, status: 'published', body: b19,
+    angle:
+      'Cluster 90/mo, SD 27, fit 3. The cheapest real first tests in our database ("to test" ' +
+      'cost), what can and can\'t be skipped, and honest answers on "no money" (it isn\'t zero).',
+    cite: ['*'],
+  },
+  {
+    slug: 'amazon-fba-courses', category: 'Getting started',
+    title: 'Are Amazon FBA Courses Worth It? What the Numbers Say',
+    kw: 'amazon fba course', vol: 320, comp: null,
+    tier: 3, status: 'draft',
+    angle:
+      'Cluster 700/mo, SD 41: above our usual ceiling. Angle: what a course costs vs what a ' +
+      'first product test costs in our data. Course prices from official pages only; no ' +
+      'ratings, no "we took the course" claims.',
+    cite: ['*'],
+  },
+  {
+    slug: 'best-3pl-for-ecommerce', category: 'Sourcing',
+    title: '3PL for E-commerce: When You Need One and What It Costs',
+    kw: '3pl for ecommerce', vol: 880, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 920/mo, SD 22, fit 1. FBA vs 3PL vs AWD on real cost lines; published 3PL ' +
+      'pricing from official pages only; which of our businesses run multi-channel (White ' +
+      'Mountain, Mount Cleverest, Kalotoys) and how they fulfil.',
+    cite: ['*'],
+  },
+  {
+    slug: 'print-on-demand-vs-dropshipping', category: 'Getting started',
+    title: 'Print on Demand vs Dropshipping: Which Makes More Per Sale?',
+    kw: 'print on demand vs dropshipping', vol: 90, comp: null,
+    tier: 3, status: 'draft',
+    angle:
+      'Cluster 150/mo, SD 5. Unit economics of both, from official POD price lists and ' +
+      'platform fees, against a private-label product in our data as the third option.',
+    cite: [],
   },
 
   // ── Tool comparison: pure commercial intent ──
