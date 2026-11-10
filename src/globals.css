@@ -2716,3 +2716,11 @@ a[data-cat]:hover { color: var(--foreground); border-color: var(--border-strong)
   [data-feature-card] h2 { font-size: 1.375rem; }
   [data-spot-card] [data-hero-art] { width: 7.5rem; }
 }
+
+/* ─── KDP royalty calculator (pages/KdpCalculator.tsx) ─────────────────
+   On the FBA calculator's data-fba-* layout, with the ROAS calculator's hint
+   and verdict styles; only the format checkboxes and fieldsets are new. */
+[data-kdp-formats] { display: flex; flex-wrap: wrap; gap: 0 1.25rem; margin: 0 0 0.4rem; }
+[data-kdp-formats] [data-fba-check] { margin-bottom: 0.6rem; }
+[data-kdp-group] { border: 0; padding: 0; margin: 0.4rem 0 0; min-width: 0; }
+[data-kdp-group] > legend { padding: 0; margin-bottom: 0.6rem; }
