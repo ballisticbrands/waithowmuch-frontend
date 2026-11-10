@@ -33,6 +33,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   <Link to="/tools/kdp-royalty-calculator/">KDP royalty calculator</Link>
                   <Link to="/tools/tariff-calculator/">Tariff calculator</Link>
                   <Link to="/tools/landed-cost-calculator/">Landed cost calculator</Link>
+                  <Link to="/tools/amazon-sales-estimator/">Amazon sales estimator</Link>
+                  <Link to="/tools/amazon-seller-revenue-calculator/">Amazon seller revenue calculator</Link>
                   <Link to="/how-we-research/">How we research</Link>
                   <Link to="/about/">About</Link>
                   <Link to="/privacy/">Privacy</Link>

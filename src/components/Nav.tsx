@@ -182,6 +182,20 @@ export function SideRail() {
           icon="parcel"
           collapsed={collapsed}
         />
+        <RailLink
+          to="/tools/amazon-sales-estimator/"
+          label="Sales estimator"
+          active={here === "/tools/amazon-sales-estimator/"}
+          icon="parcel"
+          collapsed={collapsed}
+        />
+        <RailLink
+          to="/tools/amazon-seller-revenue-calculator/"
+          label="Store revenue"
+          active={here === "/tools/amazon-seller-revenue-calculator/"}
+          icon="bag"
+          collapsed={collapsed}
+        />
 
         <div data-rail-group>Read</div>
         {/* Active on every post too: a reader inside an article is still in

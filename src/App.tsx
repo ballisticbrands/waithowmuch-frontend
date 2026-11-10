@@ -14,6 +14,8 @@ import RoasCalculator from "@/pages/RoasCalculator";
 import KdpCalculator from "@/pages/KdpCalculator";
 import TariffCalculator from "@/pages/TariffCalculator";
 import LandedCostCalculator from "@/pages/LandedCostCalculator";
+import SalesEstimator from "@/pages/SalesEstimator";
+import StoreRevenue from "@/pages/StoreRevenue";
 
 /** Every content route is registered with AND without a trailing slash: the
  *  prerender writes directories, so the canonical URL has one, but inbound
@@ -79,6 +81,8 @@ export default function App() {
         {Both({ path: "/tools/kdp-royalty-calculator", element: <KdpCalculator /> })}
         {Both({ path: "/tools/tariff-calculator", element: <TariffCalculator /> })}
         {Both({ path: "/tools/landed-cost-calculator", element: <LandedCostCalculator /> })}
+        {Both({ path: "/tools/amazon-sales-estimator", element: <SalesEstimator /> })}
+        {Both({ path: "/tools/amazon-seller-revenue-calculator", element: <StoreRevenue /> })}
         {Both({ path: "/about", element: <About /> })}
         {Both({ path: "/privacy", element: <Privacy /> })}
         {Both({ path: "/terms", element: <Terms /> })}

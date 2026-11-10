@@ -2,7 +2,9 @@ import { config } from "./config.js";
 import { getToken, clearSession } from "./session.js";
 
 export class ApiError extends Error {
-  constructor(readonly status: number, readonly code: string) {
+  /** `body` is the parsed JSON error body when there was one — for callers
+   *  that need more than the code (a `reason`, a `retryAfterSec`). */
+  constructor(readonly status: number, readonly code: string, readonly body?: Record<string, unknown>) {
     super(`${status} ${code}`);
   }
 }
@@ -30,12 +32,14 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 
   if (!res.ok) {
     let code = "request_failed";
+    let body: Record<string, unknown> | undefined;
     try {
-      code = ((await res.json()) as { error?: string }).error ?? code;
+      body = (await res.json()) as Record<string, unknown>;
+      code = typeof body.error === "string" ? body.error : code;
     } catch {
       /* a non-JSON error body (a proxy 502 page) is not worth failing over */
     }
-    throw new ApiError(res.status, code);
+    throw new ApiError(res.status, code, body);
   }
   // 204 has no body to parse.
   return res.status === 204 ? (undefined as T) : ((await res.json()) as T);
