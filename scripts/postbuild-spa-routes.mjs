@@ -25,33 +25,29 @@ import { blogIndexBody, blogPostBody } from './blog-prerender.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
 import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
 import {
-  CALCULATOR_PATH, TITLE as FBA_TITLE, DOC_TITLE as FBA_DOC_TITLE, META_DESCRIPTION as FBA_META_DESCRIPTION,
+  CALCULATOR_PATH, TITLE as FBA_TITLE, H1 as FBA_H1, TAGLINE as FBA_TAGLINE, DOC_TITLE as FBA_DOC_TITLE, META_DESCRIPTION as FBA_META_DESCRIPTION,
   LEDE as FBA_LEDE, SOURCE_LINE as FBA_SOURCE_LINE, SECTIONS as FBA_SECTIONS, FAQ as FBA_FAQ,
   RELATED as FBA_RELATED, faqPlain,
 } from '../src/data/fba-calculator-page.mjs';
-import { fbaPresets } from '../src/data/fba-calculator-presets.mjs';
 import {
-  CALCULATOR_PATH as ROAS_PATH, TITLE as ROAS_TITLE, DOC_TITLE as ROAS_DOC_TITLE,
+  CALCULATOR_PATH as ROAS_PATH, TITLE as ROAS_TITLE, H1 as ROAS_H1, TAGLINE as ROAS_TAGLINE, DOC_TITLE as ROAS_DOC_TITLE,
   META_DESCRIPTION as ROAS_META_DESCRIPTION, LEDE as ROAS_LEDE, PRIVACY_LINE as ROAS_PRIVACY_LINE,
-  SECTIONS as ROAS_SECTIONS, FAQ as ROAS_FAQ, RELATED as ROAS_RELATED, BENCHMARK_INTRO as ROAS_BENCHMARK_INTRO,
-  benchmarkSummaryHtml,
+  SECTIONS as ROAS_SECTIONS, FAQ as ROAS_FAQ, RELATED as ROAS_RELATED,
 } from '../src/data/roas-calculator-page.mjs';
-import { roasBenchmarks } from '../src/data/roas-benchmarks.mjs';
 import {
-  CALCULATOR_PATH as KDP_PATH, TITLE as KDP_TITLE, DOC_TITLE as KDP_DOC_TITLE, META_DESCRIPTION as KDP_META_DESCRIPTION,
+  CALCULATOR_PATH as KDP_PATH, TITLE as KDP_TITLE, H1 as KDP_H1, TAGLINE as KDP_TAGLINE, DOC_TITLE as KDP_DOC_TITLE, META_DESCRIPTION as KDP_META_DESCRIPTION,
   LEDE as KDP_LEDE, SOURCE_LINE as KDP_SOURCE_LINE, SECTIONS as KDP_SECTIONS, FAQ as KDP_FAQ, RELATED as KDP_RELATED,
 } from '../src/data/kdp-calculator-page.mjs';
 import {
-  CALCULATOR_PATH as TARIFF_PATH, TITLE as TARIFF_TITLE, DOC_TITLE as TARIFF_DOC_TITLE,
+  CALCULATOR_PATH as TARIFF_PATH, TITLE as TARIFF_TITLE, H1 as TARIFF_H1, TAGLINE as TARIFF_TAGLINE, DOC_TITLE as TARIFF_DOC_TITLE,
   META_DESCRIPTION as TARIFF_META_DESCRIPTION, LEDE as TARIFF_LEDE, SOURCE_LINE as TARIFF_SOURCE_LINE,
   PRIVACY_LINE as TARIFF_PRIVACY_LINE, FAQ as TARIFF_FAQ, RELATED as TARIFF_RELATED, sections as tariffSections,
 } from '../src/data/tariff-calculator-page.mjs';
 import {
-  CALCULATOR_PATH as LANDED_PATH, TITLE as LANDED_TITLE, DOC_TITLE as LANDED_DOC_TITLE,
+  CALCULATOR_PATH as LANDED_PATH, TITLE as LANDED_TITLE, H1 as LANDED_H1, TAGLINE as LANDED_TAGLINE, DOC_TITLE as LANDED_DOC_TITLE,
   META_DESCRIPTION as LANDED_META_DESCRIPTION, LEDE as LANDED_LEDE, PRIVACY_LINE as LANDED_PRIVACY_LINE,
   FAQ as LANDED_FAQ, RELATED as LANDED_RELATED, sections as landedSections,
 } from '../src/data/landed-cost-calculator-page.mjs';
-import { PRESETS as TARIFF_PRESETS } from '../src/data/tariff-presets.mjs';
 import { ESTIMATOR, STORE, ATTRIBUTION, faqPlain as toolFaqPlain } from '../src/data/sales-tools-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -1027,32 +1023,19 @@ for (const r of STATIC) {
 
 // ── Amazon FBA calculator ─────────────────────────────────────────────
 /* The calculator itself is client-side; everything a crawler should read
-   about it (the lede, the fee tables, the presets, the FAQ) comes from the
-   same JSX-free modules pages/FbaCalculator.tsx renders, so the two cannot
-   say different things. The presets are limited to published businesses —
-   `all` is the API catalogue — exactly as the app limits them. */
+   about it (the lede, the fee tables, the FAQ) comes from the same JSX-free
+   modules pages/FbaCalculator.tsx renders, so the two cannot say different
+   things. Same order as the page: H1 and one line above the calculator, then
+   the source line, the lede and the rest under it. */
 {
-  const publishedSlugs = new Set(all.map((b) => b.slug));
-  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
-  const presets = fbaPresets().filter((p) => publishedSlugs.has(p.slug));
-  const cents = (n) => `$${n.toFixed(2)}`;
-  const presetList = presets.map((p) =>
-    `<li><a href="${businessPath(p.slug)}">${esc(nameOf.get(p.slug))}</a>${p.product ? `: ${esc(p.product)}` : ''}, ${
-      cents(p.price)}, ${p.marginPct.toFixed(1)}% margin before storage</li>`).join('\n      ');
-
   const body = `
-    <h1>${esc(FBA_TITLE)}</h1>
-    <p>${FBA_LEDE}</p>
+    <h1>${esc(FBA_H1)}</h1>
+    <p>${esc(FBA_TAGLINE)}</p>
     <p>${FBA_SOURCE_LINE}</p>
-    <p>We publish the real unit economics of Amazon businesses like these, with every figure sourced. One email when a
-       new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
+    <p>${FBA_LEDE}</p>
+    <p>We publish the real unit economics of Amazon businesses, with every figure sourced. One email when a new case
+       study is out. <a href="/signup/">Get emails on new case studies</a></p>
     ${FBA_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
-    <h2>Businesses you can compare with</h2>
-    <p>Each preset is one product from a business in our database, with the per-unit figures from its case study:
-       price, cost of goods, freight, Amazon's fees and advertising.</p>
-    <ul>
-      ${presetList}
-    </ul>
     <h2>Frequently asked questions</h2>
     ${FBA_FAQ.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
     <h2>Related reading</h2>
@@ -1064,7 +1047,6 @@ for (const r of STATIC) {
     title: FBA_DOC_TITLE,
     description: FBA_META_DESCRIPTION,
     body,
-    bootstrap: { route: 'fba-calculator', businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
     schema: [
       {
         '@type': 'WebApplication',
@@ -1098,34 +1080,15 @@ for (const r of STATIC) {
 // ── ROAS calculator ───────────────────────────────────────────────────
 /* As for the FBA calculator: the calculator is client-side, and the words a
    crawler reads come from the same JSX-free modules pages/RoasCalculator.tsx
-   renders. The benchmark table is limited to published businesses, exactly
-   as the app limits it, and its summary paragraph is built from those rows. */
+   renders, in the page's order. */
 {
-  const publishedSlugs = new Set(all.map((b) => b.slug));
-  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
-  const bench = roasBenchmarks().filter((b) => publishedSlugs.has(b.slug));
-  const p1 = (n) => (n == null ? '—' : `${n.toFixed(1)}%`);
-  const rows = bench.map((b) =>
-    `<tr><td><a href="${businessPath(b.slug)}">${esc(nameOf.get(b.slug))}</a>${b.note || b.basis !== 'modelled' ? ' *' : ''}</td><td>${p1(b.adPct)}</td><td>${p1(b.preAdPct)}</td><td>${p1(b.marginPct)}</td><td>${b.beRoas == null ? '—' : b.beRoas.toFixed(2)}</td><td>${p1(b.beAcosPct)}</td></tr>`,
-  ).join('\n        ');
-  const notes = bench.filter((b) => b.note).map((b) => `<li>* ${esc(nameOf.get(b.slug))}: ${esc(b.note)}.</li>`).join('');
-
   const body = `
-    <h1>${esc(ROAS_TITLE)}</h1>
-    <p>${ROAS_LEDE}</p>
+    <h1>${esc(ROAS_H1)}</h1>
+    <p>${esc(ROAS_TAGLINE)}</p>
     <p>${esc(ROAS_PRIVACY_LINE)}</p>
+    <p>${ROAS_LEDE}</p>
     <p>We publish the real unit economics of Amazon businesses, ad spend included, with every figure sourced. One email
        when a new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
-    <h2>Real ad spend and margins</h2>
-    <p>${esc(ROAS_BENCHMARK_INTRO)}</p>
-    <table>
-      <thead><tr><th>Business</th><th>Ads, % of revenue</th><th>Margin before ads</th><th>Margin after ads</th><th>Break-even ROAS</th><th>Break-even ACOS</th></tr></thead>
-      <tbody>
-        ${rows}
-      </tbody>
-    </table>
-    ${benchmarkSummaryHtml(bench, (slug) => nameOf.get(slug), businessPath)}
-    ${notes ? `<ul>${notes}</ul>` : ''}
     ${ROAS_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
     <h2>Frequently asked questions</h2>
     ${ROAS_FAQ.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
@@ -1138,7 +1101,6 @@ for (const r of STATIC) {
     title: ROAS_DOC_TITLE,
     description: ROAS_META_DESCRIPTION,
     body,
-    bootstrap: { route: 'roas-calculator', businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
     schema: [
       {
         '@type': 'WebApplication',
@@ -1171,13 +1133,14 @@ for (const r of STATIC) {
 
 // ── KDP royalty calculator ────────────────────────────────────────────
 /* Client-side like the other two calculators; the words a crawler reads come
-   from the same JSX-free module pages/KdpCalculator.tsx renders. No business
-   data, so no bootstrap payload. */
+   from the same JSX-free module pages/KdpCalculator.tsx renders, in the page's
+   order. No bootstrap payload. */
 {
   const body = `
-    <h1>${esc(KDP_TITLE)}</h1>
-    <p>${KDP_LEDE}</p>
+    <h1>${esc(KDP_H1)}</h1>
+    <p>${esc(KDP_TAGLINE)}</p>
     <p>${esc(KDP_SOURCE_LINE)}</p>
+    <p>${KDP_LEDE}</p>
     <p>We publish the real revenue and margins of online businesses, with every figure sourced. One email when a new
        case study is out. <a href="/signup/">Get emails on new case studies</a></p>
     ${KDP_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
@@ -1226,37 +1189,26 @@ for (const r of STATIC) {
 // ── Tariff and landed-cost calculators ────────────────────────────────
 /* As for the other tools: the calculator is client-side (its HTS data loads
    per chapter from /tariff/<rev>/), and every word a crawler reads comes from
-   the same JSX-free modules the pages render. Presets are limited to
-   published businesses, exactly as the app limits them. */
+   the same JSX-free modules the pages render, in the page's order. */
 for (const t of [
   {
-    path: TARIFF_PATH, title: TARIFF_TITLE, docTitle: TARIFF_DOC_TITLE, description: TARIFF_META_DESCRIPTION,
+    path: TARIFF_PATH, title: TARIFF_TITLE, h1: TARIFF_H1, tagline: TARIFF_TAGLINE, docTitle: TARIFF_DOC_TITLE, description: TARIFF_META_DESCRIPTION,
     lede: TARIFF_LEDE, privacy: TARIFF_PRIVACY_LINE, faq: TARIFF_FAQ, related: TARIFF_RELATED,
-    sections: tariffSections(businessPath), route: 'tariff-calculator', crumb: 'Tariff calculator',
-    presetIntro: 'Each preset is one product from a business in our database: its factory price from the margin model, and the HTS line it would enter under.',
+    sections: tariffSections(businessPath), crumb: 'Tariff calculator',
   },
   {
-    path: LANDED_PATH, title: LANDED_TITLE, docTitle: LANDED_DOC_TITLE, description: LANDED_META_DESCRIPTION,
+    path: LANDED_PATH, title: LANDED_TITLE, h1: LANDED_H1, tagline: LANDED_TAGLINE, docTitle: LANDED_DOC_TITLE, description: LANDED_META_DESCRIPTION,
     lede: LANDED_LEDE, privacy: LANDED_PRIVACY_LINE, faq: LANDED_FAQ, related: LANDED_RELATED,
-    sections: landedSections(businessPath), route: 'landed-cost-calculator', crumb: 'Landed cost calculator',
-    presetIntro: 'Each preset is one product from a business in our database: its factory price and freight from the margin model, and the HTS line it would enter under.',
+    sections: landedSections(businessPath), crumb: 'Landed cost calculator',
   },
 ]) {
-  const publishedSlugs = new Set(all.map((b) => b.slug));
-  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
-  const presetList = TARIFF_PRESETS.filter((p) => publishedSlugs.has(p.slug)).map((p) =>
-    `<li><a href="${businessPath(p.slug)}">${esc(nameOf.get(p.slug))}</a>: ${esc(p.product)}, $${p.price.toFixed(2)} from the factory. ${esc(p.basis)}</li>`).join('\n      ');
   const body = `
-    <h1>${esc(t.title)}</h1>
-    <p>${t.lede}</p>
+    <h1>${esc(t.h1)}</h1>
+    <p>${esc(t.tagline)}</p>
     <p>${esc(TARIFF_SOURCE_LINE)} ${esc(t.privacy)}</p>
+    <p>${t.lede}</p>
     <p>We publish the real unit economics of Amazon businesses, tariffs and freight included, with every figure sourced.
        One email when a new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
-    <h2>Real products to load</h2>
-    <p>${esc(t.presetIntro)}</p>
-    <ul>
-      ${presetList}
-    </ul>
     ${t.sections.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
     <h2>Frequently asked questions</h2>
     ${t.faq.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
@@ -1269,7 +1221,6 @@ for (const t of [
     title: t.docTitle,
     description: t.description,
     body,
-    bootstrap: { route: t.route, businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
     schema: [
       {
         '@type': 'WebApplication',
@@ -1304,19 +1255,27 @@ for (const t of [
 // ── Amazon sales estimator & seller revenue calculator ───────────────
 /* Both tools fetch live (Keepa via the backend) after load, so the crawler
    reads what they are and how they work: the same JSX-free strings
-   (data/sales-tools-page.mjs) the pages render under the form. No bootstrap:
-   there is nothing to inline — a result only exists once someone asks. */
+   (data/sales-tools-page.mjs) the pages render under the form, in the page's
+   order. No bootstrap: a result only exists once someone asks. */
+const SALES_CTA = {
+  [ESTIMATOR.path]: `Want the whole store? The seller revenue calculator adds up every listing a seller has. We also publish the real
+       unit economics of Amazon businesses, one email when a new case study is out. <a href="${STORE.path}">Check a store's revenue</a>
+       <a href="/signup/">Get emails on new case studies</a>`,
+  [STORE.path]: `We publish the real numbers behind Amazon businesses: revenue, profit, margin and what it cost to start,
+       with every figure sourced. One email when a new case study is out. <a href="/signup/">Get emails on new case studies</a>`,
+};
 for (const page of [ESTIMATOR, STORE]) {
   const body = `
-    <h1>${esc(page.title)}</h1>
-    <p>${page.lede}</p>
+    <h1>${esc(page.h1)}</h1>
+    <p>${esc(page.tagline)}</p>
     <p>${ATTRIBUTION}</p>
+    <p>${page.lede}</p>
+    <p>${SALES_CTA[page.path]}</p>
     ${page.sections.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
     <h2>Frequently asked questions</h2>
     ${page.faq.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
     <h2>Related</h2>
-    <ul>${page.related.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>
-    <p>We publish the real numbers behind Amazon businesses, with every figure sourced. <a href="/signup/">Get emails on new case studies</a></p>`.trim();
+    <ul>${page.related.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>`.trim();
 
   const url = `${SITE}${page.path}`;
   const html = render({
@@ -1352,6 +1311,7 @@ for (const page of [ESTIMATOR, STORE]) {
   });
   guard(page.path, html);
   write(page.path, html);
+  console.log(`postbuild: ${page.path} ${words(html.slice(html.indexOf('<div id="root"')))} crawler-visible words`);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────

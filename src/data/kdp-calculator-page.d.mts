@@ -3,6 +3,8 @@ export const CALCULATOR_PATH: string;
 export const BOOKS_POST_PATH: string;
 export const ROAS_CALCULATOR_PATH: string;
 export const TITLE: string;
+export const H1: string;
+export const TAGLINE: string;
 export const DOC_TITLE: string;
 export const META_DESCRIPTION: string;
 export const readOnLabel: string;

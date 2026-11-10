@@ -14,6 +14,10 @@ import {
 
 export { LANDED_PATH as CALCULATOR_PATH };
 export const TITLE = 'Landed Cost Calculator: Duty, Freight and Fees per Unit';
+/** The visible H1: short, keyword first. TITLE stays the JSON-LD name. */
+export const H1 = 'Landed cost calculator';
+/** The one line above the calculator. Everything else sits below it. */
+export const TAGLINE = 'What one imported unit costs once it reaches Amazon: factory price, freight, US duty, customs fees and the broker.';
 export const DOC_TITLE = 'Landed Cost Calculator for Imports to the US (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
   'Free landed cost calculator for US imports: factory price, freight, insurance, 2026 duty by HTS code, MPF, HMF, broker, moulds and the trip to Amazon, per unit.';
@@ -44,7 +48,7 @@ export const X_LANDED = landedCost({
 
 export const LEDE = `Landed cost is what one unit costs by the time it is on an Amazon shelf: the factory price, the freight and insurance, the US duty and customs fees, the broker, any moulds, and the trip from the port to the warehouse. Pick the product's HTS code and country, enter the shipment, and get the cost per unit, with the duty worked out on the ${REVISION_LABEL}. A $${X.price.toFixed(2)} silicone spatula from China lands at about <strong>${usd(X_LANDED.perUnit)}</strong>, ${Math.round((X_LANDED.perUnit / X.price - 1) * 100)}% more than the factory price.`;
 
-export const PRIVACY_LINE = 'Everything is worked out in your browser. Nothing you type is sent or stored.';
+export const PRIVACY_LINE = 'Worked out in your browser; nothing you type is sent or stored.';
 
 export function sections(pathOf) {
   const row = (l) => `<tr><td>${l.label}</td><td>${usd(l.perUnit)}</td><td>${usd0(l.perUnit * X.units)}</td></tr>`;

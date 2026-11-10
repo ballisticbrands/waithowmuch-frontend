@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
-import { Comparables, Notice, Provenance, ToolCopy, Unavailable } from "@/components/SalesToolParts";
+import { Notice, Provenance, ToolCopy, Unavailable } from "@/components/SalesToolParts";
 import { gaEvent, trackCtaClick } from "@/lib/track";
 import { useSession } from "@/lib/session";
-import { ESTIMATOR_PATH, STORE, STORE_PATH } from "@/data/sales-tools-page.mjs";
+import { ATTRIBUTION, ESTIMATOR_PATH, STORE, STORE_PATH } from "@/data/sales-tools-page.mjs";
 import { fmtUnits, lookupStore, usd0, type StoreRevenue as Store, type ToolResult } from "@/lib/sales-tools";
 
 /**
@@ -57,8 +57,8 @@ export default function StoreRevenue() {
   return (
     <main data-main>
       <div data-fba>
-        <h1>{STORE.title}</h1>
-        <p data-fba-lede dangerouslySetInnerHTML={{ __html: STORE.lede }} />
+        <h1>{STORE.h1}</h1>
+        <p data-fba-tagline>{STORE.tagline}</p>
 
         <form data-fba-card data-st-form onSubmit={(e) => { e.preventDefault(); void run(q); }} aria-label="Look up a seller">
           <label data-fba-field>
@@ -112,9 +112,12 @@ export default function StoreRevenue() {
           {result?.kind === "ok" && <StoreResult s={result.data} />}
         </div>
 
+        <p data-fba-source dangerouslySetInnerHTML={{ __html: ATTRIBUTION }} />
+        <p data-fba-lede dangerouslySetInnerHTML={{ __html: STORE.lede }} />
+
         <aside data-fba-cta>
           <p>
-            We publish the real numbers behind Amazon businesses like these: revenue, profit, margin and what it cost to start,
+            We publish the real numbers behind Amazon businesses: revenue, profit, margin and what it cost to start,
             with every figure sourced. One email when a new case study is out.
           </p>
           <Link data-btn to="/signup" onClick={() => trackCtaClick("store_revenue")}>Get emails on new case studies</Link>
@@ -190,7 +193,6 @@ function StoreResult({ s }: { s: Store }) {
         </>
       )}
 
-      <Comparables items={s.comparables} />
       <Provenance retrievedAt={s.retrievedAt} />
     </section>
   );

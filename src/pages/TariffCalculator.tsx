@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
-import { ImportCalculator, usePublished } from "@/components/ImportCalculator";
-import { tariffCalculatorBootstrap } from "@/lib/bootstrap";
+import { ImportCalculator } from "@/components/ImportCalculator";
 import { trackCtaClick } from "@/lib/track";
 import {
-  TITLE, DOC_TITLE, LEDE, SOURCE_LINE, PRIVACY_LINE, FAQ, RELATED, sections,
+  H1, TAGLINE, DOC_TITLE, LEDE, SOURCE_LINE, PRIVACY_LINE, FAQ, RELATED, sections,
 } from "@/data/tariff-calculator-page.mjs";
 import { businessPath } from "@/data/site";
 
@@ -21,16 +20,17 @@ const SECTIONS = sections(businessPath);
 export default function TariffCalculator() {
   useSetCrumbs(() => [{ label: "Tariff calculator" }], []);
   useEffect(() => { document.title = DOC_TITLE; }, []);
-  const published = usePublished(tariffCalculatorBootstrap()?.businesses ?? null);
 
   return (
     <main data-main>
       <div data-fba>
-        <h1>{TITLE}</h1>
-        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
-        <p data-fba-source>{SOURCE_LINE} {PRIVACY_LINE}</p>
+        <h1>{H1}</h1>
+        <p data-fba-tagline>{TAGLINE}</p>
 
-        <ImportCalculator variant="tariff" published={published} defaultPreset="shg-deck" />
+        <ImportCalculator variant="tariff" />
+
+        <p data-fba-source>{SOURCE_LINE} {PRIVACY_LINE}</p>
+        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
 
         <aside data-fba-cta>
           <p>

@@ -18,6 +18,10 @@ export const CALCULATOR_PATH = '/tools/kdp-royalty-calculator/';
 export const BOOKS_POST_PATH = '/blog/selling-books-on-amazon-fba/';
 export const ROAS_CALCULATOR_PATH = '/tools/roas-calculator/';
 export const TITLE = 'KDP Royalty Calculator: eBook, Paperback, Hardcover and Kindle Unlimited';
+/** The visible H1: short, keyword first. TITLE stays the JSON-LD name. */
+export const H1 = 'KDP royalty calculator';
+/** The one line above the calculator. Everything else sits below it. */
+export const TAGLINE = 'Your royalty per sale, printing cost and monthly profit for an eBook, paperback or hardcover on Amazon KDP.';
 export const DOC_TITLE = 'KDP Royalty Calculator 2026: Royalties, Printing Cost & Profit (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
   'Free KDP calculator for authors: royalties per sale for eBook, paperback and hardcover, KDP printing cost, Kindle Unlimited page reads, profit after Amazon Ads and months to earn back your costs. Rates from KDP\'s help pages.';
@@ -60,7 +64,8 @@ const PB_LARGE = printingCost({ format: 'paperback', ink: 'black', pages: 300, t
 
 export const LEDE = `A 300-page novel at $${ex.paperback.price} in paperback costs <strong>${usd(exR.paperback.cost)} to print</strong> on Amazon.com and pays its author <strong>${usd(exR.paperback.royalty)} a copy</strong>; the same book as a $${ex.ebook.price} eBook pays <strong>${usd(exR.ebook.royalty)}</strong>. Pick eBook, paperback or hardcover, then drag the price (or type it) to see your royalty per sale, Amazon's share, KDP's printing cost and minimum list price. Add monthly sales to get your Kindle Unlimited page-read income, profit after Amazon Ads, the break-even ACOS and how many months it takes to earn back the cover, editing and ISBNs.`;
 
-export const SOURCE_LINE = `Every rate is from Amazon KDP's own help pages for the US marketplace (Amazon.com, USD), read on ${readOn}. Everything is worked out in your browser; nothing you type is sent or stored.`;
+/** One small line directly under the calculator. */
+export const SOURCE_LINE = `Rates from Amazon KDP's help pages for Amazon.com (USD), read on ${readOn}. Worked out in your browser; nothing you type is sent or stored.`;
 
 /* ── Tables built from the data, so the prose cannot disagree with the maths ── */
 

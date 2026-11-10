@@ -17,9 +17,13 @@ import {
 
 export const CALCULATOR_PATH = '/tools/amazon-fba-calculator/';
 export const TITLE = 'Amazon FBA Calculator: 2026 Fees and Profit';
+/** The visible H1: short, keyword first. TITLE stays the JSON-LD name. */
+export const H1 = 'Amazon FBA calculator';
+/** The one line above the calculator. Everything else sits below it. */
+export const TAGLINE = "Amazon's fees and your profit per unit on the 2026 US rate card, from your price, cost and box size.";
 export const DOC_TITLE = 'Amazon FBA Calculator 2026: Fees & Profit (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
-  "Free Amazon FBA fee and profit calculator on Amazon's 2026 US rate card, with peak fees and the 3.5% surcharge. Compare your product with real sellers' numbers.";
+  "Free Amazon FBA fee and profit calculator on Amazon's 2026 US rate card, with peak fees and the 3.5% surcharge. See fees, profit, margin, ROI and break-even ACOS per unit.";
 
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -48,9 +52,10 @@ const peak = periodLabel('peak-2026');
 const next = periodLabel('nonpeak-2027');
 const surchargePct = `${Math.round(SURCHARGE.rate * 1000) / 10}%`;
 
-export const LEDE = `A $12.99 deck of cards in a 3.7 × 2.8 × 0.87 inch box pays Amazon ${usd(deckOff.fba.fee)} to pick, pack and ship and ${usd(deckOff.referral.fee)} in referral fee: <strong>${pct(((deckOff.fba.fee + deckOff.referral.fee) / 12.99) * 100)} of the price</strong> before the cards are printed, and ${usd(deckPeak.fba.fee)} for fulfilment between ${fmtDate(peak.from).replace(/, \d{4}$/, '')} and ${fmtDate(peak.to).replace(/, \d{4}$/, '')}. Enter your own price, cost and box below. The calculator applies Amazon's published US rate card and shows what is left per unit, then lets you load a real business's numbers to see how yours compare.`;
+export const LEDE = `A $12.99 deck of cards in a 3.7 × 2.8 × 0.87 inch box pays Amazon ${usd(deckOff.fba.fee)} to pick, pack and ship and ${usd(deckOff.referral.fee)} in referral fee: <strong>${pct(((deckOff.fba.fee + deckOff.referral.fee) / 12.99) * 100)} of the price</strong> before the cards are printed, and ${usd(deckPeak.fba.fee)} for fulfilment between ${fmtDate(peak.from).replace(/, \d{4}$/, '')} and ${fmtDate(peak.to).replace(/, \d{4}$/, '')}. Enter your own price, cost and box in the calculator above. It applies Amazon's published US rate card and shows what is left per unit.`;
 
-export const SOURCE_LINE = `Fees as of ${readOnLabel}, source: Amazon (<a href="${SOURCES.fbaRates.url}" rel="nofollow noopener">FBA rate card</a>, <a href="${SOURCES.referral.url}" rel="nofollow noopener">referral fees</a>, <a href="${SOURCES.storage.url}" rel="nofollow noopener">storage</a>). Fulfilment fees include the ${surchargePct} fuel and logistics surcharge in force since ${fmtDate(SURCHARGE.since)}.`;
+/** One small line directly under the calculator. */
+export const SOURCE_LINE = `Fees as of ${readOnLabel}, from Amazon's <a href="${SOURCES.fbaRates.url}" rel="nofollow noopener">FBA rate card</a>, <a href="${SOURCES.referral.url}" rel="nofollow noopener">referral fees</a> and <a href="${SOURCES.storage.url}" rel="nofollow noopener">storage</a> pages, with the ${surchargePct} surcharge in force since ${fmtDate(SURCHARGE.since)}.`;
 
 /* ── Tables, as HTML, from the same data the calculator uses ─────────── */
 
@@ -134,7 +139,7 @@ export const FAQ = [
   },
   {
     q: 'Is this an Amazon profit calculator or just a fee calculator?',
-    a: 'Both. It totals Amazon\'s fees, then subtracts your product cost, inbound shipping and advertising to give profit per unit, margin, ROI and monthly profit. It also compares your product with a real business from our database, using that business\'s own per-unit numbers.',
+    a: 'Both. It totals Amazon\'s fees, then subtracts your product cost, inbound shipping and advertising to give profit per unit, margin, ROI, the break-even ACOS and monthly profit.',
   },
   {
     q: 'What is break-even ACOS?',
@@ -158,18 +163,19 @@ export const RELATED = [
   { href: '/blog/how-much-does-amazon-fba-cost-to-start/', label: 'How much does Amazon FBA cost to start?' },
 ];
 
-/** Plain-language explanation of each result line, shown beside it. */
+/** Plain-language explanation of each result line, shown under it. Short:
+ *  the computed detail (rate, share of price) follows it. */
 export const RESULT_NOTES = {
-  tier: 'The tier your packaged box falls in, which picks the fee table.',
-  fba: `Amazon's charge to pick, pack and ship one unit, including the ${surchargePct} surcharge.`,
-  referral: "Amazon's commission on the sale price for your category, with its per-unit minimum.",
-  storage: 'Base monthly storage for one unit for the months it waits in a warehouse.',
-  amazonFees: 'Everything Amazon takes from one sale in this calculator.',
-  landed: 'What one unit costs you before it sells: product plus inbound shipping.',
-  ads: 'Advertising per unit, as a share of the sale price.',
-  profit: 'What is left from one sale after Amazon, the product, shipping and ads.',
-  margin: 'Profit as a share of the sale price.',
-  roi: 'Profit as a share of what one unit cost you to land.',
-  acos: 'The most you can spend on ads, as a share of price, before a sale loses money.',
-  monthly: 'Profit per unit times your monthly units.',
+  tier: 'Picks the fee table.',
+  fba: `Pick, pack and ship, incl. the ${surchargePct} surcharge.`,
+  referral: "Amazon's commission for your category.",
+  storage: 'Base monthly storage.',
+  amazonFees: 'Everything Amazon takes per sale.',
+  landed: 'Product plus inbound shipping.',
+  ads: 'Ad spend per unit.',
+  profit: 'After Amazon, the product, shipping and ads.',
+  margin: 'Profit as a share of price.',
+  roi: 'Profit as a share of landed cost.',
+  acos: 'The most ads can cost, as a share of price, before a sale loses money.',
+  monthly: 'Profit per unit × units a month.',
 };

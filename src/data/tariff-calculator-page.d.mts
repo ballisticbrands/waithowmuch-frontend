@@ -6,6 +6,8 @@ export const TARIFFS_POST_PATH: string;
 export const CROSS_URL: string;
 export const HTS_URL: string;
 export const TITLE: string;
+export const H1: string;
+export const TAGLINE: string;
 export const DOC_TITLE: string;
 export const META_DESCRIPTION: string;
 export function dateLabel(iso: string): string;
