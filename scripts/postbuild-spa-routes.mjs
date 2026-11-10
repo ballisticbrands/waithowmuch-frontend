@@ -37,6 +37,7 @@ import {
   benchmarkSummaryHtml,
 } from '../src/data/roas-calculator-page.mjs';
 import { roasBenchmarks } from '../src/data/roas-benchmarks.mjs';
+import { ESTIMATOR, STORE, ATTRIBUTION, faqPlain as toolFaqPlain } from '../src/data/sales-tools-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -1151,6 +1152,59 @@ for (const r of STATIC) {
   });
   guard(ROAS_PATH, html);
   write(ROAS_PATH, html);
+}
+
+// ── Amazon sales estimator & seller revenue calculator ───────────────
+/* Both tools fetch live (Keepa via the backend) after load, so the crawler
+   reads what they are and how they work: the same JSX-free strings
+   (data/sales-tools-page.mjs) the pages render under the form. No bootstrap:
+   there is nothing to inline — a result only exists once someone asks. */
+for (const page of [ESTIMATOR, STORE]) {
+  const body = `
+    <h1>${esc(page.title)}</h1>
+    <p>${page.lede}</p>
+    <p>${ATTRIBUTION}</p>
+    ${page.sections.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
+    <h2>Frequently asked questions</h2>
+    ${page.faq.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
+    <h2>Related</h2>
+    <ul>${page.related.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>
+    <p>We publish the real numbers behind Amazon businesses, with every figure sourced. <a href="/signup/">Get emails on new case studies</a></p>`.trim();
+
+  const url = `${SITE}${page.path}`;
+  const html = render({
+    path: page.path,
+    title: page.docTitle,
+    description: page.description,
+    body,
+    schema: [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: page.title,
+        url,
+        description: page.description,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: page.faq.map((x) => ({
+          '@type': 'Question',
+          name: x.q,
+          acceptedAnswer: { '@type': 'Answer', text: toolFaqPlain(x.a) },
+        })),
+      },
+      crumbs([{ name: page.crumb, path: page.path }]),
+    ],
+  });
+  guard(page.path, html);
+  write(page.path, html);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────

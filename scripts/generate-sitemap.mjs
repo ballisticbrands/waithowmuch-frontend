@@ -29,6 +29,8 @@ const urls = [
   { loc: `${SITE}/business-attributes/`, priority: '0.6' },
   { loc: `${SITE}/tools/amazon-fba-calculator/`, priority: '0.8' },
   { loc: `${SITE}/tools/roas-calculator/`, priority: '0.8' },
+  { loc: `${SITE}/tools/amazon-sales-estimator/`, priority: '0.8' },
+  { loc: `${SITE}/tools/amazon-seller-revenue-calculator/`, priority: '0.8' },
   { loc: `${SITE}/about/`, priority: '0.5' },
   { loc: `${SITE}/privacy/`, priority: '0.2' },
   { loc: `${SITE}/terms/`, priority: '0.2' },
