@@ -21,7 +21,7 @@ export const H1 = 'ROAS calculator';
 export const TAGLINE = 'Your break-even ROAS and ACOS from your margin, plus ROAS, ACOS, TACoS and profit after ads.';
 export const DOC_TITLE = 'ROAS Calculator: Break-Even ROAS & ACOS (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
-  'Free ROAS calculator: get your break-even ROAS from your margin, plus ACOS, TACoS and profit after ads, and compare with the ad spend and margins of real Amazon businesses.';
+  'Free ROAS calculator: get your break-even ROAS from your margin, plus ACOS, TACoS and profit after ads, worked out in your browser.';
 
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

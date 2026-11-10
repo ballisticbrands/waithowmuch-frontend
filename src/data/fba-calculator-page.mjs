@@ -23,7 +23,7 @@ export const H1 = 'Amazon FBA calculator';
 export const TAGLINE = "Amazon's fees and your profit per unit on the 2026 US rate card, from your price, cost and box size.";
 export const DOC_TITLE = 'Amazon FBA Calculator 2026: Fees & Profit (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
-  "Free Amazon FBA fee and profit calculator on Amazon's 2026 US rate card, with peak fees and the 3.5% surcharge. Compare your product with real sellers' numbers.";
+  "Free Amazon FBA fee and profit calculator on Amazon's 2026 US rate card, with peak fees and the 3.5% surcharge. See fees, profit, margin, ROI and break-even ACOS per unit.";
 
 const esc = (s) =>
   String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
