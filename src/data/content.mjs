@@ -135,7 +135,7 @@ export const POSTS = [
   // Ubersuggest US volumes and SD; full list in Dragon-marketing/skills/WHM-SEO.
   // Each needs a WHM angle found before it is written, not a generic guide.
   {
-    slug: 'is-alibaba-legit', category: 'Sourcing',
+    slug: 'is-alibaba-legit', category: 'Sourcing', published: '2026-11-10',
     title: 'Is Alibaba Legit? What Real Amazon Brands Paid Their Suppliers',
     kw: 'is alibaba legit', vol: 18100, comp: null,
     tier: 2, status: 'published', body: b15,
@@ -146,7 +146,7 @@ export const POSTS = [
     cite: ['draft-top', 'songbird-specialties', 'gamblin-golf', 'ototo', 'restoration-games'],
   },
   {
-    slug: 'alibaba-vs-aliexpress', category: 'Sourcing',
+    slug: 'alibaba-vs-aliexpress', category: 'Sourcing', published: '2026-11-10',
     title: 'Alibaba vs AliExpress: Unit Costs Compared on Real Products',
     kw: 'alibaba vs aliexpress', vol: 6600, comp: null,
     tier: 2, status: 'published', body: b16,
@@ -156,7 +156,7 @@ export const POSTS = [
     cite: ['spite-house-games', 'white-mountain-puzzles', 'draft-top', 'ototo', 'songbird-specialties'],
   },
   {
-    slug: 'how-much-do-tariffs-add-to-amazon-products', category: 'Sourcing',
+    slug: 'how-much-do-tariffs-add-to-amazon-products', category: 'Sourcing', published: '2026-11-10',
     title: 'How Much Do Tariffs Add to an Amazon Product?',
     kw: 'tariff calculator', vol: 3600, comp: null,
     tier: 2, status: 'published', body: b17,
