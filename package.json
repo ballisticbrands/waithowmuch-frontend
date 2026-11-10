@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "verify:tracking": "node scripts/verify-tracking.mjs",
-    "build:og": "node scripts/build-og.mjs"
+    "build:og": "node scripts/build-og.mjs",
+    "build:blog-og": "node scripts/build-blog-og.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

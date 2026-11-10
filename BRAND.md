@@ -158,6 +158,12 @@ accent bar across the top, Inter, headline 48px weight 750, supporting copy
 23px in `--muted-foreground`, a hairline-divided footer. The site-wide
 `og:image` is `logo-512.png`.
 
+A blog post with no `image` gets the **title card** instead (`heroArtHtml` in
+`src/data/blog.mjs`, styled by the `hero-art` block in `globals.css`): near-black
+`#0a0a0d`, the title in white Inter 750, the mark and wordmark small bottom-left.
+It is the hero, every card thumbnail, and — rendered to 1200 × 630 by
+`scripts/build-blog-og.mjs` — the post's `og:image`.
+
 ## Known inconsistencies
 
 - `tailwind.config.js` sets `fontFamily.sans` to the system stack, not Inter,

@@ -2513,3 +2513,206 @@ img[data-row-logo] {
 [data-roas-bench] td:not(:first-child), [data-roas-bench] th:not(:first-child) { text-align: right; }
 [data-roas-bench] td:first-child { white-space: nowrap; }
 [data-roas-notes] { font-size: 0.8125rem; color: var(--muted-foreground); }
+
+/* ─── Blog (pages/Blog.tsx, data/blog.mjs) ────────────────────────────
+   Laid out after TrendTrack's blog: the latest post large beside a short
+   "recent" list, then a topic filter beside a three-column card grid; on a
+   post, the title and author beside the hero, then a sticky contents-and-
+   share column beside the article. Colour and type are ours. */
+
+/* hero-art:start — read verbatim by scripts/build-blog-og.mjs, which renders
+   the same block as the 1200 × 630 og:image. Literal values only: that page
+   has none of the custom properties above. */
+[data-hero-art] {
+  container-type: inline-size;
+  position: relative; box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: center;
+  width: 100%; aspect-ratio: 1200 / 630; overflow: hidden;
+  padding: 0 7% 3%;
+  background: #0a0a0d; color: #ffffff;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  text-align: left;
+}
+[data-hero-art-title] {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden;
+  font-size: 7cqw; font-weight: 750; line-height: 1.1; letter-spacing: -0.032em;
+  text-wrap: balance;
+}
+[data-hero-art][data-len="mid"] [data-hero-art-title] { font-size: 6cqw; }
+[data-hero-art][data-len="long"] [data-hero-art-title] { font-size: 5.2cqw; }
+[data-hero-art-brand] {
+  position: absolute; left: 7%; bottom: 7%;
+  display: flex; align-items: center; gap: 1.1cqw;
+  font-size: 2cqw; font-weight: 650; letter-spacing: -0.01em; color: rgb(255 255 255 / 0.7);
+}
+[data-hero-art-brand] svg { width: 3.4cqw; height: 3.4cqw; display: block; }
+/* hero-art:end */
+
+[data-blog] { max-width: 76rem; margin: 0 auto; }
+[data-blog-head] { text-align: center; margin: 1rem auto 2.5rem; max-width: 40rem; }
+[data-blog-eyebrow] {
+  display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.07em; color: var(--accent); margin-bottom: 0.6rem;
+}
+[data-blog-head] h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.033em; }
+[data-blog-head] p { margin: 0.75rem 0 0; color: var(--muted-foreground); font-size: 1rem; }
+
+/* Category label on a card or a post: neutral, not the accent — the accent
+   is for the ACTIVE filter. */
+[data-cat] {
+  display: inline-block; align-self: flex-start; justify-self: start;
+  padding: 0.15rem 0.5rem; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--muted);
+  font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted-foreground); white-space: nowrap;
+}
+a[data-cat]:hover { color: var(--foreground); border-color: var(--border-strong); }
+
+[data-post-meta] {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 0.5rem;
+  font-size: 0.8125rem; color: var(--muted-foreground);
+}
+[data-post-meta] img { width: 22px; height: 22px; border-radius: 50%; display: block; }
+
+/* The top: latest post large, the next four as a list. */
+[data-blog-top] { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+[data-blog-panel] {
+  background: var(--muted); border-radius: calc(var(--radius-lg) + 0.5rem); padding: 0.875rem;
+  display: flex; flex-direction: column; gap: 0.625rem; min-width: 0;
+}
+[data-blog-panel-label] {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--muted-foreground); padding: 0.15rem 0.35rem 0;
+}
+[data-feature-card], [data-spot-card], [data-post-card] {
+  display: flex; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; color: var(--foreground);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+[data-feature-card]:hover, [data-spot-card]:hover, [data-post-card]:hover { box-shadow: var(--shadow); border-color: var(--border-strong); }
+[data-feature-card] { flex-direction: column; flex: 1; }
+[data-feature-card] [data-card-body] { padding: 1.1rem 1.25rem 1.25rem; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 0.5rem 1.5rem; }
+[data-feature-card] h2 { font-size: 1.625rem; font-weight: 750; letter-spacing: -0.03em; grid-column: 1; }
+[data-feature-card] [data-cat] { grid-column: 1; }
+[data-feature-card] p { grid-column: 2; grid-row: 1 / span 3; align-self: end; margin: 0; font-size: 0.875rem; color: var(--muted-foreground); line-height: 1.5; }
+[data-feature-card] [data-post-meta] { grid-column: 1; }
+[data-spot-card] { align-items: center; gap: 0.875rem; padding: 0.5rem; flex: 1; }
+[data-spot-card] > img { width: 9.5rem !important; flex-shrink: 0; border-radius: 0.5rem; }
+[data-spot-card] [data-hero-art] { width: 9.5rem; flex-shrink: 0; border-radius: 0.5rem; }
+[data-spot-card] [data-card-body] { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+[data-spot-card] h3 { font-size: 1rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.25; }
+
+/* Browse: filter column + grid. */
+[data-blog-browse] { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+[data-blog-filters] {
+  position: sticky; top: calc(var(--topbar-height) + 1rem);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+[data-blog-filters] [data-blog-panel-label] { padding: 0; }
+[data-blog-filters] hr { border: none; border-top: 1px dashed var(--border-strong); margin: 0; }
+[data-blog-count] { font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-blog-grid] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+[data-post-card] { flex-direction: column; }
+[data-post-card] [data-card-body] { padding: 0.875rem 1rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+[data-post-card] h3 { font-size: 1.0625rem; font-weight: 650; letter-spacing: -0.02em; line-height: 1.25; }
+[data-post-card] [data-post-meta] { margin-top: auto; padding-top: 0.25rem; }
+
+/* ─── A post ─── */
+[data-blog-post] { max-width: 76rem; margin: 0 auto; }
+[data-post-head] {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem 2.5rem;
+  align-items: stretch; margin: 0.5rem 0 2.5rem;
+}
+[data-post-head-text] { display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+[data-post-trail] { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-post-trail] a[data-pill] {
+  padding: 0.2rem 0.6rem; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--card);
+  font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--foreground);
+}
+[data-post-trail] a[data-pill]:hover { border-color: var(--foreground); }
+[data-post-head] h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.033em; line-height: 1.1; }
+[data-author] { display: flex; align-items: center; gap: 0.75rem; margin-top: auto; padding-top: 0.5rem; }
+[data-author] img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; display: block; background: var(--muted); }
+[data-author] strong { display: block; font-size: 0.9375rem; font-weight: 650; }
+[data-author] span { display: block; font-size: 0.8125rem; color: var(--muted-foreground); }
+[data-post-hero] { margin: 0; border-radius: calc(var(--radius-lg) + 0.25rem); overflow: hidden; align-self: start; }
+[data-post-hero] img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; object-fit: cover; }
+
+[data-post-layout] { display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: 3rem; align-items: start; }
+[data-post-side] {
+  position: sticky; top: calc(var(--topbar-height) + 1.25rem);
+  max-height: calc(100vh - var(--topbar-height) - 2.5rem); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+[data-side-label] {
+  display: block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--muted-foreground); padding-bottom: 0.6rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+}
+[data-post-toc] ul { list-style: none; margin: 0; padding: 0; }
+[data-post-toc] a {
+  display: block; padding: 0.35rem 0.6rem; border-left: 2px solid transparent;
+  font-size: 0.8125rem; line-height: 1.35; color: var(--muted-foreground);
+}
+[data-post-toc] a:hover { color: var(--foreground); border-left-color: var(--border-strong); }
+[data-post-toc] a[data-on] { color: var(--foreground); font-weight: 600; border-left-color: var(--accent); }
+[data-toc-mobile] { display: none; }
+[data-share] { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+[data-share] a, [data-share] button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.25rem; height: 2.25rem; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--card); color: var(--foreground);
+  cursor: pointer; padding: 0; position: relative;
+}
+[data-share] a:hover, [data-share] button:hover { border-color: var(--foreground); }
+[data-share] [data-copied]::after {
+  content: "Copied"; position: absolute; top: calc(100% + 0.35rem); left: 50%; transform: translateX(-50%);
+  font-size: 0.6875rem; font-weight: 600; color: var(--foreground); white-space: nowrap;
+}
+[data-post-body] { max-width: 46rem; font-size: 1rem; line-height: 1.65; }
+[data-post-body] h2, [data-post-body] h3 { scroll-margin-top: calc(var(--topbar-height) + 1rem); }
+[data-post-body] h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; }
+/* Post tables had no styling at all. Scrolled inside their own box, never
+   the page: a five-column fee chart is wider than a phone. */
+[data-post-body] table {
+  display: block; max-width: 100%; overflow-x: auto; margin: 0 0 1.25rem;
+  border-collapse: collapse; font-size: 0.9375rem; line-height: 1.45;
+}
+[data-post-body] th, [data-post-body] td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+[data-post-body] th { font-size: 0.8125rem; font-weight: 650; color: var(--muted-foreground); border-bottom-color: var(--border-strong); }
+[data-post-body] td { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1100px) {
+  [data-blog-grid] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  [data-feature-card] [data-card-body] { grid-template-columns: 1fr; }
+  [data-feature-card] p { grid-column: 1; grid-row: auto; }
+  [data-post-layout] { grid-template-columns: 13rem minmax(0, 1fr); gap: 2rem; }
+}
+@media (max-width: 900px) {
+  [data-blog-top] { grid-template-columns: 1fr; }
+  [data-blog-browse] { grid-template-columns: 1fr; }
+  [data-blog-filters] { position: static; }
+  [data-post-head] { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  [data-post-hero] { order: -1; }
+  [data-author] { margin-top: 0; }
+  /* One column: the contents become a collapsible block above the article,
+     and the share row sits under it, as on the reference. */
+  [data-post-layout] { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  [data-post-layout] > *, [data-post-head] > * { min-width: 0; }
+  [data-post-side] { position: static; max-height: none; overflow: visible; gap: 1rem; }
+  [data-post-toc] { display: none; }
+  [data-toc-mobile] {
+    display: block; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--card);
+  }
+  [data-toc-mobile] summary {
+    cursor: pointer; padding: 0.75rem 1rem; font-size: 0.8125rem; font-weight: 650; list-style-position: inside;
+  }
+  [data-toc-mobile] ul { list-style: none; margin: 0; padding: 0 0.5rem 0.75rem; }
+  [data-toc-mobile] a { display: block; padding: 0.4rem 0.5rem; font-size: 0.875rem; color: var(--muted-foreground); }
+  [data-share-wrap] [data-side-label] { border-bottom: none; padding-bottom: 0; }
+}
+@media (max-width: 640px) {
+  [data-blog-head] h1, [data-post-head] h1 { font-size: 1.875rem; }
+  [data-blog-grid] { grid-template-columns: 1fr; }
+  [data-feature-card] h2 { font-size: 1.375rem; }
+  [data-spot-card] [data-hero-art] { width: 7.5rem; }
+}
