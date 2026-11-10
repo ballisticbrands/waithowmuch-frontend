@@ -8,7 +8,7 @@ import {
   type PrintFormat, type QuoteAtInput,
 } from "@/data/kdp-royalties.mjs";
 import {
-  TITLE, DOC_TITLE, LEDE, SOURCE_LINE, SECTIONS, FAQ, RELATED, EX, ASSUMED_FILE_MB,
+  H1, TAGLINE, DOC_TITLE, LEDE, SOURCE_LINE, SECTIONS, FAQ, RELATED, EX, ASSUMED_FILE_MB,
 } from "@/data/kdp-calculator-page.mjs";
 
 /**
@@ -192,9 +192,8 @@ export default function KdpCalculator() {
   return (
     <main data-main>
       <div data-fba>
-        <h1>{TITLE}</h1>
-        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
-        <p data-fba-source>{SOURCE_LINE}</p>
+        <h1>{H1}</h1>
+        <p data-fba-tagline>{TAGLINE}</p>
 
         <section data-fba-card data-kdp aria-label="KDP royalty calculator">
           <div data-kdp-tabs role="tablist" aria-label="Book format" onKeyDown={onTabKey}>
@@ -244,8 +243,7 @@ export default function KdpCalculator() {
                     </select>
                   </label>
                   <p data-roas-hint>
-                    Large trim is wider than {PRINT.largeOver.widthIn} in or taller than {PRINT.largeOver.heightIn} in (7 × 10,
-                    8.5 × 11); 5 × 8, 5.5 × 8.5 and 6 × 9 are regular.
+                    Large: wider than {PRINT.largeOver.widthIn} in or taller than {PRINT.largeOver.heightIn} in.
                   </p>
                 </>
               )}
@@ -272,10 +270,8 @@ export default function KdpCalculator() {
                     </label>
                   </div>
                   <p data-roas-hint>
-                    Only big, image-heavy files change the answer. At 70% KDP charges {usd(EBOOK.deliveryPerMb)} per MB to
-                    deliver each copy, so 35% pays more only when the file in MB is bigger than the list price ÷ $0.30
-                    {price > 0 ? <> ({(price / 0.3).toFixed(1)} MB at {usd(price)})</> : null}. Picture books, cookbooks and
-                    comics are the ones to check. 70% also needs the eBook priced at least 20% below any print edition.
+                    70% pays {usd(EBOOK.deliveryPerMb)} per MB for delivery, so 35% pays more only above
+                    {price > 0 ? <> {(price / 0.3).toFixed(1)} MB at {usd(price)}</> : <> list price ÷ $0.30 in MB</>}.
                   </p>
                 </details>
               )}
@@ -310,6 +306,9 @@ export default function KdpCalculator() {
           print={{ pages: pagesN, ink: inks.paperback, trim }}
           hcInk={inks.hardcover}
         />
+
+        <p data-fba-source>{SOURCE_LINE}</p>
+        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
 
         <aside data-fba-cta>
           <p>
@@ -762,8 +761,7 @@ function MonthlyProfit({ m, setM, prices, fileMb, option, print, hcInk }: {
       <div data-kdp-monthly-grid>
         <form onSubmit={(e) => e.preventDefault()} aria-label="Monthly sales and costs">
           <p data-roas-hint>
-            Each format's price, ink and page count come from its tab above. The numbers below are the example book's: replace
-            them with yours, and set a format to 0 if you do not publish it.
+            Prices, ink and pages come from the tabs above. Set a format to 0 if you do not publish it.
           </p>
           <fieldset data-kdp-group>
             <legend data-fba-card-title>Kindle eBook</legend>
@@ -775,8 +773,7 @@ function MonthlyProfit({ m, setM, prices, fileMb, option, print, hcInk }: {
               <Money label="Rate per KENP" value={m.kenpRate} onChange={(v) => setM("kenpRate", v)} placeholder="from your report" optional />
             </div>
             <p data-roas-hint>
-              Kindle Unlimited (Kindle+) pages need KDP Select. KDP does not publish the per-page rate: divide a recent month's
-              Kindle+ royalties by its KENP read in your KDP reports.
+              Needs KDP Select. Rate: a month's Kindle+ royalties ÷ its KENP read, from your KDP reports.
             </p>
           </fieldset>
           <fieldset data-kdp-group>
@@ -889,7 +886,7 @@ function MonthlyResults({ r }: { r: KdpResult }) {
     key: "beAcos", label: "Break-even ACOS", value: pf(r.beAcos),
     note: r.beAcos == null
       ? "Needs copies sold on Amazon."
-      : `Royalties ÷ sales at list price. Ads costing more than ${pf(r.beAcos)} of the sales they drive lose money${r.adShare != null ? `; yours are ${pf(r.adShare)} of all sales` : ""}.`,
+      : `Royalties ÷ sales at list price${r.adShare != null ? `; your ads are ${pf(r.adShare)} of all sales` : ""}.`,
   });
   rows.push({
     key: "payback", label: "Months to earn back costs",

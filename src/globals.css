@@ -2413,9 +2413,12 @@ img[data-row-logo] {
    page does not jump as the numbers change; the comparison column only adds
    width, never height. */
 [data-fba] > h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.033em; max-width: 44rem; }
-[data-fba-lede] { max-width: 44rem; margin: 0.9rem 0 0.5rem; font-size: 1.0625rem; }
-[data-fba-source] { max-width: 44rem; margin: 0 0 1.5rem; font-size: 0.8125rem; color: var(--muted-foreground); }
-[data-fba-source] a, [data-fba-compare-note] a, [data-fba-copy] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+/* Above the tool: the H1 and one short line, nothing else, so the tool is in
+   the first screen. The lede and the source line sit under the tool. */
+[data-fba-tagline] { max-width: 44rem; margin: 0.5rem 0 1.25rem; font-size: 1.0625rem; color: var(--muted-foreground); }
+[data-fba-source] { max-width: none; margin: 0.75rem 0 0; font-size: 0.75rem; line-height: 1.45; color: var(--muted-foreground); }
+[data-fba-lede] { max-width: 44rem; margin: 1.5rem 0 0.5rem; font-size: 1.0625rem; }
+[data-fba-source] a, [data-fba-lede] a, [data-fba-copy] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
 
 [data-fba-grid] { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
 @media (min-width: 1100px) { [data-fba-grid] { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
@@ -2465,15 +2468,12 @@ img[data-row-logo] {
 [data-fba-results-table] tbody tr + tr > * { border-top: 1px solid var(--border); }
 [data-fba-results-table] td { text-align: right; vertical-align: top; padding: 0.55rem 0 0.55rem 0.75rem; white-space: nowrap; }
 [data-fba-num] { font-variant-numeric: tabular-nums; letter-spacing: -0.015em; font-weight: 600; }
-[data-fba-num][data-theirs] { color: var(--muted-foreground); font-weight: 500; }
 [data-fba-num][data-negative] { color: var(--danger); }
 [data-fba-line] { display: block; font-size: 0.9375rem; font-weight: 600; }
 [data-fba-note] { display: block; font-size: 0.78rem; line-height: 1.4; color: var(--muted-foreground); margin-top: 0.1rem; white-space: normal; }
-[data-fba-results-table] tr[data-strong] [data-fba-num]:not([data-theirs]) { font-size: 1.0625rem; font-weight: 700; }
+[data-fba-results-table] tr[data-strong] [data-fba-num] { font-size: 1.0625rem; font-weight: 700; }
 [data-fba-empty], [data-fba-flag] { font-size: 0.875rem; color: var(--muted-foreground); }
 [data-fba-flag] { margin: 0.75rem 0 0; color: var(--warning); }
-[data-fba-compare-note] { margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border); font-size: 0.8125rem; color: var(--muted-foreground); }
-[data-fba-compare-note] p { margin: 0 0 0.6rem; }
 
 [data-fba-cta] {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem;
@@ -2494,7 +2494,7 @@ img[data-row-logo] {
   [data-fba] > h1 { font-size: 1.875rem; }
   [data-fba-card] { padding: 0.95rem 0.9rem 1.1rem; }
   [data-fba-results-table] td, [data-fba-results-table] thead th { padding-left: 0.5rem; }
-  [data-fba-results-table] tr[data-strong] [data-fba-num]:not([data-theirs]) { font-size: 1rem; }
+  [data-fba-results-table] tr[data-strong] [data-fba-num] { font-size: 1rem; }
 }
 
 /* ─── ROAS calculator (pages/RoasCalculator.tsx) ───────────────────────
@@ -2510,9 +2510,6 @@ img[data-row-logo] {
 }
 [data-roas-verdict][data-tone="good"] { border-left-color: var(--success, var(--accent)); }
 [data-roas-verdict][data-tone="bad"] { border-left-color: var(--danger); }
-[data-roas-bench] td:not(:first-child), [data-roas-bench] th:not(:first-child) { text-align: right; }
-[data-roas-bench] td:first-child { white-space: nowrap; }
-[data-roas-notes] { font-size: 0.8125rem; color: var(--muted-foreground); }
 
 /* ─── Sales estimator & seller revenue calculator ──────────────────────
    (pages/SalesEstimator.tsx, StoreRevenue.tsx, components/SalesToolParts.tsx)
@@ -2544,11 +2541,6 @@ img[data-row-logo] {
 [data-st-list] li { margin-bottom: 0.55rem; overflow-wrap: anywhere; }
 [data-st-list] li > a { color: var(--foreground); text-decoration: none; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 [data-st-list] li > span { display: block; font-size: 0.78rem; color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
-[data-st-comparables] { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
-[data-st-comparables] ul { list-style: none; margin: 0 0 0.5rem; padding: 0; }
-[data-st-comparables] li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.1rem 0.75rem; padding: 0.35rem 0; font-size: 0.9rem; }
-[data-st-comparables] li a { font-weight: 600; color: var(--accent); }
-[data-st-comparables] li span { font-size: 0.78rem; color: var(--muted-foreground); }
 [data-st-provenance] { margin: 0.9rem 0 0; font-size: 0.75rem; color: var(--muted-foreground); }
 [data-st-notice], [data-st-gate] {
   margin: 0 0 1rem; padding: 0.9rem 1rem; border-radius: var(--radius-lg); border: 1px solid var(--border);

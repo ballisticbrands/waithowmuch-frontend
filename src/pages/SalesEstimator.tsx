@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
-import { Comparables, Notice, Provenance, ToolCopy, Unavailable } from "@/components/SalesToolParts";
+import { Notice, Provenance, ToolCopy, Unavailable } from "@/components/SalesToolParts";
 import { gaEvent, trackCtaClick } from "@/lib/track";
-import { ESTIMATOR, STORE_PATH } from "@/data/sales-tools-page.mjs";
+import { ATTRIBUTION, ESTIMATOR, STORE_PATH } from "@/data/sales-tools-page.mjs";
 import {
   REFERRAL_CATEGORIES, IN_PER_CM, LB_PER_KG, TIER_LABELS, calculate, periodFor, type CalcResult,
 } from "@/data/fba-fees-2026.mjs";
@@ -56,8 +56,8 @@ export default function SalesEstimator() {
   return (
     <main data-main>
       <div data-fba>
-        <h1>{ESTIMATOR.title}</h1>
-        <p data-fba-lede dangerouslySetInnerHTML={{ __html: ESTIMATOR.lede }} />
+        <h1>{ESTIMATOR.h1}</h1>
+        <p data-fba-tagline>{ESTIMATOR.tagline}</p>
 
         <form
           data-fba-card
@@ -90,6 +90,9 @@ export default function SalesEstimator() {
           )}
           {result?.kind === "ok" && <ProductResult p={result.data} />}
         </div>
+
+        <p data-fba-source dangerouslySetInnerHTML={{ __html: ATTRIBUTION }} />
+        <p data-fba-lede dangerouslySetInnerHTML={{ __html: ESTIMATOR.lede }} />
 
         <aside data-fba-cta>
           <p>
@@ -243,7 +246,6 @@ function ProductResult({ p }: { p: ProductSales }) {
         </>
       )}
 
-      <Comparables items={p.comparables} />
       <Provenance retrievedAt={p.retrievedAt} />
     </section>
   );

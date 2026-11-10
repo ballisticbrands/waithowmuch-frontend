@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { businessPath } from "@/data/site";
 import { ATTRIBUTION, FBA_PATH, type ToolPage } from "@/data/sales-tools-page.mjs";
-import { readAt, type Comparable } from "@/lib/sales-tools";
+import { readAt } from "@/lib/sales-tools";
 
 /** Shared pieces of the two Keepa-backed tools (pages/SalesEstimator.tsx and
  *  pages/StoreRevenue.tsx). Layout reuses the FBA calculator's data-fba-*. */
@@ -29,34 +28,6 @@ export function ToolCopy({ page }: { page: ToolPage }) {
         <h2>Related</h2>
         <ul>{page.related.map((r) => <li key={r.href}><Link to={r.href}>{r.label}</Link></li>)}</ul>
       </section>
-    </div>
-  );
-}
-
-const MATCH: Record<Comparable["matchedOn"], string> = {
-  asin: "sells this product",
-  brand: "same brand",
-  seller: "same seller",
-  revenue: "similar monthly revenue",
-};
-
-export function Comparables({ items }: { items: Comparable[] }) {
-  if (!items.length) return null;
-  return (
-    <div data-st-comparables>
-      <h3 data-fba-card-title>Businesses in our database</h3>
-      <ul>
-        {items.map((c) => (
-          <li key={c.slug}>
-            <Link to={businessPath(c.slug)}>{c.name}</Link>
-            <span>
-              {MATCH[c.matchedOn]}
-              {c.latestMonthlyRevenue ? ` · $${Math.round(Number(c.latestMonthlyRevenue)).toLocaleString("en-US")}/mo` : ""}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <p data-fba-empty>Each one is a full case study: revenue, profit, margin and how the numbers were reached.</p>
     </div>
   );
 }

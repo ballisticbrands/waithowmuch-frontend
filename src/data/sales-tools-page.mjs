@@ -35,10 +35,13 @@ export const ESTIMATOR = {
   path: ESTIMATOR_PATH,
   crumb: 'Amazon sales estimator',
   title: 'Amazon Sales Estimator: Monthly Sales by ASIN',
+  /* The visible H1 and the one line above the tool; `title` stays the JSON-LD name. */
+  h1: 'Amazon sales estimator',
+  tagline: 'Monthly units and revenue for any ASIN, from Amazon\'s own "bought in past month" figure, plus fees and profit.',
   docTitle: 'Amazon Sales Estimator by ASIN (Free) | WaitHowMuch',
   description:
     "Free Amazon sales estimator: paste an ASIN or product link and see monthly units from Amazon's own \"bought in past month\" figure, revenue, FBA fees and profit per unit.",
-  lede: `Paste an ASIN or an Amazon product link and see how many units it sells a month, read from <strong>Amazon's own "bought in past month" figure</strong> rather than guessed from its sales rank. You get the price, a monthly revenue range, Amazon's FBA and referral fees on the 2026 rate card, profit per unit at the cost you enter, and the businesses in our database that sell at a similar scale.`,
+  lede: `Paste an ASIN or an Amazon product link and see how many units it sells a month, read from <strong>Amazon's own "bought in past month" figure</strong> rather than guessed from its sales rank. You get the price, a monthly revenue range, Amazon's FBA and referral fees on the 2026 rate card, and profit per unit at the cost you enter.`,
   sections: [
     {
       id: 'how',
@@ -104,6 +107,8 @@ export const STORE = {
   path: STORE_PATH,
   crumb: 'Amazon seller revenue calculator',
   title: 'Amazon Seller Revenue Calculator: Any Store\'s Monthly Sales',
+  h1: 'Amazon seller revenue calculator',
+  tagline: 'Paste a seller ID or storefront link to estimate the whole store\'s monthly revenue from Amazon\'s own sales figures.',
   docTitle: 'Amazon Seller Revenue Calculator (Free) | WaitHowMuch',
   description:
     "Estimate any Amazon seller's monthly revenue: paste a seller ID or storefront link and we add up Amazon's \"bought in past month\" figure times price across the whole store.",

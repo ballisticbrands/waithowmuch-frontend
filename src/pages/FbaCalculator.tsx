@@ -1,23 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
-import { apiFetch, type BusinessCard } from "@/lib/api";
-import { fbaCalculatorBootstrap } from "@/lib/bootstrap";
 import { gaEvent, trackCtaClick } from "@/lib/track";
 import {
   PERIODS, REFERRAL_CATEGORIES, TIER_LABELS, IN_PER_CM, LB_PER_KG, calculate, categoryById, periodFor,
   type PeriodId, type CalcResult,
 } from "@/data/fba-fees-2026.mjs";
-import { fbaPresets, type FbaPreset } from "@/data/fba-calculator-presets.mjs";
 import {
-  TITLE, DOC_TITLE, LEDE, SOURCE_LINE, SECTIONS, FAQ, RELATED, RESULT_NOTES,
+  H1, TAGLINE, DOC_TITLE, LEDE, SOURCE_LINE, SECTIONS, FAQ, RELATED, RESULT_NOTES,
 } from "@/data/fba-calculator-page.mjs";
-import { businessPath } from "@/data/site";
 
 /**
  * /tools/amazon-fba-calculator/ — an FBA fee and profit calculator on
- * Amazon's published US rate card (data/fba-fees-2026.mjs), with the option to
- * set any product beside a real business's per-unit numbers.
+ * Amazon's published US rate card (data/fba-fees-2026.mjs).
  *
  * Client-side only: nothing is sent anywhere. The words under the calculator
  * come from data/fba-calculator-page.mjs, which the prerender emits too.
@@ -61,23 +56,6 @@ function fromQuery(): Fields {
   return { ...DEFAULTS, productCost: ok("cost") ?? DEFAULTS.productCost, inboundShipping: ok("inbound") ?? DEFAULTS.inboundShipping };
 }
 
-type Published = Pick<BusinessCard, "slug" | "name" | "snapshotMonth">;
-
-/** Published businesses (slug → name). Inlined by the prerender on a landing;
- *  fetched on a client-side navigation. Null until known. */
-function usePublished(): Map<string, Published> | null {
-  const [list, setList] = useState<Published[] | null>(() => fbaCalculatorBootstrap()?.businesses ?? null);
-  useEffect(() => {
-    if (list) return;
-    let live = true;
-    apiFetch<{ businesses: BusinessCard[] }>("/v1/businesses?limit=100")
-      .then((r) => live && setList(r.businesses))
-      .catch(() => live && setList([]));
-    return () => { live = false; };
-  }, [list]);
-  return useMemo(() => (list ? new Map(list.map((b) => [b.slug, b])) : null), [list]);
-}
-
 export default function FbaCalculator() {
   useSetCrumbs(() => [{ label: "Amazon FBA calculator" }], []);
   useEffect(() => { document.title = DOC_TITLE; }, []);
@@ -85,7 +63,6 @@ export default function FbaCalculator() {
   const [period, setPeriod] = useState<PeriodId>(() => periodFor(today));
   const [units, setUnits] = useState<Units>("imperial");
   const [f, setF] = useState<Fields>(fromQuery);
-  const [compareId, setCompareId] = useState("");
 
   /* One "calculator_use" per page view, on the first edit — enough to tell
      visitors who used it from ones who only read. */
@@ -97,15 +74,6 @@ export default function FbaCalculator() {
   };
   const set = <K extends keyof Fields>(k: K, v: Fields[K]) => { touch(); setF((x) => ({ ...x, [k]: v })); };
 
-  const published = usePublished();
-  const presets = useMemo(
-    () => (published ? fbaPresets().filter((p) => published.has(p.slug)) : []),
-    [published],
-  );
-  const compare = presets.find((p) => p.id === compareId) ?? null;
-  const presetName = (p: FbaPreset) =>
-    `${published?.get(p.slug)?.name ?? p.slug}${p.product ? ` — ${p.product}` : ""}`;
-
   const switchUnits = (to: Units) => {
     if (to === units) return;
     const k = to === "metric" ? 1 / IN_PER_CM : IN_PER_CM;
@@ -115,25 +83,6 @@ export default function FbaCalculator() {
       ...x, length: conv(x.length, k), width: conv(x.width, k), height: conv(x.height, k), weight: conv(x.weight, w),
     }));
     setUnits(to);
-  };
-
-  const loadPreset = (p: FbaPreset) => {
-    touch();
-    gaEvent("calculator_preset", { tool: "fba_calculator", business_slug: p.slug });
-    const metric = units === "metric";
-    setF((x) => ({
-      ...x,
-      price: trim(p.price),
-      productCost: trim(p.productCost),
-      inboundShipping: trim(p.inboundShipping),
-      length: trim(metric ? p.lengthIn / IN_PER_CM : p.lengthIn),
-      width: trim(metric ? p.widthIn / IN_PER_CM : p.widthIn),
-      height: trim(metric ? p.heightIn / IN_PER_CM : p.heightIn),
-      weight: trim(metric ? p.weightLb / LB_PER_KG : p.weightLb, 3),
-      category: p.category,
-      dangerous: false,
-      adPct: trim(p.adPct, 1),
-    }));
   };
 
   const result: CalcResult | null = useMemo(() => {
@@ -161,9 +110,8 @@ export default function FbaCalculator() {
   return (
     <main data-main>
       <div data-fba>
-        <h1>{TITLE}</h1>
-        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
-        <p data-fba-source dangerouslySetInnerHTML={{ __html: SOURCE_LINE }} />
+        <h1>{H1}</h1>
+        <p data-fba-tagline>{TAGLINE}</p>
 
         <div data-fba-grid>
           {/* ── Inputs ───────────────────────────────────────────── */}
@@ -229,40 +177,22 @@ export default function FbaCalculator() {
           <section data-fba-card data-fba-results aria-live="polite" aria-label="Results">
             <h2 data-fba-card-title>Per unit</h2>
 
-            <label data-fba-field>
-              <span>Compare with a real business</span>
-              <select data-select value={compareId} onChange={(e) => setCompareId(e.target.value)} disabled={!presets.length}>
-                <option value="">{published ? "Choose a product…" : "Loading…"}</option>
-                {presets.map((p) => <option key={p.id} value={p.id}>{presetName(p)}</option>)}
-              </select>
-            </label>
-
             {!result ? (
               <p data-fba-empty>Enter a price above $0 and the box's length, width, height and weight to see the fees.</p>
             ) : (
-              <Results r={result} price={num(f.price)} compare={compare} cat={cat?.name ?? ""} />
+              <Results r={result} price={num(f.price)} cat={cat?.name ?? ""} />
             )}
 
-            {compare && (
-              <div data-fba-compare-note>
-                <p>
-                  <strong>Theirs: {presetName(compare)}</strong> at {usd(compare.price)} ({compare.priceLabel}), with every
-                  cost line from its <Link to={businessPath(compare.slug)}>case study</Link>. Their FBA fee is what Amazon
-                  charged when we read the listings, not this calculator's figure, and their figures leave out storage. All of them
-                  are estimates built from public data.
-                </p>
-                <button type="button" data-btn data-variant="ghost" onClick={() => loadPreset(compare)}>
-                  Load their numbers into the calculator
-                </button>
-              </div>
-            )}
           </section>
         </div>
 
+        <p data-fba-source dangerouslySetInnerHTML={{ __html: SOURCE_LINE }} />
+        <p data-fba-lede dangerouslySetInnerHTML={{ __html: LEDE }} />
+
         <aside data-fba-cta>
           <p>
-            We publish the real unit economics of Amazon businesses like these, with every figure sourced. One email when a
-            new case study is out.
+            We publish the real unit economics of Amazon businesses, with every figure sourced. One email when a new case
+            study is out.
           </p>
           <Link data-btn to="/signup" onClick={() => trackCtaClick("fba_calculator")}>Get emails on new case studies</Link>
         </aside>
@@ -274,22 +204,6 @@ export default function FbaCalculator() {
               <div dangerouslySetInnerHTML={{ __html: s.html }} />
             </section>
           ))}
-
-          <section id="compare">
-            <h2>Businesses you can compare with</h2>
-            <p>
-              Each preset is one product from a business in our database, with the per-unit figures from its case study:
-              price, cost of goods, freight, Amazon's fees and advertising.
-            </p>
-            <ul>
-              {presets.map((p) => (
-                <li key={p.id}>
-                  <Link to={businessPath(p.slug)}>{published?.get(p.slug)?.name ?? p.slug}</Link>
-                  {p.product ? `: ${p.product}` : ""}, {usd(p.price)}, {pct(p.marginPct)} margin before storage
-                </li>
-              ))}
-            </ul>
-          </section>
 
           <section id="faq">
             <h2>Frequently asked questions</h2>
@@ -332,42 +246,33 @@ function Num({ label, value, onChange, optional }: { label: string; value: strin
   );
 }
 
-function Results({ r, price, compare, cat }: { r: CalcResult; price: number; compare: FbaPreset | null; cat: string }) {
-  const c = compare;
-  const cFees = c ? c.referral + c.fba : null;
-  const cLanded = c ? c.productCost + c.inboundShipping : null;
-  const cBeforeAds = c ? c.price - c.referral - c.fba - c.productCost - c.inboundShipping : null;
+function Results({ r, price, cat }: { r: CalcResult; price: number; cat: string }) {
   const shipping = `${trim(r.tier.shippingLb, 2)} lb shipping weight${r.tier.usesDim ? " (dimensional)" : ""}`;
   const band = ["under $10", "$10–$50", "over $50"][r.fba.band];
 
-  type Row = { key: keyof typeof RESULT_NOTES; label: string; yours: string; theirs?: string; strong?: boolean; detail?: string; negative?: boolean };
+  type Row = { key: keyof typeof RESULT_NOTES; label: string; yours: string; strong?: boolean; detail?: string; negative?: boolean };
   const rows: Row[] = [
-    { key: "tier", label: "Size tier", yours: TIER_LABELS[r.tier.tier], detail: `${shipping}, ${band} rate`, theirs: c ? "" : undefined },
-    { key: "fba", label: "FBA fulfilment fee", yours: usd(r.fba.fee), theirs: c ? usd(c.fba) : undefined,
+    { key: "tier", label: "Size tier", yours: TIER_LABELS[r.tier.tier], detail: `${shipping}, ${band} rate` },
+    { key: "fba", label: "FBA fulfilment fee", yours: usd(r.fba.fee),
       detail: `${usd(r.fba.base)} from the rate card${r.kind === "apparel" ? " (apparel)" : r.kind === "dangerous" ? " (dangerous goods)" : ""}` },
-    { key: "referral", label: "Referral fee", yours: usd(r.referral.fee + r.referral.closingFee), theirs: c ? usd(c.referral) : undefined,
+    { key: "referral", label: "Referral fee", yours: usd(r.referral.fee + r.referral.closingFee),
       detail: `${cat}: ${r.referral.atMinimum ? "the per-unit minimum" : `${r.referral.effectivePct.toFixed(1)}% of price`}${r.referral.closingFee ? `, incl. ${usd(r.referral.closingFee)} closing fee` : ""}` },
-    { key: "storage", label: "Storage", yours: usd(r.storage), theirs: c ? "—" : undefined,
+    { key: "storage", label: "Storage", yours: usd(r.storage),
       detail: `${trim(r.storageMonth.cubicFeet, 3)} cu ft at $${r.storageMonth.rate.toFixed(2)} a month` },
-    { key: "amazonFees", label: "Total Amazon fees", yours: usd(r.amazonFees), theirs: c ? usd(cFees) : undefined, strong: true,
+    { key: "amazonFees", label: "Total Amazon fees", yours: usd(r.amazonFees), strong: true,
       detail: price > 0 ? `${((r.amazonFees / price) * 100).toFixed(1)}% of price` : undefined },
-    { key: "landed", label: "Landed cost", yours: usd(r.landed), theirs: c ? usd(cLanded) : undefined },
-    { key: "ads", label: "Advertising", yours: usd(r.ads), theirs: c ? usd(c.ads) : undefined },
-    { key: "profit", label: "Profit per unit", yours: usd(r.profit), theirs: c ? usd(c.profit) : undefined, strong: true, negative: r.profit < 0 },
-    { key: "margin", label: "Margin", yours: pct(r.marginPct), theirs: c ? pct(c.marginPct) : undefined, strong: true },
-    { key: "roi", label: "ROI", yours: pct(r.roiPct), theirs: c && cLanded ? pct((c.profit / cLanded) * 100) : c ? "—" : undefined },
-    { key: "acos", label: "Break-even ACOS", yours: pct(r.breakEvenAcosPct), theirs: c && cBeforeAds != null ? pct((cBeforeAds / c.price) * 100) : undefined },
-    { key: "monthly", label: "Profit a month", yours: usd0(r.monthlyProfit), theirs: c ? "" : undefined, strong: true },
+    { key: "landed", label: "Landed cost", yours: usd(r.landed) },
+    { key: "ads", label: "Advertising", yours: usd(r.ads) },
+    { key: "profit", label: "Profit per unit", yours: usd(r.profit), strong: true, negative: r.profit < 0 },
+    { key: "margin", label: "Margin", yours: pct(r.marginPct), strong: true },
+    { key: "roi", label: "ROI", yours: pct(r.roiPct) },
+    { key: "acos", label: "Break-even ACOS", yours: pct(r.breakEvenAcosPct) },
+    { key: "monthly", label: "Profit a month", yours: usd0(r.monthlyProfit), strong: true },
   ];
 
   return (
     <>
       <table data-fba-results-table>
-        {c && (
-          <thead>
-            <tr><th scope="col"><span data-sr-only>Line</span></th><th scope="col">Yours</th><th scope="col">Theirs</th></tr>
-          </thead>
-        )}
         <tbody>
           {rows.map((row) => (
             <tr key={row.key} data-strong={row.strong ? "" : undefined}>
@@ -376,7 +281,6 @@ function Results({ r, price, compare, cat }: { r: CalcResult; price: number; com
                 <span data-fba-note>{RESULT_NOTES[row.key]}{row.detail ? ` ${row.detail}.` : ""}</span>
               </th>
               <td data-fba-num data-negative={row.negative ? "" : undefined}>{row.yours}</td>
-              {c && <td data-fba-num data-theirs>{row.theirs}</td>}
             </tr>
           ))}
         </tbody>

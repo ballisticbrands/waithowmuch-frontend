@@ -22,8 +22,6 @@ import {
 } from '../src/data/tariff.mjs';
 import { EXAMPLES, MPF_EXAMPLES, RELATED } from '../src/data/tariff-calculator-page.mjs';
 import { X_LANDED, X_FEES, X_DUTY, LANDED_EXAMPLE, RELATED as LANDED_RELATED } from '../src/data/landed-cost-calculator-page.mjs';
-import { PRESETS } from '../src/data/tariff-presets.mjs';
-import { profileFor } from '../src/businesses/index.mjs';
 import { publishedPosts, postPath } from '../src/data/content.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -180,14 +178,6 @@ near('landed example rate is the tariff example', LANDED_EXAMPLE.ratePct, EXAMPL
 /* CIF adds no freight line on top of the price. */
 near('CIF adds no freight', landedCost({ price: 10, units: 100, incoterm: 'CIF', freight: 500, insurance: 20 }).perUnit, 10, 1e-9);
 
-/* ── Presets: real lines, real businesses ───────────────────────────── */
-for (const p of PRESETS) {
-  const got = duty({ code: p.code, country: p.country, price: p.price, claims: p.claims });
-  if (got && !got.r.complete) fail(`preset ${p.id}: total is incomplete (${got.r.notes.join(' ')})`);
-  if (!profileFor(p.slug)) fail(`preset ${p.id}: no profile for ${p.slug}`);
-  if (findLeaves(shard(p.code), p.code).length !== 1) fail(`preset ${p.id}: ${p.code} is not exactly one leaf`);
-}
-
 /* Related reading must not link to a draft post. */
 const live = new Set(publishedPosts().map((p) => postPath(p.slug)));
 for (const r of [...RELATED, ...LANDED_RELATED]) if (r.href.startsWith('/blog/') && !live.has(r.href)) fail(`related link ${r.href} is not a published post`);
@@ -209,4 +199,4 @@ try {
 }
 
 if (failed) process.exit(1);
-console.log(`check-tariff: ${checks} checks agree on ${META.revision.name} (${EXAMPLES.length} worked examples, ${PRESETS.length} presets)`);
+console.log(`check-tariff: ${checks} checks agree on ${META.revision.name} (${EXAMPLES.length} worked examples)`);

@@ -1,7 +1,6 @@
 /**
- * Fails the build if the ROAS calculator's arithmetic is wrong, if the worked
- * examples in its copy stop saying what the copy claims, or if a benchmark
- * disagrees with the profile it was read from.
+ * Fails the build if the ROAS calculator's arithmetic is wrong, or if the
+ * worked examples in its copy stop saying what the copy claims.
  *
  * Cheap and offline, like check-fba-fees.mjs. Every expected value below is
  * worked by hand in the comment beside it, not taken from the code under test.
@@ -9,7 +8,6 @@
 import {
   calculate, preAdMargin, breakEvenRoas, breakEvenAcos, roasOf, acosOf, tacosOf, acosToRoas, roasToAcos,
 } from '../src/data/roas.mjs';
-import { roasBenchmarks, median } from '../src/data/roas-benchmarks.mjs';
 import { EX_GOOD, EX_BAD, EX_CHEAP, EX_LOSS, RELATED } from '../src/data/roas-calculator-page.mjs';
 import { publishedPosts, postPath } from '../src/data/content.mjs';
 
@@ -123,22 +121,10 @@ near('breakEvenAcos(0.3)', breakEvenAcos(0.3), 0.3);
 near('roasOf(500,0)', roasOf(500, 0), null);
 near('acosOf(100,0)', acosOf(100, 0), null);
 near('tacosOf(100,undefined)', tacosOf(100, undefined), null);
-near('median odd', median([3, 1, 2]), 2);
-near('median even', median([4, 1, 3, 2]), 2.5);
-
-/* Benchmarks: each one's numbers must add up, and there must be some. */
-const bench = roasBenchmarks();
-if (bench.length < 5) fail(`only ${bench.length} benchmarks (expected the published profiles' margins)`);
-for (const b of bench) {
-  near(`${b.slug} pre = after + ads`, b.preAdPct, b.marginPct + b.adPct, 1e-9);
-  if (b.preAdPct > 0) near(`${b.slug} beRoas × pre`, b.beRoas * b.preAdPct, 100, 1e-9);
-  near(`${b.slug} costs add up`, (b.productCost + b.fees + b.otherCosts) / b.price, 1 - b.preAdPct / 100, 1e-3);
-  if (!(b.adPct >= 0 && b.adPct < 100)) fail(`${b.slug}: ad share ${b.adPct}% is out of range`);
-}
 
 /* Related reading must not link to a draft post (a 404 in production). */
 const live = new Set(publishedPosts().map((p) => postPath(p.slug)));
 for (const r of RELATED) if (r.href.startsWith('/blog/') && !live.has(r.href)) fail(`related link ${r.href} is not a published post`);
 
 if (failed) process.exit(1);
-console.log(`check-roas: ${checks} checks agree, ${bench.length} benchmarks add up`);
+console.log(`check-roas: ${checks} checks agree`);

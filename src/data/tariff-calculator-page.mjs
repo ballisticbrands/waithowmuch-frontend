@@ -22,6 +22,10 @@ export const CROSS_URL = 'https://rulings.cbp.gov/';
 export const HTS_URL = 'https://hts.usitc.gov/';
 
 export const TITLE = 'US Import Tariff Calculator: Duty by HTS Code and Country';
+/** The visible H1: short, keyword first. TITLE stays the JSON-LD name. */
+export const H1 = 'US import tariff calculator';
+/** The one line above the calculator. Everything else sits below it. */
+export const TAGLINE = 'US import duty for any HTS code and country of origin, layer by layer, with the MPF and HMF.';
 export const DOC_TITLE = 'US Import Tariff Calculator 2026: Duty by HTS Code (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
   'Free US import tariff calculator on the official 2026 HTS: base duty, China Section 301 lists and exclusions, the 2026 Section 301 rate by country, MPF and HMF.';
@@ -36,8 +40,9 @@ export const dateLabel = (iso) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
 export const REVISION_LABEL = `HTS ${META.revision.label.replace(/^\d{4} HTS /, `${META.revision.label.slice(0, 4)} `)}`; // "HTS 2026 Revision 23"
-export const SOURCE_LINE = `Rates from the ${REVISION_LABEL} (in force from ${dateLabel(VALID_FROM)}), read from the US International Trade Commission on ${dateLabel(META.fetchedAt)}, with the Chapter 99 notes of the same revision. It answers for entry dates from ${dateLabel(VALID_FROM)} to ${dateLabel(VALID_THROUGH)}. An estimate, not a ruling: the classification that counts is the one CBP accepts.`;
-export const PRIVACY_LINE = 'Everything is worked out in your browser. Nothing you type is sent or stored.';
+/** One small line directly under the calculator (the tariff and landed-cost pages). */
+export const SOURCE_LINE = `Rates from the ${REVISION_LABEL}, read from the US International Trade Commission on ${dateLabel(META.fetchedAt)}, for entries through ${dateLabel(VALID_THROUGH)}.`;
+export const PRIVACY_LINE = 'Worked out in your browser; nothing you type is sent or stored.';
 
 /* ── Worked examples (recomputed by scripts/check-tariff.mjs) ────────── */
 export const EXAMPLES = [
@@ -135,7 +140,7 @@ ${META.lists.map((l) => `<tr><td>List ${l.id}</td><td>${l.heading}</td><td>${l.s
     {
       id: 'worked-examples',
       title: 'Worked examples from real Amazon products',
-      html: `<p>Products from businesses in our database, at the factory prices in their margin models, entered on ${dateLabel(VALID_FROM)}. The classification is ours, argued in <a href="${TARIFFS_POST_PATH}">how much tariffs add to Amazon products</a>; each preset above carries the CBP ruling it leans on.</p>
+      html: `<p>Products from businesses in our database, at the factory prices in their margin models, entered on ${dateLabel(VALID_FROM)}. The classification is ours, argued in <a href="${TARIFFS_POST_PATH}">how much tariffs add to Amazon products</a>, with the CBP rulings it leans on.</p>
 ${examplesTable(pathOf)}
 <p>The corkscrew shows why the exclusions matter: one sentence in note 20 takes the duty from 41.2% to 16.2%, about ${usd(2.28 - 0.9)} a unit. The scissors show a compound rate: 3 cents a pair plus 3%, which on a $2.42 pair works out to 4.24% before the 12.5%.</p>`,
     },
@@ -239,6 +244,6 @@ export const RELATED = [
   { href: '/blog/alibaba-vs-aliexpress/', label: 'Alibaba vs AliExpress' },
 ];
 
-export const LEDE = `Enter an HTS code or a product description, the country it is made in and its factory price, and get the US import duty layer by layer: the base rate, the China Section 301 lists and their exclusions, the 2026 Section 301 rate for the country of origin, the MPF and the HMF. A deck of cards from China pays <strong>12.5%</strong>; a steel kitchen tool on List 3 pays <strong>41.2%</strong> unless an exclusion covers it. Presets load real products from businesses we track.`;
+export const LEDE = `Enter an HTS code or a product description, the country it is made in and its factory price, and get the US import duty layer by layer: the base rate, the China Section 301 lists and their exclusions, the 2026 Section 301 rate for the country of origin, the MPF and the HMF. A deck of cards from China pays <strong>12.5%</strong>; a steel kitchen tool on List 3 pays <strong>41.2%</strong> unless an exclusion covers it. An estimate, not a ruling: the classification that counts is the one CBP accepts.`;
 
 export const usd0Label = usd0;

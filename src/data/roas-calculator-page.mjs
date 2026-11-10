@@ -11,11 +11,14 @@
  * prose and the arithmetic cannot drift apart.
  */
 import { calculate } from './roas.mjs';
-import { median } from './roas-benchmarks.mjs';
 
 export const CALCULATOR_PATH = '/tools/roas-calculator/';
 export const FBA_CALCULATOR_PATH = '/tools/amazon-fba-calculator/';
 export const TITLE = 'ROAS Calculator: Break-Even ROAS, ACOS and TACoS';
+/** The visible H1: short, keyword first. TITLE stays the JSON-LD name. */
+export const H1 = 'ROAS calculator';
+/** The one line above the calculator. Everything else sits below it. */
+export const TAGLINE = 'Your break-even ROAS and ACOS from your margin, plus ROAS, ACOS, TACoS and profit after ads.';
 export const DOC_TITLE = 'ROAS Calculator: Break-Even ROAS & ACOS (Free) | WaitHowMuch';
 export const META_DESCRIPTION =
   'Free ROAS calculator: get your break-even ROAS from your margin, plus ACOS, TACoS and profit after ads, and compare with the ad spend and margins of real Amazon businesses.';
@@ -42,7 +45,7 @@ export const EX_LOSS = calculate({ price: 15, productCost: 6, fees: 9.5, otherCo
 const ex = EXAMPLE;
 const exCosts = ex.productCost + ex.fees;
 
-export const LEDE = `A product that sells for $${ex.price} and costs $${x2(exCosts)} to make and sell keeps <strong>${pct(EX_GOOD.m, 0)} of its price before advertising</strong>, so every $1 of ads has to bring back at least <strong>$${x2(EX_GOOD.beRoas)} in sales</strong> just to break even. That is its break-even ROAS. Enter your price, costs and a period's ad spend and sales below to get your ROAS, ACOS, break-even ROAS and ACOS, TACoS and what is left after ads, then set them beside the margins and ad spend of real Amazon businesses.`;
+export const LEDE = `A product that sells for $${ex.price} and costs $${x2(exCosts)} to make and sell keeps <strong>${pct(EX_GOOD.m, 0)} of its price before advertising</strong>, so every $1 of ads has to bring back at least <strong>$${x2(EX_GOOD.beRoas)} in sales</strong> just to break even. That is its break-even ROAS. Enter your price, costs and a period's ad spend and sales in the calculator above to get your ROAS, ACOS, break-even ROAS and ACOS, TACoS and what is left after ads.`;
 
 export const PRIVACY_LINE = 'Everything is worked out in your browser. Nothing you type is sent or stored.';
 
@@ -107,30 +110,6 @@ export const SECTIONS = [
   },
 ];
 
-/* ── Benchmarks: the words around the table, from the same rows ─────── */
-
-/**
- * The paragraph under "Real ad spend and margins", from the rows the page
- * actually shows (published businesses only), so it can never name a
- * business that is not on the page. `nameOf` maps a slug to its name.
- */
-export function benchmarkSummaryHtml(rows, nameOf, pathOf) {
-  if (!rows.length) return '';
-  const link = (r) => `<a href="${pathOf(r.slug)}">${esc(nameOf(r.slug))}</a>`;
-  const byPre = [...rows].filter((r) => r.beRoas != null).sort((a, b) => b.preAdPct - a.preAdPct);
-  const hi = byPre[0];
-  const lo = byPre[byPre.length - 1];
-  const medAd = median(rows.map((r) => r.adPct));
-  const medPre = median(rows.map((r) => r.preAdPct));
-  const medBe = median(rows.map((r) => r.beRoas));
-  const modelled = rows.filter((r) => r.basis === 'modelled').length;
-  return `<p>These are the ${rows.length} businesses in our database with an advertising line in their published margin. Across them the median margin before ads is ${medPre.toFixed(1)}%, which puts the median break-even ROAS at ${medBe.toFixed(2)}. The spread is wide: ${link(hi)} keeps ${hi.preAdPct.toFixed(1)}% before ads and breaks even at a ROAS of ${hi.beRoas.toFixed(2)}, while ${link(lo)} keeps ${lo.preAdPct.toFixed(1)}% and needs ${lo.beRoas.toFixed(2)}.</p>
-<p>The median business puts ${medAd.toFixed(1)}% of its revenue into advertising (its TACoS). Read that as a floor: ${modelled} of the ${rows.length} advertising figures are modelled from the sponsored ads we can see in Amazon search results, which misses automatic campaigns, ads on product pages, Sponsored Brands and Display. None of these businesses publishes ad-attributed sales, so we show no ROAS or ACOS for them, only what break-even would be at their margins.</p>`;
-}
-
-export const BENCHMARK_INTRO =
-  'Each row is one business from our database: advertising as a share of its revenue, its margin before and after ads, and the break-even ROAS and ACOS that margin implies. Every figure comes from the margin breakdown on its case study.';
-
 /* ── FAQ: written around what people actually search ───────────────── */
 export const FAQ = [
   {
@@ -163,7 +142,7 @@ export const FAQ = [
   },
   {
     q: 'Does this ROAS calculator work for Google, Meta or Shopify ads?',
-    a: 'Yes. The arithmetic is the same on every platform: enter your price, product cost, the fees each sale pays (Shopify and payment fees instead of Amazon\'s), and the spend and sales the platform reports. Only the Amazon fee helper and the benchmarks are Amazon-specific.',
+    a: 'Yes. The arithmetic is the same on every platform: enter your price, product cost, the fees each sale pays (Shopify and payment fees instead of Amazon\'s), and the spend and sales the platform reports. Only the link to the Amazon FBA fee calculator is Amazon-specific.',
   },
 ];
 

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiFetch, type BusinessCard } from "@/lib/api";
 import { gaEvent, trackCtaClick } from "@/lib/track";
 import { loadShard, loadSearch, searchHts, type SearchHit } from "@/lib/tariff-client";
 import {
@@ -8,9 +7,7 @@ import {
   chapterOf, digitsOf, formatCode, findLeaves, lineInfo, overlaysFor, computeDuty, entryFees, customsValue,
   landedCost, bandCheck, type Shard, type Claims, type Need, type DutyResult,
 } from "@/data/tariff.mjs";
-import { PRESETS, presetById, type TariffPreset } from "@/data/tariff-presets.mjs";
 import { dateLabel, CROSS_URL, FBA_CALCULATOR_PATH, LANDED_PATH, CALCULATOR_PATH } from "@/data/tariff-calculator-page.mjs";
-import { businessPath } from "@/data/site";
 
 /**
  * The calculator behind /tools/tariff-calculator/ and
@@ -24,7 +21,6 @@ import { businessPath } from "@/data/site";
  */
 
 export type Variant = "tariff" | "landed";
-type Published = Pick<BusinessCard, "slug" | "name" | "snapshotMonth">;
 
 type Fields = {
   units: string; price: string; incoterm: string; included: string;
@@ -55,47 +51,28 @@ const BLANK: Fields = {
   weightKg: "", freight: "", insurance: "", broker: "150", inbound: "0.25", other: "",
 };
 
-function fieldsFor(p: TariffPreset, variant: Variant, units = 1000): Fields {
-  return {
-    ...BLANK,
-    units: String(units),
-    price: trim(p.price),
-    assistTotal: p.assist ? String(p.assist.total) : "",
-    assistUnits: p.assist ? String(p.assist.units) : "",
-    freight: variant === "landed" ? trim(p.freightPerUnit * units) : "",
-    insurance: variant === "landed" ? trim(p.price * units * 0.005) : "",
-  };
-}
+/* What each page opens on: the deck of cards and the spatula from the worked
+   examples (data/tariff-calculator-page.mjs), so the first screen already
+   shows a result. Insurance is 0.5% of the goods, as in the landed example. */
+const START: Record<Variant, { code: string; country: string; fields: Fields }> = {
+  tariff: { code: "9504400000", country: "CN", fields: { ...BLANK, units: "1000", price: "0.47" } },
+  landed: {
+    code: "3924104000", country: "CN",
+    fields: { ...BLANK, units: "2000", price: "1.4", freight: "340", insurance: "14" },
+  },
+};
 
-/** Published businesses (slug → name): inlined by the prerender on a landing,
- *  fetched on a client-side navigation. Null until known. */
-export function usePublished(initial: Published[] | null): Map<string, Published> | null {
-  const [list, setList] = useState<Published[] | null>(initial);
-  useEffect(() => {
-    if (list) return;
-    let live = true;
-    apiFetch<{ businesses: BusinessCard[] }>("/v1/businesses?limit=100")
-      .then((r) => live && setList(r.businesses))
-      .catch(() => live && setList([]));
-    return () => { live = false; };
-  }, [list]);
-  return useMemo(() => (list ? new Map(list.map((b) => [b.slug, b])) : null), [list]);
-}
-
-export function ImportCalculator({ variant, published, defaultPreset }: {
-  variant: Variant; published: Map<string, Published> | null; defaultPreset: string;
-}) {
+export function ImportCalculator({ variant }: { variant: Variant }) {
   const tool = variant === "tariff" ? "tariff_calculator" : "landed_cost_calculator";
-  const start = presetById(defaultPreset) ?? PRESETS[0];
+  const start = START[variant];
 
-  const [presetId, setPresetId] = useState(start.id);
   const [code, setCode] = useState<string>(start.code);
   const [query, setQuery] = useState(formatCode(start.code));
   const [country, setCountry] = useState(start.country);
   const [date, setDate] = useState(clampDate(TODAY));
   const [mode, setMode] = useState("ocean");
-  const [f, setF] = useState<Fields>(() => fieldsFor(start, variant, variant === "landed" ? 2000 : 1000));
-  const [claims, setClaims] = useState<Claims>(start.claims ?? {});
+  const [f, setF] = useState<Fields>(start.fields);
+  const [claims, setClaims] = useState<Claims>({});
 
   /* One "calculator_use" per page view, on the first edit. */
   const used = useRef(false);
@@ -165,21 +142,7 @@ export function ImportCalculator({ variant, published, defaultPreset }: {
     setQuery(formatCode(d));
     setOpen(false);
     setClaims({});
-    setPresetId("");
     gaEvent("calculator_classify", { tool, hts: formatCode(d) });
-  };
-
-  const loadPreset = (id: string) => {
-    const p = presetById(id);
-    setPresetId(id);
-    if (!p) return;
-    touch();
-    gaEvent("calculator_preset", { tool, business_slug: p.slug, preset: p.id });
-    setCode(p.code);
-    setQuery(formatCode(p.code));
-    setCountry(p.country);
-    setClaims(p.claims ?? {});
-    setF((x) => ({ ...fieldsFor(p, variant, num(x.units) > 0 ? num(x.units) : 1000), broker: x.broker, inbound: x.inbound }));
   };
 
   /* ── The arithmetic ────────────────────────────────────────────────── */
@@ -209,9 +172,6 @@ export function ImportCalculator({ variant, published, defaultPreset }: {
     : null;
   const needsWeight = !!line && line.general.specific.some((s) => s.per === "kg");
   const band = line && price > 0 ? bandCheck(line.bands, cv.unitValue, weightKg) : null;
-  const preset = presetById(presetId);
-  const presets = published ? PRESETS.filter((p) => published.has(p.slug)) : [];
-  const nameOf = (slug: string) => published?.get(slug)?.name ?? slug;
 
   const exclusionNeeds = (result?.needs ?? []).filter((n): n is Extract<Need, { kind: "exclusion" }> => typeof n === "object" && n.kind === "exclusion");
   const n52Needs = (result?.needs ?? []).filter((n): n is Extract<Need, { kind: "n52" }> => typeof n === "object" && n.kind === "n52");
@@ -232,19 +192,6 @@ export function ImportCalculator({ variant, published, defaultPreset }: {
       {/* ── Inputs ─────────────────────────────────────────────────── */}
       <form data-fba-card data-fba-inputs onSubmit={(e) => e.preventDefault()} aria-label="Your product and shipment">
         <h2 data-fba-card-title>Product</h2>
-        <label data-fba-field>
-          <span>Load a real product</span>
-          <select data-select value={presetId} disabled={!presets.length} onChange={(e) => loadPreset(e.target.value)}>
-            <option value="">{published ? "Choose a product…" : "Loading…"}</option>
-            {presets.map((p) => <option key={p.id} value={p.id}>{nameOf(p.slug)}: {p.product}</option>)}
-          </select>
-        </label>
-        {preset && published?.has(preset.slug) && (
-          <p data-roas-hint>
-            {preset.basis} <Link to={businessPath(preset.slug)}>{nameOf(preset.slug)}'s case study</Link>.
-          </p>
-        )}
-
         <div data-fba-field data-tariff-search>
           <label htmlFor={`hts-${variant}`}><span>HTS code or product description</span></label>
           <input
@@ -332,8 +279,7 @@ export function ImportCalculator({ variant, published, defaultPreset }: {
           </div>
         )}
         <p data-roas-hint>
-          Duty is charged on the customs value: the price without international freight and insurance, plus moulds and
-          tooling you pay for, spread over the units they make. Here that is <strong>{usd4(cv.unitValue)}</strong> a unit.
+          Customs value (price less freight and insurance, plus moulds per unit): <strong>{usd4(cv.unitValue)}</strong>.
         </p>
 
         {variant === "landed" && (
@@ -431,12 +377,12 @@ export function ImportCalculator({ variant, published, defaultPreset }: {
 
         <p data-tariff-next>
           {variant === "tariff"
-            ? <>Add freight, the broker and the trip to Amazon in the <Link to={LANDED_PATH}>landed cost calculator</Link>, then </>
-            : <>Check the duty layer by layer in the <Link to={CALCULATOR_PATH}>tariff calculator</Link>, then </>}
+            ? <>Next: add freight in the <Link to={LANDED_PATH}>landed cost calculator</Link>, or </>
+            : <>Next: check the duty in the <Link to={CALCULATOR_PATH}>tariff calculator</Link>, or </>}
           <Link to={handoff} onClick={() => trackCtaClick(`${tool}_to_fba`, FBA_CALCULATOR_PATH)}>
             take {variant === "landed" ? "this landed cost" : "the cost with duty"} into the FBA calculator
-          </Link>{" "}
-          for profit after Amazon's fees. An estimate, not a ruling: the classification is CBP's. Search rulings on{" "}
+          </Link>
+          . Classification is CBP's: search rulings on{" "}
           <a href={CROSS_URL} target="_blank" rel="noopener">CBP CROSS</a>.
         </p>
       </section>

@@ -7,6 +7,8 @@ export type ToolPage = {
   path: string;
   crumb: string;
   title: string;
+  h1: string;
+  tagline: string;
   docTitle: string;
   description: string;
   lede: string;
