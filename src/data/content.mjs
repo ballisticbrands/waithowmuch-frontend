@@ -20,6 +20,13 @@ import b1 from './posts/is-amazon-fba-still-profitable.mjs';
 import b2 from './posts/how-much-does-amazon-fba-cost-to-start.mjs';
 import b3 from './posts/how-much-do-amazon-sellers-make.mjs';
 import b4 from './posts/amazon-fba-fees-2026.mjs';
+import b5 from './posts/jungle-scout-alternatives.mjs';
+import b6 from './posts/helium-10-alternatives.mjs';
+import b7 from './posts/best-amazon-product-research-tools.mjs';
+import b8 from './posts/best-products-to-sell-on-amazon.mjs';
+import b9 from './posts/top-amazon-sellers-by-revenue.mjs';
+import b10 from './posts/how-much-does-it-cost-to-start-an-ecommerce-business.mjs';
+import b11 from './posts/private-label-vs-wholesale-vs-dropshipping-on-amazon.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -186,6 +193,45 @@ export const POSTS = [
       '(Ubersuggest lags new policies; the forum thread is the real signal).',
     cite: [],
   },
+
+  // ── Added from the 2026-11-09 research shortlist (clusters 6, 7, 12) ──
+  {
+    slug: 'best-products-to-sell-on-amazon',
+    title: 'The Best Products to Sell on Amazon, Ranked by Real Seller Revenue',
+    kw: 'best products to sell on amazon', vol: 720, comp: null,
+    tier: 1, status: 'published', body: b8,
+    angle:
+      'Cluster 1,670/mo, median SD 37; secondaries "for beginners" (170), "fba" (170), ' +
+      '"trending products to sell on amazon" (50/19). Fit 3: this is literally the WHM ' +
+      'database filtered by product and sorted by revenue, with margin and startup cost ' +
+      'beside each. Every other list is opinion; ours is measured.',
+    cite: ['*'],
+  },
+  {
+    slug: 'how-much-does-it-cost-to-start-an-ecommerce-business',
+    title: 'How Much Does It Cost to Start an E-commerce Business? Real Numbers',
+    kw: 'how much does it cost to start a business', vol: 1000, comp: null,
+    tier: 2, status: 'published', body: b10,
+    angle:
+      'Cluster 3,740/mo, but SD 35-42 on the generic phrasings, so aim at the "online / ' +
+      'e-commerce" variants. Niche long tail (jewelry, clothing, skincare, coffee, ' +
+      'supplements, candles, board games) is 10-40/mo each: cover them as sections of this ' +
+      'one hub, not separate posts. Distinct from how-much-does-amazon-fba-cost-to-start, ' +
+      'which is Amazon-only: link to it rather than repeat it.',
+    cite: ['*'],
+  },
+  {
+    slug: 'amazon-referral-fees-by-category',
+    title: 'Amazon Referral Fees by Category (2026)',
+    kw: 'amazon referral fee', vol: 260, comp: null,
+    tier: 2, status: 'draft',
+    angle:
+      'Cluster 730/mo, median SD 10 (head term SD 34; "by category" variants SD 41-46). ' +
+      'The full category table plus minimums and tiered categories, with which category ' +
+      'each WHM business sells in and what it pays. Must not duplicate amazon-fba-fees-2026: ' +
+      'that post summarises referral fees and links here for the full table.',
+    cite: ['*'],
+  },
   {
     slug: 'how-to-start-an-amazon-t-shirt-business',
     title: 'How to Start an Amazon T-Shirt Business (2026)',
@@ -211,8 +257,8 @@ export const POSTS = [
   {
     slug: 'top-amazon-sellers-by-revenue',
     title: 'Top Amazon Sellers by Revenue',
-    kw: null, vol: null, comp: null,
-    tier: 2, status: 'draft',
+    kw: 'top amazon sellers', vol: 720, comp: null,
+    tier: 2, status: 'published', body: b9,
     angle: 'Listicle fed directly from the database; regenerates as the catalogue grows.',
     cite: ['*'],
   },
@@ -235,20 +281,20 @@ export const POSTS = [
   {
     slug: 'private-label-vs-wholesale-vs-dropshipping-on-amazon',
     title: 'Private Label vs Wholesale vs Dropshipping on Amazon',
-    kw: null, vol: null, comp: null,
-    tier: 3, status: 'draft',
+    kw: 'private label vs wholesale', vol: 30, comp: null,
+    tier: 3, status: 'published', body: b11,
     angle: 'Compare on observed margin by model, not theory.',
     cite: ['*'],
   },
 
   // ── Tool comparison: pure commercial intent ──
   { slug: 'jungle-scout-alternatives', title: 'Jungle Scout Alternatives (2026)',
-    kw: null, vol: null, comp: null, tier: 2, status: 'draft',
-    angle: 'High intent. Be genuinely even-handed — a rigged comparison reads as one instantly.', cite: [] },
+    kw: 'jungle scout alternatives', vol: 90, comp: null, tier: 2, status: 'published', body: b5,
+    angle: 'High intent. Be genuinely even-handed — a rigged comparison reads as one instantly.', cite: ['*'] },
   { slug: 'helium-10-alternatives', title: 'Helium 10 Alternatives (2026)',
-    kw: null, vol: null, comp: null, tier: 2, status: 'draft', angle: 'As above.', cite: [] },
+    kw: 'helium 10 alternatives', vol: 90, comp: null, tier: 2, status: 'published', body: b6, angle: 'As above.', cite: ['*'] },
   { slug: 'best-amazon-product-research-tools', title: 'Best Amazon Product Research Tools',
-    kw: null, vol: null, comp: null, tier: 3, status: 'draft', angle: 'Roundup; the format LLMs cite for "best tool" questions.', cite: [] },
+    kw: 'product research amazon', vol: 480, comp: null, tier: 3, status: 'published', body: b7, angle: 'Roundup; the format LLMs cite for "best tool" questions.', cite: ['*'] },
 ];
 
 /**
