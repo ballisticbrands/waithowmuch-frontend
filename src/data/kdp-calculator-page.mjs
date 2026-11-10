@@ -45,6 +45,10 @@ export const EX = (() => {
 const ex = EX.input;
 const exR = EX.result;
 
+/** The eBook file size the calculator assumes until you open "Advanced": the
+ *  example's file, typical for a text-only novel. Asserted by check-kdp. */
+export const ASSUMED_FILE_MB = EX.input.ebook.fileMb;
+
 /* Side examples for the prose. */
 const EB_MID = ebookQuote({ price: 9.99, fileMb: 2, option: '70' });
 const EB_HIGH = ebookQuote({ price: 14.99, fileMb: 2, option: '70' });
@@ -54,7 +58,7 @@ const PB_999 = printQuote({ format: 'paperback', ink: 'black', pages: 300, trim:
 const PB_COLOR = printQuote({ format: 'paperback', ink: 'premium', pages: 100, trim: 'large', price: 14.99 });
 const PB_LARGE = printingCost({ format: 'paperback', ink: 'black', pages: 300, trim: 'large' }).cost;
 
-export const LEDE = `A 300-page novel at $${ex.paperback.price} in paperback costs <strong>${usd(exR.paperback.cost)} to print</strong> on Amazon.com and pays its author <strong>${usd(exR.paperback.royalty)} a copy</strong>; the same book as a $${ex.ebook.price} eBook pays <strong>${usd(exR.ebook.royalty)}</strong>. Enter your list prices, page count, ink, trim and monthly sales below to get your royalty per sale for each format, KDP's printing cost and minimum list price, your Kindle Unlimited page-read income, profit after Amazon Ads, the break-even ACOS and how many months it takes to earn back the cover, editing and ISBNs.`;
+export const LEDE = `A 300-page novel at $${ex.paperback.price} in paperback costs <strong>${usd(exR.paperback.cost)} to print</strong> on Amazon.com and pays its author <strong>${usd(exR.paperback.royalty)} a copy</strong>; the same book as a $${ex.ebook.price} eBook pays <strong>${usd(exR.ebook.royalty)}</strong>. Pick eBook, paperback or hardcover, then drag the price (or type it) to see your royalty per sale, Amazon's share, KDP's printing cost and minimum list price. Add monthly sales to get your Kindle Unlimited page-read income, profit after Amazon Ads, the break-even ACOS and how many months it takes to earn back the cover, editing and ISBNs.`;
 
 export const SOURCE_LINE = `Every rate is from Amazon KDP's own help pages for the US marketplace (Amazon.com, USD), read on ${readOn}. Everything is worked out in your browser; nothing you type is sent or stored.`;
 
@@ -102,8 +106,8 @@ export const SECTIONS = [
   {
     id: '35-vs-70',
     title: 'Where the 35% vs 70% choice flips',
-    html: `<p>Inside the ${usd(EBOOK.band70.min)}–${usd(EBOOK.band70.max)} band, 70% almost always wins. It loses only when the delivery cost eats more than half the price, which happens when the file is larger than the list price divided by $0.30 in megabytes: above ${(ex.ebook.price / 0.3).toFixed(1)} MB at $4.99, or ${(9.99 / 0.3).toFixed(1)} MB at $9.99. Text-only novels are usually far smaller; picture books, cookbooks and comics with many images are the ones to check.</p>
-<p>Above ${usd(EBOOK.band70.max)} you can only take 35%. A 2 MB eBook at $14.99 pays ${usd(EB_HIGH.royalty)}, less than the ${usd(EB_HIGH.royaltyAtBandMax)} it would make at $12.99 on the 70% option. To earn more at 35% than at $12.99 on 70%, the list price has to be above <strong>${usd(EB_HIGH.match35At)}</strong>, twice ($12.99 less the delivery cost). The calculator shows both figures for your own price and file size.</p>`,
+    html: `<p>Inside the ${usd(EBOOK.band70.min)}–${usd(EBOOK.band70.max)} band, 70% almost always wins. It loses only when the delivery cost eats more than half the price, which happens when the file is larger than the list price divided by $0.30 in megabytes: above ${(ex.ebook.price / 0.3).toFixed(1)} MB at $4.99, or ${(9.99 / 0.3).toFixed(1)} MB at $9.99. Text-only novels are usually far smaller; picture books, cookbooks and comics with many images are the ones to check. That is why the calculator does not ask for your file size: it assumes ${ASSUMED_FILE_MB} MB, a typical text-only novel, which costs ${usd(exR.ebook.delivery)} to deliver per sale at 70%. Open <em>Advanced</em> under the eBook price to enter a bigger file.</p>
+<p>Above ${usd(EBOOK.band70.max)} you can only take 35%. A 2 MB eBook at $14.99 pays ${usd(EB_HIGH.royalty)}, less than the ${usd(EB_HIGH.royaltyAtBandMax)} it would make at $12.99 on the 70% option. To earn more at 35% than at $12.99 on 70%, the list price has to be above <strong>${usd(EB_HIGH.match35At)}</strong>, twice ($12.99 less the delivery cost). The calculator's price slider shows both: the royalty drops where the 70% band ends.</p>`,
   },
   {
     id: 'paperback-royalties',
@@ -147,7 +151,7 @@ ${bandRows('hardcover')}
 ${MIN_ROWS}
 </tbody>
 </table>
-<p>The minimum is a floor, not a price to aim for: at the minimum you earn close to nothing per copy. The calculator shows the minimum for your page count, ink and trim beside your price.</p>`,
+<p>The minimum is a floor, not a price to aim for: at the minimum you earn close to nothing per copy. The calculator marks the minimum for your page count, ink and trim on the price slider.</p>`,
   },
   {
     id: 'kindle-unlimited',
