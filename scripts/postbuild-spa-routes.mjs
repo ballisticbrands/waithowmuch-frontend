@@ -20,6 +20,8 @@ import { SITE, API_BASE, BRAND_NAME, businessPath } from '../src/data/site.mjs';
 import { COLLECTIONS, MORE, DESCRIPTIONS, DEFAULT_SORT, collectionPath } from '../src/data/collections.mjs';
 import { profileFor } from '../src/businesses/index.mjs';
 import { publishedPosts, publishedTerms, postPath, termPath } from '../src/data/content.mjs';
+import { AUTHOR, CATEGORIES, excerpt, ogImagePath } from '../src/data/blog.mjs';
+import { blogIndexBody, blogPostBody } from './blog-prerender.mjs';
 import { resolveSelling } from '../src/businesses/selling-methods.mjs';
 import { scoreProfile, valuationAsOf } from '../src/valuation/inputs.mjs';
 import {
@@ -774,24 +776,67 @@ for (const b of all) {
 const posts = publishedPosts();
 const terms = publishedTerms();
 
+/* A published post must say where it goes and when it went up: the card, the
+   filter tab, the date line and datePublished all read these. */
+for (const post of posts) {
+  if (!CATEGORIES.includes(post.category) || !/^\d{4}-\d{2}-\d{2}$/.test(post.published ?? '')) {
+    console.error(`postbuild: ${postPath(post.slug)} needs a category from blog.mjs CATEGORIES and a published date (YYYY-MM-DD) in content.mjs.`);
+    process.exit(1);
+  }
+}
+
+/** The author as a schema.org Person: one constant, AUTHOR in blog.mjs. */
+const PERSON = {
+  '@type': 'Person', name: AUTHOR.name, jobTitle: AUTHOR.jobTitle,
+  image: `${SITE}${AUTHOR.imageJpg}`, worksFor: { '@id': `${SITE}/#org` },
+};
+
+/**
+ * A post's link preview: its own `image` if it has one, else the black title
+ * card that scripts/build-blog-og.mjs renders into public/og/blog/. A post
+ * with neither keeps the site-wide preview, and says so here — run
+ * `npm run build:blog-og` and commit the PNG.
+ */
+function postCard(post) {
+  if (post.image) {
+    const url = /^https?:\/\//.test(post.image.src) ? post.image.src : `${SITE}${post.image.src}`;
+    return { url, alt: post.image.alt, width: post.image.width, height: post.image.height };
+  }
+  const file = join(dist, ogImagePath(post.slug).replace(/^\//, ''));
+  if (!existsSync(file)) {
+    console.warn(`postbuild: ⚠️ ${postPath(post.slug)} has no ${ogImagePath(post.slug)} — run npm run build:blog-og and commit it.`);
+    return null;
+  }
+  return { url: `${SITE}${ogImagePath(post.slug)}`, alt: post.title, ...imageSize(readFileSync(file)) };
+}
+
 if (posts.length) {
-  const list = posts.map((p) => `<li><a href="${postPath(p.slug)}">${esc(p.title)}</a></li>`).join('\n      ');
-  write('/blog/', render({
+  const index = render({
     path: '/blog/', title: `Blog — ${BRAND_NAME}`,
     description: `What the numbers across every business ${BRAND_NAME} has researched add up to.`,
-    body: `<h1>Blog</h1>\n    <ul>\n      ${list}\n    </ul>\n    ${FOOTER}`,
-  }));
+    body: blogIndexBody(posts, FOOTER),
+  });
+  guard('/blog/', index);
+  write('/blog/', index);
   for (const post of posts) {
+    const image = postCard(post);
+    /* The opening paragraph, not `angle`: angle is the writer's brief, with
+       notes like "⚠️ no case study yet" that were never meant for a SERP. */
+    const description = excerpt(post.body, 155);
     const html = render({
       schema: [
         { '@type': 'Article', '@id': `${SITE}${postPath(post.slug)}#article`,
-          headline: post.title, publisher: { '@id': `${SITE}/#org` }, isAccessibleForFree: true },
+          headline: post.title, description, author: PERSON, datePublished: post.published,
+          ...(image ? { image: image.url } : {}),
+          articleSection: post.category,
+          publisher: { '@id': `${SITE}/#org` }, isAccessibleForFree: true },
         crumbs([{ name: 'Blog', path: '/blog/' }, { name: post.title, path: postPath(post.slug) }]),
       ],
       path: postPath(post.slug),
       title: `${post.title} — ${BRAND_NAME}`,
-      description: post.angle.slice(0, 155),
-      body: `<h1>${esc(post.title)}</h1>\n${post.body ?? ''}\n${FOOTER}`,
+      description,
+      share: image ? { image } : undefined,
+      body: blogPostBody(post, FOOTER),
     });
     guard(postPath(post.slug), html);   // same 120-word floor as every other SEO route
     write(postPath(post.slug), html);

@@ -143,7 +143,35 @@ export function SideRail() {
           collapsed={collapsed}
         />
 
-        <div data-rail-group>About</div>
+        {/* The two live calculators. Listed by name rather than behind one
+            "Tools" link: there is no tools index page, and each one is a
+            search destination in its own right. */}
+        <div data-rail-group>Free tools</div>
+        <RailLink
+          to="/tools/amazon-fba-calculator/"
+          label="FBA calculator"
+          active={here === "/tools/amazon-fba-calculator/"}
+          icon="calculator"
+          collapsed={collapsed}
+        />
+        <RailLink
+          to="/tools/roas-calculator/"
+          label="ROAS calculator"
+          active={here === "/tools/roas-calculator/"}
+          icon="trend"
+          collapsed={collapsed}
+        />
+
+        <div data-rail-group>Read</div>
+        {/* Active on every post too: a reader inside an article is still in
+            the blog. */}
+        <RailLink
+          to="/blog/"
+          label="Blog"
+          active={here.startsWith("/blog/")}
+          icon="article"
+          collapsed={collapsed}
+        />
         <RailLink
           to="/how-we-research/"
           label="How we research"

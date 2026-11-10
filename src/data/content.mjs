@@ -11,6 +11,11 @@
  * Plain .mjs with a sibling .d.mts because scripts/postbuild-spa-routes.mjs is
  * plain Node and must read the same source the React app renders from.
  *
+ * Every post carries a `category` (one of CATEGORIES in blog.mjs) and, once
+ * published, a `published` date (YYYY-MM-DD). An optional `image`
+ * ({ src, alt, width, height }) replaces the black title card as the hero and
+ * the og:image. The build fails on a published post missing category or date.
+ *
  * Keyword volumes are US/month from Google Keyword Planner (2026-10-19 pulls,
  * 2,637 merged keywords). `comp` is Keyword Planner's own competition rating.
  */
@@ -35,7 +40,7 @@ import b14 from './posts/selling-books-on-amazon-fba.mjs';
 export const POSTS = [
   // ── Tier 1: real volume, LOW competition, answerable from existing research ──
   {
-    slug: 'how-much-does-amazon-take-from-sellers',
+    slug: 'how-much-does-amazon-take-from-sellers', category: 'Fees & costs', published: '2026-10-20',
     title: 'How Much Does Amazon Take From Sellers?',
     kw: 'how much does amazon take from sellers', vol: 480, comp: 'Low',
     tier: 1, status: 'published',
@@ -47,7 +52,7 @@ export const POSTS = [
     cite: ['spite-house-games', 'ototo', 'white-mountain-puzzles'],
   },
   {
-    slug: 'is-amazon-fba-still-profitable',
+    slug: 'is-amazon-fba-still-profitable', category: 'Data & rankings', published: '2026-10-20',
     title: 'Is Amazon FBA Worth It in 2026? Margins From 13 Real Businesses',
     kw: 'is amazon fba worth it', vol: 320, comp: 'Low',
     tier: 1, status: 'published',
@@ -61,7 +66,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-much-does-amazon-fba-cost-to-start',
+    slug: 'how-much-does-amazon-fba-cost-to-start', category: 'Fees & costs', published: '2026-10-20',
     title: 'How Much Does Amazon FBA Cost to Start?',
     kw: 'how much does amazon fba cost', vol: 110, comp: 'Low',
     tier: 1, status: 'published',
@@ -72,7 +77,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-much-do-amazon-sellers-make',
+    slug: 'how-much-do-amazon-sellers-make', category: 'Data & rankings', published: '2026-10-20',
     title: 'How Much Do Amazon Sellers Actually Make?',
     kw: 'how much do amazon sellers make', vol: 90, comp: 'Low',
     tier: 1, status: 'published',
@@ -85,7 +90,7 @@ export const POSTS = [
 
   // ── Tier 2: bigger volume, Medium competition ──
   {
-    slug: 'how-to-start-selling-on-amazon',
+    slug: 'how-to-start-selling-on-amazon', category: 'Getting started',
     title: 'How to Start Selling on Amazon (2026)',
     kw: 'how to start amazon selling', vol: 1900, comp: 'Medium',
     tier: 2, status: 'draft',
@@ -93,7 +98,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-to-start-an-amazon-business',
+    slug: 'how-to-start-an-amazon-business', category: 'Getting started',
     title: 'How to Start an Amazon Business',
     kw: 'how to start an amazon business', vol: 720, comp: 'Medium',
     tier: 2, status: 'draft',
@@ -101,7 +106,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-to-start-amazon-fba',
+    slug: 'how-to-start-amazon-fba', category: 'Getting started',
     title: 'How to Start Amazon FBA',
     kw: 'how to start amazon fba', vol: 480, comp: 'Medium',
     tier: 2, status: 'draft',
@@ -111,7 +116,7 @@ export const POSTS = [
 
   // ── Niche entry posts (volume lives in beginner niches, not interesting ones) ──
   {
-    slug: 'selling-books-on-amazon-fba',
+    slug: 'selling-books-on-amazon-fba', category: 'Getting started', published: '2026-11-10',
     title: 'Selling Books on Amazon FBA: What It Actually Pays',
     kw: 'selling books on amazon', vol: 9900, comp: 'Low',
     tier: 1, status: 'published', body: b14,
@@ -127,7 +132,7 @@ export const POSTS = [
   // Ubersuggest US volumes and SD; full list in Dragon-marketing/skills/WHM-SEO.
   // Each needs a WHM angle found before it is written, not a generic guide.
   {
-    slug: 'is-alibaba-legit',
+    slug: 'is-alibaba-legit', category: 'Sourcing',
     title: 'Is Alibaba Legit? What Real Amazon Brands Paid Their Suppliers',
     kw: 'is alibaba legit', vol: 18100, comp: null,
     tier: 2, status: 'draft',
@@ -138,7 +143,7 @@ export const POSTS = [
     cite: [],
   },
   {
-    slug: 'alibaba-vs-aliexpress',
+    slug: 'alibaba-vs-aliexpress', category: 'Sourcing',
     title: 'Alibaba vs AliExpress: Unit Costs Compared on Real Products',
     kw: 'alibaba vs aliexpress', vol: 6600, comp: null,
     tier: 2, status: 'draft',
@@ -148,7 +153,7 @@ export const POSTS = [
     cite: [],
   },
   {
-    slug: 'how-much-do-tariffs-add-to-amazon-products',
+    slug: 'how-much-do-tariffs-add-to-amazon-products', category: 'Sourcing',
     title: 'How Much Do Tariffs Add to an Amazon Product?',
     kw: 'tariff calculator', vol: 3600, comp: null,
     tier: 2, status: 'draft',
@@ -159,7 +164,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'amazon-fba-fees-2026',
+    slug: 'amazon-fba-fees-2026', category: 'Fees & costs', published: '2026-11-10',
     title: 'Amazon FBA Fees 2026: The Full Schedule, Worked on Real Products',
     kw: 'amazon fba fees', vol: 2900, comp: null,
     tier: 1, status: 'published',
@@ -178,7 +183,7 @@ export const POSTS = [
 
   // ── Trend radar picks: ship within ~48h of the spike (Dragon-marketing/skills/WHM-trend-radar) ──
   {
-    slug: 'amazon-seller-insurance-requirement-2026',
+    slug: 'amazon-seller-insurance-requirement-2026', category: 'Policy', published: '2026-11-10',
     title: "Amazon's New Liability Insurance Rule: Who Needs It and What It Costs",
     kw: 'amazon seller insurance', vol: 140, comp: null,
     tier: 1, status: 'published', body: b12,
@@ -199,7 +204,7 @@ export const POSTS = [
 
   // ── Added from the 2026-11-09 research shortlist (clusters 6, 7, 12) ──
   {
-    slug: 'best-products-to-sell-on-amazon',
+    slug: 'best-products-to-sell-on-amazon', category: 'Data & rankings', published: '2026-11-10',
     title: 'The Best Products to Sell on Amazon, Ranked by Real Seller Revenue',
     kw: 'best products to sell on amazon', vol: 720, comp: null,
     tier: 1, status: 'published', body: b8,
@@ -211,7 +216,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-much-does-it-cost-to-start-an-ecommerce-business',
+    slug: 'how-much-does-it-cost-to-start-an-ecommerce-business', category: 'Fees & costs', published: '2026-11-10',
     title: 'How Much Does It Cost to Start an E-commerce Business? Real Numbers',
     kw: 'how much does it cost to start a business', vol: 1000, comp: null,
     tier: 2, status: 'published', body: b10,
@@ -224,7 +229,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'amazon-referral-fees-by-category',
+    slug: 'amazon-referral-fees-by-category', category: 'Fees & costs', published: '2026-11-10',
     title: 'Amazon Referral Fees by Category (2026)',
     kw: 'amazon referral fee', vol: 260, comp: null,
     tier: 2, status: 'published', body: b13,
@@ -236,7 +241,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-to-start-an-amazon-t-shirt-business',
+    slug: 'how-to-start-an-amazon-t-shirt-business', category: 'Getting started',
     title: 'How to Start an Amazon T-Shirt Business (2026)',
     kw: 'amazon t shirt business', vol: 30, comp: 'Medium',
     tier: 3, status: 'draft',
@@ -248,7 +253,7 @@ export const POSTS = [
 
   // ── Revenue-research posts: our native territory ──
   {
-    slug: 'how-to-check-another-amazon-sellers-revenue',
+    slug: 'how-to-check-another-amazon-sellers-revenue', category: 'Data & rankings',
     title: "How to Check Another Amazon Seller's Revenue",
     kw: null, vol: null, comp: null,
     tier: 2, status: 'draft',
@@ -258,7 +263,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'top-amazon-sellers-by-revenue',
+    slug: 'top-amazon-sellers-by-revenue', category: 'Data & rankings', published: '2026-11-10',
     title: 'Top Amazon Sellers by Revenue',
     kw: 'top amazon sellers', vol: 720, comp: null,
     tier: 2, status: 'published', body: b9,
@@ -266,7 +271,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'how-to-analyse-an-amazon-store',
+    slug: 'how-to-analyse-an-amazon-store', category: 'Data & rankings',
     title: 'How to Analyse an Amazon Store',
     kw: null, vol: null, comp: null,
     tier: 3, status: 'draft',
@@ -274,7 +279,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'is-amazon-fba-saturated',
+    slug: 'is-amazon-fba-saturated', category: 'Data & rankings',
     title: 'Is Amazon FBA Saturated?',
     kw: null, vol: null, comp: null,
     tier: 2, status: 'draft',
@@ -282,7 +287,7 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'private-label-vs-wholesale-vs-dropshipping-on-amazon',
+    slug: 'private-label-vs-wholesale-vs-dropshipping-on-amazon', category: 'Getting started', published: '2026-11-10',
     title: 'Private Label vs Wholesale vs Dropshipping on Amazon',
     kw: 'private label vs wholesale', vol: 30, comp: null,
     tier: 3, status: 'published', body: b11,
@@ -291,12 +296,12 @@ export const POSTS = [
   },
 
   // ── Tool comparison: pure commercial intent ──
-  { slug: 'jungle-scout-alternatives', title: 'Jungle Scout Alternatives (2026)',
+  { slug: 'jungle-scout-alternatives', category: 'Tools', published: '2026-11-10', title: 'Jungle Scout Alternatives (2026)',
     kw: 'jungle scout alternatives', vol: 90, comp: null, tier: 2, status: 'published', body: b5,
     angle: 'High intent. Be genuinely even-handed — a rigged comparison reads as one instantly.', cite: ['*'] },
-  { slug: 'helium-10-alternatives', title: 'Helium 10 Alternatives (2026)',
+  { slug: 'helium-10-alternatives', category: 'Tools', published: '2026-11-10', title: 'Helium 10 Alternatives (2026)',
     kw: 'helium 10 alternatives', vol: 90, comp: null, tier: 2, status: 'published', body: b6, angle: 'As above.', cite: ['*'] },
-  { slug: 'best-amazon-product-research-tools', title: 'Best Amazon Product Research Tools',
+  { slug: 'best-amazon-product-research-tools', category: 'Tools', published: '2026-11-10', title: 'Best Amazon Product Research Tools',
     kw: 'product research amazon', vol: 480, comp: null, tier: 3, status: 'published', body: b7, angle: 'Roundup; the format LLMs cite for "best tool" questions.', cite: ['*'] },
 ];
 

@@ -18,8 +18,11 @@ Every entry carries `status: 'draft' | 'published'`.
 | Prerendered to static HTML | ✗ | ✓ |
 | Has JSON-LD | — | ✓ automatic |
 
-**To publish:** write `body` (HTML string), flip `status` to `'published'`, run
-`npm run build`, push. CI deploys. Then request indexing for that one URL in
+**To publish:** write `body` (HTML string), flip `status` to `'published'`, set
+`published: 'YYYY-MM-DD'` (and check `category` is one of `CATEGORIES` in
+`src/data/blog.mjs`), run `npm run build:blog-og` to render the post's black
+title card into `public/og/blog/<slug>.png` (commit it: it is the og:image),
+run `npm run build`, push. CI deploys. Then request indexing for that one URL in
 Search Console (URL Inspection → Request indexing).
 
 🚨 **There are deliberately no placeholder pages.** A reserved-but-empty URL that
@@ -151,7 +154,7 @@ Do not hand-write schema. The prerender emits it per route type:
 |---|---|
 | `/` | `Organization` + `WebSite` |
 | `/business/<slug>/` | `Organization` + `Article` (`about` an Organization) + `BreadcrumbList` |
-| `/blog/<slug>/` | `Organization` + `Article` + `BreadcrumbList` |
+| `/blog/<slug>/` | `Organization` + `Article` (author a `Person`, from `AUTHOR` in `src/data/blog.mjs`) + `BreadcrumbList` |
 | `/glossary/<slug>/` | `Organization` + `DefinedTerm` in a `DefinedTermSet` + `BreadcrumbList` |
 
 `about`, not `mainEntity`, on business pages — we report **on** these companies;
