@@ -44,6 +44,7 @@ import b20 from './posts/how-to-start-selling-on-amazon.mjs';
 import b21 from './posts/amazon-fba-courses.mjs';
 import b22 from './posts/best-3pl-for-ecommerce.mjs';
 import b23 from './posts/print-on-demand-vs-dropshipping.mjs';
+import b24 from './posts/de-minimis-for-ecommerce-sellers.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -318,10 +319,10 @@ export const POSTS = [
     cite: ['*'],
   },
   {
-    slug: 'de-minimis-for-ecommerce-sellers', category: 'Policy',
+    slug: 'de-minimis-for-ecommerce-sellers', published: '2026-11-10', category: 'Policy',
     title: 'The End of De Minimis: What It Costs E-commerce Sellers',
     kw: 'will de minimis come back', vol: 390, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b24,
     angle:
       'Cluster 40,080/mo but median SD 46: a long shot on the head terms, realistic on the ' +
       'seller long tail. What the suspension changed (Federal Register 2026-12670 / 2026-12669), ' +
