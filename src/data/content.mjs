@@ -30,6 +30,9 @@ import b11 from './posts/private-label-vs-wholesale-vs-dropshipping-on-amazon.mj
 import b12 from './posts/amazon-seller-insurance-requirement-2026.mjs';
 import b13 from './posts/amazon-referral-fees-by-category.mjs';
 import b14 from './posts/selling-books-on-amazon-fba.mjs';
+import b15 from './posts/is-alibaba-legit.mjs';
+import b16 from './posts/alibaba-vs-aliexpress.mjs';
+import b17 from './posts/how-much-do-tariffs-add-to-amazon-products.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -130,28 +133,28 @@ export const POSTS = [
     slug: 'is-alibaba-legit',
     title: 'Is Alibaba Legit? What Real Amazon Brands Paid Their Suppliers',
     kw: 'is alibaba legit', vol: 18100, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b15,
     angle:
       'Cluster 18,630/mo, SD 27; cosmosourcing (DA 20) ranks #6, so a small site can get ' +
       'in. Our angle: the factory quotes behind the businesses we model (Accio/Alibaba ' +
       'quotes are already on file for several), not a trust-badge checklist.',
-    cite: [],
+    cite: ['draft-top', 'songbird-specialties', 'gamblin-golf', 'ototo', 'restoration-games'],
   },
   {
     slug: 'alibaba-vs-aliexpress',
     title: 'Alibaba vs AliExpress: Unit Costs Compared on Real Products',
     kw: 'alibaba vs aliexpress', vol: 6600, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b16,
     angle:
       'Cluster 6,940/mo, median SD 21. Price the same products from both against the ' +
       'cost of goods in our margin models.',
-    cite: [],
+    cite: ['spite-house-games', 'white-mountain-puzzles', 'draft-top', 'ototo', 'songbird-specialties'],
   },
   {
     slug: 'how-much-do-tariffs-add-to-amazon-products',
     title: 'How Much Do Tariffs Add to an Amazon Product?',
     kw: 'tariff calculator', vol: 3600, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b17,
     angle:
       'Cluster 17,130/mo, SD 11 on the head term. Searchers want a calculator; we have ' +
       'no duty-rate data yet. Our margin models already carry a tariff line per ' +
