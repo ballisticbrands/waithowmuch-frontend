@@ -69,8 +69,8 @@ export function printQuote(x: { format: PrintFormat; ink: InkId; pages: number; 
 
 export type KdpInputs = {
   ebook?: { price: number; fileMb: number; option: EbookOption; units: number; kenp: number; kenpRate: number | null };
-  paperback?: { price: number; units: number; expandedUnits: number };
-  hardcover?: { price: number; units: number };
+  paperback?: { price: number; units: number; expandedUnits: number; ink?: InkId };
+  hardcover?: { price: number; units: number; ink?: InkId };
   print: { pages: number; ink: InkId; trim: Trim };
   adSpend?: number;
   oneOff?: number;
@@ -92,3 +92,19 @@ export type KdpResult = {
   kuMissingRate: boolean;
 };
 export function calculate(x: KdpInputs): KdpResult;
+
+export type BookFormat = "ebook" | PrintFormat;
+export type QuoteAtInput = {
+  format: BookFormat; price: number;
+  fileMb?: number; option?: EbookOption; printPrice?: number;
+  ink?: InkId; pages?: number; trim?: Trim;
+};
+export type PriceQuote = {
+  format: BookFormat; price: number; royalty: number; rate: number; cost: number; minPrice: number;
+  split: { royalty: number; cost: number; amazon: number };
+  ebook?: EbookQuote;
+  print?: PrintQuote;
+};
+export function quoteAt(x: QuoteAtInput): PriceQuote | null;
+export type CurvePoint = { price: number; royalty: number; rate: number };
+export function royaltyCurve(x: Omit<QuoteAtInput, "price"> & { from: number; to: number; step?: number }): CurvePoint[];

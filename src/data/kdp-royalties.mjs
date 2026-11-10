@@ -305,8 +305,8 @@ export function printQuote({ format, ink, pages, trim, price }) {
 /**
  * @param x {{
  *   ebook?: { price, fileMb, option, units, kenp, kenpRate },
- *   paperback?: { price, units, expandedUnits },
- *   hardcover?: { price, units },
+ *   paperback?: { price, units, expandedUnits, ink? },
+ *   hardcover?: { price, units, ink? },
  *   print: { pages, ink, trim },
  *   adSpend?: number, oneOff?: number,
  * }}
@@ -337,7 +337,8 @@ export function calculate(x) {
   for (const format of ['paperback', 'hardcover']) {
     const f = x[format];
     if (!f || !finite(f.price) || f.price <= 0) continue;
-    const q = printQuote({ format, ...x.print, price: f.price });
+    /* A format may print in its own ink (hardcovers come in fewer inks than paperbacks). */
+    const q = printQuote({ format, ...x.print, ...(f.ink ? { ink: f.ink } : {}), price: f.price });
     const u = n(f.units);
     const ue = format === 'paperback' ? n(f.expandedUnits) : 0;
     if (q.royalty == null) { out[format] = { ...q, units: u, expandedUnits: ue, monthly: null, beAcos: null }; continue; }
@@ -366,4 +367,68 @@ export function calculate(x) {
     paybackMonths: oneOff > 0 && profit > 0 ? oneOff / profit : oneOff > 0 ? null : 0,
     kuMissingRate: out.ku != null && out.ku.kenp > 0 && out.ku.rate == null,
   };
+}
+
+/* ── One format at one price: the slider, the pie and the curve ────── */
+
+/**
+ * The royalty for one format at one list price, with what the price is split
+ * into. `format` is 'ebook', 'paperback' or 'hardcover'; eBooks take `fileMb`,
+ * `option` and an optional `printPrice`, print takes `ink`, `pages`, `trim`.
+ *
+ * `split` divides the list price three ways, each rounded to the cent and
+ * summing to the price exactly:
+ *  - `royalty`: what the author is paid;
+ *  - `cost`: the delivery cost (70% eBook; zero at 35%) or the printing cost;
+ *  - `amazon`: the rest, Amazon's share (price − royalty − cost).
+ * When the royalty is negative (a print price below KDP's minimum) the split
+ * is still returned, with `royalty` < 0, and the page says so instead of
+ * drawing it.
+ */
+export function quoteAt({ format, price, fileMb, option = '70', printPrice, ink, pages, trim }) {
+  if (!finite(price) || price <= 0) return null;
+  if (format === 'ebook') {
+    const q = ebookQuote({ price, fileMb, option, printPrice });
+    const cost = q.rate === EBOOK.rate70 ? q.delivery : 0;
+    return {
+      format, price, royalty: q.royalty, rate: q.rate, cost, minPrice: q.min35,
+      split: { royalty: q.royalty, cost, amazon: round2(price - q.royalty - cost) },
+      ebook: q,
+    };
+  }
+  const q = printQuote({ format, ink, pages, trim, price });
+  if (q.cost == null) return null;
+  return {
+    format, price, royalty: q.royalty, rate: q.rate, cost: q.cost, minPrice: q.minPrice,
+    split: { royalty: q.royalty, cost: q.cost, amazon: round2(price - q.royalty - q.cost) },
+    print: q,
+  };
+}
+
+/**
+ * The royalty at every price from `from` to `to` in `step`s, plus the prices
+ * either side of each threshold, so a line drawn through the points shows the
+ * jumps rather than a slope: $2.98 / $2.99 and $12.99 / $13.00 for eBooks
+ * (where the 70% option opens and closes), $9.98 / $9.99 for print (50% to
+ * 60%), and the print minimum. Sorted by price, one point per price; empty if
+ * the format cannot be printed with these settings.
+ */
+export function royaltyCurve({ from, to, step = 0.5, ...book }) {
+  if (!finite(from) || !finite(to) || !(to > from) || !(step > 0)) return [];
+  const prices = new Set();
+  for (let p = from; p <= to + 1e-9; p += step) prices.add(round2(p));
+  const edges = book.format === 'ebook'
+    ? [EBOOK.band70.min - 0.01, EBOOK.band70.min, EBOOK.band70.max, EBOOK.band70.max + 0.01]
+    : [PRINT.highFrom - 0.01, PRINT.highFrom];
+  if (book.format !== 'ebook') {
+    const pc = printingCost(book);
+    if (pc.cost == null) return [];
+    edges.push(minPrintPrice(pc.cost));
+  }
+  for (const e of edges) if (e >= from - 1e-9 && e <= to + 1e-9) prices.add(round2(e));
+  prices.add(round2(to));
+  return [...prices].sort((a, b) => a - b).map((price) => {
+    const q = quoteAt({ ...book, price });
+    return { price, royalty: q.royalty, rate: q.rate };
+  });
 }

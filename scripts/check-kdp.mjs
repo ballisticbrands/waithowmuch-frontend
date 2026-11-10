@@ -10,9 +10,9 @@
  */
 import {
   ebookRoyalty35, ebookRoyalty70, deliveryCost, ebookMin35, ebook70Eligible, ebookQuote,
-  printingCost, printRate, printRoyalty, minPrintPrice, printQuote, calculate,
+  printingCost, printRate, printRoyalty, minPrintPrice, printQuote, calculate, quoteAt, royaltyCurve,
 } from '../src/data/kdp-royalties.mjs';
-import { EX, RELATED } from '../src/data/kdp-calculator-page.mjs';
+import { EX, RELATED, ASSUMED_FILE_MB } from '../src/data/kdp-calculator-page.mjs';
 import { publishedPosts, postPath } from '../src/data/content.mjs';
 
 let failed = 0;
@@ -190,9 +190,91 @@ near('loss payback', loss.paybackMonths, null);
 const ed = calculate({ paperback: { price: 15, units: 0, expandedUnits: 10 }, print: { pages: 333, ink: 'black', trim: 'regular' } });
 near('ed monthly', ed.paperback.monthly, 10, 1e-6);
 
+/* A format can print in its own ink: a premium-color hardcover beside a
+   black-ink paperback. 300 pp hardcover premium: 5.65 + 300 × 0.065 = 25.15;
+   at $49.99: 0.60 × 49.99 − 25.15 = 4.844 → 4.84. The paperback keeps black ($4.39). */
+const mixed = calculate({
+  paperback: { price: 14.99, units: 1, expandedUnits: 0 },
+  hardcover: { price: 49.99, units: 1, ink: 'premium' },
+  print: { pages: 300, ink: 'black', trim: 'regular' },
+});
+near('mixed ink hardcover cost', mixed.hardcover.cost, 25.15);
+near('mixed ink hardcover royalty', mixed.hardcover.royalty, 4.84);
+near('mixed ink paperback royalty', mixed.paperback.royalty, 4.39);
+
 /* The copy's example is the same book. */
 near('copy EX paperback', EX.result.paperback.royalty, 4.39);
 near('copy EX ebook', EX.result.ebook.royalty, 3.28);
+
+/* ── One format at one price (the slider, the pie and the curve) ───── */
+
+/* The split always closes: royalty + cost + Amazon's share = list price. */
+const sums = (name, q) => near(`${name} split sums`, Math.round((q.split.royalty + q.split.cost + q.split.amazon) * 100), Math.round(q.price * 100));
+/* Print Book Pricing Page, $9.99 / 300 pp: royalty 1.39, printing 4.60, so
+   Amazon keeps 9.99 − 1.39 − 4.60 = 4.00 (0.40 × 9.99 = 3.996). */
+const s999 = quoteAt({ format: 'paperback', price: 9.99, ink: 'black', pages: 300, trim: 'regular' });
+near('split $9.99 royalty', s999.split.royalty, 1.39);
+near('split $9.99 printing', s999.split.cost, 4.6);
+near('split $9.99 amazon', s999.split.amazon, 4.0);
+near('split $9.99 rate', s999.rate, 0.6);
+near('split $9.99 min', s999.minPrice, 9.2);
+sums('pb $9.99', s999);
+/* $9.98: 0.50 × 9.98 − 4.60 = 0.39; Amazon 9.98 − 0.39 − 4.60 = 4.99. */
+const s998 = quoteAt({ format: 'paperback', price: 9.98, ink: 'black', pages: 300, trim: 'regular' });
+near('split $9.98 royalty', s998.split.royalty, 0.39);
+near('split $9.98 amazon', s998.split.amazon, 4.99);
+sums('pb $9.98', s998);
+/* eBook $4.99, 2 MB, 70%: royalty 3.28, delivery 0.30, Amazon 4.99 − 3.28 − 0.30 = 1.41. */
+const e499 = quoteAt({ format: 'ebook', price: 4.99, fileMb: 2, option: '70' });
+near('split ebook royalty', e499.split.royalty, 3.28);
+near('split ebook delivery', e499.split.cost, 0.3);
+near('split ebook amazon', e499.split.amazon, 1.41);
+sums('ebook $4.99', e499);
+/* eBook $14.99 is 35% only, with no delivery cost: 0.35 × 14.99 = 5.2465 → 5.25; Amazon 9.74. */
+const e1499 = quoteAt({ format: 'ebook', price: 14.99, fileMb: 2, option: '70' });
+near('split ebook 35% rate', e1499.rate, 0.35);
+near('split ebook 35% cost', e1499.split.cost, 0);
+near('split ebook 35% royalty', e1499.split.royalty, 5.25);
+near('split ebook 35% amazon', e1499.split.amazon, 9.74);
+sums('ebook $14.99', e1499);
+/* Hardcover $24.99 / 300 pp: 0.60 × 24.99 − 9.25 = 5.744 → 5.74; Amazon 24.99 − 5.74 − 9.25 = 10.00. */
+const h2499 = quoteAt({ format: 'hardcover', price: 24.99, ink: 'black', pages: 300, trim: 'regular' });
+near('split hc royalty', h2499.split.royalty, 5.74);
+near('split hc amazon', h2499.split.amazon, 10.0);
+sums('hc $24.99', h2499);
+/* Below the minimum the royalty goes negative and the split still closes:
+   $5.00 / 300 pp → 0.50 × 5 − 4.60 = −2.10. */
+const sNeg = quoteAt({ format: 'paperback', price: 5, ink: 'black', pages: 300, trim: 'regular' });
+near('split below-min royalty', sNeg.split.royalty, -2.1);
+sums('pb $5', sNeg);
+/* Hardcover groundwood is not offered: no quote. */
+is('quoteAt not offered', quoteAt({ format: 'hardcover', price: 20, ink: 'groundwood', pages: 300, trim: 'regular' }), null);
+is('quoteAt no price', quoteAt({ format: 'ebook', price: 0, fileMb: 2 }), null);
+
+/* The curve carries both sides of every threshold, so the jumps show. */
+const cPb = royaltyCurve({ format: 'paperback', ink: 'black', pages: 300, trim: 'regular', from: 4.99, to: 20.99 });
+const at = (c, p) => c.find((x) => Math.abs(x.price - p) < 1e-9);
+near('curve pb $9.98', at(cPb, 9.98)?.royalty, 0.39);
+near('curve pb $9.99', at(cPb, 9.99)?.royalty, 1.39);
+near('curve pb min point', at(cPb, 9.2)?.royalty, 0.0);
+near('curve pb first', cPb[0].price, 4.99);
+near('curve pb last', cPb[cPb.length - 1].price, 20.99);
+is('curve pb sorted', cPb.every((x, i) => i === 0 || x.price > cPb[i - 1].price), true);
+/* Within one rate the royalty only rises with price. */
+is('curve pb rises within a rate', cPb.every((x, i) => i === 0 || x.rate !== cPb[i - 1].rate || x.royalty >= cPb[i - 1].royalty), true);
+const cEb = royaltyCurve({ format: 'ebook', fileMb: 2, option: '70', from: 0.99, to: 24.99 });
+/* $2.98 → 35%: 1.043 → 1.04; $2.99 → 70%: 0.70 × 2.69 = 1.883 → 1.88. */
+near('curve ebook $2.98', at(cEb, 2.98)?.royalty, 1.04);
+near('curve ebook $2.99', at(cEb, 2.99)?.royalty, 1.88);
+/* $12.99 → 0.70 × 12.69 = 8.883 → 8.88; $13.00 → 0.35 × 13 = 4.55. */
+near('curve ebook $12.99', at(cEb, 12.99)?.royalty, 8.88);
+near('curve ebook $13.00', at(cEb, 13)?.royalty, 4.55);
+is('curve not offered', royaltyCurve({ format: 'hardcover', ink: 'standard', pages: 300, trim: 'regular', from: 5, to: 30 }).length, 0);
+
+/* The default the page assumes for the eBook file (no file-size question up
+   front) is the copy's example file, so the calculator opens on the lede's figure. */
+near('assumed file MB', ASSUMED_FILE_MB, EX.input.ebook.fileMb);
+near('assumed delivery', deliveryCost(ASSUMED_FILE_MB), 0.3);
 
 /* Related reading must not link to a draft post. */
 const live = new Set(publishedPosts().map((p) => postPath(p.slug)));

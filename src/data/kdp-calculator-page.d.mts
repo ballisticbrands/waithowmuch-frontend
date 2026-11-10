@@ -22,3 +22,4 @@ export const SECTIONS: Array<{ id: string; title: string; html: string }>;
 export const FAQ: Array<{ q: string; a: string }>;
 export function faqPlain(html: string): string;
 export const RELATED: Array<{ href: string; label: string }>;
+export const ASSUMED_FILE_MB: number;
