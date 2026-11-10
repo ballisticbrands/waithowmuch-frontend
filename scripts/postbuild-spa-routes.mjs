@@ -28,6 +28,13 @@ import {
   RELATED as FBA_RELATED, faqPlain,
 } from '../src/data/fba-calculator-page.mjs';
 import { fbaPresets } from '../src/data/fba-calculator-presets.mjs';
+import {
+  CALCULATOR_PATH as ROAS_PATH, TITLE as ROAS_TITLE, DOC_TITLE as ROAS_DOC_TITLE,
+  META_DESCRIPTION as ROAS_META_DESCRIPTION, LEDE as ROAS_LEDE, PRIVACY_LINE as ROAS_PRIVACY_LINE,
+  SECTIONS as ROAS_SECTIONS, FAQ as ROAS_FAQ, RELATED as ROAS_RELATED, BENCHMARK_INTRO as ROAS_BENCHMARK_INTRO,
+  benchmarkSummaryHtml,
+} from '../src/data/roas-calculator-page.mjs';
+import { roasBenchmarks } from '../src/data/roas-benchmarks.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -1025,6 +1032,80 @@ for (const r of STATIC) {
   });
   guard(CALCULATOR_PATH, html);
   write(CALCULATOR_PATH, html);
+}
+
+// ── ROAS calculator ───────────────────────────────────────────────────
+/* As for the FBA calculator: the calculator is client-side, and the words a
+   crawler reads come from the same JSX-free modules pages/RoasCalculator.tsx
+   renders. The benchmark table is limited to published businesses, exactly
+   as the app limits it, and its summary paragraph is built from those rows. */
+{
+  const publishedSlugs = new Set(all.map((b) => b.slug));
+  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
+  const bench = roasBenchmarks().filter((b) => publishedSlugs.has(b.slug));
+  const p1 = (n) => (n == null ? '—' : `${n.toFixed(1)}%`);
+  const rows = bench.map((b) =>
+    `<tr><td><a href="${businessPath(b.slug)}">${esc(nameOf.get(b.slug))}</a>${b.note || b.basis !== 'modelled' ? ' *' : ''}</td><td>${p1(b.adPct)}</td><td>${p1(b.preAdPct)}</td><td>${p1(b.marginPct)}</td><td>${b.beRoas == null ? '—' : b.beRoas.toFixed(2)}</td><td>${p1(b.beAcosPct)}</td></tr>`,
+  ).join('\n        ');
+  const notes = bench.filter((b) => b.note).map((b) => `<li>* ${esc(nameOf.get(b.slug))}: ${esc(b.note)}.</li>`).join('');
+
+  const body = `
+    <h1>${esc(ROAS_TITLE)}</h1>
+    <p>${ROAS_LEDE}</p>
+    <p>${esc(ROAS_PRIVACY_LINE)}</p>
+    <p>We publish the real unit economics of Amazon businesses, ad spend included, with every figure sourced. One email
+       when a new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
+    <h2>Real ad spend and margins</h2>
+    <p>${esc(ROAS_BENCHMARK_INTRO)}</p>
+    <table>
+      <thead><tr><th>Business</th><th>Ads, % of revenue</th><th>Margin before ads</th><th>Margin after ads</th><th>Break-even ROAS</th><th>Break-even ACOS</th></tr></thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+    ${benchmarkSummaryHtml(bench, (slug) => nameOf.get(slug), businessPath)}
+    ${notes ? `<ul>${notes}</ul>` : ''}
+    ${ROAS_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
+    <h2>Frequently asked questions</h2>
+    ${ROAS_FAQ.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
+    <h2>Related reading</h2>
+    <ul>${ROAS_RELATED.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>`.trim();
+
+  const url = `${SITE}${ROAS_PATH}`;
+  const html = render({
+    path: ROAS_PATH,
+    title: ROAS_DOC_TITLE,
+    description: ROAS_META_DESCRIPTION,
+    body,
+    bootstrap: { route: 'roas-calculator', businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
+    schema: [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: ROAS_TITLE,
+        url,
+        description: ROAS_META_DESCRIPTION,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: ROAS_FAQ.map((x) => ({
+          '@type': 'Question',
+          name: x.q,
+          acceptedAnswer: { '@type': 'Answer', text: faqPlain(x.a) },
+        })),
+      },
+      crumbs([{ name: 'ROAS calculator', path: ROAS_PATH }]),
+    ],
+  });
+  guard(ROAS_PATH, html);
+  write(ROAS_PATH, html);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────

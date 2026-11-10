@@ -29,6 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                     <Link key={c.slug} to={collectionPath(c.slug)}>{c.navLabel ?? c.title}</Link>
                   ))}
                   <Link to="/tools/amazon-fba-calculator/">Amazon FBA calculator</Link>
+                  <Link to="/tools/roas-calculator/">ROAS calculator</Link>
                   <Link to="/how-we-research/">How we research</Link>
                   <Link to="/about/">About</Link>
                   <Link to="/privacy/">Privacy</Link>
