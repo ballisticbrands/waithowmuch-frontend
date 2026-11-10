@@ -41,6 +41,17 @@ import {
   CALCULATOR_PATH as KDP_PATH, TITLE as KDP_TITLE, DOC_TITLE as KDP_DOC_TITLE, META_DESCRIPTION as KDP_META_DESCRIPTION,
   LEDE as KDP_LEDE, SOURCE_LINE as KDP_SOURCE_LINE, SECTIONS as KDP_SECTIONS, FAQ as KDP_FAQ, RELATED as KDP_RELATED,
 } from '../src/data/kdp-calculator-page.mjs';
+import {
+  CALCULATOR_PATH as TARIFF_PATH, TITLE as TARIFF_TITLE, DOC_TITLE as TARIFF_DOC_TITLE,
+  META_DESCRIPTION as TARIFF_META_DESCRIPTION, LEDE as TARIFF_LEDE, SOURCE_LINE as TARIFF_SOURCE_LINE,
+  PRIVACY_LINE as TARIFF_PRIVACY_LINE, FAQ as TARIFF_FAQ, RELATED as TARIFF_RELATED, sections as tariffSections,
+} from '../src/data/tariff-calculator-page.mjs';
+import {
+  CALCULATOR_PATH as LANDED_PATH, TITLE as LANDED_TITLE, DOC_TITLE as LANDED_DOC_TITLE,
+  META_DESCRIPTION as LANDED_META_DESCRIPTION, LEDE as LANDED_LEDE, PRIVACY_LINE as LANDED_PRIVACY_LINE,
+  FAQ as LANDED_FAQ, RELATED as LANDED_RELATED, sections as landedSections,
+} from '../src/data/landed-cost-calculator-page.mjs';
+import { PRESETS as TARIFF_PRESETS } from '../src/data/tariff-presets.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -1209,6 +1220,84 @@ for (const r of STATIC) {
   guard(KDP_PATH, html);
   write(KDP_PATH, html);
   console.log(`postbuild: ${KDP_PATH} ${words(html.slice(html.indexOf('<div id="root"')))} crawler-visible words`);
+}
+
+// ── Tariff and landed-cost calculators ────────────────────────────────
+/* As for the other tools: the calculator is client-side (its HTS data loads
+   per chapter from /tariff/<rev>/), and every word a crawler reads comes from
+   the same JSX-free modules the pages render. Presets are limited to
+   published businesses, exactly as the app limits them. */
+for (const t of [
+  {
+    path: TARIFF_PATH, title: TARIFF_TITLE, docTitle: TARIFF_DOC_TITLE, description: TARIFF_META_DESCRIPTION,
+    lede: TARIFF_LEDE, privacy: TARIFF_PRIVACY_LINE, faq: TARIFF_FAQ, related: TARIFF_RELATED,
+    sections: tariffSections(businessPath), route: 'tariff-calculator', crumb: 'Tariff calculator',
+    presetIntro: 'Each preset is one product from a business in our database: its factory price from the margin model, and the HTS line it would enter under.',
+  },
+  {
+    path: LANDED_PATH, title: LANDED_TITLE, docTitle: LANDED_DOC_TITLE, description: LANDED_META_DESCRIPTION,
+    lede: LANDED_LEDE, privacy: LANDED_PRIVACY_LINE, faq: LANDED_FAQ, related: LANDED_RELATED,
+    sections: landedSections(businessPath), route: 'landed-cost-calculator', crumb: 'Landed cost calculator',
+    presetIntro: 'Each preset is one product from a business in our database: its factory price and freight from the margin model, and the HTS line it would enter under.',
+  },
+]) {
+  const publishedSlugs = new Set(all.map((b) => b.slug));
+  const nameOf = new Map(all.map((b) => [b.slug, b.name]));
+  const presetList = TARIFF_PRESETS.filter((p) => publishedSlugs.has(p.slug)).map((p) =>
+    `<li><a href="${businessPath(p.slug)}">${esc(nameOf.get(p.slug))}</a>: ${esc(p.product)}, $${p.price.toFixed(2)} from the factory. ${esc(p.basis)}</li>`).join('\n      ');
+  const body = `
+    <h1>${esc(t.title)}</h1>
+    <p>${t.lede}</p>
+    <p>${esc(TARIFF_SOURCE_LINE)} ${esc(t.privacy)}</p>
+    <p>We publish the real unit economics of Amazon businesses, tariffs and freight included, with every figure sourced.
+       One email when a new case study is out. <a href="/signup/">Get emails on new case studies</a></p>
+    <h2>Real products to load</h2>
+    <p>${esc(t.presetIntro)}</p>
+    <ul>
+      ${presetList}
+    </ul>
+    ${t.sections.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
+    <h2>Frequently asked questions</h2>
+    ${t.faq.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
+    <h2>Related reading</h2>
+    <ul>${t.related.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>`.trim();
+
+  const url = `${SITE}${t.path}`;
+  const html = render({
+    path: t.path,
+    title: t.docTitle,
+    description: t.description,
+    body,
+    bootstrap: { route: t.route, businesses: all.map((b) => ({ slug: b.slug, name: b.name, snapshotMonth: b.snapshotMonth ?? null })) },
+    schema: [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: t.title,
+        url,
+        description: t.description,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: t.faq.map((x) => ({
+          '@type': 'Question',
+          name: x.q,
+          acceptedAnswer: { '@type': 'Answer', text: faqPlain(x.a) },
+        })),
+      },
+      crumbs([{ name: t.crumb, path: t.path }]),
+    ],
+  });
+  guard(t.path, html);
+  write(t.path, html);
+  console.log(`postbuild: ${t.path} ${words(html.slice(html.indexOf('<div id="root"')))} crawler-visible words`);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────

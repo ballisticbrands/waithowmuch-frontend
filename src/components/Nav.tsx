@@ -168,6 +168,20 @@ export function SideRail() {
           icon="book"
           collapsed={collapsed}
         />
+        <RailLink
+          to="/tools/tariff-calculator/"
+          label="Tariff calculator"
+          active={here === "/tools/tariff-calculator/"}
+          icon="calculator"
+          collapsed={collapsed}
+        />
+        <RailLink
+          to="/tools/landed-cost-calculator/"
+          label="Landed cost calculator"
+          active={here === "/tools/landed-cost-calculator/"}
+          icon="parcel"
+          collapsed={collapsed}
+        />
 
         <div data-rail-group>Read</div>
         {/* Active on every post too: a reader inside an article is still in

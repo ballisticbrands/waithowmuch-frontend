@@ -1,0 +1,26 @@
+import type { Claims } from "./tariff.mjs";
+export const CALCULATOR_PATH: string;
+export const LANDED_PATH: string;
+export const FBA_CALCULATOR_PATH: string;
+export const TARIFFS_POST_PATH: string;
+export const CROSS_URL: string;
+export const HTS_URL: string;
+export const TITLE: string;
+export const DOC_TITLE: string;
+export const META_DESCRIPTION: string;
+export function dateLabel(iso: string): string;
+export const REVISION_LABEL: string;
+export const SOURCE_LINE: string;
+export const PRIVACY_LINE: string;
+export type TariffExample = {
+  id: string; slug: string | null; business: string | null; product: string; code: string; country: string; price: number;
+  claims?: Claims; expect: { ratePct: number; perUnit: number }; layers: string;
+};
+export const EXAMPLES: TariffExample[];
+export const MPF_EXAMPLES: Array<{ value: number; mpf: number }>;
+export function sections(pathOf: (slug: string) => string): Array<{ id: string; title: string; html: string }>;
+export const FAQ: Array<{ q: string; a: string }>;
+export function faqPlain(html: string): string;
+export const RELATED: Array<{ href: string; label: string }>;
+export const LEDE: string;
+export const usd0Label: (n: number) => string;

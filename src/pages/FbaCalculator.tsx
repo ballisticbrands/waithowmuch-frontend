@@ -52,6 +52,15 @@ const usd0 = (n: number | null | undefined) =>
   n == null || !Number.isFinite(n) ? "—" : `${n < 0 ? "−" : ""}$${Math.round(Math.abs(n)).toLocaleString("en-US")}`;
 const pct = (n: number | null | undefined) => (n == null || !Number.isFinite(n) ? "—" : `${n.toFixed(1)}%`);
 
+/* The tariff and landed-cost calculators hand their result across as
+   ?cost=<product cost per unit>&inbound=<inbound shipping per unit>. */
+function fromQuery(): Fields {
+  if (typeof window === "undefined") return DEFAULTS;
+  const q = new URLSearchParams(window.location.search);
+  const ok = (k: string) => { const v = num(q.get(k) ?? ""); return v >= 0 ? String(v) : null; };
+  return { ...DEFAULTS, productCost: ok("cost") ?? DEFAULTS.productCost, inboundShipping: ok("inbound") ?? DEFAULTS.inboundShipping };
+}
+
 type Published = Pick<BusinessCard, "slug" | "name" | "snapshotMonth">;
 
 /** Published businesses (slug → name). Inlined by the prerender on a landing;
@@ -75,7 +84,7 @@ export default function FbaCalculator() {
 
   const [period, setPeriod] = useState<PeriodId>(() => periodFor(today));
   const [units, setUnits] = useState<Units>("imperial");
-  const [f, setF] = useState<Fields>(DEFAULTS);
+  const [f, setF] = useState<Fields>(fromQuery);
   const [compareId, setCompareId] = useState("");
 
   /* One "calculator_use" per page view, on the first edit — enough to tell

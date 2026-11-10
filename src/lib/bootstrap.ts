@@ -21,7 +21,10 @@ type Bootstrap =
      profile and need no fetch on a landing. */
   | { route: "fba-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> }
   /* The ROAS calculator: the same list, for its benchmark table and presets. */
-  | { route: "roas-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> };
+  | { route: "roas-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> }
+  /* The tariff and landed-cost calculators: the same list, for their presets. */
+  | { route: "tariff-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> }
+  | { route: "landed-cost-calculator"; businesses: Array<Pick<BusinessCard, "slug" | "name" | "snapshotMonth">> };
 
 declare global {
   interface Window {
@@ -64,3 +67,9 @@ export const fbaCalculatorBootstrap = () =>
 
 export const roasCalculatorBootstrap = () =>
   initial?.route === "roas-calculator" && initial.businesses.length > 0 ? initial : undefined;
+
+export const tariffCalculatorBootstrap = () =>
+  initial?.route === "tariff-calculator" && initial.businesses.length > 0 ? initial : undefined;
+
+export const landedCostCalculatorBootstrap = () =>
+  initial?.route === "landed-cost-calculator" && initial.businesses.length > 0 ? initial : undefined;
