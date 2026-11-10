@@ -27,6 +27,9 @@ import b8 from './posts/best-products-to-sell-on-amazon.mjs';
 import b9 from './posts/top-amazon-sellers-by-revenue.mjs';
 import b10 from './posts/how-much-does-it-cost-to-start-an-ecommerce-business.mjs';
 import b11 from './posts/private-label-vs-wholesale-vs-dropshipping-on-amazon.mjs';
+import b12 from './posts/amazon-seller-insurance-requirement-2026.mjs';
+import b13 from './posts/amazon-referral-fees-by-category.mjs';
+import b14 from './posts/selling-books-on-amazon-fba.mjs';
 
 /** @type {import('./content').Post[]} */
 export const POSTS = [
@@ -111,7 +114,7 @@ export const POSTS = [
     slug: 'selling-books-on-amazon-fba',
     title: 'Selling Books on Amazon FBA: What It Actually Pays',
     kw: 'selling books on amazon', vol: 9900, comp: 'Low',
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published', body: b14,
     angle:
       'Biggest niche term found, by an order of magnitude. ⚠️ No book case study exists ' +
       'yet — research one first or the post has nothing proprietary in it. ⚠️ The SERP ' +
@@ -178,9 +181,9 @@ export const POSTS = [
     slug: 'amazon-seller-insurance-requirement-2026',
     title: "Amazon's New Liability Insurance Rule: Who Needs It and What It Costs",
     kw: 'amazon seller insurance', vol: 140, comp: null,
-    tier: 1, status: 'draft',
+    tier: 1, status: 'published', body: b12,
     angle:
-      'Trigger: Amazon\'s 2026-11-02 announcement (Seller Forums, news and announcements, ' +
+      'Trigger: Amazon\'s announcement posted 2026-09-03, effective 2026-11-02 (Seller Forums, news and announcements, ' +
       'thread 287d5c33-8278-4802-ba69-2f58f7dda408; 4.9k views). The rule: $1M per ' +
       'occurrence and aggregate was already required within 30 days of a $10k gross-proceeds ' +
       'month; now it is required REGARDLESS of sales for categories with enhanced safety ' +
@@ -191,7 +194,7 @@ export const POSTS = [
       'established one. Premium figures must come from insurer quotes or published rate ' +
       'pages, never from memory. Keywords: 140/mo, SD 28, $33 CPC; "requirements" 40/mo ' +
       '(Ubersuggest lags new policies; the forum thread is the real signal).',
-    cite: [],
+    cite: ['*'],
   },
 
   // ── Added from the 2026-11-09 research shortlist (clusters 6, 7, 12) ──
@@ -224,7 +227,7 @@ export const POSTS = [
     slug: 'amazon-referral-fees-by-category',
     title: 'Amazon Referral Fees by Category (2026)',
     kw: 'amazon referral fee', vol: 260, comp: null,
-    tier: 2, status: 'draft',
+    tier: 2, status: 'published', body: b13,
     angle:
       'Cluster 730/mo, median SD 10 (head term SD 34; "by category" variants SD 41-46). ' +
       'The full category table plus minimums and tiered categories, with which category ' +
