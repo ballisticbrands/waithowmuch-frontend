@@ -161,6 +161,13 @@ export function SideRail() {
           icon="trend"
           collapsed={collapsed}
         />
+        <RailLink
+          to="/tools/kdp-royalty-calculator/"
+          label="KDP calculator"
+          active={here === "/tools/kdp-royalty-calculator/"}
+          icon="book"
+          collapsed={collapsed}
+        />
 
         <div data-rail-group>Read</div>
         {/* Active on every post too: a reader inside an article is still in

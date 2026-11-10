@@ -37,6 +37,10 @@ import {
   benchmarkSummaryHtml,
 } from '../src/data/roas-calculator-page.mjs';
 import { roasBenchmarks } from '../src/data/roas-benchmarks.mjs';
+import {
+  CALCULATOR_PATH as KDP_PATH, TITLE as KDP_TITLE, DOC_TITLE as KDP_DOC_TITLE, META_DESCRIPTION as KDP_META_DESCRIPTION,
+  LEDE as KDP_LEDE, SOURCE_LINE as KDP_SOURCE_LINE, SECTIONS as KDP_SECTIONS, FAQ as KDP_FAQ, RELATED as KDP_RELATED,
+} from '../src/data/kdp-calculator-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -1151,6 +1155,60 @@ for (const r of STATIC) {
   });
   guard(ROAS_PATH, html);
   write(ROAS_PATH, html);
+}
+
+// ── KDP royalty calculator ────────────────────────────────────────────
+/* Client-side like the other two calculators; the words a crawler reads come
+   from the same JSX-free module pages/KdpCalculator.tsx renders. No business
+   data, so no bootstrap payload. */
+{
+  const body = `
+    <h1>${esc(KDP_TITLE)}</h1>
+    <p>${KDP_LEDE}</p>
+    <p>${esc(KDP_SOURCE_LINE)}</p>
+    <p>We publish the real revenue and margins of online businesses, with every figure sourced. One email when a new
+       case study is out. <a href="/signup/">Get emails on new case studies</a></p>
+    ${KDP_SECTIONS.map((s) => `<h2>${esc(s.title)}</h2>\n    ${s.html}`).join('\n    ')}
+    <h2>Frequently asked questions</h2>
+    ${KDP_FAQ.map((x) => `<h3>${esc(x.q)}</h3>\n    <p>${x.a}</p>`).join('\n    ')}
+    <h2>Related reading</h2>
+    <ul>${KDP_RELATED.map((r) => `<li><a href="${r.href}">${esc(r.label)}</a></li>`).join('')}</ul>`.trim();
+
+  const url = `${SITE}${KDP_PATH}`;
+  const html = render({
+    path: KDP_PATH,
+    title: KDP_DOC_TITLE,
+    description: KDP_META_DESCRIPTION,
+    body,
+    schema: [
+      {
+        '@type': 'WebApplication',
+        '@id': `${url}#app`,
+        name: KDP_TITLE,
+        url,
+        description: KDP_META_DESCRIPTION,
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Any',
+        browserRequirements: 'Requires JavaScript',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        publisher: { '@id': `${SITE}/#org` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${url}#faq`,
+        mainEntity: KDP_FAQ.map((x) => ({
+          '@type': 'Question',
+          name: x.q,
+          acceptedAnswer: { '@type': 'Answer', text: faqPlain(x.a) },
+        })),
+      },
+      crumbs([{ name: 'KDP royalty calculator', path: KDP_PATH }]),
+    ],
+  });
+  guard(KDP_PATH, html);
+  write(KDP_PATH, html);
+  console.log(`postbuild: ${KDP_PATH} ${words(html.slice(html.indexOf('<div id="root"')))} crawler-visible words`);
 }
 
 // ── Home — the case-study cards ───────────────────────────────────────
