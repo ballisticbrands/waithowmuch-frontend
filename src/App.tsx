@@ -11,6 +11,8 @@ import { BlogIndex, BlogPost, GlossaryIndex, GlossaryTerm } from "@/pages/Blog";
 import BusinessAttributes from "@/pages/BusinessAttributes";
 import FbaCalculator from "@/pages/FbaCalculator";
 import RoasCalculator from "@/pages/RoasCalculator";
+import TariffCalculator from "@/pages/TariffCalculator";
+import LandedCostCalculator from "@/pages/LandedCostCalculator";
 
 /** Every content route is registered with AND without a trailing slash: the
  *  prerender writes directories, so the canonical URL has one, but inbound
@@ -73,6 +75,8 @@ export default function App() {
         {/* No /tools/ index yet: two tools on an index page is thin content. */}
         {Both({ path: "/tools/amazon-fba-calculator", element: <FbaCalculator /> })}
         {Both({ path: "/tools/roas-calculator", element: <RoasCalculator /> })}
+        {Both({ path: "/tools/tariff-calculator", element: <TariffCalculator /> })}
+        {Both({ path: "/tools/landed-cost-calculator", element: <LandedCostCalculator /> })}
         {Both({ path: "/about", element: <About /> })}
         {Both({ path: "/privacy", element: <Privacy /> })}
         {Both({ path: "/terms", element: <Terms /> })}

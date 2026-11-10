@@ -1,0 +1,547 @@
+{
+  "revision": {
+    "name": "2026HTSRev23",
+    "label": "2026 HTS Revision 23",
+    "startDate": "2026-11-10",
+    "slug": "2026-rev23"
+  },
+  "fetchedAt": "2026-11-10",
+  "validThrough": "2027-01-09",
+  "dataPath": "/tariff/2026-rev23/",
+  "lists": [
+    {
+      "id": "1",
+      "heading": "9903.88.01",
+      "rate": 25,
+      "suspended": false
+    },
+    {
+      "id": "2",
+      "heading": "9903.88.02",
+      "rate": 25,
+      "suspended": false
+    },
+    {
+      "id": "3",
+      "heading": "9903.88.03",
+      "rate": 25,
+      "suspended": false
+    },
+    {
+      "id": "4A",
+      "heading": "9903.88.15",
+      "rate": 7.5,
+      "suspended": false
+    },
+    {
+      "id": "4B",
+      "heading": "9903.88.16",
+      "rate": 0,
+      "suspended": true
+    }
+  ],
+  "note31": [
+    {
+      "heading": "9903.91.01",
+      "rate": 25,
+      "from": "2024-09-27",
+      "until": null
+    },
+    {
+      "heading": "9903.91.02",
+      "rate": 50,
+      "from": "2024-09-27",
+      "until": null
+    },
+    {
+      "heading": "9903.91.03",
+      "rate": 100,
+      "from": "2024-09-27",
+      "until": null
+    },
+    {
+      "heading": "9903.91.04",
+      "rate": 25,
+      "from": "2025-01-01",
+      "until": "2025-12-31"
+    },
+    {
+      "heading": "9903.91.05",
+      "rate": 50,
+      "from": "2025-01-01",
+      "until": null
+    },
+    {
+      "heading": "9903.91.06",
+      "rate": 25,
+      "from": "2026-01-01",
+      "until": null
+    },
+    {
+      "heading": "9903.91.07",
+      "rate": 50,
+      "from": "2026-01-01",
+      "until": null
+    },
+    {
+      "heading": "9903.91.08",
+      "rate": 100,
+      "from": "2026-01-01",
+      "until": null
+    },
+    {
+      "heading": "9903.91.11",
+      "rate": 25,
+      "from": "2025-01-01",
+      "until": null
+    }
+  ],
+  "n52": [
+    {
+      "heading": "9903.05.20",
+      "country": "Algeria",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.21",
+      "country": "Angola",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.22",
+      "country": "Argentina",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.23",
+      "country": "Australia",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.24",
+      "country": "Bahamas",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.25",
+      "country": "Bahrain",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.26",
+      "country": "Bangladesh",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.27",
+      "country": "Brazil",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.28",
+      "country": "Cambodia",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.29",
+      "country": "Canada",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.30",
+      "country": "Chile",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.31",
+      "country": "China",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.32",
+      "country": "Colombia",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.33",
+      "country": "Costa Rica",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.34",
+      "country": "Dominican Republic",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.35",
+      "country": "Ecuador",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.36",
+      "country": "Egypt",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.37",
+      "country": "El Salvador",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.38",
+      "country": "European Union",
+      "kind": "floorNone",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.39",
+      "country": "European Union",
+      "kind": "floor",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.40",
+      "country": "Guatemala",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.41",
+      "country": "Guyana",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.42",
+      "country": "Honduras",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.43",
+      "country": "Hong Kong, China",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.44",
+      "country": "India",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.45",
+      "country": "Indonesia",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.46",
+      "country": "Iraq",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.47",
+      "country": "Israel",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.48",
+      "country": "Japan",
+      "kind": "floorNone",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.49",
+      "country": "Japan",
+      "kind": "floor",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.50",
+      "country": "Jordan",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.51",
+      "country": "Kazakhstan",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.52",
+      "country": "Kuwait",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.53",
+      "country": "Libya",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.54",
+      "country": "Malaysia",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.55",
+      "country": "Mexico",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.56",
+      "country": "Morocco",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.57",
+      "country": "New Zealand",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.58",
+      "country": "Nicaragua",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.59",
+      "country": "Nigeria",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.60",
+      "country": "Norway",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.61",
+      "country": "Oman",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.62",
+      "country": "Pakistan",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.63",
+      "country": "Peru",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.64",
+      "country": "Philippines",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.65",
+      "country": "Qatar",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.66",
+      "country": "Russia",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.67",
+      "country": "Saudi Arabia",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.68",
+      "country": "Singapore",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.69",
+      "country": "South Africa",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.70",
+      "country": "South Korea",
+      "kind": "floorNone",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.71",
+      "country": "South Korea",
+      "kind": "floor",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.72",
+      "country": "Sri Lanka",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.73",
+      "country": "Switzerland",
+      "kind": "floorNone",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.74",
+      "country": "Switzerland",
+      "kind": "floor",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.75",
+      "country": "Taiwan",
+      "kind": "floorNone",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.76",
+      "country": "Taiwan",
+      "kind": "floor",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.77",
+      "country": "Thailand",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.78",
+      "country": "Trinidad and Tobago",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.79",
+      "country": "Türkiye",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.80",
+      "country": "United Arab Emirates",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.81",
+      "country": "United Kingdom",
+      "kind": "add",
+      "rate": 10
+    },
+    {
+      "heading": "9903.05.82",
+      "country": "Uruguay",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.83",
+      "country": "Venezuela",
+      "kind": "add",
+      "rate": 12.5
+    },
+    {
+      "heading": "9903.05.84",
+      "country": "Vietnam",
+      "kind": "add",
+      "rate": 12.5
+    }
+  ],
+  "flags": [
+    {
+      "note": "16",
+      "title": "Section 232: steel, aluminium and copper (and derivative articles)",
+      "how": "Applies to the full value when the metal is at least 15% of the article's weight (any weight for chapters 72, 73, 74 and 76). Rates run from 10% to 50% depending on origin and metal source. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "33",
+      "title": "Section 232: passenger vehicles, light trucks and their parts",
+      "how": "25% on listed vehicles and parts, with country deals. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "37",
+      "title": "Section 232: timber, lumber, upholstered furniture, kitchen cabinets and vanities",
+      "how": "10% on softwood lumber, 25% on upholstered wooden furniture and on kitchen cabinets and vanities, with country caps. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "38",
+      "title": "Section 232: medium- and heavy-duty vehicles, buses and their parts",
+      "how": "10% to 25%. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "39",
+      "title": "Section 232: semiconductors",
+      "how": "25% on semiconductor articles, with end-use exemptions. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "40",
+      "title": "Section 232: pharmaceuticals",
+      "how": "Up to 100% on patented pharmaceuticals, with country caps and exemptions; generics excluded. Where it applies, the 2026 note-52 duty does not."
+    },
+    {
+      "note": "41",
+      "title": "Section 201 safeguard: quartz surface products",
+      "how": "25% within the quota, 50% above it."
+    },
+    {
+      "note": "43",
+      "title": "Section 232: unmanned aircraft (drones), their parts and components",
+      "how": "Up to 100% on drones and listed parts, with country caps. This one does NOT replace the 2026 note-52 duty."
+    }
+  ],
+  "counts": {
+    "rows": 35805,
+    "lists": {
+      "1": 856,
+      "2": 283,
+      "3": 5917,
+      "4A": 2963,
+      "4B": 538
+    },
+    "exclusions": 178,
+    "generalRates": 11414,
+    "notPercent": 1236,
+    "notPercentComputed": 883
+  }
+}

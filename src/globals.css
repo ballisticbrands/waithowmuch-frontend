@@ -2716,3 +2716,40 @@ a[data-cat]:hover { color: var(--foreground); border-color: var(--border-strong)
   [data-feature-card] h2 { font-size: 1.375rem; }
   [data-spot-card] [data-hero-art] { width: 7.5rem; }
 }
+
+/* ─── Tariff and landed-cost calculators (components/ImportCalculator.tsx) ─
+   On the FBA calculator's data-fba-* layout; only what they add is here.
+   The search list overlays the form rather than pushing it down, and every
+   long code path wraps, so nothing scrolls sideways at 390px. */
+[data-tariff-search] { position: relative; }
+[data-tariff-hits] {
+  position: absolute; z-index: 20; left: 0; right: 0; top: 100%; margin-top: 0.25rem; max-height: 22rem; overflow-y: auto;
+  background: var(--background); border: 1px solid var(--border-strong); border-radius: var(--radius); box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+[data-tariff-hits] button {
+  display: block; width: 100%; text-align: left; padding: 0.5rem 0.7rem; font-size: 0.8125rem; line-height: 1.35;
+  border: 0; border-bottom: 1px solid var(--border); background: none; color: var(--foreground); cursor: pointer; overflow-wrap: anywhere;
+}
+[data-tariff-hits] button:hover, [data-tariff-hits] button[aria-selected="true"] { background: var(--accent-tint); }
+[data-tariff-hits] button strong { font-variant-numeric: tabular-nums; margin-right: 0.25rem; }
+[data-tariff-hits] button span { display: block; font-size: 0.72rem; color: var(--muted-foreground); }
+[data-tariff-hits] [data-tariff-close] { text-align: center; color: var(--muted-foreground); border-bottom: 0; }
+[data-tariff-hint], [data-tariff-note], [data-tariff-asof] { font-size: 0.78rem; line-height: 1.45; color: var(--muted-foreground); margin: 0 0 0.6rem; }
+[data-tariff-hits] [data-tariff-hint] { padding: 0.5rem 0.7rem; margin: 0; }
+[data-tariff-line] { min-height: 3.6rem; font-size: 0.8125rem; line-height: 1.4; margin: -0.2rem 0 0.8rem; overflow-wrap: anywhere; }
+[data-tariff-line] p { margin: 0 0 0.2rem; }
+[data-tariff-path] { color: var(--muted-foreground); font-size: 0.75rem; }
+[data-tariff-results] { min-height: 30rem; }
+[data-tariff-claims] { margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
+[data-tariff-claims] [data-fba-check] { align-items: flex-start; font-size: 0.8125rem; line-height: 1.4; }
+[data-tariff-claims] [data-fba-check] input { flex: none; margin-top: 0.15rem; }
+[data-tariff-claims] em { font-style: normal; color: var(--muted-foreground); }
+[data-tariff-flag] {
+  font-size: 0.8125rem; line-height: 1.45; margin: 0.75rem 0 0; padding: 0.6rem 0.75rem;
+  border-radius: var(--radius); background: var(--surface); border-left: 3px solid var(--warning);
+}
+[data-tariff-landed] { margin-top: 1rem; }
+[data-tariff-next] { font-size: 0.8125rem; line-height: 1.45; color: var(--muted-foreground); margin: 1rem 0 0; }
+[data-tariff-next] a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+[data-fba-results] [data-fba-results-table] th { overflow-wrap: anywhere; }
+[data-tariff-results] [data-fba-results-table] thead th { white-space: nowrap; }
