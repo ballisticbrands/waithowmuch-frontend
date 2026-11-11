@@ -10341,9 +10341,9 @@ export const PROFILES = {
 
     /* 🚨 Two channels, two margins. Months with no TikTok sales (everything before
        October 2025, and January to August 2026) earn Amazon's own September rate,
-       49.65%; months with both sit near the Whole-brand tab's 50.2%.
+       41.66%; months with both sit near the Whole-brand tab's 42.3%.
        check-profile.mjs accepts either, within half a point. */
-    profitSeriesAltPct: [49.65],
+    profitSeriesAltPct: [41.66],
 
     valuation: {
       inputs: {
@@ -10655,7 +10655,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'Thirty-seven months of history, from September 2023, which is as far back as Amazon’s “bought in past month” badge goes in Keepa. Revenue is two channels. Amazon US is that badge on each of the eighteen listings at each month end, priced at the buy box; the seller holds the buy box on every top listing, so nothing is split with a reseller. TikTok Shop UK is a third-party estimate of the brand’s shop, from Kalodata, which reads zero before October 2025. Roughly half of September was left after the goods, shipping, tariff and each channel’s fees.',
+          'Thirty-seven months of history, from September 2023, which is as far back as Amazon’s “bought in past month” badge goes in Keepa. Revenue is two channels. Amazon US is that badge on each of the eighteen listings at each month end, priced at the buy box; the seller holds the buy box on every top listing, so nothing is split with a reseller. TikTok Shop UK is a third-party estimate of the brand’s shop, from Kalodata, which reads zero before October 2025. Roughly two fifths of September was left after the goods, shipping, tariff and each channel’s fees.',
       },
       {
         type: 'prose',
@@ -10725,12 +10725,12 @@ export const PROFILES = {
       {
         type: 'lede',
         text:
-          'About half of each September dollar survives the box, the boat and the marketplaces, and a little less on the older Amazon flash cards: the printing is cheap, and the biggest cut is a fulfilment fee that does not shrink with the price. The UK TikTok Shop keeps about the same in its best month.',
+          'About two fifths of each September dollar survives the box, the boat and the marketplaces, and a little less on the older Amazon flash cards: the biggest cut is a fulfilment fee that does not shrink with the price. The UK TikTok Shop keeps a little more in its best month.',
       },
       {
         type: 'prose',
         text:
-          'Two lines are measured, two are assumed, and the last two are built from other readings. Amazon’s referral rate is 15% on all eighteen listings, and the fulfilment fee is Amazon’s own pick-and-pack figure per listing. Production is the average of the lowest prices verified Chinese printers list on Alibaba for a deck like each one: $0.66 for a trivia deck in a box and $0.75 for flash cards, a few cents against Amazon’s four-dollar fulfilment fee. The tariff is a flat 20% of that cost, on the assumption of Chinese origin that nothing read supports or rules out. Freight is priced from a dated public rate and the box’s own dimensions, and the advertising line is modelled.',
+          'Two lines are measured, two are assumed, and the last two are built from other readings. Amazon’s referral rate is 15% on all eighteen listings, and the fulfilment fee is Amazon’s own pick-and-pack figure per listing. Production is the owner’s figure, $1.88 for a triangular Mount Cleverest deck and $1.39 for a flash-card deck. Verified Chinese printers on Alibaba list decks like these at $0.66 and $0.75 on average, but they quote plain rectangular boxes and the owner judged them too low for a die-cut triangle and a cased flash-card deck. The tariff is a flat 20% of that cost, on the assumption of Chinese origin that nothing read supports or rules out. Freight is priced from a dated public rate and the box’s own dimensions, and the advertising line is modelled.',
       },
       {
         type: 'prose',
@@ -10766,10 +10766,10 @@ export const PROFILES = {
                   ['Wenzhou Tiange Arts & Crafts Co., Ltd', 'Verified · 9 yrs', '4.9★ from 9', '110', '500 boxes', '$2.00'],
                   ['Hunan Igor Crafts Co., Ltd', 'Verified · 4 yrs', '4.9★ from 34', '703', '500 sets', '$0.21–0.52'],
                   ['Dongguan Jolly Play Card Game Co., Ltd', 'Verified · 1 yr', '5.0★ from 8', '—', '500 sets', '$0.50–1.99'],
-                  ['Average lowest price — the cost to make used below', '', '', '', '', '$0.66'],
+                  ['Production cost used below — our figure, not a quote', '', '', '', '', '$1.88'],
                 ],
                 note:
-                  'Five verified Chinese printers from a search for “custom trivia card game printing”, filtered to a 4.5+ supplier rating; none was marked as an ad. They print question-card decks in a box to order. The cost to make takes each one’s lowest listed price — $0.40, $0.20, $2.00, $0.21 and $0.50 — and averages them. They quote rectangular boxes: Mount Cleverest’s triangular, die-cut box would cost more, and where Poptacular prints is not public.',
+                  'Five verified Chinese printers from a search for “custom trivia card game printing”, filtered to a 4.5+ supplier rating; none was marked as an ad. They print question-card decks in a box to order. The cost to make takes each one’s lowest listed price — $0.40, $0.20, $2.00, $0.21 and $0.50 — and averages them to $0.66. They quote rectangular boxes: Mount Cleverest’s triangular, die-cut box would cost more, so the figure used is the owner’s $1.88, decided on 11 November 2026. Where Poptacular prints is not public.',
               },
               {
                 type: 'table',
@@ -10794,13 +10794,13 @@ export const PROFILES = {
                 noteColumns: [2],
                 columns: ['Line', 'Per deck', 'From'],
                 rows: [
-                  ['Production', '$0.66', 'The Alibaba printers’ lowest prices, averaged — COGS table above'],
-                  ['Tariff', '$0.13', 'ASSUMED: 20% of production, Section 301 plus the reciprocal rate on China, applied flat'],
+                  ['Production', '$1.88', 'The owner’s figure for a die-cut triangular deck — COGS table above'],
+                  ['Tariff', '$0.38', 'ASSUMED: 20% of production, Section 301 plus the reciprocal rate on China, applied flat'],
                   ['Ocean freight', '$0.51', 'This deck’s carton at $496.67/cbm, the shipping table above'],
-                  ['Landed cost', '$1.30', 'What one deck costs before it sells'],
+                  ['Landed cost', '$2.77', 'What one deck costs before it sells'],
                 ],
                 note:
-                  '$1.30 is 7.7% of the $16.99 price, and the freight to move the box is most of the difference from the printing alone. No prep or inbound-placement line is added, so the figure is a floor on that count; against that, the door-to-door freight already includes delivery to a warehouse.',
+                  '$2.77 is 16.3% of the $16.99 price. No prep or inbound-placement line is added, so the figure is a floor on that count; against that, the door-to-door freight already includes delivery to a warehouse.',
               },
               {
                 type: 'margin',
@@ -10809,10 +10809,10 @@ export const PROFILES = {
                   {
                     label: 'Cost of goods',
                     key: 'cogs',
-                    pct: -7.652,
-                    amount: 1.3,
+                    pct: -16.304,
+                    amount: 2.77,
                     detail:
-                      '$0.66 of production, $0.13 of tariff and $0.51 of ocean freight. The printing is the average of five Alibaba quotes; the tariff is assumed.',
+                      '$1.88 of production, $0.38 of tariff and $0.51 of ocean freight. The production figure is the owner’s, not a quote, and the tariff is assumed.',
                     links: [
                       { label: 'See landed cost above', href: '#landed-cost' },
                       { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -10873,10 +10873,10 @@ export const PROFILES = {
                   ['Guangzhou Bonroy Cultural Creativity Co., Ltd', 'Verified · 9 yrs', 'No score shown', '450', '500 pieces', '$1.09'],
                   ['Yiwu Forever Print Paper Products Co., Ltd', 'Verified · 7 yrs', '4.8★ from 62', '—', '500 units', '$1.39–2.99'],
                   ['Dongguan Caijia Printing Co., Ltd', 'Verified · 1 yr', '5.0★ from 5', '—', '300 pieces', '$0.15–0.35'],
-                  ['Average lowest price — the cost to make used below', '', '', '', '', '$0.75'],
+                  ['Production cost used below — our figure, not a quote', '', '', '', '', '$1.39'],
                 ],
                 note:
-                  'Four verified Chinese printers from a search for “custom flash cards printing with case”, filtered to a 4.5+ supplier rating; none was marked as an ad. Their lowest prices — $0.35, $1.09, $1.39 and $0.15 — average $0.75. They quote paper boxes, so the 100 PICS plastic slide case is not priced in it, and a fifth result, two decks of playing cards at $5 for a single set, is left out as a different product.',
+                  'Four verified Chinese printers from a search for “custom flash cards printing with case”, filtered to a 4.5+ supplier rating; none was marked as an ad. Their lowest prices — $0.35, $1.09, $1.39 and $0.15 — average $0.75. They quote paper boxes, so the 100 PICS plastic slide case is not priced in it, which is why the figure used is the owner’s $1.39, decided on 11 November 2026, and a fifth result, two decks of playing cards at $5 for a single set, is left out as a different product.',
               },
               {
                 type: 'table',
@@ -10901,13 +10901,13 @@ export const PROFILES = {
                 noteColumns: [2],
                 columns: ['Line', 'Per deck', 'From'],
                 rows: [
-                  ['Production', '$0.75', 'The Alibaba printers’ lowest prices, averaged — COGS table above'],
-                  ['Tariff', '$0.15', 'ASSUMED: 20% of production, applied flat'],
+                  ['Production', '$1.39', 'The owner’s figure for a cased flash-card deck — COGS table above'],
+                  ['Tariff', '$0.28', 'ASSUMED: 20% of production, applied flat'],
                   ['Ocean freight', '$0.14', 'The September mix of boxes at $496.67/cbm; the US States deck alone is $0.13'],
-                  ['Landed cost', '$1.04', 'What one deck costs before it sells'],
+                  ['Landed cost', '$1.81', 'What one deck costs before it sells'],
                 ],
                 note:
-                  '$1.04 is 8.3% of the $12.47 average sale across September’s 100 PICS listings, the highest cost-of-goods share on the page, on a product with the same fulfilment fee as one that sells for $4.50 more.',
+                  '$1.81 is 14.5% of the $12.47 average sale across September’s 100 PICS listings, the highest cost-of-goods share on the page, on a product with the same fulfilment fee as one that sells for $4.50 more.',
               },
               {
                 type: 'margin',
@@ -10916,9 +10916,9 @@ export const PROFILES = {
                   {
                     label: 'Cost of goods',
                     key: 'cogs',
-                    pct: -8.34,
-                    amount: 1.04,
-                    detail: '$0.75 of production, $0.15 of tariff and $0.14 of ocean freight. The printing is the average of four Alibaba quotes; the plastic case and the tariff are not quoted.',
+                    pct: -14.515,
+                    amount: 1.81,
+                    detail: '$1.39 of production, $0.28 of tariff and $0.14 of ocean freight. The production figure is the owner’s, not a quote, and the tariff is assumed.',
                     links: [
                       { label: 'See landed cost above', href: '#landed-cost' },
                       { label: 'See COGS breakdown above', href: '#cogs-breakdown' },
@@ -10957,7 +10957,7 @@ export const PROFILES = {
                   },
                 ],
                 note:
-                  'Before storage, returns, removals, inbound placement and the peak fulfilment surcharge, none of which is modelled. The gap between this tab and the Mount Cleverest one is not the production cost, which is cents on both: it is that Amazon charges almost the same to pick a $12 deck as a $17 one.',
+                  'Before storage, returns, removals, inbound placement and the peak fulfilment surcharge, none of which is modelled. The gap between this tab and the Mount Cleverest one is not the production cost, which is $1.88 and $1.39: it is that Amazon charges almost the same to pick a $12 deck as a $17 one.',
               },
             ],
           },
@@ -10969,7 +10969,7 @@ export const PROFILES = {
               {
                 /* 🚨 The backend seed builds the profit and ad-spend series
                    from these SAME numbers (seed-mount-cleverest.ts COST_LINES:
-                   cogs 7.82: production, tariff and freight on Amazon units
+                   cogs 15.75: production, tariff and freight on Amazon units
                    plus TikTok production, at September's mix).
                    Change one, change both. */
                 type: 'margin',
@@ -10978,9 +10978,9 @@ export const PROFILES = {
                   {
                     label: 'Cost of goods',
                     key: 'cogs',
-                    pct: -7.82,
+                    pct: -15.75,
                     detail:
-                      'Production, tariff and ocean freight on Amazon units ($1.30 a Mount Cleverest deck, $1.04 a 100 PICS deck, and the deck’s $0.66 printing carried over to the SMART CARDS, which have no quote of their own), and $0.66 of production on each TikTok order. See each product’s tab for the parts, the carton and the rate behind it.',
+                      'Production, tariff and ocean freight on Amazon units ($2.77 a Mount Cleverest deck, $1.81 a 100 PICS deck, and the deck’s $1.88 production carried over to the SMART CARDS, which have no figure of their own), and $1.88 of production on each TikTok order. See each product’s tab for the parts, the carton and the rate behind it.',
                   },
                   {
                     label: 'Marketplace and creator fees',
@@ -11022,12 +11022,12 @@ export const PROFILES = {
         columns: ['Line', 'Month', 'Basis'],
         rows: [
           ['Sales', '$35,741', 'Kalodata’s estimate for the “100 PICS” brand shop, 2,603 units'],
-          ['Production', '−$1,718', '$0.66 a unit, the Mount Cleverest deck’s Alibaba average'],
+          ['Production', '−$4,894', '$1.88 a unit, the owner’s figure for the Mount Cleverest deck'],
           ['Referral fee, 5%', '−$1,787', 'Published UK rate; one source reports 9%'],
           ['Order fee, 50p', '−$1,721', 'Published UK merchant-fulfilled fee, one order per unit assumed'],
           ['Creator commission, 9%', '−$1,530', 'Kalodata’s rate on its $17,002 of affiliate sales'],
           ['Outbound shipping', '−$9,111', 'ASSUMED $3.50 a unit; nobody quoted it'],
-          ['Kept', '$19,874', '55.6% of sales, before duty, inbound freight, VAT and returns'],
+          ['Kept', '$16,698', '46.7% of sales, before duty, inbound freight, VAT and returns'],
         ],
         note:
           'A modelled month, built from that month’s own units and affiliate sales. No UK import duty or freight to the UK is priced, and Kalodata does not say whether its sales figure includes VAT, so every line is a ceiling. The shop sold nothing in January to August 2026 and $941 in September, so the channel is a Christmas quarter and little else.',
@@ -11035,7 +11035,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The softest figures in the model, in order: the TikTok shipping and fee lines, which are one published summary and a placeholder; the tariff, which depends on a country of origin nobody has established; the freight lane, which is priced for China and is wrong for a UK or EU printer; and the production cost, which is what public quotes say a deck like this costs and not Poptacular’s own bill — the triangular box and the plastic case would add to it. None of them moves the picture much: the printing is cents, and Amazon’s fees are most of what a deck costs.',
+          'The softest figures in the model, in order: the TikTok shipping and fee lines, which are one published summary and a placeholder; the tariff, which depends on a country of origin nobody has established; the freight lane, which is priced for China and is wrong for a UK or EU printer; and the production cost, which is the owner’s figure and not Poptacular’s own bill. Amazon’s fees are still the largest part of what a deck costs.',
       },
       {
         type: 'callout',
@@ -11288,7 +11288,7 @@ export const PROFILES = {
       {
         type: 'valuation-board',
         note:
-          'The own store, Walmart, eBay and every other channel are excluded because nobody read their sales, and the apps are not a card business and are not counted. The TikTok Shop is in, from a third-party estimate, and is what earns the off-Amazon line. The profit being multiplied is built channel by channel and month by month, Amazon at September 2026’s rate, on a production cost nobody has quoted and a tariff nobody has established, before storage, returns and the peak fulfilment surcharge. On that basis it is an upper bound on a business that has to fund a year of inventory to catch a few weeks of sales.',
+          'The own store, Walmart, eBay and every other channel are excluded because nobody read their sales, and the apps are not a card business and are not counted. The TikTok Shop is in, from a third-party estimate, and is what earns the off-Amazon line. The profit being multiplied is built channel by channel and month by month, Amazon at September 2026’s rate, on a production cost that is the owner’s figure rather than a quote and a tariff nobody has established, before storage, returns and the peak fulfilment surcharge. On that basis it is an upper bound on a business that has to fund a year of inventory to catch a few weeks of sales.',
       },
       {
         type: 'prose',
@@ -11298,7 +11298,7 @@ export const PROFILES = {
       {
         type: 'prose',
         text:
-          'The whole figure rests on assumptions that are not the data’s. The production cost is public quotes for a similar deck rather than their bill, and the tariff is put in, not read. Sourcing, catalogue shape and differentiation are questionnaire answers taken from the public record, and the differentiation level is probably the low side, because the question set is the company’s own content and nothing read says how hard it would be to copy. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
+          'The whole figure rests on assumptions that are not the data’s. The production cost is the owner’s figure rather than their bill, and the tariff is put in, not read. Sourcing, catalogue shape and differentiation are questionnaire answers taken from the public record, and the differentiation level is probably the low side, because the question set is the company’s own content and nothing read says how hard it would be to copy. Brand Registry is firmer, because Amazon gates the brand store behind enrolment. All of these are the first things to put to the owner.',
       },
 
       { type: 'section', id: 'to-start', title: 'Test it first', group: 'Build your own', labelled: true, asOf: true },
