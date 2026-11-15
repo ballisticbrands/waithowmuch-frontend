@@ -31,6 +31,7 @@ const ORIGIN = process.argv[2] || "http://localhost:4178";
 const PIXEL = "1079875758342522";
 const GA4 = "G-0K360RYPPB";
 const CLARITY = "yfrezqqmrh";
+const REDDIT = "t2_owanf";
 
 // puppeteer-core is not a dependency of this repo (it would be the heaviest
 // thing in it, for one script). Resolve it from anywhere in the workspace.
@@ -64,8 +65,8 @@ async function session(path) {
   const net = [];
   page.on("request", (r) => {
     const u = r.url();
-    if (/facebook|googletagmanager|clarity\.ms/.test(u)) net.push(u);
-    if (/fbevents\.js|gtag\/js|clarity\.ms\/tag/.test(u)) return r.abort();
+    if (/facebook|googletagmanager|clarity\.ms|redditstatic/.test(u)) net.push(u);
+    if (/fbevents\.js|gtag\/js|clarity\.ms\/tag|redditstatic\.com\/ads\/pixel/.test(u)) return r.abort();
     if (/\/metrics/.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: FIXTURE_METRICS });
     if (/\/v1\/businesses\/[^/]+$/.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: FIXTURE_BIZ });
     if (/\/v1\//.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: "{}" });
@@ -82,6 +83,7 @@ async function session(path) {
 const calls = (page) => page.evaluate(() => ({
   gtag: (window.dataLayer || []).map((a) => Array.from(a)),
   fbq: ((window.fbq && window.fbq.queue) || []).map((a) => Array.from(a)),
+  rdt: ((window.rdt && window.rdt.callQueue) || []).map((a) => Array.from(a)),
 }));
 
 console.log(`\n── ${ORIGIN}/ — cold load`);
@@ -91,13 +93,18 @@ const init = c.fbq.find((a) => a[0] === "init");
 init ? ok(`fbq('init','${init[1]}')`) : bad("fbq('init') never called — the pixel is not installed");
 if (init && init[1] !== PIXEL) bad(`WRONG pixel id ${init[1]} (expected ${PIXEL})`);
 c.fbq.some((a) => a[0] === "track" && a[1] === "PageView") ? ok("Meta base PageView") : bad("no Meta base PageView");
+const rinit = c.rdt.find((a) => a[0] === "init");
+rinit ? ok(`rdt('init','${rinit[1]}')`) : bad("rdt('init') never called — the Reddit pixel is not installed");
+if (rinit && rinit[1] !== REDDIT) bad(`WRONG Reddit pixel id ${rinit[1]} (expected ${REDDIT})`);
+c.rdt.some((a) => a[0] === "track" && a[1] === "PageVisit") ? ok("Reddit base PageVisit") : bad("no Reddit base PageVisit");
+net.some((u) => u.includes("redditstatic.com/ads/pixel")) ? ok("Reddit pixel.js requested") : bad("Reddit pixel.js never requested");
 const cfg = c.gtag.find((a) => a[0] === "config");
 cfg && cfg[1] === GA4 ? ok(`gtag('config','${cfg[1]}')`) : bad(`GA4 config missing or wrong: ${JSON.stringify(cfg)}`);
 net.some((u) => u.includes("fbevents.js")) ? ok("fbevents.js requested") : bad("fbevents.js never requested");
 net.some((u) => u.includes(CLARITY)) ? ok("Clarity requested") : bad("Clarity never requested");
 
 const shell = await (await fetch(`${ORIGIN}/`)).text();
-/fbevents|connect\.facebook|googletagmanager/.test(shell)
+/fbevents|connect\.facebook|googletagmanager|redditstatic/.test(shell)
   ? bad("a vendor script is in the static head — that undoes the deferred-analytics budget (mobile 75 → 100)")
   : ok("no vendor script in the static head (deferred, as designed)");
 
@@ -114,6 +121,8 @@ pvs.length === 1
   : bad(`SPA page_view fired ${pvs.length}× (0 = every in-app nav uncounted; 2 = the first load is double-counted)`);
 const mpv = c.fbq.filter((a) => a[0] === "track" && a[1] === "PageView");
 mpv.length === 2 ? ok("Meta PageView: 1 base + 1 route change") : bad(`Meta PageView fired ${mpv.length}× (expected 2)`);
+const rpv = c.rdt.filter((a) => a[0] === "track" && a[1] === "PageVisit");
+rpv.length === 2 ? ok("Reddit PageVisit: 1 base + 1 route change") : bad(`Reddit PageVisit fired ${rpv.length}× (expected 2)`);
 await page.close();
 
 console.log("\n── /business/dummy-widgets/ — the content event");
@@ -123,6 +132,8 @@ const vb = c.gtag.filter((a) => a[1] === "view_business");
 const vc = c.fbq.filter((a) => a[0] === "track" && a[1] === "ViewContent");
 vb.length === 1 ? ok(`view_business once → ${JSON.stringify(vb[0][2])}`) : bad(`view_business fired ${vb.length}× (expected 1)`);
 if (vb.length === 1 && !vb[0][2].business_name) bad("view_business has no business_name — it fired before the API resolved");
+const rvc = c.rdt.filter((a) => a[0] === "track" && a[1] === "ViewContent");
+rvc.length === 1 ? ok("Reddit ViewContent once") : bad(`Reddit ViewContent fired ${rvc.length}× (expected 1)`);
 vc.length === 1 ? ok(`ViewContent once, STANDARD → ${JSON.stringify(vc[0][2])}`) : bad(`ViewContent fired ${vc.length}× (expected 1)`);
 c.fbq.some((a) => a[0] === "trackCustom" && ["ViewContent", "CompleteRegistration", "PageView", "Lead"].includes(a[1]))
   ? bad("a STANDARD Meta event was sent via trackCustom — it forfeits Meta's priors and its AEM slot")

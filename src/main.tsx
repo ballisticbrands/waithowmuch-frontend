@@ -80,6 +80,31 @@ function injectMetaPixel(pixelId: string): void {
   fbq("track", "PageView");
 }
 
+function injectRedditPixel(pixelId: string): void {
+  if (!pixelId) return;
+  // Reddit's base snippet, transcribed. Same shape as Meta's: `rdt` must be a
+  // QUEUEING stub the moment this runs, because `init` and `track` are called
+  // before pixel.js has downloaded and the real implementation drains
+  // `rdt.callQueue` when it arrives.
+  const w = window as unknown as { rdt?: any };
+  if (w.rdt) return; // already installed — a second copy double-counts
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const rdt: any = function (...args: unknown[]) {
+    rdt.sendEvent ? rdt.sendEvent.apply(rdt, args) : rdt.callQueue.push(args);
+  };
+  rdt.callQueue = [];
+  w.rdt = rdt;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
+  const s = document.createElement("script");
+  s.async = true;
+  s.src = "https://www.redditstatic.com/ads/pixel.js";
+  document.head.appendChild(s);
+
+  rdt("init", pixelId);
+  rdt("track", "PageVisit");
+}
+
 /**
  * Analytics loads AFTER the page is interactive, never during mount.
  *
@@ -110,6 +135,7 @@ function startAnalytics(): void {
     injectGa4(config.ga4MeasurementId);
     injectClarity(config.clarityId);
     injectMetaPixel(config.metaPixelId);
+    injectRedditPixel(config.redditPixelId);
     // Each loader above has now counted the CURRENT url. Tell the route
     // tracker so it treats that page as already reported and starts counting
     // from the next navigation instead of double-counting this one.

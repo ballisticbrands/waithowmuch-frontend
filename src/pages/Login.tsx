@@ -92,7 +92,7 @@ function AuthPage({ mode }: { mode: Mode }) {
       takeIntent();
       // `isNew` is the server's answer, not a guess from "we just got a
       // session" — every returning sign-in produces one of those too.
-      if (r.isNew) trackSignUp("google", intent);
+      if (r.isNew) trackSignUp("google", intent, r.user.id);
       else trackLogin("google");
       navigate(intent.next ?? "/");
     } catch (err) {

@@ -16,6 +16,10 @@ const KEY = "whm_attribution_v1";
 const FIELDS = [
   "utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term",
   "gclid", "fbclid",
+  // Reddit appends this to every ad click. The pixel reads it itself, but the
+  // server-side event can only carry it if WE store it — and a magic link is
+  // often opened in a different browser, where the pixel has no click at all.
+  "rdt_cid",
 ] as const;
 
 export type Attribution = Partial<Record<string, string>>;

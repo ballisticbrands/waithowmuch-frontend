@@ -21,6 +21,7 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
     fbq?: ((...args: unknown[]) => void) & { callMethod?: unknown; queue?: unknown[] };
+    rdt?: ((...args: unknown[]) => void) & { sendEvent?: unknown; callQueue?: unknown[] };
   }
 }
 
@@ -91,6 +92,22 @@ export function metaCustom(name: string, params: Params = {}): void {
 }
 
 /**
+ * Reddit pixel event — `rdt('track', …)`.
+ *
+ * Reddit's standard names: PageVisit, ViewContent, Search, AddToCart,
+ * AddToWishlist, Purchase, Lead, SignUp. Only PageVisit, Lead, SignUp,
+ * AddToCart and Purchase can be optimisation goals; ViewContent is audience
+ * and reporting only.
+ *
+ * Pass `conversionId` on anything that is ALSO sent server-side: it is the key
+ * Reddit uses to merge the two copies. Reusing one id across different events
+ * marks all of them as duplicates, so it must be unique per event.
+ */
+export function redditEvent(name: string, params: Params = {}): void {
+  whenReady(() => window.rdt?.("track", name, params));
+}
+
+/**
  * A client-side navigation.
  *
  * `gtag('config')` and the pixel's base code only fire on a hard load, so
@@ -118,6 +135,8 @@ export function trackRouteChange(path: string): void {
   });
   // Meta's SPA equivalent. 'PageView' is standard, so `track`, not `trackCustom`.
   metaStandard("PageView");
+  // Reddit's base code only counts a hard load, exactly like Meta's.
+  window.rdt?.("track", "PageVisit");
 }
 
 /**
@@ -134,6 +153,7 @@ export function trackBusinessView(slug: string, name?: string): void {
     content_ids: [slug],
     content_name: name,
   });
+  redditEvent("ViewContent");
 }
 
 /**
@@ -156,11 +176,16 @@ export function trackCtaClick(location: string, target = "/signup"): void {
 export function trackSignUp(
   method: "google" | "magic_link",
   intent?: { source: string } | null,
+  userId?: string,
 ): void {
   // Where the signup started: the /signup page or the sign-in page. Registered
   // as a GA4 custom dimension, so it is reportable.
   gaEvent("sign_up", { method, signup_source: intent?.source });
   metaStandard("CompleteRegistration", { registration_method: method });
+  // The backend sends the same event server-side (it is the only copy that
+  // survives a magic link opened in another browser). `signup:<userId>` is the
+  // shared key that stops Reddit counting one account twice.
+  redditEvent("SignUp", userId ? { conversionId: `signup:${userId}` } : {});
 }
 
 /** A returning sign-in. Deliberately NOT a Meta event — it optimises nothing. */
