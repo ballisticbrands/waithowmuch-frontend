@@ -17,6 +17,7 @@ import { derivedFacts } from "@/components/MetricCards";
 import { ProductFilterBar, matches, type FilterRow, type ProductFilterState } from "@/components/ProductFilters";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { collectionPath, BRAND_NAME_SAFE } from "@/lib/nav-helpers";
+import { trackBusinessView } from "@/lib/track";
 import { startingCostFigure, startingCostRange, FIXED_COSTS_NOTE } from "@/lib/starting-cost";
 import { ageLabel, compact, dayLabel, exactMoney, money, monthLabel, percent, price } from "@/lib/format";
 
@@ -262,6 +263,25 @@ function Business2() {
   useEffect(() => {
     if (b) document.title = `${b.name} — ${BRAND_NAME_SAFE}`;
   }, [b]);
+
+  // The profile view event — the same one `Business.tsx` fires, which this page
+  // never did, so GA4 `view_business`, Meta `ViewContent` and Reddit
+  // `ViewContent` were all silently absent on every brand on this page
+  // (Spite House, Virora, White Mountain) from the day it shipped.
+  //
+  // Once per slug, and only after the business has resolved, so the event
+  // carries its name. 🚨 `b.slug !== slug` matters here: the fetch effect above
+  // resets `b` to null, but only AFTER the render in which a client-side
+  // navigation has already changed `slug` — without the check this fires for
+  // the new slug with the PREVIOUS brand's name.
+  const viewFired = useRef<string | null>(null);
+  useEffect(() => {
+    if (!slug || viewFired.current === slug) return;
+    if (!b && !missing) return;
+    if (b && b.slug !== slug) return;
+    viewFired.current = slug;
+    if (b) trackBusinessView(slug, b.name);
+  }, [slug, b, missing]);
 
   useSetCrumbs(
     () => [
