@@ -39,16 +39,20 @@ const PILL_STYLE: Partial<CSSStyleDeclaration> = {
   gap: "0.4em",
   margin: "0",
   padding: "0.3em 0.65em",
-  border: "1px solid #d2d2de",
+  // ⚠️ Tuned UP after the first version shipped. Grey text at 55% opacity on a
+  // translucent white pill was invisible against page content — it rendered
+  // correctly and still failed its only job, which is being noticed. A status
+  // light nobody can read is worse than none, because it looks like proof.
+  // Opaque background, the danger colour, and enough weight to catch an eye.
+  border: "1px solid #f2b8b2",
   borderRadius: "999px",
-  background: "rgba(255,255,255,0.92)",
-  backdropFilter: "blur(6px)",
-  color: "#5f6072",
-  font: "500 11px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif",
+  background: "#fef3f2",
+  color: "#b42318",
+  font: "600 11.5px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif",
   letterSpacing: "0.01em",
   cursor: "pointer",
-  opacity: "0.55",
-  boxShadow: "0 1px 2px rgba(20,20,27,0.06)",
+  opacity: "0.92",
+  boxShadow: "0 1px 3px rgba(20,20,27,0.12)",
 };
 
 /** Shows the badge. Idempotent — a second call is a no-op, so it is safe if
@@ -88,7 +92,7 @@ export function showInternalBadge(): void {
   if (motionOK) pill.style.transition = "opacity 120ms ease";
 
   const up = () => { pill.style.opacity = "1"; };
-  const down = () => { pill.style.opacity = "0.55"; };
+  const down = () => { pill.style.opacity = "0.92"; };
   pill.addEventListener("pointerenter", up);
   pill.addEventListener("pointerleave", down);
   pill.addEventListener("focus", up);
