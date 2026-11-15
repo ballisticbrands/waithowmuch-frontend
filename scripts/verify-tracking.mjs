@@ -72,7 +72,12 @@ async function session(path) {
     if (/\/v1\//.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: "{}" });
     return r.continue();
   });
-  await page.goto(`${ORIGIN}${path}`, { waitUntil: "domcontentloaded" });
+  // 🚨 `internal=0` is required, not cosmetic. Analytics is skipped on every
+  // non-production hostname (see src/lib/internal-traffic.ts), and this
+  // verifier runs against localhost by default — without the override every
+  // assertion below would fail against perfectly working code.
+  const sep = path.includes("?") ? "&" : "?";
+  await page.goto(`${ORIGIN}${path}${sep}internal=0`, { waitUntil: "domcontentloaded" });
   // Analytics is deliberately deferred to idle / first interaction (see
   // main.tsx). Without this click the loaders may not have run yet.
   await page.mouse.move(10, 10); await page.mouse.down(); await page.mouse.up();

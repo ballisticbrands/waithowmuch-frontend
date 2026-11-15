@@ -5,6 +5,8 @@ import App from "./App";
 import { config } from "./lib/config";
 import { captureAttribution } from "./lib/attribution";
 import { markAnalyticsReady } from "./lib/track";
+import { isInternalTraffic } from "./lib/internal-traffic";
+import { showInternalBadge } from "./lib/internal-badge";
 import "./globals.css";
 
 captureAttribution();
@@ -128,6 +130,18 @@ function injectRedditPixel(pixelId: string): void {
  * head is the domain-verification meta tag, which is inert markup.
  */
 function startAnalytics(): void {
+  // Our own browsers, opted out via ?internal=1. Checked HERE rather than
+  // inside each loader so the opt-out covers all four at once and can never
+  // drift as loaders are added. See lib/internal-traffic.ts for why this is
+  // a localStorage flag and not GA4's IP-based internal-traffic rule.
+  if (isInternalTraffic()) {
+    // The only visible sign the switch is on. Shown here rather than at the
+    // top of the module so it appears on exactly the loads that skip
+    // analytics — the badge and the skip can never disagree.
+    showInternalBadge();
+    return;
+  }
+
   let started = false;
   const go = () => {
     if (started) return;
