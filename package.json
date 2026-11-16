@@ -11,7 +11,8 @@
     "verify:tracking": "node scripts/verify-tracking.mjs",
     "build:og": "node scripts/build-og.mjs",
     "build:blog-og": "node scripts/build-blog-og.mjs",
-    "fetch:hts": "node scripts/tariff/fetch-hts.mjs"
+    "fetch:hts": "node scripts/tariff/fetch-hts.mjs",
+    "tabs": "node scripts/brand-tabs.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
