@@ -48,6 +48,7 @@ import {
   META_DESCRIPTION as LANDED_META_DESCRIPTION, LEDE as LANDED_LEDE, PRIVACY_LINE as LANDED_PRIVACY_LINE,
   FAQ as LANDED_FAQ, RELATED as LANDED_RELATED, sections as landedSections,
 } from '../src/data/landed-cost-calculator-page.mjs';
+import * as SIGNUP from '../src/data/signup-page.mjs';
 import { ESTIMATOR, STORE, ATTRIBUTION, faqPlain as toolFaqPlain } from '../src/data/sales-tools-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -1008,14 +1009,13 @@ const STATIC = [
     body: `<h1>Sign in</h1>
     <p>Welcome back. No password: enter your email and we send a one-time link.</p>
     <p>New here? <a href="/signup/">Sign up</a>.</p>` },
-  { path: '/signup/', title: `Sign up to ${BRAND_NAME}`,
-    description: `Get an email when ${BRAND_NAME} publishes a new case study, or early access to the ${BRAND_NAME} API for the Claude Code skills.`,
-    body: `<h1>Sign up to ${BRAND_NAME}</h1>
-    <ul>
-      <li><strong>Case studies.</strong> One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.</li>
-      <li><strong>API access for the skills.</strong> One ${BRAND_NAME} key for the Claude Code skills, in place of a separate key for each data provider. Keys are not issued yet: sign up for early access.</li>
-    </ul>
-    <p>No spam, and you can unsubscribe any time. Enter your email and we send a link to confirm it, or continue with Google.</p>` },
+  { path: '/signup/', title: SIGNUP.TITLE, description: SIGNUP.META_DESCRIPTION,
+    body: `<h1>${esc(SIGNUP.TITLE)}</h1>
+    ${SIGNUP.COLUMNS.map((c) => `<section>
+      <h2>${esc(c.heading)}</h2>
+      ${c.lines.map((l) => `<p>${esc(l)}</p>`).join('\n      ')}
+    </section>`).join('\n    ')}
+    <p>${esc(SIGNUP.NOTE)}</p>` },
 ];
 
 for (const r of STATIC) {

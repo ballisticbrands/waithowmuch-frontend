@@ -64,16 +64,30 @@ that knows.
 
 ### Signup source
 
-Where a signup started — the `/signup` page (the "Get emails on new case
-studies" button in the top bar) or the `/login` page — is recorded in two places, from one value (`lib/signup-intent.ts`):
+Where a signup started — which column of the `/signup` page, or the `/login`
+page — is recorded in two places, from one value (`lib/signup-intent.ts`):
 
-- **The `User` row** — `signupSource` (`signup_page` or `login_page`), written
+- **The `User` row** — `signupSource`, written
   once on account creation alongside the first-touch UTMs. This is the durable
   record: it survives ad blockers and consent.
 - **GA4** — the same value as the `sign_up` param `signup_source`, registered
   as an event-scoped custom dimension (2026-09-16, via the Admin API); `sign_up`
   is a key event. A new event param needs the same registration before GA4
   reports on it.
+
+Values:
+
+| `signupSource` | where |
+|---|---|
+| `signup_page_case_studies` | `/signup`, the "Get notified on new WaitHowMuch case studies" column (its button, or its Google button) |
+| `signup_page_api` | `/signup`, the "Early access to the WaitHowMuch API" column |
+| `signup_page` | `/signup` before 2026-11-18 (one form); since then, a Google sign-in on `/signup` whose column was not caught |
+| `login_page` | `/login` |
+| `profile_gate` | the unlock prompt on a business profile (API only) |
+
+The backend allowlists these (`src/routes/auth.ts`); a new value goes there
+first, or the signup is rejected with a 400. The `/signup` copy lives in
+`src/data/signup-page.mjs`, shared with the prerender.
 
 ### Signup campaign (UTMs)
 
@@ -93,8 +107,8 @@ opened in another browser, and the email click starts a new GA4 session whose
 own source is the mail client.
 
 The skills repo README sends `/signup/?utm_source=github&utm_medium=readme&utm_campaign=whm-skills&utm_content=whm-key`
-(through `api.waithowmuch.com/go/whm-key`). With `utm_campaign=whm-skills`
-in the URL or in last touch, `/signup` leads with the API early-access point.
+(through `api.waithowmuch.com/go/whm-key`). The page does not change with the
+UTMs: everyone sees the same two columns.
 
 Verify it for real, in a browser, against the built site:
 

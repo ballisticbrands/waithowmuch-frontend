@@ -43,16 +43,27 @@ function loadGsi(): Promise<void> {
  * traffic.
  */
 export function GoogleSignIn({
-  onCredential, text = "continue_with",
+  onCredential, text = "continue_with", onClick,
 }: {
   onCredential: (credential: string) => void;
   /** Google's own button wording: "signup_with" reads "Sign up with Google". */
   text?: "continue_with" | "signup_with" | "signin_with";
+  /**
+   * Called when THIS button is clicked, before the credential arrives.
+   *
+   * 🚨 GSI's `initialize` is global: with two buttons on a page the last
+   * `initialize` wins, and every button's credential goes to that callback.
+   * A page with more than one button tells them apart here, not in
+   * `onCredential`.
+   */
+  onClick?: () => void;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   // Kept in a ref so re-renders don't re-initialise GSI with a stale closure.
   const cb = useRef(onCredential);
   cb.current = onCredential;
+  const click = useRef(onClick);
+  click.current = onClick;
 
   useEffect(() => {
     if (!config.googleClientId || !ref.current) return;
@@ -64,8 +75,11 @@ export function GoogleSignIn({
           client_id: config.googleClientId,
           callback: (r) => cb.current(r.credential),
         });
+        // Fills its container up to 320px; GSI accepts 200–400.
+        const width = Math.max(200, Math.min(320, Math.floor(ref.current.clientWidth) || 320));
         window.google.accounts.id.renderButton(ref.current, {
-          theme: "outline", size: "large", width: 320, text,
+          theme: "outline", size: "large", width, text,
+          click_listener: () => click.current?.(),
         });
       })
       .catch(() => {
@@ -76,5 +90,5 @@ export function GoogleSignIn({
   }, [text]);
 
   if (!config.googleClientId) return null;
-  return <div ref={ref} style={{ minHeight: 44 }} />;
+  return <div ref={ref} style={{ minHeight: 44, width: "100%", maxWidth: 320, display: "flex", justifyContent: "center" }} />;
 }

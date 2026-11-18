@@ -11,7 +11,11 @@
  */
 const KEY = "whm_signup_intent_v1";
 
-export type SignupSource = "signup_page" | "login_page";
+/** One per /signup column (src/data/signup-page.mjs), or the sign-in page.
+ *  Plain "signup_page" is a Google sign-in on /signup whose column is not
+ *  known (see GoogleSignIn's onClick). The API's allowlist must match. */
+export type SignupSource =
+  | "signup_page_case_studies" | "signup_page_api" | "signup_page" | "login_page";
 
 export type SignupIntent = {
   source: SignupSource;
@@ -23,11 +27,8 @@ function safeNext(v: string | null): string | undefined {
   return v && v.startsWith("/") && !v.startsWith("//") ? v.slice(0, 512) : undefined;
 }
 
-export function intentFromUrl(mode: "signup" | "login", params: URLSearchParams): SignupIntent {
-  return {
-    source: mode === "signup" ? "signup_page" : "login_page",
-    next: safeNext(params.get("next")),
-  };
+export function intentFromUrl(source: SignupSource, params: URLSearchParams): SignupIntent {
+  return { source, next: safeNext(params.get("next")) };
 }
 
 export function saveIntent(intent: SignupIntent): void {

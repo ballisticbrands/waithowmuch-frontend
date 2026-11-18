@@ -1,90 +1,40 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
 import { trackSignUp, trackLogin, type SignupTouch } from "@/lib/track";
-import { intentFromUrl, intentFields, saveIntent, takeIntent } from "@/lib/signup-intent";
+import {
+  intentFromUrl, intentFields, saveIntent, takeIntent,
+  type SignupIntent, type SignupSource,
+} from "@/lib/signup-intent";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
 import { BRAND_NAME } from "@/data/site";
+import { TITLE, COLUMNS, NOTE, SENT } from "@/data/signup-page.mjs";
 
-type Mode = "signup" | "login";
+/* /login and /signup both create an account for a new address and sign in an
+   existing one, because a magic link cannot tell the difference until it is
+   opened. Only the words and the layout differ.
 
-/* The two pages are one form — both routes create an account for a new
-   address and sign in an existing one, because a magic link cannot tell the
-   difference until it is opened. Only the words change, so the reader who
-   came for case studies is not greeted with "Sign in".
+   /signup speaks to two interests with equal weight, in two columns, each
+   with its own action: the case-study emails, and early access to the
+   WaitHowMuch API for the Claude Code skills. The column a visitor uses is
+   the signupSource on the User row and `signup_source` on GA4's sign_up. The
+   page is the same for everyone, whatever the UTMs. Copy lives in
+   src/data/signup-page.mjs, shared with the prerender. */
 
-   /signup has two kinds of visitor: readers who want the case-study emails,
-   and users of the public skills repo (github.com/ggballas/waithowmuch-skills)
-   who want a WaitHowMuch API key. Keys are not issued yet, so the second
-   point offers early access and nothing more. */
-type Point = { label: string; text: string };
+type AuthResult = { token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null };
 
-const CASE_STUDIES: Point = {
-  label: "Case studies.",
-  text: "One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.",
-};
-const API_ACCESS: Point = {
-  label: "API access for the skills.",
-  text: "One WaitHowMuch key for the Claude Code skills, in place of a separate key for each data provider. Keys are not issued yet: sign up for early access.",
-};
-
-const COPY: Record<Mode, {
-  title: string; lede?: string; points?: Point[]; note?: string;
-  button: string; sent: string; google: "signup_with" | "signin_with";
-  switch?: { text: string; link: string; to: string };
-}> = {
-  signup: {
-    title: "Sign up to WaitHowMuch",
-    points: [CASE_STUDIES, API_ACCESS],
-    note: "No spam, and you can unsubscribe any time.",
-    button: "Confirm my email",
-    sent: "If that address can receive mail, a confirmation link is on its way. Open it to finish signing up.",
-    google: "signup_with",
-  },
-  login: {
-    title: "Sign in",
-    lede: "Welcome back. No password — we email you a one-time link.",
-    button: "Email me a sign-in link",
-    sent: "If that address can receive mail, a sign-in link is on its way.",
-    google: "signin_with",
-    switch: { text: "New here?", link: "Sign up", to: "/signup" },
-  },
-};
-
-/* A visitor sent by the skills repo README (utm_campaign=whm-skills) gets the
-   API point first and a title about it. Read from the URL, or from the stored
-   last touch so it survives a detour to another page and back. */
-const SKILLS_CAMPAIGN = "whm-skills";
-function copyFor(mode: Mode, params: URLSearchParams) {
-  const base = COPY[mode];
-  const fromSkills =
-    (params.get("utm_campaign") ?? readAttribution().lastUtmCampaign) === SKILLS_CAMPAIGN;
-  if (mode !== "signup" || !fromSkills) return base;
-  return { ...base, title: "Early access to the WaitHowMuch API", points: [API_ACCESS, CASE_STUDIES] };
-}
-
-function AuthPage({ mode }: { mode: Mode }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
+/** The two ways in, shared by both pages. */
+function useAuth() {
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const copy = useMemo(() => copyFor(mode, params), [mode, params]);
-  const intent = useMemo(() => intentFromUrl(mode, params), [mode, params]);
-  // Carried across the switch link, so `next` survives a change of mind.
-  const qs = params.toString();
 
-  useEffect(() => {
-    document.title = copy.title.includes(BRAND_NAME) ? copy.title : `${copy.title} — ${BRAND_NAME}`;
-  }, [copy.title]);
-
-  async function requestLink(e: React.FormEvent) {
-    e.preventDefault();
+  async function requestLink(email: string, intent: SignupIntent) {
     setBusy(true);
     setError(null);
     try {
@@ -109,10 +59,10 @@ function AuthPage({ mode }: { mode: Mode }) {
     }
   }
 
-  async function onGoogle(credential: string) {
+  async function google(credential: string, intent: SignupIntent) {
     setError(null);
     try {
-      const r = await apiFetch<{ token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null }>("/v1/auth/google", {
+      const r = await apiFetch<AuthResult>("/v1/auth/google", {
         method: "POST",
         body: JSON.stringify({ credential, attribution: { ...readAttribution(), ...intentFields(intent) } }),
       });
@@ -134,37 +84,45 @@ function AuthPage({ mode }: { mode: Mode }) {
     }
   }
 
+  return { busy, sent, error, turnstileToken, setTurnstileToken, requestLink, google };
+}
+
+const errorStyle = { color: "var(--destructive, #b42318)", fontSize: "0.875rem", marginTop: "0.75rem" } as const;
+
+function SentNotice({ text }: { text: string }) {
+  return (
+    <div data-empty style={{ marginTop: "1.5rem" }}>
+      <p>{text}</p>
+      <p style={{ marginTop: "0.75rem", fontSize: "0.875rem" }}>It expires in 20 minutes and works once.</p>
+    </div>
+  );
+}
+
+// ─── /login ──────────────────────────────────────────────────────────
+
+export default function Login() {
+  const [params] = useSearchParams();
+  const intent = useMemo(() => intentFromUrl("login_page", params), [params]);
+  const auth = useAuth();
+  const [email, setEmail] = useState("");
+  // Carried across the switch link, so `next` survives a change of mind.
+  const qs = params.toString();
+
+  useEffect(() => { document.title = `Sign in — ${BRAND_NAME}`; }, []);
+
   return (
     <main data-main>
     <div style={{ maxWidth: "22rem", margin: "2rem auto" }}>
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>{copy.title}</h1>
-      {copy.lede && (
-        <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
-          {copy.lede}
-        </p>
-      )}
-      {copy.points && (
-        <ul style={{ marginTop: "0.75rem", paddingLeft: "1.1rem", listStyle: "disc", fontSize: "0.875rem",
-                     display: "grid", gap: "0.5rem" }}>
-          {copy.points.map((p) => (
-            <li key={p.label}><strong style={{ fontWeight: 600 }}>{p.label}</strong>{" "}
-              <span style={{ color: "var(--muted-foreground)" }}>{p.text}</span></li>
-          ))}
-        </ul>
-      )}
-      {copy.note && (
-        <p style={{ color: "var(--muted-foreground)", marginTop: "0.75rem", fontSize: "0.875rem" }}>
-          {copy.note}
-        </p>
-      )}
+      <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>Sign in</h1>
+      <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
+        Welcome back. No password — we email you a one-time link.
+      </p>
 
-      {sent ? (
-        <div data-empty style={{ marginTop: "1.5rem" }}>
-          <p>{copy.sent}</p>
-          <p style={{ marginTop: "0.75rem", fontSize: "0.875rem" }}>It expires in 20 minutes and works once.</p>
-        </div>
+      {auth.sent ? (
+        <SentNotice text="If that address can receive mail, a sign-in link is on its way." />
       ) : (
-        <form onSubmit={requestLink} style={{ marginTop: "1.5rem" }}>
+        <form onSubmit={(e) => { e.preventDefault(); void auth.requestLink(email, intent); }}
+              style={{ marginTop: "1.5rem" }}>
           <label htmlFor="email" style={{ fontSize: "0.875rem", fontWeight: 550 }}>Email</label>
           <input
             id="email" data-input type="email" required autoComplete="email"
@@ -172,39 +130,100 @@ function AuthPage({ mode }: { mode: Mode }) {
             placeholder="you@example.com" style={{ marginTop: "0.375rem" }}
           />
           <div style={{ marginTop: "0.75rem" }}>
-            <Turnstile onToken={setTurnstileToken} />
+            <Turnstile onToken={auth.setTurnstileToken} />
           </div>
           {/* Disabled until the challenge reports back — an empty token is a
               guaranteed rejection, and a button that silently does nothing
               reads as the site being broken. */}
-          <button data-btn type="submit" disabled={busy || !email || turnstileToken === null}
+          <button data-btn type="submit" disabled={auth.busy || !email || auth.turnstileToken === null}
                   style={{ width: "100%", marginTop: "0.75rem" }}>
-            {busy ? "Sending…" : copy.button}
+            {auth.busy ? "Sending…" : "Email me a sign-in link"}
           </button>
         </form>
       )}
 
-      {error && <p style={{ color: "var(--destructive, #b42318)", fontSize: "0.875rem", marginTop: "0.75rem" }}>{error}</p>}
+      {auth.error && <p style={errorStyle}>{auth.error}</p>}
 
       <div style={{ marginTop: "1.5rem", display: "flex", justifyContent: "center" }}>
-        <GoogleSignIn onCredential={onGoogle} text={copy.google} />
+        <GoogleSignIn onCredential={(c) => void auth.google(c, intent)} text="signin_with" />
       </div>
 
-      {copy.switch && (
-        <p style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
-          {copy.switch.text}{" "}
-          <Link to={`${copy.switch.to}${qs ? `?${qs}` : ""}`}>{copy.switch.link}</Link>
-        </p>
-      )}
+      <p style={{ marginTop: "1.5rem", textAlign: "center", fontSize: "0.875rem", color: "var(--muted-foreground)" }}>
+        New here? <Link to={`/signup${qs ? `?${qs}` : ""}`}>Sign up</Link>
+      </p>
     </div>
     </main>
   );
 }
 
-export default function Login() {
-  return <AuthPage mode="login" />;
-}
+// ─── /signup ─────────────────────────────────────────────────────────
 
 export function Signup() {
-  return <AuthPage mode="signup" />;
+  const [params] = useSearchParams();
+  const auth = useAuth();
+  const [emails, setEmails] = useState<Record<string, string>>({});
+  const intentFor = (source: SignupSource) => intentFromUrl(source, params);
+  // Which column's Google button was clicked. GSI routes every button's
+  // credential to one callback (see GoogleSignIn), so the column is noted on
+  // click; plain "signup_page" if that never fired.
+  const googleFrom = useRef<SignupSource>("signup_page");
+
+  useEffect(() => { document.title = TITLE; }, []);
+
+  return (
+    <main data-main>
+    <div data-signup>
+      <h1>{TITLE}</h1>
+
+      {auth.sent ? (
+        <SentNotice text={SENT} />
+      ) : (
+        <div data-signup-columns>
+          {COLUMNS.map((col) => {
+            const email = emails[col.source] ?? "";
+            const id = `email-${col.source}`;
+            return (
+              <section key={col.source} data-signup-column>
+                <h2>{col.heading}</h2>
+                {col.lines.map((l) => <p key={l}>{l}</p>)}
+                <form data-signup-form
+                      onSubmit={(e) => { e.preventDefault(); void auth.requestLink(email, intentFor(col.source)); }}>
+                  <label htmlFor={id}>Email</label>
+                  <input
+                    id={id} data-input type="email" required autoComplete="email"
+                    value={email} onChange={(e) => setEmails((m) => ({ ...m, [col.source]: e.target.value }))}
+                    placeholder="you@example.com"
+                  />
+                  {/* Disabled until the challenge reports back, as on /login. */}
+                  <button data-btn type="submit" data-signup-source={col.source}
+                          disabled={auth.busy || !email || auth.turnstileToken === null}>
+                    {auth.busy ? "Sending…" : col.button}
+                  </button>
+                  <div data-signup-google>
+                    <GoogleSignIn
+                      text="signup_with"
+                      onClick={() => { googleFrom.current = col.source; }}
+                      onCredential={(c) => void auth.google(c, intentFor(googleFrom.current))}
+                    />
+                  </div>
+                </form>
+              </section>
+            );
+          })}
+        </div>
+      )}
+
+      {!auth.sent && (
+        <>
+          <p data-signup-note>{NOTE}</p>
+          {/* One challenge for the page: whichever column is used spends it. */}
+          <div style={{ marginTop: "0.75rem", display: "flex", justifyContent: "center" }}>
+            <Turnstile onToken={auth.setTurnstileToken} />
+          </div>
+        </>
+      )}
+      {auth.error && <p style={{ ...errorStyle, textAlign: "center" }}>{auth.error}</p>}
+    </div>
+    </main>
+  );
 }
