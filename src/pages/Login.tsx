@@ -12,7 +12,7 @@ import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
 import { BRAND_NAME } from "@/data/site";
 import {
-  SOURCE, TITLE, CHOICES, SKILLS_LINK, BUTTON, NONE_CHECKED, NOTE, SENT,
+  SOURCE, TITLE, SECTIONS, CHOICES, SKILLS_LINK, BUTTON, NONE_CHECKED, NOTE, SENT,
 } from "@/data/signup-page.mjs";
 
 /* /login and /signup both create an account for a new address and sign in an
@@ -189,6 +189,15 @@ export function Signup() {
     <div data-signup>
       <h1>{TITLE}</h1>
 
+      <div data-signup-sections>
+        {SECTIONS.map((sec) => (
+          <section key={sec.heading} data-signup-section>
+            <h2>{sec.heading}</h2>
+            {sec.lines.map((l) => <p key={l}>{l}</p>)}
+          </section>
+        ))}
+      </div>
+
       {auth.sent ? (
         <SentNotice text={SENT} />
       ) : (
@@ -213,7 +222,6 @@ export function Signup() {
                   {c.link && (
                     <a href={SKILLS_LINK} target="_blank" rel="noopener">{c.link}</a>
                   )}
-                  {c.detail.map((d) => <small key={d} data-signup-detail>{d}</small>)}
                 </span>
               </div>
             ))}

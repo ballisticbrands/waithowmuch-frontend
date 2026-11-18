@@ -19,26 +19,35 @@ export const META_DESCRIPTION =
  *  ReadmeHit click with readme "signup"). */
 export const SKILLS_LINK = 'https://api.waithowmuch.com/go/repo?from=signup';
 
-/** Checkbox labels. `link` is the part of the label that is a link;
- *  `detail` is the short explanation shown under the label. */
-export const CHOICES = [
+/** The two offers, each a heading with its explanation, shown above the form. */
+export const SECTIONS = [
   {
-    key: 'wantsApiAccess',
-    before: `Get early access to ${BRAND_NAME} API to use with our `,
-    link: 'FREE skills',
-    detail: [
+    heading: `Early access to the ${BRAND_NAME} API`,
+    lines: [
       `One ${BRAND_NAME} key for the Claude Code skills, in place of a separate key for each data provider.`,
       'Keys are not issued yet: sign up for early access.',
     ],
   },
   {
-    key: 'wantsCaseStudies',
-    before: `Get notified on new ${BRAND_NAME} case studies - FREE`,
-    link: '',
-    detail: [
+    heading: `Free ${BRAND_NAME} case studies`,
+    lines: [
       'One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.',
       'No spam, and you can unsubscribe any time.',
     ],
+  },
+];
+
+/** Checkbox labels. `link` is the part of the label that is a link. */
+export const CHOICES = [
+  {
+    key: 'wantsApiAccess',
+    before: `Get early access to ${BRAND_NAME} API to use with our `,
+    link: 'FREE skills',
+  },
+  {
+    key: 'wantsCaseStudies',
+    before: `Get notified on new ${BRAND_NAME} case studies - FREE`,
+    link: '',
   },
 ];
 
