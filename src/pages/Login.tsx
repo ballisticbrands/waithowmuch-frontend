@@ -213,6 +213,7 @@ export function Signup() {
                   {c.link && (
                     <a href={SKILLS_LINK} target="_blank" rel="noopener">{c.link}</a>
                   )}
+                  {c.detail.map((d) => <small key={d} data-signup-detail>{d}</small>)}
                 </span>
               </div>
             ))}

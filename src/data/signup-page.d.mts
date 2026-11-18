@@ -6,6 +6,7 @@ export const CHOICES: ReadonlyArray<{
   key: "wantsApiAccess" | "wantsCaseStudies";
   before: string;
   link: string;
+  detail: readonly string[];
 }>;
 export const BUTTON: string;
 export const NONE_CHECKED: string;

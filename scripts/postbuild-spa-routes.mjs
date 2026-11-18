@@ -1013,7 +1013,7 @@ const STATIC = [
     body: `<h1>${esc(SIGNUP.TITLE)}</h1>
     <ul>
       ${SIGNUP.CHOICES.map((c) => `<li>${esc(c.before)}${c.link
-        ? `<a href="${esc(SIGNUP.SKILLS_LINK)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : ''}</li>`).join('\n      ')}
+        ? `<a href="${esc(SIGNUP.SKILLS_LINK)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : ''}${c.detail.map((d) => ` <small>${esc(d)}</small>`).join('')}</li>`).join('\n      ')}
     </ul>
     <p>${esc(SIGNUP.NOTE)}</p>` },
 ];

@@ -2132,6 +2132,7 @@ img[data-row-logo] {
   accent-color: var(--primary, #5b3df5); cursor: pointer;
 }
 [data-signup-choice] label { cursor: pointer; }
+[data-signup-detail] { display: block; margin-top: 0.125rem; font-size: 0.8125rem; line-height: 1.45; color: var(--muted-foreground); }
 [data-signup-choice] a { font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
 [data-signup-hint] { margin: 0; text-align: center; font-size: 0.8125rem; color: var(--destructive, #b42318); }
 [data-signup-google] { display: flex; justify-content: center; margin-top: 0.5rem; }
