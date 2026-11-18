@@ -3,7 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
-import { trackSignUp, trackLogin } from "@/lib/track";
+import { trackSignUp, trackLogin, type SignupTouch } from "@/lib/track";
 import { intentFromUrl, intentFields, saveIntent, takeIntent } from "@/lib/signup-intent";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
@@ -14,16 +14,34 @@ type Mode = "signup" | "login";
 /* The two pages are one form — both routes create an account for a new
    address and sign in an existing one, because a magic link cannot tell the
    difference until it is opened. Only the words change, so the reader who
-   asked for case-study emails is not greeted with "Sign in". */
+   came for case studies is not greeted with "Sign in".
+
+   /signup has two kinds of visitor: readers who want the case-study emails,
+   and users of the public skills repo (github.com/ggballas/waithowmuch-skills)
+   who want a WaitHowMuch API key. Keys are not issued yet, so the second
+   point offers early access and nothing more. */
+type Point = { label: string; text: string };
+
+const CASE_STUDIES: Point = {
+  label: "Case studies.",
+  text: "One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.",
+};
+const API_ACCESS: Point = {
+  label: "API access for the skills.",
+  text: "One WaitHowMuch key for the Claude Code skills, in place of a separate key for each data provider. Keys are not issued yet: sign up for early access.",
+};
+
 const COPY: Record<Mode, {
-  title: string; lede: string; button: string; sent: string; google: "signup_with" | "signin_with";
+  title: string; lede?: string; points?: Point[]; note?: string;
+  button: string; sent: string; google: "signup_with" | "signin_with";
   switch?: { text: string; link: string; to: string };
 }> = {
   signup: {
-    title: "Get emails on new case studies",
-    lede: "One email when a new case study is published. No spam, and you can unsubscribe any time.",
+    title: "Sign up to WaitHowMuch",
+    points: [CASE_STUDIES, API_ACCESS],
+    note: "No spam, and you can unsubscribe any time.",
     button: "Confirm my email",
-    sent: "If that address can receive mail, a confirmation link is on its way. Open it to start getting case studies.",
+    sent: "If that address can receive mail, a confirmation link is on its way. Open it to finish signing up.",
     google: "signup_with",
   },
   login: {
@@ -32,9 +50,21 @@ const COPY: Record<Mode, {
     button: "Email me a sign-in link",
     sent: "If that address can receive mail, a sign-in link is on its way.",
     google: "signin_with",
-    switch: { text: "New here?", link: "Get emails on new case studies", to: "/signup" },
+    switch: { text: "New here?", link: "Sign up", to: "/signup" },
   },
 };
+
+/* A visitor sent by the skills repo README (utm_campaign=whm-skills) gets the
+   API point first and a title about it. Read from the URL, or from the stored
+   last touch so it survives a detour to another page and back. */
+const SKILLS_CAMPAIGN = "whm-skills";
+function copyFor(mode: Mode, params: URLSearchParams) {
+  const base = COPY[mode];
+  const fromSkills =
+    (params.get("utm_campaign") ?? readAttribution().lastUtmCampaign) === SKILLS_CAMPAIGN;
+  if (mode !== "signup" || !fromSkills) return base;
+  return { ...base, title: "Early access to the WaitHowMuch API", points: [API_ACCESS, CASE_STUDIES] };
+}
 
 function AuthPage({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState("");
@@ -44,13 +74,13 @@ function AuthPage({ mode }: { mode: Mode }) {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const copy = COPY[mode];
+  const copy = useMemo(() => copyFor(mode, params), [mode, params]);
   const intent = useMemo(() => intentFromUrl(mode, params), [mode, params]);
   // Carried across the switch link, so `next` survives a change of mind.
   const qs = params.toString();
 
   useEffect(() => {
-    document.title = `${copy.title} — ${BRAND_NAME}`;
+    document.title = copy.title.includes(BRAND_NAME) ? copy.title : `${copy.title} — ${BRAND_NAME}`;
   }, [copy.title]);
 
   async function requestLink(e: React.FormEvent) {
@@ -82,7 +112,7 @@ function AuthPage({ mode }: { mode: Mode }) {
   async function onGoogle(credential: string) {
     setError(null);
     try {
-      const r = await apiFetch<{ token: string; user: SessionUser; isNew?: boolean }>("/v1/auth/google", {
+      const r = await apiFetch<{ token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null }>("/v1/auth/google", {
         method: "POST",
         body: JSON.stringify({ credential, attribution: { ...readAttribution(), ...intentFields(intent) } }),
       });
@@ -92,7 +122,7 @@ function AuthPage({ mode }: { mode: Mode }) {
       takeIntent();
       // `isNew` is the server's answer, not a guess from "we just got a
       // session" — every returning sign-in produces one of those too.
-      if (r.isNew) trackSignUp("google", intent, r.user.id);
+      if (r.isNew) trackSignUp("google", intent, r.user.id, r.touch);
       else trackLogin("google");
       navigate(intent.next ?? "/");
     } catch (err) {
@@ -108,9 +138,25 @@ function AuthPage({ mode }: { mode: Mode }) {
     <main data-main>
     <div style={{ maxWidth: "22rem", margin: "2rem auto" }}>
       <h1 style={{ fontSize: "1.5rem", fontWeight: 700 }}>{copy.title}</h1>
-      <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
-        {copy.lede}
-      </p>
+      {copy.lede && (
+        <p style={{ color: "var(--muted-foreground)", marginTop: "0.5rem", fontSize: "0.875rem" }}>
+          {copy.lede}
+        </p>
+      )}
+      {copy.points && (
+        <ul style={{ marginTop: "0.75rem", paddingLeft: "1.1rem", listStyle: "disc", fontSize: "0.875rem",
+                     display: "grid", gap: "0.5rem" }}>
+          {copy.points.map((p) => (
+            <li key={p.label}><strong style={{ fontWeight: 600 }}>{p.label}</strong>{" "}
+              <span style={{ color: "var(--muted-foreground)" }}>{p.text}</span></li>
+          ))}
+        </ul>
+      )}
+      {copy.note && (
+        <p style={{ color: "var(--muted-foreground)", marginTop: "0.75rem", fontSize: "0.875rem" }}>
+          {copy.note}
+        </p>
+      )}
 
       {sent ? (
         <div data-empty style={{ marginTop: "1.5rem" }}>

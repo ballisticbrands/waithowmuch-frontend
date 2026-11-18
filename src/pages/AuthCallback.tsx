@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { apiFetch } from "@/lib/api";
 import { setSession, type SessionUser } from "@/lib/session";
-import { trackSignUp, trackLogin } from "@/lib/track";
+import { trackSignUp, trackLogin, type SignupTouch } from "@/lib/track";
 import { takeIntent } from "@/lib/signup-intent";
 
 export default function AuthCallback() {
@@ -20,7 +20,7 @@ export default function AuthCallback() {
     if (consumed.current) return;
     consumed.current = true;
 
-    apiFetch<{ token: string; user: SessionUser; isNew?: boolean }>("/v1/auth/magic-link/consume", {
+    apiFetch<{ token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null }>("/v1/auth/magic-link/consume", {
       method: "POST",
       body: JSON.stringify({ token }),
     })
@@ -32,7 +32,7 @@ export default function AuthCallback() {
         const intent = takeIntent();
         // Fired here rather than on the login form: requesting a link is not
         // signing up, and a good share of requested links are never opened.
-        if (r.isNew) trackSignUp("magic_link", intent, r.user.id);
+        if (r.isNew) trackSignUp("magic_link", intent, r.user.id, r.touch);
         else trackLogin("magic_link");
         navigate(intent?.next ?? "/", { replace: true });
       })

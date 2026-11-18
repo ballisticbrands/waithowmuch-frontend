@@ -1007,12 +1007,15 @@ const STATIC = [
     description: `Sign in to ${BRAND_NAME} with a one-time email link or with Google.`,
     body: `<h1>Sign in</h1>
     <p>Welcome back. No password: enter your email and we send a one-time link.</p>
-    <p>New here? <a href="/signup/">Get emails on new case studies</a>.</p>` },
-  { path: '/signup/', title: `Get emails on new case studies — ${BRAND_NAME}`,
-    description: `Get an email whenever ${BRAND_NAME} publishes a new case study. No spam.`,
-    body: `<h1>Get emails on new case studies</h1>
-    <p>One email when a new case study is published. No spam, and you can unsubscribe any time. Enter
-       your email and we send a link to confirm it, or continue with Google.</p>` },
+    <p>New here? <a href="/signup/">Sign up</a>.</p>` },
+  { path: '/signup/', title: `Sign up to ${BRAND_NAME}`,
+    description: `Get an email when ${BRAND_NAME} publishes a new case study, or early access to the ${BRAND_NAME} API for the Claude Code skills.`,
+    body: `<h1>Sign up to ${BRAND_NAME}</h1>
+    <ul>
+      <li><strong>Case studies.</strong> One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.</li>
+      <li><strong>API access for the skills.</strong> One ${BRAND_NAME} key for the Claude Code skills, in place of a separate key for each data provider. Keys are not issued yet: sign up for early access.</li>
+    </ul>
+    <p>No spam, and you can unsubscribe any time. Enter your email and we send a link to confirm it, or continue with Google.</p>` },
 ];
 
 for (const r of STATIC) {

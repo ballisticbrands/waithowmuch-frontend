@@ -17,6 +17,14 @@
 
 type Params = Record<string, unknown>;
 
+/** The campaign behind a signup, as the API returns it with `isNew`. */
+export type SignupTouch = {
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+};
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -177,10 +185,24 @@ export function trackSignUp(
   method: "google" | "magic_link",
   intent?: { source: string } | null,
   userId?: string,
+  touch?: SignupTouch | null,
 ): void {
   // Where the signup started: the /signup page or the sign-in page. Registered
   // as a GA4 custom dimension, so it is reportable.
-  gaEvent("sign_up", { method, signup_source: intent?.source });
+  //
+  // `touch` is the campaign that brought this person, read back from the User
+  // row by the API (last touch, else first). It comes from the server, not
+  // from this browser, because a magic link is often opened in another
+  // browser — and even in the same one, the email click starts a new GA4
+  // session whose own source is the mail client, not the campaign. The three
+  // `signup_utm_*` params are registered as event-scoped custom dimensions.
+  gaEvent("sign_up", {
+    method,
+    signup_source: intent?.source,
+    signup_utm_source: touch?.utmSource ?? undefined,
+    signup_utm_campaign: touch?.utmCampaign ?? undefined,
+    signup_utm_content: touch?.utmContent ?? undefined,
+  });
   metaStandard("CompleteRegistration", { registration_method: method });
   // The backend sends the same event server-side (it is the only copy that
   // survives a magic link opened in another browser). `signup:<userId>` is the

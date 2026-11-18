@@ -26,7 +26,7 @@ entirely from the public npm registry.
 
 - `src/lib/api.ts` — the one way this app talks to the backend
 - `src/lib/session.ts` — token store, `useSession` over `useSyncExternalStore`
-- `src/lib/attribution.ts` — first-touch capture, localStorage
+- `src/lib/attribution.ts` — first- and last-touch capture, localStorage
 - `src/data/collections.mjs` — the "Data" listings (`/data/…`) and their URLs
 - `src/businesses/` — the hand-written case-study prose; figures come from the API
 - `src/components/PerformanceChart.tsx` — hand-rolled SVG charts (a chart
@@ -54,7 +54,7 @@ Events currently fired:
 |---|---|---|
 | `page_view` | `PageView` | hard load, and every client-side route change |
 | `view_business` | `ViewContent` | a business profile resolves, once per slug |
-| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API. Params: `method`, `signup_source` |
+| `sign_up` | `CompleteRegistration` | a NEW account only — `isNew` from the API. Params: `method`, `signup_source`, `signup_utm_source`, `signup_utm_campaign`, `signup_utm_content` |
 | `login` | — | a returning sign-in |
 
 🚨 `sign_up` is gated on the API's `isNew` flag, not on "we received a
@@ -74,6 +74,27 @@ studies" button in the top bar) or the `/login` page — is recorded in two plac
   as an event-scoped custom dimension (2026-09-16, via the Admin API); `sign_up`
   is a key event. A new event param needs the same registration before GA4
   reports on it.
+
+### Signup campaign (UTMs)
+
+`lib/attribution.ts` keeps two records in localStorage: **first touch** (the
+first page ever landed on: UTMs, click ids, referrer, landing page) and **last
+touch** (the UTMs of the most recent hard load that had any). Both go to the
+API with the signup and land on the `User` row: `utmSource`… and
+`lastUtmSource`…, written once, on account creation. Last touch exists because
+first touch alone credits a returning visitor to whatever brought them the
+first time.
+
+The API returns the campaign with `isNew` (`touch`: last touch, else first,
+read from the User row), and `sign_up` carries it as `signup_utm_source`,
+`signup_utm_campaign` and `signup_utm_content` (event-scoped custom dimensions,
+registered 2026-11-18). It comes from the server because a magic link is often
+opened in another browser, and the email click starts a new GA4 session whose
+own source is the mail client.
+
+The skills repo README sends `/signup/?utm_source=github&utm_medium=readme&utm_campaign=whm-skills&utm_content=whm-key`
+(through `api.waithowmuch.com/go/whm-key`). With `utm_campaign=whm-skills`
+in the URL or in last touch, `/signup` leads with the API early-access point.
 
 Verify it for real, in a browser, against the built site:
 
