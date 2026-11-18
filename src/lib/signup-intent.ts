@@ -11,15 +11,21 @@
  */
 const KEY = "whm_signup_intent_v1";
 
-/** One per /signup column (src/data/signup-page.mjs), or the sign-in page.
- *  Plain "signup_page" is a Google sign-in on /signup whose column is not
- *  known (see GoogleSignIn's onClick). The API's allowlist must match. */
-export type SignupSource =
-  | "signup_page_case_studies" | "signup_page_api" | "signup_page" | "login_page";
+/** The /signup form, or the sign-in page. The API's allowlist must match
+ *  (it also still takes the two column values the 2026-11-18 page sent). */
+export type SignupSource = "signup_page" | "login_page";
+
+/** The two /signup checkboxes (src/data/signup-page.mjs), both ticked by
+ *  default. Only /signup has them; elsewhere they are absent and the API
+ *  leaves the User columns NULL. */
+export type SignupChoices = { wantsApiAccess: boolean; wantsCaseStudies: boolean };
 
 export type SignupIntent = {
   source: SignupSource;
   next?: string;
+  choices?: SignupChoices;
+  /** The visitor toggled a checkbox at least once (GA4 only). */
+  choicesChanged?: boolean;
 };
 
 /** Only same-origin paths. `//evil.com` is a protocol-relative URL, not a path. */
@@ -51,5 +57,5 @@ export function takeIntent(): SignupIntent | null {
   }
 }
 
-/** The field the API stores on a NEW User row. */
-export const intentFields = (i: SignupIntent) => ({ signupSource: i.source });
+/** The fields the API stores on a NEW User row. */
+export const intentFields = (i: SignupIntent) => ({ signupSource: i.source, ...i.choices });

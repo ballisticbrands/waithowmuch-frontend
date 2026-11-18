@@ -1011,10 +1011,10 @@ const STATIC = [
     <p>New here? <a href="/signup/">Sign up</a>.</p>` },
   { path: '/signup/', title: SIGNUP.TITLE, description: SIGNUP.META_DESCRIPTION,
     body: `<h1>${esc(SIGNUP.TITLE)}</h1>
-    ${SIGNUP.COLUMNS.map((c) => `<section>
-      <h2>${esc(c.heading)}</h2>
-      ${c.lines.map((l) => `<p>${esc(l)}</p>`).join('\n      ')}
-    </section>`).join('\n    ')}
+    <ul>
+      ${SIGNUP.CHOICES.map((c) => `<li>${esc(c.before)}${c.link
+        ? `<a href="${esc(SIGNUP.SKILLS_LINK)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : ''}</li>`).join('\n      ')}
+    </ul>
     <p>${esc(SIGNUP.NOTE)}</p>` },
 ];
 

@@ -1,30 +1,36 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, ApiError } from "@/lib/api";
 import { readAttribution } from "@/lib/attribution";
 import { setSession, type SessionUser } from "@/lib/session";
-import { trackSignUp, trackLogin, type SignupTouch } from "@/lib/track";
+import { trackSignUp, trackLogin, type SignupTouch, type SignupChoicesFromApi } from "@/lib/track";
 import {
   intentFromUrl, intentFields, saveIntent, takeIntent,
-  type SignupIntent, type SignupSource,
+  type SignupIntent, type SignupChoices,
 } from "@/lib/signup-intent";
 import { GoogleSignIn } from "@/components/GoogleSignIn";
 import { Turnstile } from "@/components/Turnstile";
 import { BRAND_NAME } from "@/data/site";
-import { TITLE, COLUMNS, NOTE, SENT } from "@/data/signup-page.mjs";
+import {
+  SOURCE, TITLE, CHOICES, SKILLS_LINK, BUTTON, NONE_CHECKED, NOTE, SENT,
+} from "@/data/signup-page.mjs";
 
 /* /login and /signup both create an account for a new address and sign in an
    existing one, because a magic link cannot tell the difference until it is
    opened. Only the words and the layout differ.
 
-   /signup speaks to two interests with equal weight, in two columns, each
-   with its own action: the case-study emails, and early access to the
-   WaitHowMuch API for the Claude Code skills. The column a visitor uses is
-   the signupSource on the User row and `signup_source` on GA4's sign_up. The
-   page is the same for everyone, whatever the UTMs. Copy lives in
-   src/data/signup-page.mjs, shared with the prerender. */
+   /signup is one form (email or Google) with two checkboxes, both ticked by
+   default: early access to the WaitHowMuch API for the free skills, and
+   case-study emails. What is left ticked goes to the API with the
+   attribution (User.wantsApiAccess / wantsCaseStudies, the latter being the
+   case-study mailing consent) and onto GA4's sign_up. With neither ticked
+   the form cannot be sent. Copy lives in src/data/signup-page.mjs, shared
+   with the prerender. */
 
-type AuthResult = { token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null };
+type AuthResult = {
+  token: string; user: SessionUser; isNew?: boolean;
+  touch?: SignupTouch | null; choices?: SignupChoicesFromApi | null;
+};
 
 /** The two ways in, shared by both pages. */
 function useAuth() {
@@ -72,7 +78,7 @@ function useAuth() {
       takeIntent();
       // `isNew` is the server's answer, not a guess from "we just got a
       // session" — every returning sign-in produces one of those too.
-      if (r.isNew) trackSignUp("google", intent, r.user.id, r.touch);
+      if (r.isNew) trackSignUp("google", intent, r.user.id, r.touch, r.choices);
       else trackLogin("google");
       navigate(intent.next ?? "/");
     } catch (err) {
@@ -158,17 +164,25 @@ export default function Login() {
 
 // ─── /signup ─────────────────────────────────────────────────────────
 
+const DEFAULT_CHOICES: SignupChoices = { wantsApiAccess: true, wantsCaseStudies: true };
+
 export function Signup() {
   const [params] = useSearchParams();
   const auth = useAuth();
-  const [emails, setEmails] = useState<Record<string, string>>({});
-  const intentFor = (source: SignupSource) => intentFromUrl(source, params);
-  // Which column's Google button was clicked. GSI routes every button's
-  // credential to one callback (see GoogleSignIn), so the column is noted on
-  // click; plain "signup_page" if that never fired.
-  const googleFrom = useRef<SignupSource>("signup_page");
+  const [email, setEmail] = useState("");
+  const [choices, setChoices] = useState<SignupChoices>(DEFAULT_CHOICES);
+  const [changed, setChanged] = useState(false);
+  const none = !choices.wantsApiAccess && !choices.wantsCaseStudies;
+  // Read at submit time, and by the Google callback (GoogleSignIn keeps the
+  // latest callback in a ref, so this closure is never stale).
+  const intent = (): SignupIntent => ({ ...intentFromUrl(SOURCE, params), choices, choicesChanged: changed });
 
   useEffect(() => { document.title = TITLE; }, []);
+
+  const toggle = (key: keyof SignupChoices) => {
+    setChoices((c) => ({ ...c, [key]: !c[key] }));
+    setChanged(true);
+  };
 
   return (
     <main data-main>
@@ -178,45 +192,54 @@ export function Signup() {
       {auth.sent ? (
         <SentNotice text={SENT} />
       ) : (
-        <div data-signup-columns>
-          {COLUMNS.map((col) => {
-            const email = emails[col.source] ?? "";
-            const id = `email-${col.source}`;
-            return (
-              <section key={col.source} data-signup-column>
-                <h2>{col.heading}</h2>
-                {col.lines.map((l) => <p key={l}>{l}</p>)}
-                <form data-signup-form
-                      onSubmit={(e) => { e.preventDefault(); void auth.requestLink(email, intentFor(col.source)); }}>
-                  <label htmlFor={id}>Email</label>
-                  <input
-                    id={id} data-input type="email" required autoComplete="email"
-                    value={email} onChange={(e) => setEmails((m) => ({ ...m, [col.source]: e.target.value }))}
-                    placeholder="you@example.com"
-                  />
-                  {/* Disabled until the challenge reports back, as on /login. */}
-                  <button data-btn type="submit" data-signup-source={col.source}
-                          disabled={auth.busy || !email || auth.turnstileToken === null}>
-                    {auth.busy ? "Sending…" : col.button}
-                  </button>
-                  <div data-signup-google>
-                    <GoogleSignIn
-                      text="signup_with"
-                      onClick={() => { googleFrom.current = col.source; }}
-                      onCredential={(c) => void auth.google(c, intentFor(googleFrom.current))}
-                    />
-                  </div>
-                </form>
-              </section>
-            );
-          })}
-        </div>
+        <form data-signup-form
+              onSubmit={(e) => { e.preventDefault(); if (!none) void auth.requestLink(email, intent()); }}>
+          <label htmlFor="email">Email</label>
+          <input
+            id="email" data-input type="email" required autoComplete="email"
+            value={email} onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+          />
+
+          <div data-signup-choices>
+            {CHOICES.map((c) => (
+              <div key={c.key} data-signup-choice>
+                <input id={`choice-${c.key}`} type="checkbox" name={c.key}
+                       checked={choices[c.key]} onChange={() => toggle(c.key)} />
+                {/* The link sits OUTSIDE the <label>, so following it never
+                    toggles the box. */}
+                <span>
+                  <label htmlFor={`choice-${c.key}`}>{c.before}</label>
+                  {c.link && (
+                    <a href={SKILLS_LINK} target="_blank" rel="noopener">{c.link}</a>
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Disabled until the challenge reports back, as on /login. */}
+          <button data-btn type="submit" data-signup-source={SOURCE}
+                  disabled={auth.busy || !email || none || auth.turnstileToken === null}>
+            {auth.busy ? "Sending…" : BUTTON}
+          </button>
+          {none && <p data-signup-hint role="status">{NONE_CHECKED}</p>}
+
+          {/* GSI's button cannot be disabled, so with nothing ticked it is
+              dimmed, made inert, and its callback refuses. */}
+          <div data-signup-google aria-disabled={none || undefined}
+               style={none ? { opacity: 0.4, pointerEvents: "none" } : undefined}>
+            <GoogleSignIn
+              text="signup_with"
+              onCredential={(cred) => { if (!none) void auth.google(cred, intent()); }}
+            />
+          </div>
+        </form>
       )}
 
       {!auth.sent && (
         <>
           <p data-signup-note>{NOTE}</p>
-          {/* One challenge for the page: whichever column is used spends it. */}
           <div style={{ marginTop: "0.75rem", display: "flex", justifyContent: "center" }}>
             <Turnstile onToken={auth.setTurnstileToken} />
           </div>

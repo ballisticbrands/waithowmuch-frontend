@@ -64,8 +64,7 @@ that knows.
 
 ### Signup source
 
-Where a signup started — which column of the `/signup` page, or the `/login`
-page — is recorded in two places, from one value (`lib/signup-intent.ts`):
+Where a signup started — the `/signup` page or the `/login` page — is recorded in two places, from one value (`lib/signup-intent.ts`):
 
 - **The `User` row** — `signupSource`, written
   once on account creation alongside the first-touch UTMs. This is the durable
@@ -79,15 +78,33 @@ Values:
 
 | `signupSource` | where |
 |---|---|
-| `signup_page_case_studies` | `/signup`, the "Get notified on new WaitHowMuch case studies" column (its button, or its Google button) |
-| `signup_page_api` | `/signup`, the "Early access to the WaitHowMuch API" column |
-| `signup_page` | `/signup` before 2026-11-18 (one form); since then, a Google sign-in on `/signup` whose column was not caught |
+| `signup_page` | `/signup` (one form; since 2026-11-18 with the two checkboxes below) |
+| `signup_page_case_studies` / `signup_page_api` | the two columns of the `/signup` that was live for a few hours on 2026-11-18; still accepted for tabs left open on it |
 | `login_page` | `/login` |
 | `profile_gate` | the unlock prompt on a business profile (API only) |
 
 The backend allowlists these (`src/routes/auth.ts`); a new value goes there
 first, or the signup is rejected with a 400. The `/signup` copy lives in
 `src/data/signup-page.mjs`, shared with the prerender.
+
+### Signup choices (the two checkboxes)
+
+`/signup` has two checkboxes, both ticked by default: "Get early access to
+WaitHowMuch API to use with our FREE skills" ("FREE skills" links to the repo
+through `api.waithowmuch.com/go/repo?from=signup`, counted as a ReadmeHit with
+readme `signup`) and "Get notified on new WaitHowMuch case studies - FREE".
+With neither ticked the button and Google are disabled.
+
+- **The `User` row** — `wantsApiAccess` / `wantsCaseStudies`, booleans written
+  once on account creation from the attribution blob (magic link and Google).
+  NULL = never saw the checkboxes. `wantsCaseStudies` is the case-study mailing
+  consent: the backend's `caseStudyRecipientsWhere`
+  (`src/lib/signup-choices.ts`) is the one recipient rule.
+- **GA4** — `sign_up` carries `signup_wants_api` and
+  `signup_wants_case_studies` (`yes`/`no`, from the API's copy of the row, so a
+  link opened in another browser still has them) and `signup_choices_changed`
+  (`yes` if the visitor toggled a box at all; this browser only). All three are
+  event-scoped custom dimensions, registered 2026-11-18.
 
 ### Signup campaign (UTMs)
 
@@ -108,7 +125,7 @@ own source is the mail client.
 
 The skills repo README sends `/signup/?utm_source=github&utm_medium=readme&utm_campaign=whm-skills&utm_content=whm-key`
 (through `api.waithowmuch.com/go/whm-key`). The page does not change with the
-UTMs: everyone sees the same two columns.
+UTMs: everyone sees the same form.
 
 Verify it for real, in a browser, against the built site:
 

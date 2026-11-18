@@ -25,6 +25,15 @@ export type SignupTouch = {
   utmContent?: string | null;
 };
 
+/** The /signup checkboxes, as the API returns them with `isNew` (read from
+ *  the User row; NULL for a signup that never saw them). */
+export type SignupChoicesFromApi = {
+  wantsApiAccess?: boolean | null;
+  wantsCaseStudies?: boolean | null;
+};
+
+const yesNo = (v: boolean | null | undefined) => (v == null ? undefined : v ? "yes" : "no");
+
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -183,9 +192,14 @@ export function trackCtaClick(location: string, target = "/signup"): void {
  */
 export function trackSignUp(
   method: "google" | "magic_link",
-  intent?: { source: string } | null,
+  intent?: {
+    source: string;
+    choices?: { wantsApiAccess: boolean; wantsCaseStudies: boolean };
+    choicesChanged?: boolean;
+  } | null,
   userId?: string,
   touch?: SignupTouch | null,
+  choices?: SignupChoicesFromApi | null,
 ): void {
   // Where the signup started: the /signup page or the sign-in page. Registered
   // as a GA4 custom dimension, so it is reportable.
@@ -202,6 +216,14 @@ export function trackSignUp(
     signup_utm_source: touch?.utmSource ?? undefined,
     signup_utm_campaign: touch?.utmCampaign ?? undefined,
     signup_utm_content: touch?.utmContent ?? undefined,
+    // The two /signup checkboxes, "yes"/"no" (absent off /signup). The API's
+    // copy (from the User row) wins over this browser's, for the same reason
+    // as touch. `signup_choices_changed` is whether the visitor toggled a box
+    // at all: only this browser knows, so it is absent when the link was
+    // opened elsewhere. All three are event-scoped custom dimensions.
+    signup_wants_api: yesNo(choices?.wantsApiAccess ?? intent?.choices?.wantsApiAccess),
+    signup_wants_case_studies: yesNo(choices?.wantsCaseStudies ?? intent?.choices?.wantsCaseStudies),
+    signup_choices_changed: yesNo(intent?.choicesChanged),
   });
   metaStandard("CompleteRegistration", { registration_method: method });
   // The backend sends the same event server-side (it is the only copy that

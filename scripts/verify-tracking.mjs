@@ -59,14 +59,18 @@ const bad = (m) => { console.log("  ❌", m); fails.push(m); };
 
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: true, args: ["--no-sandbox"] });
 
-async function session(path) {
+async function session(path, { api = {}, before } = {}) {
   const page = await browser.newPage();
+  if (before) await page.evaluateOnNewDocument(before);
   await page.setRequestInterception(true);
   const net = [];
   page.on("request", (r) => {
     const u = r.url();
     if (/facebook|googletagmanager|clarity\.ms|redditstatic/.test(u)) net.push(u);
     if (/fbevents\.js|gtag\/js|clarity\.ms\/tag|redditstatic\.com\/ads\/pixel/.test(u)) return r.abort();
+    for (const [re, body] of Object.entries(api)) {
+      if (new RegExp(re).test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: JSON.stringify(body) });
+    }
     if (/\/metrics/.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: FIXTURE_METRICS });
     if (/\/v1\/businesses\/[^/]+$/.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: FIXTURE_BIZ });
     if (/\/v1\//.test(u)) return r.respond({ status: 200, contentType: "application/json", headers: CORS, body: "{}" });
@@ -143,6 +147,33 @@ vc.length === 1 ? ok(`ViewContent once, STANDARD → ${JSON.stringify(vc[0][2])}
 c.fbq.some((a) => a[0] === "trackCustom" && ["ViewContent", "CompleteRegistration", "PageView", "Lead"].includes(a[1]))
   ? bad("a STANDARD Meta event was sent via trackCustom — it forfeits Meta's priors and its AEM slot")
   : ok("no standard event sent via trackCustom");
+await page.close();
+
+console.log("\n── /auth/callback — sign_up for a NEW account (signup page, one box unticked)");
+({ page } = await session("/auth/callback?token=fixture", {
+  // The /signup form saved this before requesting the link.
+  before: () => localStorage.setItem("whm_signup_intent_v1", JSON.stringify({
+    source: "signup_page", choices: { wantsApiAccess: true, wantsCaseStudies: false }, choicesChanged: true,
+  })),
+  api: { "/v1/auth/magic-link/consume$": {
+    token: "t", user: { id: "u_fixture", email: "f@example.invalid", role: "USER" }, isNew: true,
+    touch: { utmSource: "github", utmMedium: "readme", utmCampaign: "whm-skills", utmContent: "whm-key" },
+    choices: { wantsApiAccess: true, wantsCaseStudies: false },
+  } },
+}));
+c = await calls(page);
+const su = c.gtag.filter((a) => a[0] === "event" && a[1] === "sign_up");
+const want = { method: "magic_link", signup_source: "signup_page", signup_utm_source: "github",
+  signup_utm_campaign: "whm-skills", signup_utm_content: "whm-key",
+  signup_wants_api: "yes", signup_wants_case_studies: "no", signup_choices_changed: "yes" };
+if (su.length !== 1) bad(`sign_up fired ${su.length}× (expected 1)`);
+else {
+  const got = su[0][2];
+  const wrong = Object.entries(want).filter(([k, v]) => got[k] !== v);
+  wrong.length ? bad(`sign_up params wrong: ${wrong.map(([k, v]) => `${k}=${got[k]} (want ${v})`).join(", ")}`)
+    : ok(`sign_up once → ${JSON.stringify(got)}`);
+}
+c.fbq.some((a) => a[0] === "track" && a[1] === "CompleteRegistration") ? ok("CompleteRegistration, STANDARD") : bad("no Meta CompleteRegistration");
 await page.close();
 
 console.log("\n── domain verification (Meta's crawler does not run JS)");
