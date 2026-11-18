@@ -11,47 +11,50 @@
 import { BRAND_NAME } from './site.mjs';
 
 export const SOURCE = 'signup_page';
-export const TITLE = `Sign up to ${BRAND_NAME}`;
+export const TITLE = `Sign up to ${BRAND_NAME} for free`;
 export const META_DESCRIPTION =
-  `Sign up for early access to the ${BRAND_NAME} API for the free AI agent skills, and an email when ${BRAND_NAME} publishes a new case study.`;
+  'Get free case studies on successful Amazon stores by email, and early access to spy on any Amazon store with your own AI agent.';
 
 /** The FREE skills repo, through the API's tracked redirect (counted as a
  *  ReadmeHit click with readme "signup"). */
 export const SKILLS_LINK = 'https://api.waithowmuch.com/go/repo?from=signup';
 
-/** The two offers, each a heading with its explanation, shown above the form. */
+/** The two offers, each a heading with its explanation, shown above the form,
+ *  written as what the visitor gets. */
 export const SECTIONS = [
   {
-    heading: `Free ${BRAND_NAME} case studies`,
+    heading: 'Get FREE case studies on successful Amazon stores',
     lines: [
-      'One email when a new Amazon brand breakdown is published: revenue, profit, suppliers.',
-      'No spam, and you can unsubscribe any time.',
+      'See what a real Amazon brand makes, what it keeps, and who manufactures its products, in one email each time we publish a new breakdown.',
+      'No spam. Unsubscribe any time.',
     ],
   },
   {
-    heading: `Early access to the ${BRAND_NAME} API`,
+    heading: 'Spy on Amazon stores with your own AI agent',
     lines: [
-      `One ${BRAND_NAME} key for the AI agent skills, in place of a separate key for each data provider.`,
+      'Ask your AI agent what any Amazon store sells, earns and spends on ads, using our free skills.',
+      'Get early access to one key that replaces a separate subscription for each data provider.',
     ],
   },
 ];
 
-/** Checkbox labels. `link` is the part of the label that is a link. */
+/** Checkbox labels, in the same order as SECTIONS. `link` is the part of the
+ *  label that is a link (placed after `before`). */
 export const CHOICES = [
   {
-    key: 'wantsApiAccess',
-    before: `Get early access to ${BRAND_NAME} API to use with our `,
-    link: 'FREE skills',
+    key: 'wantsCaseStudies',
+    before: 'Email me FREE case studies on successful Amazon stores',
+    link: '',
   },
   {
-    key: 'wantsCaseStudies',
-    before: `Get notified on new ${BRAND_NAME} case studies - FREE`,
-    link: '',
+    key: 'wantsApiAccess',
+    before: 'Give me early access to spy on Amazon stores with my AI agent, using your ',
+    link: 'FREE skills',
   },
 ];
 
-export const BUTTON = 'Sign up';
+export const BUTTON = 'Sign me up';
 export const NONE_CHECKED = 'Tick at least one to sign up.';
-export const NOTE = 'No password: we email you a link to confirm your address, or continue with Google.';
+export const NOTE = 'No password needed: we email you a link to confirm, or continue with Google.';
 export const SENT =
-  'If that address can receive mail, a confirmation link is on its way. Open it to finish signing up.';
+  'Check your inbox: if that address can receive mail, your confirmation link is on its way. Open it to finish signing up.';
