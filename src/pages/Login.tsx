@@ -194,6 +194,11 @@ export function Signup() {
           <section key={sec.heading} data-signup-section>
             <h2>{sec.heading}</h2>
             {sec.lines.map((l) => <p key={l}>{l}</p>)}
+            <p data-signup-section-link>
+              {sec.link.external
+                ? <a href={sec.link.href} target="_blank" rel="noopener">{sec.link.text}</a>
+                : <Link to={sec.link.href}>{sec.link.text}</Link>}
+            </p>
           </section>
         ))}
       </div>

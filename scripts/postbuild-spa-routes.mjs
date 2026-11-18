@@ -1012,7 +1012,8 @@ const STATIC = [
   { path: '/signup/', title: SIGNUP.TITLE, description: SIGNUP.META_DESCRIPTION,
     body: `<h1>${esc(SIGNUP.TITLE)}</h1>
     ${SIGNUP.SECTIONS.map((sec) => `<h2>${esc(sec.heading)}</h2>
-    ${sec.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}`).join('\n    ')}
+    ${sec.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}
+    <p><a href="${esc(sec.link.href)}"${sec.link.external ? ' target="_blank" rel="noopener"' : ''}>${esc(sec.link.text)}</a></p>`).join('\n    ')}
     <ul>
       ${SIGNUP.CHOICES.map((c) => `<li>${esc(c.before)}${c.link
         ? `<a href="${esc(SIGNUP.SKILLS_LINK)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : ''}</li>`).join('\n      ')}

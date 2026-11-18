@@ -9,6 +9,7 @@
  * case-study mailing consent. Every visitor sees the same page.
  */
 import { BRAND_NAME } from './site.mjs';
+import { collectionPath } from './collections.mjs';
 
 export const SOURCE = 'signup_page';
 export const TITLE = `Sign up to ${BRAND_NAME} for free`;
@@ -19,7 +20,7 @@ export const META_DESCRIPTION =
  *  ReadmeHit click with readme "signup"). */
 export const SKILLS_LINK = 'https://api.waithowmuch.com/go/repo?from=signup';
 
-/** The two offers, each a heading with its explanation, shown above the form,
+/** The two offers, each a heading, its explanation and a link, shown above the form,
  *  written as what the visitor gets. */
 export const SECTIONS = [
   {
@@ -28,6 +29,7 @@ export const SECTIONS = [
       'See what a real Amazon brand makes, what it keeps, and who manufactures its products, in one email each time we publish a new breakdown.',
       'No spam. Unsubscribe any time.',
     ],
+    link: { text: 'Read our FREE case studies here →', href: collectionPath('all-ideas'), external: false },
   },
   {
     heading: 'Spy on Amazon stores with your own AI agent',
@@ -35,6 +37,7 @@ export const SECTIONS = [
       'Ask your AI agent what any Amazon store sells, earns and spends on ads, using our free skills.',
       'Get early access to one key that replaces a separate subscription for each data provider.',
     ],
+    link: { text: 'See our FREE skills here →', href: SKILLS_LINK, external: true },
   },
 ];
 
