@@ -11,9 +11,10 @@
  */
 const KEY = "whm_signup_intent_v1";
 
-/** The /signup form, or the sign-in page. The API's allowlist must match
- *  (it also still takes the two column values the 2026-11-18 page sent). */
-export type SignupSource = "signup_page" | "login_page";
+/** The /signup form, the sign-in page, or the /report/ popup. The API's
+ *  allowlist must match (it also still takes the two column values the
+ *  2026-11-18 page sent). */
+export type SignupSource = "signup_page" | "login_page" | "report_page";
 
 /** The two /signup checkboxes (src/data/signup-page.mjs), both ticked by
  *  default. Only /signup has them; elsewhere they are absent and the API

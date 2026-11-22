@@ -1,0 +1,22 @@
+export type ReportPlan = "free" | "verdict_99";
+export const SOURCE: "report_page";
+export const PATH: string;
+export const TITLE: string;
+export const META_DESCRIPTION: string;
+export const HERO: { h1: string; lines: readonly string[]; placeholder: string; button: string };
+export const INPUT_ERRORS: Record<"empty" | "not_amazon" | "us_only" | "short_link" | "no_asin" | "invalid", string>;
+export const BUILDING: readonly string[];
+export const POPUP: {
+  title: string;
+  signedInTitle: string;
+  plansHeading: string;
+  signupHeading: string;
+  emailButton: string;
+  signedInButton: string;
+  changeStore: string;
+  caseStudies: { text: string; href: string };
+};
+export const PLANS: ReadonlyArray<{ key: ReportPlan; title: string; lines: readonly string[] }>;
+export const PLAN_NOTE: string;
+export const DEFAULT_PLAN: ReportPlan;
+export const SENT: { emailTitle: string; emailText: string; doneTitle: string; doneText: string; doneVerdict: string };

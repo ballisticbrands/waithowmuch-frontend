@@ -32,15 +32,19 @@ type AuthResult = {
   touch?: SignupTouch | null; choices?: SignupChoicesFromApi | null;
 };
 
-/** The two ways in, shared by both pages. */
-function useAuth() {
+/** Sent beside the attribution by /report/ (the store asked for and the plan
+ *  picked). The API records it for new and existing accounts alike. */
+export type ReportAsk = { input: string; plan: "free" | "verdict_99" };
+
+/** The two ways in, shared by /login, /signup and the /report/ popup. */
+export function useAuth() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
-  async function requestLink(email: string, intent: SignupIntent) {
+  async function requestLink(email: string, intent: SignupIntent, report?: ReportAsk) {
     setBusy(true);
     setError(null);
     try {
@@ -52,6 +56,7 @@ function useAuth() {
         body: JSON.stringify({
           email, turnstileToken,
           attribution: { ...readAttribution(), ...intentFields(intent) },
+          report,
         }),
       });
       // The API answers 202 whether or not the address has an account, so this
@@ -65,12 +70,12 @@ function useAuth() {
     }
   }
 
-  async function google(credential: string, intent: SignupIntent) {
+  async function google(credential: string, intent: SignupIntent, report?: ReportAsk) {
     setError(null);
     try {
       const r = await apiFetch<AuthResult>("/v1/auth/google", {
         method: "POST",
-        body: JSON.stringify({ credential, attribution: { ...readAttribution(), ...intentFields(intent) } }),
+        body: JSON.stringify({ credential, attribution: { ...readAttribution(), ...intentFields(intent) }, report }),
       });
       setSession(r.token, r.user);
       // Google finishes on this page, so a link-request intent saved earlier

@@ -16,6 +16,7 @@ import TariffCalculator from "@/pages/TariffCalculator";
 import LandedCostCalculator from "@/pages/LandedCostCalculator";
 import SalesEstimator from "@/pages/SalesEstimator";
 import StoreRevenue from "@/pages/StoreRevenue";
+import Report from "@/pages/Report";
 
 /** Every content route is registered with AND without a trailing slash: the
  *  prerender writes directories, so the canonical URL has one, but inbound
@@ -69,6 +70,7 @@ export default function App() {
         {Both({ path: "/business2/:slug/:section", element: <PreviousCaseStudyRoute /> })}
         {Both({ path: "/login", element: <Login /> })}
         {Both({ path: "/signup", element: <Signup /> })}
+        {Both({ path: "/report", element: <Report /> })}
         <Route path="/auth/callback" element={<AuthCallback />} />
         {Both({ path: "/how-we-research", element: <HowWeResearch /> })}
         {/* The reference behind the Sourcing / Catalogue / Differentiation ⓘ on

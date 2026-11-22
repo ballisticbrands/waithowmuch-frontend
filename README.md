@@ -82,6 +82,7 @@ Values:
 | `signup_page_case_studies` / `signup_page_api` | the two columns of the `/signup` that was live for a few hours on 2026-11-18; still accepted for tabs left open on it |
 | `login_page` | `/login` |
 | `profile_gate` | the unlock prompt on a business profile (API only) |
+| `report_page` | the `/report/` popup (free report request). The store asked for and the plan picked (Free / $99 team verdict) are NOT here: they are a `ReportRequest` row in the API (`GET /v1/admin/report-requests`) and GA4 `report_request` (`plan`, `method`) |
 
 The backend allowlists these (`src/routes/auth.ts`); a new value goes there
 first, or the signup is rejected with a 400. The `/signup` copy lives in

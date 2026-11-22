@@ -49,6 +49,7 @@ import {
   FAQ as LANDED_FAQ, RELATED as LANDED_RELATED, sections as landedSections,
 } from '../src/data/landed-cost-calculator-page.mjs';
 import * as SIGNUP from '../src/data/signup-page.mjs';
+import * as REPORT from '../src/data/report-page.mjs';
 import { ESTIMATOR, STORE, ATTRIBUTION, faqPlain as toolFaqPlain } from '../src/data/sales-tools-page.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -1019,6 +1020,13 @@ const STATIC = [
         ? `<a href="${esc(SIGNUP.SKILLS_LINK)}" target="_blank" rel="noopener">${esc(c.link)}</a>` : ''}</li>`).join('\n      ')}
     </ul>
     <p>${esc(SIGNUP.NOTE)}</p>` },
+  { path: REPORT.PATH, title: REPORT.TITLE, description: REPORT.META_DESCRIPTION,
+    body: `<h1>${esc(REPORT.HERO.h1)}</h1>
+    ${REPORT.HERO.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}
+    ${REPORT.PLANS.map((p) => `<h2>${esc(p.title)}</h2>
+    ${p.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}`).join('\n    ')}
+    <p>${esc(REPORT.PLAN_NOTE)}</p>
+    <p><a href="${esc(REPORT.POPUP.caseStudies.href)}">${esc(REPORT.POPUP.caseStudies.text)}</a></p>` },
 ];
 
 for (const r of STATIC) {
