@@ -31,6 +31,8 @@ const PATHS: Record<string, React.ReactNode> = {
   calculator: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8.5 7h7" /><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15v2.5M8.5 18h.01M12 18h.01" /></>,
   trend: <><path d="M3.5 20.5h17" /><path d="m4.5 16 5-5 3.5 3.5 6.5-7" /><path d="M15 7.5h4.5V12" /></>,
   // A page of text — the blog.
+  /* A magnifier over a page: the competitor report (/report/). */
+  report: <><path d="M5 3h9l4 4v5" /><path d="M13.5 3v4.5H18" /><path d="M5 3v18h6" /><circle cx="16" cy="16.5" r="3.5" /><path d="m18.6 19.1 2.4 2.4" /></>,
   article: <><path d="M6 3h9l4 4v14H6z" /><path d="M14.5 3v4.5H19" /><path d="M9 12h7M9 15.5h7M9 8.5h3" /></>,
 };
 

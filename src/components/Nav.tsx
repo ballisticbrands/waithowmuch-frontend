@@ -148,6 +148,13 @@ export function SideRail() {
             search destination in its own right. */}
         <div data-rail-group>Free tools</div>
         <RailLink
+          to="/report/"
+          label="Competitor report"
+          active={here === "/report/"}
+          icon="report"
+          collapsed={collapsed}
+        />
+        <RailLink
           to="/tools/amazon-fba-calculator/"
           label="FBA calculator"
           active={here === "/tools/amazon-fba-calculator/"}
