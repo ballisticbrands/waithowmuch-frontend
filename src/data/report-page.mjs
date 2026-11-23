@@ -47,7 +47,7 @@ export const LANDING = {
   h1: "See exactly what any Amazon competitor makes, spends and pays for their product",
   sub: 'The only place you get a competitor\'s revenue, COGS, ad spend and traffic sources (organic and paid) in one report. Paste their store or product link, and we email you the full breakdown, for free.',
   trust: ['100% free', 'No credit card', 'Researched by hand, the same way as our case studies'],
-  whatHeading: "What's in your report",
+  whatHeading: 'You get ALL of this data about your competitor',
   what: [
     { icon: 'revenue', title: 'Revenue', text: 'Monthly revenue for the whole store and for each product, from Amazon\'s own "bought in past month" figures and the buy box price.' },
     { icon: 'cogs', title: 'COGS', text: 'What it costs them to make and ship each unit: real supplier quotes for the same product, plus freight and duties.' },
