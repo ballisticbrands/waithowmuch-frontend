@@ -39,6 +39,50 @@ export const INPUT_ERRORS = {
   invalid: 'We could not read that. Paste an amazon.com store or product link, an ASIN or a seller ID.',
 };
 
+/** The landing page: /report/ with no store yet. 🚧 First draft, to iterate
+ *  on with the owner. Every claim here must stay true of what the report
+ *  actually contains. */
+export const LANDING = {
+  eyebrow: 'Free competitor report',
+  h1: "See exactly what any Amazon competitor makes, spends and pays for their product",
+  sub: 'The only place you get a competitor\'s revenue, COGS, ad spend and traffic sources (organic and paid) in one report. Paste their store or product link, and we email you the full breakdown, for free.',
+  trust: ['100% free', 'No credit card', 'Researched by hand, the same way as our case studies'],
+  whatHeading: "What's in your report",
+  what: [
+    { icon: 'revenue', title: 'Revenue', text: 'Monthly revenue for the whole store and for each product, from Amazon\'s own "bought in past month" figures and the buy box price.' },
+    { icon: 'cogs', title: 'COGS', text: 'What it costs them to make and ship each unit: real supplier quotes for the same product, plus freight and duties.' },
+    { icon: 'ads', title: 'Ad spend', text: 'What they spend on Amazon Ads every month, and the exact keywords they bid on.' },
+    { icon: 'traffic', title: 'Traffic sources', text: 'Where their sales come from: organic search vs. paid ads on Amazon, plus their website, social media and external ads.' },
+    { icon: 'margin', title: 'Profit and margin', text: 'Revenue minus COGS, Amazon fees and ad spend: what they actually keep each month.' },
+    { icon: 'launch', title: 'What it takes to compete', text: 'What it would cost you to launch a similar product: first order, shipping and the ads to get it moving.' },
+  ],
+  compareHeading: 'Why nobody else gives you this',
+  compareLines: [
+    'Amazon research tools estimate revenue. That is where they stop.',
+    'Revenue alone tells you nothing about whether a product is worth going after. You need to know what it costs to make, what it takes in ads to sell, and where the buyers come from. That is the part we research.',
+  ],
+  compareCols: ['Typical Amazon research tools', 'WaitHowMuch report'],
+  compareRows: [
+    ['Revenue estimate', true, true],
+    ['COGS from real supplier quotes', false, true],
+    ['Monthly ad spend and keywords', false, true],
+    ['Organic vs. paid traffic', false, true],
+    ['Off-Amazon traffic (site, social, ads)', false, true],
+    ['Real profit and margin', false, true],
+    ['Checked by a human', false, true],
+  ],
+  stepsHeading: 'How it works',
+  steps: [
+    { title: 'Paste a link', text: 'Any amazon.com store, product page, ASIN or seller ID.' },
+    { title: 'We research it', text: 'Sales data, ad libraries, supplier quotes and freight rates, pulled together and checked by hand.' },
+    { title: 'Get it by email', text: 'Your full report, free. Want our team\'s verdict on it too? That\'s an optional $99, decided after you\'ve read the report.' },
+  ],
+  proofHeading: 'The same research behind our case studies',
+  proofText: 'Every case study on WaitHowMuch is a report like yours. Here are the latest:',
+  proofLink: 'See all case studies →',
+  finalHeading: 'Which competitor do you want to see?',
+};
+
 export const BUILDING = ['Estimating revenue', 'Modelling profit and margin', 'Reading ad spend', 'Pricing COGS', 'Ranking best sellers'];
 
 export const POPUP = {

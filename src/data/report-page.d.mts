@@ -5,6 +5,24 @@ export const TITLE: string;
 export const META_DESCRIPTION: string;
 export const HERO: { h1: string; lines: readonly string[]; placeholder: string; button: string };
 export const INPUT_ERRORS: Record<"empty" | "not_amazon" | "us_only" | "short_link" | "no_asin" | "invalid", string>;
+export const LANDING: {
+  eyebrow: string;
+  h1: string;
+  sub: string;
+  trust: readonly string[];
+  whatHeading: string;
+  what: ReadonlyArray<{ icon: "revenue" | "cogs" | "ads" | "traffic" | "margin" | "launch"; title: string; text: string }>;
+  compareHeading: string;
+  compareLines: readonly string[];
+  compareCols: readonly [string, string];
+  compareRows: ReadonlyArray<readonly [string, boolean, boolean]>;
+  stepsHeading: string;
+  steps: ReadonlyArray<{ title: string; text: string }>;
+  proofHeading: string;
+  proofText: string;
+  proofLink: string;
+  finalHeading: string;
+};
 export const BUILDING: readonly string[];
 export const POPUP: {
   title: string;

@@ -1021,8 +1021,15 @@ const STATIC = [
     </ul>
     <p>${esc(SIGNUP.NOTE)}</p>` },
   { path: REPORT.PATH, title: REPORT.TITLE, description: REPORT.META_DESCRIPTION,
-    body: `<h1>${esc(REPORT.HERO.h1)}</h1>
-    ${REPORT.HERO.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}
+    body: `<h1>${esc(REPORT.LANDING.h1)}</h1>
+    <p>${esc(REPORT.LANDING.sub)}</p>
+    <h2>${esc(REPORT.LANDING.whatHeading)}</h2>
+    ${REPORT.LANDING.what.map((w) => `<h3>${esc(w.title)}</h3>
+    <p>${esc(w.text)}</p>`).join('\n    ')}
+    <h2>${esc(REPORT.LANDING.compareHeading)}</h2>
+    ${REPORT.LANDING.compareLines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}
+    <h2>${esc(REPORT.LANDING.stepsHeading)}</h2>
+    <ol>${REPORT.LANDING.steps.map((st) => `<li><strong>${esc(st.title)}</strong>: ${esc(st.text)}</li>`).join('')}</ol>
     ${REPORT.PLANS.map((p) => `<h2>${esc(p.title)}</h2>
     ${p.lines.map((l) => `<p>${esc(l)}</p>`).join('\n    ')}`).join('\n    ')}
     <p>${esc(REPORT.PLAN_NOTE)}</p>

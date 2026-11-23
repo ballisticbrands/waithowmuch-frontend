@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch, ApiError, listBusinesses, type BusinessCard } from "@/lib/api";
 import { gaEvent } from "@/lib/track";
 import { useSession } from "@/lib/session";
 import { useAuth, type ReportAsk } from "@/pages/Login";
@@ -10,15 +10,18 @@ import { Turnstile } from "@/components/Turnstile";
 import { PlatformIcon } from "@/components/PlatformIcon";
 import { useSetCrumbs } from "@/components/Breadcrumbs";
 import { TABS } from "@/businesses/brand-tabs.mjs";
+import { CaseStudyCard } from "@/components/CaseStudyCard";
 import {
-  SOURCE, PATH, TITLE, HERO, INPUT_ERRORS, BUILDING, POPUP, PLANS, PLAN_NOTE, DEFAULT_PLAN, SENT,
+  SOURCE, PATH, TITLE, HERO, LANDING, INPUT_ERRORS, BUILDING, POPUP, PLANS, PLAN_NOTE, DEFAULT_PLAN, SENT,
   type ReportPlan,
 } from "@/data/report-page.mjs";
 
 /**
  * /report/ — a free WaitHowMuch report on any Amazon store, by email.
  *
- * The visitor pastes a store or product; the page shows the newest brand page
+ * Without a store (or with one we cannot read) it is a landing page: what the
+ * report contains and why no tool gives you the same. With one, the visitor
+ * pastes a store or product; the page shows the newest brand page
  * (pages/Business2.tsx) for it with its REAL name and product photos and every
  * figure blurred and "building", under a popup that asks for an email (or
  * Google) and a plan: Free, or the $99 team verdict (selected by default,
@@ -93,14 +96,14 @@ export default function Report() {
   const header = state.kind === "ok" ? state.header : null;
   const showGate = !!store && state.kind !== "invalid" && state.kind !== "loading";
 
+  if (!store || state.kind === "invalid") {
+    return <Landing initial={store} error={state.kind === "invalid" ? state.message : null} onAsk={ask} />;
+  }
+
   return (
     <main data-main data-report style={{ padding: "0.75rem 0.75rem 2rem" }}>
-      {(!store || state.kind === "invalid") && (
-        <StoreForm initial={store} error={state.kind === "invalid" ? state.message : null} onAsk={ask} />
-      )}
-
-      <div className="relative" aria-hidden={showGate || !store ? true : undefined}>
-        <ReportPreview header={header} loading={state.kind === "loading"} placeholder={!store || state.kind === "invalid"} />
+      <div className="relative" aria-hidden={showGate ? true : undefined}>
+        <ReportPreview header={header} loading={state.kind === "loading"} placeholder={false} />
       </div>
 
       {showGate && (
@@ -112,26 +115,158 @@ export default function Report() {
   );
 }
 
-// ─── The store input ─────────────────────────────────────────────────
+// ─── The landing page ────────────────────────────────────────────────
 
-function StoreForm({ initial, error, onAsk }: { initial: string; error: string | null; onAsk: (s: string) => void }) {
+function StoreInput({ initial, error, onAsk, id }: { initial: string; error: string | null; onAsk: (s: string) => void; id: string }) {
   const [q, setQ] = useState(initial);
   return (
-    <section className="mx-auto mb-4 max-w-[46rem] rounded-2xl border border-[color:var(--border)] bg-[var(--card)] p-5 shadow-[var(--shadow)] sm:p-7">
-      <h1 className="m-0 text-2xl font-extrabold tracking-tight sm:text-3xl">{HERO.h1}</h1>
-      {HERO.lines.map((l) => <p key={l} className="mb-0 mt-2 text-[color:var(--muted-foreground)]">{l}</p>)}
+    <>
       <form
-        className="mt-4 flex flex-col gap-2 sm:flex-row"
-        onSubmit={(e) => { e.preventDefault(); if (q.trim()) onAsk(q); }}
+        className="flex flex-col gap-2 sm:flex-row"
+        onSubmit={(e) => { e.preventDefault(); if (q.trim()) { gaEvent("report_cta", { location: id }); onAsk(q); } }}
       >
         <input
           data-input aria-label={HERO.placeholder} placeholder={HERO.placeholder}
-          value={q} onChange={(e) => setQ(e.target.value)} className="min-w-0 flex-1"
+          value={q} onChange={(e) => setQ(e.target.value)} className="min-w-0 flex-1 !py-3 text-base"
         />
-        <button data-btn type="submit" disabled={!q.trim()}>{HERO.button}</button>
+        <button data-btn type="submit" disabled={!q.trim()} className="!px-6 !py-3 text-base">{HERO.button}</button>
       </form>
       {error && <p role="alert" className="mb-0 mt-2 text-sm text-[color:var(--destructive,#b42318)]">{error}</p>}
-    </section>
+    </>
+  );
+}
+
+const ICON: Record<(typeof LANDING.what)[number]["icon"], React.ReactNode> = {
+  revenue: <path d="M3 3v18h18M7 15l4-4 3 3 6-6" />,
+  cogs: <><path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" /></>,
+  ads: <path d="M3 11l18-8v18L3 13zM7 12v6a2 2 0 0 0 4 0v-4" />,
+  traffic: <><path d="M3 17l5-5 4 4 8-8" /><path d="M14 8h6v6" /></>,
+  margin: <path d="M12 2a10 10 0 1 0 10 10H12zM15 2.5A10 10 0 0 1 21.5 9H15z" />,
+  launch: <><path d="M9 3h6M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3" /><path d="M7 15h10" /></>,
+};
+
+function Mark({ yes }: { yes: boolean }) {
+  return yes ? (
+    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--success)] text-white" aria-label="Yes">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
+    </span>
+  ) : (
+    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--muted)] text-[color:var(--muted-foreground)]" aria-label="No">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </span>
+  );
+}
+
+function Landing({ initial, error, onAsk }: { initial: string; error: string | null; onAsk: (s: string) => void }) {
+  const [cases, setCases] = useState<BusinessCard[] | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    listBusinesses("sort=newest").then((r) => !cancelled && setCases(r.businesses.slice(0, 3))).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  const section = "mx-auto max-w-[64rem] px-1 sm:px-4";
+
+  return (
+    <main data-main data-report-landing>
+      {/* Hero */}
+      <section className={`${section} pb-10 pt-4 text-center sm:pt-10`}>
+        <span className="inline-block rounded-full bg-[var(--accent-tint)] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[color:var(--accent)]">{LANDING.eyebrow}</span>
+        <h1 className="mx-auto mb-0 mt-4 max-w-[48rem] text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">{LANDING.h1}</h1>
+        <p className="mx-auto mb-0 mt-4 max-w-[40rem] text-lg text-[color:var(--muted-foreground)]">{LANDING.sub}</p>
+        <div className="mx-auto mt-6 max-w-[40rem] text-left">
+          <StoreInput id="hero" initial={initial} error={error} onAsk={onAsk} />
+        </div>
+        <ul className="m-0 mt-4 flex list-none flex-wrap justify-center gap-x-5 gap-y-1 p-0 text-sm text-[color:var(--muted-foreground)]">
+          {LANDING.trust.map((t) => (
+            <li key={t} className="flex items-center gap-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="3" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* What's in it */}
+      <section className={`${section} py-10`}>
+        <h2 className="m-0 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.whatHeading}</h2>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {LANDING.what.map((w) => (
+            <div key={w.title} className="rounded-xl border border-[color:var(--border)] bg-[var(--card)] p-5">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--accent-tint)] text-[color:var(--accent)]">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICON[w.icon]}</svg>
+              </span>
+              <h3 className="mb-0 mt-3 text-lg font-bold">{w.title}</h3>
+              <p className="mb-0 mt-1 text-sm leading-relaxed text-[color:var(--muted-foreground)]">{w.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Why nobody else */}
+      <section className={`${section} py-10`}>
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div>
+            <h2 className="m-0 text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.compareHeading}</h2>
+            {LANDING.compareLines.map((l) => <p key={l} className="mb-0 mt-3 text-[color:var(--muted-foreground)]">{l}</p>)}
+          </div>
+          <div className="overflow-hidden rounded-xl border border-[color:var(--border)] bg-[var(--card)]">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="bg-[var(--surface)]">
+                  <th className="p-3 text-left font-semibold" />
+                  {LANDING.compareCols.map((c, i) => (
+                    <th key={c} className={`w-28 p-3 text-center text-xs font-semibold ${i === 1 ? "text-[color:var(--accent)]" : "text-[color:var(--muted-foreground)]"}`}>{c}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {LANDING.compareRows.map(([label, them, us]) => (
+                  <tr key={label} className="border-t border-[color:var(--border)]">
+                    <td className="p-3 font-medium">{label}</td>
+                    <td className="p-3 text-center"><Mark yes={them} /></td>
+                    <td className="p-3 text-center"><Mark yes={us} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className={`${section} py-10`}>
+        <h2 className="m-0 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.stepsHeading}</h2>
+        <ol className="m-0 mt-6 grid list-none gap-4 p-0 sm:grid-cols-3">
+          {LANDING.steps.map((st, i) => (
+            <li key={st.title} className="rounded-xl border border-[color:var(--border)] bg-[var(--card)] p-5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-sm font-bold text-white">{i + 1}</span>
+              <h3 className="mb-0 mt-3 text-lg font-bold">{st.title}</h3>
+              <p className="mb-0 mt-1 text-sm leading-relaxed text-[color:var(--muted-foreground)]">{st.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* Proof: the case studies */}
+      {cases && cases.length > 0 && (
+        <section className={`${section} py-10`}>
+          <h2 className="m-0 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.proofHeading}</h2>
+          <p className="mb-0 mt-2 text-center text-[color:var(--muted-foreground)]">{LANDING.proofText}</p>
+          <div data-case-cards className="mt-6">{cases.map((b) => <CaseStudyCard key={b.id} business={b} />)}</div>
+          <p className="mb-0 mt-4 text-center"><Link to={POPUP.caseStudies.href} className="font-semibold">{LANDING.proofLink}</Link></p>
+        </section>
+      )}
+
+      {/* Final CTA */}
+      <section className={`${section} pb-6 pt-10`}>
+        <div className="rounded-2xl bg-[var(--accent-tint)] p-6 text-center sm:p-10">
+          <h2 className="m-0 text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.finalHeading}</h2>
+          <div className="mx-auto mt-5 max-w-[40rem] text-left">
+            <StoreInput id="final" initial={initial} error={null} onAsk={onAsk} />
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
