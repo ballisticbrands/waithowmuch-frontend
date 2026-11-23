@@ -94,6 +94,9 @@ export const POPUP = {
   emailButton: 'Send me the report',
   signedInButton: 'Send me the report',
   changeStore: '← Try a different store',
+  /** When the link names no store (amazon.com/stores/page/<id>): we cannot read
+   *  the brand from it without fetching Amazon, which we don't do. */
+  unknownStore: "This link doesn't show the store's name, but that's fine: we'll find it when we research it. To see the store here now, paste a link to one of its products instead.",
   caseStudies: { text: 'Read all existing case studies →', href: collectionPath('all-ideas') },
 };
 

@@ -33,6 +33,7 @@ export const POPUP: {
   emailButton: string;
   signedInButton: string;
   changeStore: string;
+  unknownStore: string;
   caseStudies: { text: string; href: string };
 };
 export const PLANS: ReadonlyArray<{ key: ReportPlan; title: string; lines: readonly string[] }>;

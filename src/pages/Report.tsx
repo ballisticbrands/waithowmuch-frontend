@@ -279,6 +279,11 @@ function Landing({ initial, error, onAsk }: { initial: string; error: string | n
 
 // ─── The gate ────────────────────────────────────────────────────────
 
+/** The popups' backdrop. On desktop the dialog starts below the report's
+ *  header (logo, name, "Building report"), which stays visible above it. */
+const OVERLAY =
+  "fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(15,15,30,0.28)] px-4 py-6 lg:pt-[9.5rem]";
+
 function Gate({ store, name, onChangeStore }: { store: string; name: string | null; onChangeStore: () => void }) {
   const { signedIn } = useSession();
   const auth = useAuth();
@@ -317,17 +322,23 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(15,15,30,0.35)] px-4 py-6 sm:items-center">
+    /* Desktop: wide and short, and pushed below the report's header so the
+       store's name and photo stay in view above it. */
+    <div className={OVERLAY}>
       <div
         ref={dialog} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="report-gate-title"
-        className="w-full max-w-[44rem] rounded-2xl border border-[color:var(--border)] bg-[var(--card)] p-5 shadow-2xl outline-none sm:p-7"
+        className="w-full max-w-[68rem] rounded-2xl border border-[color:var(--border)] bg-[var(--card)] p-5 shadow-2xl outline-none sm:p-6"
         style={{ outline: "none" }}
       >
         <h2 id="report-gate-title" className="m-0 text-2xl font-extrabold tracking-tight">{signedIn ? POPUP.signedInTitle : POPUP.title}</h2>
-        {name && <p className="mb-0 mt-1 text-sm text-[color:var(--muted-foreground)]">Report on <strong className="text-[color:var(--foreground)]">{name}</strong></p>}
+        {name
+          ? <p className="mb-0 mt-1 text-sm text-[color:var(--muted-foreground)]">Report on <strong className="text-[color:var(--foreground)]">{name}</strong></p>
+          : <p className="mb-0 mt-1 text-sm text-[color:var(--muted-foreground)]">{POPUP.unknownStore}</p>}
 
-        {/* 1 — the plans, as big as the signup below them. */}
-        <h3 className="mb-3 mt-5 text-lg font-bold">{POPUP.plansHeading}</h3>
+        <div className="mt-4 grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-6">
+        {/* 1 — the plans, as big as the signup beside them. */}
+        <div>
+        <h3 className="mb-3 mt-0 text-lg font-bold">{POPUP.plansHeading}</h3>
         <div role="radiogroup" aria-label={POPUP.plansHeading} className="grid gap-3 sm:grid-cols-2">
           {PLANS.map((p) => {
             const on = plan === p.key;
@@ -352,9 +363,11 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
           })}
         </div>
         <p className="mb-0 mt-3 rounded-lg bg-[var(--surface)] px-3 py-2 text-sm">{PLAN_NOTE}</p>
+        </div>
 
         {/* 2 — where to send it. */}
-        <h3 className="mb-3 mt-6 text-lg font-bold">{POPUP.signupHeading}</h3>
+        <div className="lg:border-l lg:border-[color:var(--border)] lg:pl-6">
+        <h3 className="mb-3 mt-0 text-lg font-bold">{POPUP.signupHeading}</h3>
         {signedIn ? (
           <button data-btn type="button" className="w-full" disabled={busy} onClick={() => void signedInRequest()}>
             {busy ? "Sending…" : POPUP.signedInButton}
@@ -367,7 +380,7 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
         ) : (
           <>
             <form
-              className="flex flex-col gap-2 sm:flex-row"
+              className="flex flex-col gap-2"
               onSubmit={(e) => {
                 e.preventDefault();
                 sent("magic_link");
@@ -390,6 +403,8 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
           </>
         )}
         {(auth.error || error) && <p role="alert" className="mb-0 mt-2 text-sm text-[color:var(--destructive,#b42318)]">{auth.error ?? error}</p>}
+        </div>
+        </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-2 border-t border-[color:var(--border)] pt-4 text-sm">
           <button type="button" onClick={onChangeStore} className="text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)]">{POPUP.changeStore}</button>
@@ -402,7 +417,7 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
 
 function Done({ verdict, onAnother }: { verdict: boolean; onAnother: () => void }) {
   return (
-    <div className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[rgba(15,15,30,0.35)] px-4 py-6 sm:items-center">
+    <div className={OVERLAY}>
       <div role="dialog" aria-modal="true" aria-labelledby="report-done-title" className="w-full max-w-[34rem] rounded-2xl border border-[color:var(--border)] bg-[var(--card)] p-6 shadow-2xl sm:p-7">
         <h2 id="report-done-title" className="m-0 text-2xl font-extrabold tracking-tight">{SENT.doneTitle}</h2>
         <p className="mb-0 mt-2">{SENT.doneText}</p>
@@ -474,7 +489,7 @@ function Building() {
 }
 
 function ReportPreview({ header, loading, placeholder }: { header: Header | null; loading: boolean; placeholder: boolean }) {
-  const name = placeholder ? "Your store" : header?.name ?? (loading ? "…" : "This store");
+  const name = placeholder ? "Your store" : header?.name ?? (loading ? "…" : "Amazon store");
   const photos = (header?.products ?? []).filter((p) => p.imageUrl);
   const seed = header?.name ?? name;
   const groups = useMemo(() => {
