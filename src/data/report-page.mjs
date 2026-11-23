@@ -106,6 +106,7 @@ export const PLANS = [
   {
     key: 'free',
     title: 'Free',
+    tag: 'The same research behind our case studies, no catch',
     lines: [
       'The full WaitHowMuch report on this store: monthly revenue, profit and margin, ad spend, COGS, its best sellers and what it would cost to launch your own.',
       'Researched by us and emailed to you.',
@@ -114,6 +115,7 @@ export const PLANS = [
   {
     key: 'verdict_99',
     title: '$99 one-time payment',
+    tag: 'Pay later, only if you want it',
     lines: [
       'Everything in the free report, then the WaitHowMuch team goes over it by hand and gives you their verdict: is this worth going after, where the margin really comes from, and what we would do in your place.',
     ],
@@ -122,7 +124,7 @@ export const PLANS = [
 
 /** Under the plans: the $99 is not a decision for now. */
 export const PLAN_NOTE =
-  "You don't have to decide now. No payment is taken today: your free report is delivered first, and we only ask for the $99 after you've seen it.";
+  "Free report first, either way. No card, no charge today. Picked $99? You only pay if you still want the verdict after reading your report.";
 
 export const DEFAULT_PLAN = 'verdict_99';
 

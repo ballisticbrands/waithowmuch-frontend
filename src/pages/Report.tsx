@@ -357,6 +357,7 @@ function Gate({ store, name, onChangeStore }: { store: string; name: string | nu
                   {on && <span className="h-2.5 w-2.5 rounded-full bg-[var(--accent)]" />}
                 </span>
                 <span className="block pr-8 text-2xl font-extrabold tracking-tight">{p.title}</span>
+                <span className="mt-1.5 inline-block rounded-md bg-[var(--success)] px-2 py-0.5 text-xs font-semibold text-white">{p.tag}</span>
                 {p.lines.map((l) => <span key={l} className="mt-2 block text-sm leading-relaxed text-[color:var(--muted-foreground)]">{l}</span>)}
               </button>
             );

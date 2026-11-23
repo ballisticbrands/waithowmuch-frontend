@@ -36,7 +36,7 @@ export const POPUP: {
   unknownStore: string;
   caseStudies: { text: string; href: string };
 };
-export const PLANS: ReadonlyArray<{ key: ReportPlan; title: string; lines: readonly string[] }>;
+export const PLANS: ReadonlyArray<{ key: ReportPlan; title: string; tag: string; lines: readonly string[] }>;
 export const PLAN_NOTE: string;
 export const DEFAULT_PLAN: ReportPlan;
 export const SENT: { emailTitle: string; emailText: string; doneTitle: string; doneText: string; doneVerdict: string };
