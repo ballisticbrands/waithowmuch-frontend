@@ -10,6 +10,7 @@ export const LANDING: {
   h1: string;
   sub: string;
   trust: readonly string[];
+  examplesLink: string;
   whatHeading: string;
   what: ReadonlyArray<{ icon: "revenue" | "cogs" | "ads" | "traffic" | "margin" | "launch"; title: string; text: string }>;
   compareHeading: string;

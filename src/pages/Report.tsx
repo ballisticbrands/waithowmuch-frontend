@@ -188,6 +188,10 @@ function Landing({ initial, error, onAsk }: { initial: string; error: string | n
 
       {/* What's in it */}
       <section className={`${section} py-10`}>
+        <p className="m-0 mb-3 text-center">
+          <a href={POPUP.caseStudies.href} target="_blank" rel="noopener" className="font-semibold"
+             onClick={() => gaEvent("report_examples_click", { location: "landing" })}>{LANDING.examplesLink}</a>
+        </p>
         <h2 className="m-0 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.whatHeading}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {LANDING.what.map((w) => (

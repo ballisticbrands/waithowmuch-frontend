@@ -1023,6 +1023,7 @@ const STATIC = [
   { path: REPORT.PATH, title: REPORT.TITLE, description: REPORT.META_DESCRIPTION,
     body: `<h1>${esc(REPORT.LANDING.h1)}</h1>
     <p>${esc(REPORT.LANDING.sub)}</p>
+    <p><a href="${esc(REPORT.POPUP.caseStudies.href)}" target="_blank" rel="noopener">${esc(REPORT.LANDING.examplesLink)}</a></p>
     <h2>${esc(REPORT.LANDING.whatHeading)}</h2>
     ${REPORT.LANDING.what.map((w) => `<h3>${esc(w.title)}</h3>
     <p>${esc(w.text)}</p>`).join('\n    ')}
