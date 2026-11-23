@@ -26,7 +26,7 @@ export const HERO = {
     'Paste an Amazon store or product link. We research its revenue, profit, margin, ad spend and costs, the same way we do for our case studies, and email you the full report.',
   ],
   placeholder: 'Amazon store or product link, ASIN or seller ID',
-  button: 'Get the report',
+  button: 'Get FREE report',
 };
 
 /** What each pasted-input error means, in the visitor's words. */

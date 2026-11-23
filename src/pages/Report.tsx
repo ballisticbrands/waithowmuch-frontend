@@ -184,14 +184,17 @@ function Landing({ initial, error, onAsk }: { initial: string; error: string | n
             </li>
           ))}
         </ul>
+        <a
+          href={POPUP.caseStudies.href} target="_blank" rel="noopener"
+          onClick={() => gaEvent("report_examples_click", { location: "landing" })}
+          className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--accent)] bg-[var(--card)] px-4 py-2 text-base font-semibold text-[color:var(--accent)] no-underline hover:bg-[var(--accent-tint)]"
+        >
+          {LANDING.examplesLink}
+        </a>
       </section>
 
       {/* What's in it */}
       <section className={`${section} py-10`}>
-        <p className="m-0 mb-3 text-center">
-          <a href={POPUP.caseStudies.href} target="_blank" rel="noopener" className="font-semibold"
-             onClick={() => gaEvent("report_examples_click", { location: "landing" })}>{LANDING.examplesLink}</a>
-        </p>
         <h2 className="m-0 text-center text-2xl font-extrabold tracking-tight sm:text-3xl">{LANDING.whatHeading}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {LANDING.what.map((w) => (
