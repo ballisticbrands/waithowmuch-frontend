@@ -20,7 +20,7 @@ export default function AuthCallback() {
     if (consumed.current) return;
     consumed.current = true;
 
-    apiFetch<{ token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null; choices?: SignupChoicesFromApi | null }>("/v1/auth/magic-link/consume", {
+    apiFetch<{ token: string; user: SessionUser; isNew?: boolean; touch?: SignupTouch | null; choices?: SignupChoicesFromApi | null; report?: { next: string } | null }>("/v1/auth/magic-link/consume", {
       method: "POST",
       body: JSON.stringify({ token }),
     })
@@ -34,7 +34,11 @@ export default function AuthCallback() {
         // signing up, and a good share of requested links are never opened.
         if (r.isNew) trackSignUp("magic_link", intent, r.user.id, r.touch, r.choices);
         else trackLogin("magic_link");
-        navigate(intent?.next ?? "/", { replace: true });
+        // A /report/ request this link confirmed: its "on its way" page, from
+        // the API, so it lands there even in a browser that never saw the
+        // form (desktop form, link opened on the phone).
+        const reportNext = r.report?.next?.startsWith("/report/") ? r.report.next : undefined;
+        navigate(reportNext ?? intent?.next ?? "/", { replace: true });
       })
       .catch(() => setFailed(true));
   }, [params, navigate]);
